@@ -4,8 +4,8 @@
 /local_app/node_modules
 /local_app/.pnp
 /local_app/.pnp.js
-/ccphylo/
-/kma/
+/ccphylo
+/kma
 # testing
 /local_app/coverage
 
