@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<div class="sidenav" id="mySidebar">
+    <a href="./index.html" id>Home</a>
+    <a href="./services.html">Services</a>
+    <a href="./database.html">Database</a>
+    <a href="./dashboard.html">Dashboard</a>
+    <a href="./update.html">Update</a>
+    <a href="./config.html">Config</a>
+    <a href="./history.html">History</a>
+</div>
+<!-- Side navigation -->
+
+<!-- Page content -->
+<div class="main" id="main">
+    <main data-router-wrapper>
+        <section data-router-view="services" class="services">
+            <div class="services-content">
+                <div class="services-presentation">
+                </div>
+                <form method="get" action="./analyse.html">
+                    <button class="button">Analyze new isolate input</button>
+                </form>
+                <form method="get" action="./initialize.html">
+                    <button class="button">Initialize reference database</button>
+                </form>
+                <form method="get" action="./managedb.html">
+                    <button class="button">Manage database system</button>
+                </form>
+            </div>
+
+        </section>
+    </main>
+</div>
+
+<script>
+    
+</script>
+</body>
+</html>

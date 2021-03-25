@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../js/initialize.js" type="text/javascript"></script>
+</head>
+
+
+  <body>
+  <!-- Side navigation -->
+  <div class="sidenav" id="mySidebar">
+    <a href="./index.html" id>Home</a>
+    <a href="./services.html">Services</a>
+    <a href="./database.html">Database</a>
+    <a href="./dashboard.html">Dashboard</a>
+    <a href="./update.html">Update</a>
+    <a href="./config.html">Config</a>
+  </div>
+  <!-- Page content -->
+
+
+  <div class="main" id="main">
+    <main data-router-wrapper>
+      <section data-router-view="home" class="home">
+        <div class="home-content">
+          <div class = "sub-header-text">
+            Initialize your database, and get started!
+            <br><br>
+        </div>
+        <div class="init-section">
+          <div class="init-path">
+            <form>
+            <label for="init-path"> Please enter the COMPLETE path (e.g. /home/disk1/myfolder/prrtdb/) for the location where you wish to create your PRTT database:</label>
+            <input type="text" id="init-path" name="init-path" value="">
+            <br><br>
+          </form></div>
+
+          <div class="exe-path">
+            <form>
+            <label for="exe-path"> Select the directory in which you have cloned PRTT from github and have run setup.py to install KMA:</label>
+            <input type="file" id="exe-path" value="" webkitdirectory mozdirectory msdirectory odirectory directory multiple />
+            <br><br>
+          </form></div>
+          
+
+          <div class="input-fasta">
+            <form>
+            <label for="input-fasta"> Select a folder containing fasta files to be indexed as References:</label>
+            <input type="file" id="input-fasta" value=""  webkitdirectory mozdirectory msdirectory odirectory directory multiple />
+            <br><br>
+          </form></div>
+
+
+          <div class="kmaindex-path">
+            <form>
+            <label for="kmaindex-path"> Select a directory containing ONLY a kma-index .ATG database:</label>
+            <input type="file" id="kmaindex-path" value=""  webkitdirectory mozdirectory msdirectory odirectory directory multiple />
+            <br><br>
+          </form></div>
+
+          <div class="config-name">
+            <form>
+            <label for="config-name"> Select a name for the generated configuration file (.json)</label>
+            <input type="text" id="config-name" name="config-name" value="">
+            <br><br>
+          </form></div>
+
+          <button onclick="submitInitilization()">Submit initialization</button>
+
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <script type="text/javascript">
+  </script>
+  </body>
+</html>

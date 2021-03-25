@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="../js/database.js" type="text/javascript"></script>
+</head>
+
+
+<body>
+<!-- Side navigation -->
+<div class="sidenav" id="mySidebar">
+  <a href="./index.html" id>Home</a>
+  <a href="./services.html">Services</a>
+  <a href="./database.html">Database</a>
+  <a href="./dashboard.html">Dashboard</a>
+  <a href="./update.html">Update</a>
+  <a href="./config.html">Config</a>
+  <a href="./history.html">History</a>
+</div>
+<!-- Page content -->
+
+
+<div class="main" id="main">
+  <main data-router-wrapper>
+    <section data-router-view="home" class="home">
+      <div class="home-content">
+        <div class ="home-presentation">
+          <h1>Database</h1>
+
+          Your current system configuration is:
+
+          <pre id="current-config"></pre>
+
+          <h3></h3>
+        </div>
+        <hr>
+        <div class="db-overview">
+          <div id='db-data'>
+            <div class="dashboard-options">
+              <button type="button" id="outbreak-clusters-button" onclick="logdb()">Fetch DB info</button>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+
+
+
+
+
+    </section>
+  </main>
+</div>
+
+<script type="text/javascript">
+
+
+    const storage = require('electron-json-storage');
+
+
+
+    storage.get('currentConfig', function(error, data) {
+      if (error) throw error;
+
+      var element = document.getElementById('current-config');
+      element.textContent = data.dbdir;
+    });
+
+
+  </script>
+</body>
+</html>

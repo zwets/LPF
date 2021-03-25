@@ -1,0 +1,215 @@
+#!/usr/bin/env python3
+
+# Copyright (c) 2018, Malte Bjørn Hallgren Technical University of Denmark
+# All rights reserved.
+#
+
+# Import Libraries
+
+import sys
+import os
+import argparse
+import operator
+import time
+import gc
+import numpy as np
+import array
+from optparse import OptionParser
+from operator import itemgetter
+import re
+#Use Argparse to correctly open the inputfiles
+
+parser = argparse.ArgumentParser(description='NDTree-2.0')
+#parser.add_argument('-vcf_file', action="store", type=str, dest='vcf', default="", help='The path to the directory containing ONLY the input illumina files. Should be used when analyzing >5 read-files at a time.')
+parser.add_argument('-difffile_file', action="store", type=str, dest='difffile', default="", help='name of your difffile from running NDTREE')
+parser.add_argument('-i', nargs='+', type=str, dest='input', default="", help='Names of the two samples that you would like to compare. The CORRECT names of the files must be given here separated by spaces. The Illumina file should be stated first, followed by the nanopore file. Only use this function if you only wish to compare 2 samples')
+parser.add_argument('-i_path_illumina', action="store", type=str, dest='i_path_illumina', default="", help='The path to the directory containing ONLY the input illumina files. Should be used when analyzing >5 read-files at a time.')
+parser.add_argument('-i_path_nanopore', action="store", type=str, dest='i_path_nanopore', default="", help='The path to the directory containing ONLY the input nanopore files. Should be used when analyzing >5 read-files at a time.')
+parser.add_argument('-dcmFile', action="store", type=str, dest='dcmFile', default="", help='Enter the dcmFile generated from NDtree if you would like to see if the shared SNP positions are within a dcm motif')
+parser.add_argument("-snpseq", action="store_true", dest="snpseq", help="snpseq")
+parser.add_argument("-o", action="store", dest="output", help="Name that you would like the output to be called.")
+parser.add_argument('-version', action='version', version='mutationSpotter 1.0.1', help = "This program must the run in the directory where your difffile and other output from running MinIONTyper is located.")
+args = parser.parse_args()
+
+
+def load_illumina(illumina_path_input):
+    path = illumina_path_input
+    illumina_files = os.listdir(path)
+    illumina_files.sort()
+    return illumina_files
+
+def load_nanopore(nanopore_path_input):
+    path = nanopore_path_input
+    nanopore_files = os.listdir(path)
+    nanopore_files.sort()
+    return nanopore_files
+
+
+def SNPScomp(illumina_files, nanopore_files):
+    if args.dcmFile != "":
+        dcmPositions = []
+        infile = open(args.dcmFile, 'r')
+        for line in infile:
+            if line[0] != ">":
+                line = line.rstrip()
+                line = line.split("\t")
+                dcmPositions.append(int(line[0]))
+        infile.close()
+
+    difffile = open(args.difffile, 'r')
+    outfile = open(args.output, 'w')
+    print ("> SNPS between " + str(illumina_files) + " and " + str(nanopore_files), file=outfile)
+    for line in difffile:
+        line = line.rstrip()
+        line = line.replace(' ', '*')
+        line = line.replace('*******', '\t')
+        line = line.replace('******', '\t')
+        line = line.replace('*****', '\t')
+        line = line.replace('****', '\t')
+        line = line.replace('***', '\t')
+        line = line.replace('**', '\t')
+        line = line.replace('*', '\t')
+        line = line.split("\t")
+        for i in range(len(nanopore_files)):
+            if nanopore_files[i] in line and illumina_files[i] in line:
+                """
+                ncfile = open('nctree_input', 'r')
+                print (nanopore_files[i])
+                sequence = ""
+                fflag = False
+                for line in ncfile:
+                    if line[0] == ">":
+                        if sequence != "":
+                            start = position-5
+                            end = position+5
+                            printseq = sequence[start:end]
+                            printline.append(printseq)
+                            break
+                        line = line.rstrip()
+                        fflag = False
+                        if line[1:] == nanopore_files[i]:
+                            fflag = True
+                        sequence = ""
+                    if fflag == True:
+                        line = line.rstrip()
+                        sequence += line
+                ncfile.close()
+                """
+
+                print ("\t".join(line), file = outfile)
+
+
+
+    outfile.close()
+    difffile.close()
+
+    infile = open(args.output, 'r')
+    outfile = open(args.output + "2", 'w')
+    formerID = ""
+    sequence = ""
+    fflag = False
+    for line in infile:
+        if line[0] != ">":
+            line = line.rstrip()
+            line = line.split("\t")
+            printline = line
+            currentID = line[1]
+            position = int(line[2])-1
+            if currentID != formerID:
+                print (currentID)
+                filename = "DataFiles/" + line[1] + "_mapping_results.fsa"
+                ncfile = open(filename, 'r')
+                sequence = ""
+                for line in ncfile:
+                    if line[0] != ">":
+                        line = line.rstrip()
+                        sequence += line
+                ncfile.close()
+                start = position - 7
+                end = position + 8
+                printseq = sequence[start:end]
+                printline.append(printseq)
+                """
+                    if fflag == True:
+                        line = line.rstrip()
+                        if line[0] == ">":
+                            start = position - 1
+                            end = position + 1
+                            printseq = sequence[position]
+                            printline.append(printseq)
+                            break
+                        sequence += line
+                    if line[0] == ">":
+                        line = line.rstrip()
+                        if line == ">" + currentID:
+                            sequence = ""
+                            fflag = True
+                ncfile.close()
+                """
+            elif currentID == formerID:
+                start = position - 7
+                end = position + 8
+                printseq = sequence[start:end]
+                printline.append(printseq)
+            print ("\t".join(printline), file = outfile)
+            formerID = currentID
+
+    infile.close()
+    outfile.close()
+
+    cmd = "rm " + args.output
+    os.system(cmd)
+    cmd = "mv " + args.output + "2 " + args.output
+    os.system(cmd)
+
+    if args.dcmFile != "":
+
+        infile = open(args.output, 'r')
+        outfile = open(args.output+"2", 'w')
+
+        for line in infile:
+            line = line.rstrip()
+            if line[0] == ">":
+                print (line, file = outfile)
+            else:
+                line = line.split("\t")
+                for i in range(len(dcmPositions)):
+                    if 0 <= (int(line[2]) - dcmPositions[i]) <= 5:
+                        line.append("DCM")
+                        break
+                print ("\t".join(line), file = outfile)
+        infile.close()
+        outfile.close()
+
+        cmd = "rm " + args.output
+        os.system(cmd)
+        cmd = "mv " + args.output + "2 " + args.output
+        os.system(cmd)
+
+
+
+
+def main():
+    if args.i_path_illumina != "":
+        illumina_files = load_illumina(args.i_path_illumina)
+    if args.i_path_nanopore != "":
+        nanopore_files = load_nanopore(args.i_path_nanopore)
+    if args.i_path_illumina == "" and args.i_path_nanopore == "":
+        illumina_files = [args.input[0]]
+        nanopore_files = [args.input[1]]
+    if len(nanopore_files) != len(illumina_files):
+        if len(illumina_files) == 2*len(nanopore_files): #In case of PE
+            new_illumina_list =[]
+            for i in range(0,len(illumina_files),2):
+                new_illumina_list.append(illumina_files[i])
+            illumina_files = new_illumina_list
+        else:
+            print (len(illumina_files))
+            print (len(nanopore_files))
+            sys.exit("The amount of illumina and nanopore files given is not the same. Make sure it is the same and run the program again.")
+    SNPScomp(illumina_files, nanopore_files)
+
+
+
+if __name__== "__main__":
+  main()

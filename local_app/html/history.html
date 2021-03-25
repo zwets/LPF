@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../js/history.js" type="text/javascript"></script>
+</head>
+
+
+<body>
+<!-- Side navigation -->
+<!-- Side navigation -->
+<div class="sidenav" id="mySidebar">
+    <a href="./index.html" id>Home</a>
+    <a href="./services.html">Services</a>
+    <a href="./database.html">Database</a>
+    <a href="./dashboard.html">Dashboard</a>
+    <a href="./update.html">Update</a>
+    <a href="./config.html">Config</a>
+    <a href="./history.html">History</a>
+</div>
+<!-- Page content -->
+
+
+<div class="main" id="main">
+    <main data-router-wrapper>
+        <section data-router-view="home" class="home">
+            <div class="home-content">
+                <div class ="home-presentation">
+                    <h1>Analyses History</h1>
+
+                    Overview of currently running and completed analyses for database configuration: <pre id="current-config"></pre> </div>
+
+                <div>
+                    <h3>
+                        Click the button to create a dynamic table using data extracted from a JSON array.
+                    </h3>
+                    <input type='button' onclick='showFinishedAnalyses()'
+                           value='Show Finished Analyses' />
+                    <input type='button' onclick='showRunningAnalyses()'
+                           value='Show Running Analyses' />
+
+                    <p id='showData'></p>
+
+                </div>
+            </div>
+
+
+        </section>
+    </main>
+</div>
+
+<script type="text/javascript">
+  </script>
+</body>
+</html>
