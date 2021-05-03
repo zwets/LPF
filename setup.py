@@ -19,6 +19,7 @@ def main():
     os.system(cmd)
     cmd = "sudo apt install python3-pip"
     os.system(cmd)
+    installresfinder()
     cmd = "pip install posix-ipc"
     os.system(cmd)
 
