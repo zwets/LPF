@@ -1,5 +1,6 @@
 const { exec } = require('child_process');
-
+const fs = require('fs')
+const storage = require('electron-json-storage');
 
 function getfolder(id) {
     var trypath = document.getElementById(id).files[0].path;
@@ -9,11 +10,11 @@ function getfolder(id) {
     return returnstring;
   }
 
-function submitInitilization() {
+
+function submitinit() {
   var init_path = document.getElementById("init-path").value;
   var config_name = document.getElementById("config-name").value;
-  var exe_path = getfolder("exe-path");
-
+  var exepath = getfolder("exe-path");
 
   var input_fasta = document.getElementById("input-fasta").value;
   if (input_fasta == "") {
@@ -29,8 +30,8 @@ function submitInitilization() {
     var kmaindex_path = getfolder("kmaindex-path");
   }
 
-  var execstring = `python3 ${exe_path}prtt_init.py -db_dir ${init_path} -exepath ${exe_path} -configname ${config_name}`
-
+  var execstring = `python3 ${exepath}src/moss_init.py -db_dir ${init_path} -exepath ${exepath} -configname ${config_name}`
+  console.log(execstring);
 
 
 
@@ -45,14 +46,17 @@ function submitInitilization() {
   console.log(execstring);
 
 
-  console.log("job submitted");
+  //console.log("job submitted");
 
-  alert("job submitted, you will be redirected to Home.");
+  //alert("job submitted.");
 
-  location.href = "./index.html";
+  //location.href = "./index.html";
 
   //Auto initialization of config!
   //Loader whilst initializing perhaps?
+  var loader = document.getElementById('loader');
+  loader.style.display = 'block';
+  document.getElementById('loadermessage').innerHTML = "Setting up database system. Depending on the database size, this might take some time (>20 min).";
 
   exec(execstring, (error, stdout, stderr) => {
 
@@ -67,24 +71,22 @@ function submitInitilization() {
     console.log(`stdout: ${stdout}`);
     console.error(`stderr: ${stderr}`);
 
+    //Automatic change of correct system config to
+    console.log(exepath)
+    console.log(init_path)
+    storage.set('currentConfig', { exepath: exepath, dbdir: init_path }, function(error) {
+            if (error) throw error;
+        });
+    alert("Your database has been set up!");
 
-    fs.writeFile(output_path + 'stdout', stdout, (err) => {
-
-        // In case of a error throw err.
-        if (err) throw err;
-    })
-    fs.writeFile(output_path + 'stderr', stderr, (err) => {
-
-        // In case of a error throw err.
-        if (err) throw err;
-    })
-
+    loader.style.display = 'none';
+    document.getElementById('loadermessage').innerHTML = "Your database system has been set up.";
 
 
 
+      });
 
-      }); 
 
-    }
+  }
 
 

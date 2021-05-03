@@ -9,6 +9,13 @@
   cursor: pointer;
 }
 
+body {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0;
+}
+
 /* Dropdown button on hover & focus */
 .dropbtn:hover, .dropbtn:focus {
   background-color: #2980B9;
@@ -86,6 +93,7 @@
 /* Style page content */
 .main {
   margin-left: 160px; /* Same as the width of the sidebar */
+  /*margin-right: 160px; /* Same as the width of the sidebar */
   padding: 0px 10px;
 }
 
@@ -108,7 +116,14 @@
 }
 
 .prtt-arguments {
-  display: None;
+  display: block;
+}
+
+.home-presentation {
+    margin: auto;
+    text-align: center;
+    width: 50%;
+    padding: 10px;
 }
 
 .header-text {
@@ -119,17 +134,18 @@
 }
 
 .loader {
-  border: 16px solid #f3f3f3; /* Light grey */
-  border-top: 16px solid #3498db; /* Blue */
-  border-radius: 50%;
-  width: 120px;
-  height: 120px;
-  animation: spin 1s linear infinite;
-}
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 320px;
+    height: 320px;
+    animation: spin 2s linear infinite;
+    display: none;
+ }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 @keyframes fadeIn {
@@ -176,7 +192,7 @@
 
 .home, .services {
     height: 100%;
-    width: 100%;
+    width: 90%;
     position: absolute;
 }
 

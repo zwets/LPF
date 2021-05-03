@@ -23,7 +23,6 @@ import datetime
 import hashlib
 import gzip
 import posix_ipc
-import hashlib
 
 
 #Utility functions
@@ -490,7 +489,7 @@ def ThreshholdDistanceCheck(distancematrixfile, reference, isolate):
         if secondentry == True:
             if line[0] == reference or line[0] == isolate:
                 distance = line[linecount-1]
-                return distance
+                return float(distance)
         if secondentry == False:
             if line[0] == reference or line[0] == isolate:
                 index = linecount
@@ -873,13 +872,6 @@ def makeDBinfo(isolatedb):
     referencenumber = len(refdata)
     conn.close()
 
-
-
-
-
-
-
-
-
-
-
+def runResFinder(exepath, total_filenames, target_dir):
+    cmd = "python3 {}resfinder/run_resfinder.py -ifq {} -o {}resfinderResults -b {}resfinder/cge/ncbi-blast-2.10.1+/bin/blastn -acq".format(total_filenames, exepath, target_dir, exepath)
+    os.system(cmd)

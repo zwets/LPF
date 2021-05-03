@@ -139,6 +139,7 @@ def SurveillancePipeline(i_illumina, i_nanopore, masking_scheme, prune_distance,
         print("# -ref: " + reference, file=logfile)
     print("loading input")
 
+    runResFinder(exepath, total_filenames, target_dir)
     best_template_score, template_found, templatename = moss.findTemplateSurveillance(total_filenames, target_dir, kma_database_path, logfile, kma_path)
 
     best_template = moss.findTemplateNumber(db_dir, templatename)
@@ -156,7 +157,6 @@ def SurveillancePipeline(i_illumina, i_nanopore, masking_scheme, prune_distance,
 
     if template_found == False: #NO TEMPLATE FOUND #Being assembly
         print ("assebly stop", file = logfile)
-        sys.exit("Debug stop assembly")
 
         if assemblyType == "illumina":
             moss.inputAssemblyFunction(assemblyType, inputType, target_dir, i_illumina, illumina_name1, illumina_name2, "", jobid, inputname, kma_path, kma_database_path, entryid, referenceSyncFile, isolatedb, db_dir)
@@ -227,17 +227,17 @@ def SurveillancePipeline(i_illumina, i_nanopore, masking_scheme, prune_distance,
     #CCind her. single fil som skal appendes til eksisterende matrix med samme, gemte conditions.
     if len(moss.loadFiles("{}datafiles/isolatefiles/{}/".format(db_dir, refname))) > 1:
         print ("CCPHYLO")
-        cmd = "{} dist -i {}datafiles/isolatefiles/{}/* -r \"{}\" -mc 1 -nm 0 -o {}distance_matrix_{}".format(ccphylo_path, db_dir, refname, templatename, target_dir, refname)
+        cmd = "{} dist -i {}datafiles/isolatefiles/{}/* -r \"{}\" -mc 0.01 -nm 0 -o {}distance_matrix_{}".format(ccphylo_path, db_dir, refname, templatename, target_dir, refname)
+        print (cmd, file = logfile)
         if prune_distance != 0 :
             cmd += " -pr {}".format(prune_distance)
         os.system(cmd)
 
         # Check if acceptable snp distance
-        distance = float(moss.ThreshholdDistanceCheck("{}distance_matrix_{}".format(target_dir, refname), refname, "{}_{}_consensus.fsa".format(inputname, templateaccesion)))
-
+        distance = moss.ThreshholdDistanceCheck("{}distance_matrix_{}".format(target_dir, refname), refname, "{}_{}_consensus.fsa".format(inputname, templateaccesion))
+        print (distance, file = logfile)
         if distance > 300: #SNP distance
             print("Distance to best template was over 300 basepairs, so input will be defined as reference")
-            sys.exit("Debug stop assembly", file=logfile)
             if assemblyType == "illumina":
                 moss.inputAssemblyFunction(assemblyType, inputType, target_dir, i_illumina, illumina_name1, illumina_name2, "", jobid, inputname, kma_path, kma_database_path, entryid, referenceSyncFile, isolatedb, db_dir)
             elif assemblyType == "nanopore":

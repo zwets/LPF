@@ -26,33 +26,38 @@
       <section data-router-view="home" class="home">
         <div class="home-content">
           <div class ="home-presentation">
-            <h3>Welcome to Pathogen Real Time Typer v1.0.1</h3>
+            <h1>Welcome to Microbial Outbreak Surveillance System 1.0</h1>
+            <b>For additional documentation on Microbial Outbreak Surveillance System, please visit: GITHUB LINK</b><br>
+            <u>If this is your first time installing and using Microbial Outbreak Surveillance System (MOSS), please read and follow the set-up guide carefully.<br>
+              Additionally, the instructions on how to correctly operating MOSS should be thoroughly studied.</u>
           </div>
-          <div class = "sub-header-text">
-            For documentation on Pathogen Real Time Typer, please visit: GITHUB LINK
+          <div class="Setup-guide">
+            <h2><b><u>Set up guide:</u></b></h2>
+           <ol>
+              <li><b>Initializing your first surveillance system</b></li>
+             If you have just downloaded (Cloned) MOSS from github/bitbucket, you will need to either generate a new MOSS system or download an existing one.
+             <ol>
+               <li><b>Initializing a new MOSS system</b></li>
+               MANGLER
+               <li><b>Downloading and configuring an existing MOSS system</b></li>
+               MANGLER
+             </ol>
+              <li><b>Analyzing isolate samples</b></li>
+              <li><b>Analysis reports</b></li>
+              <li><b>Analysis status</b></li>
+              In order to check the status of an analysis, click the History tab in the action bar to the left.
+             If the analysis has finished, it will be shown under "Show Finished Analyses". Otherwise, it will be shown under "Show Running Analyses".
+             <li><b>General considerations when using MOSS</b></li>
+             Some of the bioinformatical programs run during the MOSS pipeline can be quite computationally requiring,
+             and therefore any user should consider the natural limitations of their hardware. The two primary areas of
+             concern are running multiple analyses in parallel and performing de novo assembly. De novo assembly is extremely
+             demanding in terms of RAM usage, as the De Bruijn graph needs to be stored in the memory in order to determine the next building edge.
+             It is not uncommon for De Bruijn graph of bacterial assemblies of 5M BP size to use upwards of 1-3 Gb RAM. Therefore,
+             if 5 samples are run in parallel and they all fail to identify a proper reference, the RAM usage for graph building could easily be in the 10-20 gb range.
+             For these reasons, it is <b>strongly</b> recommended that a computer build for running MOSS has atleast 16 gb ram - Ideally 32 or even 64.
+             <br>Additionally, a good CPU should be utilized, especially if isolate samples are to be run in parallel. The recommended number of cores are <b>atleast</b> 12.
+           </ol>
           </div>
-
-          <div>
-            <header>
-              <ol>
-                <li><a href="#">Readme1</a></li>
-                <li><a href="#">Readme2</a></li>
-                <li><a href="#">Readme3</a></li>
-                <li><a href="#">Readme4</a></li>
-                <li><a href="#">Readme5</a></li>
-              </ol>
-            </header>
-          </div>
-
-          <h3>Show a file-select field which allows only one file to be chosen:</h3>
-          <div class="upload-file">
-            <form action="/action_page.php">
-              <label for="myfile">Select a file:</label>
-              <input type="file" id="myfile" name="myfile"><br><br>
-              <input type="submit">
-            </form>
-          </div>
-          <img src="../images/folder-blue-documents-icon.png" alt="home">
         </div>
 
       </section>

@@ -12,11 +12,15 @@ storage.get('currentConfig', function(error, data) {
 
 });
 
+function check(){
+    console.log("check")
+}
+
 
 function displayContents(contents) {
     var element = document.getElementById('file-content');
     element.textContent = contents;
-    document.getElementById('prtt-arguments').style.display = "block";
+    document.getElementById('moss-arguments').style.display = "block";
 }
 
 function singleInputFunction() {
@@ -77,15 +81,16 @@ function submitAnalysis() {
     obj.output_name = output_name;
     obj.dbdir = document.getElementById('current-config').innerHTML;
     obj.exepath = document.getElementById('current-exepath').innerHTML;
+    obj.srcpath = obj.exepath + "src/";
 
     var combinedilluminacheck = obj.illumina_input_forward + obj.illumina_input_reverse;
 
     if (combinedilluminacheck != "") {
         combinedillumina = obj.illumina_input_forward + " " + obj.illumina_input_reverse;
-        prtt_string = `python3 ${obj.exepath}prtt.py -i_illumina ${combinedillumina} -prune_distance ${obj.prune_distance} -bc ${obj.base_calling} -thread ${obj.threads} -db_dir ${obj.dbdir} -o ${obj.output_name} -exepath ${obj.exepath}`;
+        moss_string = `python3 ${obj.srcpath}moss.py -i_illumina ${combinedillumina} -prune_distance ${obj.prune_distance} -bc ${obj.base_calling} -thread ${obj.threads} -db_dir ${obj.dbdir} -o ${obj.output_name} -exepath ${obj.exepath}`;
     } else if (nanopore_input != "") {
         combinedillumina = combinedilluminacheck;
-        prtt_string = `python3 ${obj.exepath}prtt.py -i_nanopore ${obj.nanopore_input} -prune_distance ${obj.prune_distance} -bc ${obj.base_calling} -thread ${obj.threads} -db_dir ${obj.dbdir} -o ${obj.output_name} -exepath ${obj.exepath}`;
+        moss_string = `python3 ${obj.srcpath}moss.py -i_nanopore ${obj.nanopore_input} -prune_distance ${obj.prune_distance} -bc ${obj.base_calling} -thread ${obj.threads} -db_dir ${obj.dbdir} -o ${obj.output_name} -exepath ${obj.exepath}`;
     } else if (document.getElementById('multiple-input-field').value != "") {
         var input = document.getElementById('multiple-input-field');
         var children = "";
@@ -95,14 +100,14 @@ function submitAnalysis() {
         var parallel_input = children.slice(0, -1);
         var input_type = document.getElementById("input-type").value;
         var parallel_jobs = document.getElementById("parallel-jobs").value;
-        prtt_string = `python3 ${obj.exepath}prtt_parallel_wrapper.py -input_type ${input_type} -prune_distance ${obj.prune_distance} -bc ${obj.base_calling} -thread ${obj.threads} -db_dir ${obj.dbdir} -o ${obj.output_name} -exepath ${obj.exepath} -parallel_input ${parallel_input} -jobs ${parallel_jobs}`;
+        moss_string = `python3 ${obj.srcpath}moss_parallel_wrapper.py -input_type ${input_type} -prune_distance ${obj.prune_distance} -bc ${obj.base_calling} -thread ${obj.threads} -db_dir ${obj.dbdir} -o ${obj.output_name} -exepath ${obj.exepath} -parallel_input ${parallel_input} -jobs ${parallel_jobs}`;
     }
 
     if (obj.masking_scheme != ""){
-        prtt_string = prtt_string.concat(`-masking_scheme ${obj.masking_scheme}`);
+        moss_string = moss_string.concat(`-masking_scheme ${obj.masking_scheme}`);
     }
 
-    console.log(prtt_string);
+    console.log(moss_string);
 
     console.log("job submitted");
 
@@ -110,9 +115,11 @@ function submitAnalysis() {
 
     let output_path = obj.dbdir + "multiSampleAnalysisReports/" + obj.output_name + "/"
 
+    alert("job submitted.");
 
 
-    exec(prtt_string, (error, stdout, stderr) => {
+
+    exec(moss_string, (error, stdout, stderr) => {
 
         if (error) {
           //If error, change accepted ui to failure, which attached message.
@@ -133,8 +140,9 @@ function submitAnalysis() {
             if (err) throw err; 
         }) 
 
-        outbreakfinderstring = `python3 ${obj.exepath}outbreak_finder.py -db_dir ${obj.dbdir}`
+        outbreakfinderstring = `python3 ${obj.srcpath}outbreak_finder.py -db_dir ${obj.dbdir}`
         console.log(outbreakfinderstring);
+
 
         exec(outbreakfinderstring, (error, stdout, stderr) => {
 
@@ -146,8 +154,11 @@ function submitAnalysis() {
 
             console.log(`stdout: ${stdout}`);
             console.error(`stderr: ${stderr}`);
+
+
     
           });
+
 
 
       }); 
