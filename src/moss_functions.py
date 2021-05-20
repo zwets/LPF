@@ -23,7 +23,7 @@ import datetime
 import hashlib
 import gzip
 import posix_ipc
-
+from fpdf import FPDF
 
 #Utility functions
 def correctPathCheck(pathName):
@@ -873,5 +873,48 @@ def makeDBinfo(isolatedb):
     conn.close()
 
 def runResFinder(exepath, total_filenames, target_dir):
-    cmd = "python3 {}resfinder/run_resfinder.py -ifq {} -o {}resfinderResults -b {}resfinder/cge/ncbi-blast-2.10.1+/bin/blastn -acq".format(total_filenames, exepath, target_dir, exepath)
+    cmd = "python3 {}resfinder/run_resfinder.py -ifq {} -o {}resfinderResults -b {}resfinder/cge/ncbi-blast-2.10.1+/bin/blastn -acq".format(exepath, total_filenames, target_dir, exepath)
     os.system(cmd)
+
+def runPlasmidFinder(exepath, total_filenames, target_dir):
+    cmd = "mkdir {}plasmidFinderResults".format(target_dir)
+    os.system(cmd)
+    cmd = "python3 {}plasmidfinder/plasmidfinder.py -i {} -o {}plasmidFinderResults -mp {}kma/kma -p {}plasmidfinder/plasmidfinder_db".format(exepath, total_filenames, target_dir, exepath, exepath)
+    os.system(cmd)
+
+def runVirulenceFinder(exepath, total_filenames, target_dir):
+    cmd = "mkdir {}virulenceFinderResults".format(target_dir)
+    os.system(cmd)
+    cmd = "python3 {}virulencefinder/virulencefinder.py -i {} -o {}virulenceFinderResults -mp {}kma/kma -p {}virulencefinder/virulencefinder_db".format(exepath, total_filenames, target_dir, exepath, exepath)
+    os.system(cmd)
+
+def complileReport(day, target_dir):
+    pdf = FPDF()  # A4 (210 by 297 mm)
+    filename = "report.pdf" #ADD idd
+
+    states = ['Massachusetts', 'New Hampshire']
+
+    ''' First Page '''
+    pdf.add_page()
+    create_title(day, pdf)
+
+    ''' Second Page '''
+    pdf.add_page()
+    create_title(day, pdf)
+
+    ''' Third Page '''
+    pdf.add_page()
+    create_title(day, pdf)
+
+    pdf.output(target_dir + filename, 'F')
+
+def create_title(day, pdf):
+  # Unicode is not yet supported in the py3k version; use windows-1252 standard font
+  pdf.set_font('Arial', '', 24)
+  pdf.ln(60)
+  pdf.write(5, f"MOSS Analytics Repotr")
+  pdf.ln(10)
+  pdf.set_font('Arial', '', 16)
+  pdf.write(4, f'{day}')
+  pdf.ln(5)
+

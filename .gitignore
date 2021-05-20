@@ -6,6 +6,8 @@
 /local_app/.pnp.js
 /ccphylo
 /kma
+/resfinder
+/plasmidfinder
 # testing
 /local_app/coverage
 

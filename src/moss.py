@@ -139,7 +139,9 @@ def SurveillancePipeline(i_illumina, i_nanopore, masking_scheme, prune_distance,
         print("# -ref: " + reference, file=logfile)
     print("loading input")
 
-    runResFinder(exepath, total_filenames, target_dir)
+    moss.runResFinder(exepath, total_filenames, target_dir)
+    moss.runPlasmidFinder(exepath, total_filenames, target_dir)
+    moss.runVirulenceFinder(exepath, total_filenames, target_dir)
     best_template_score, template_found, templatename = moss.findTemplateSurveillance(total_filenames, target_dir, kma_database_path, logfile, kma_path)
 
     best_template = moss.findTemplateNumber(db_dir, templatename)
@@ -326,8 +328,10 @@ def SurveillancePipeline(i_illumina, i_nanopore, masking_scheme, prune_distance,
 
         moss.endRunningAnalyses(db_dir, output_name, inputname, entryid)
 
-        cmd = "python3 {}/outbreak_finder.py -db_dir {}".format(exepath, db_dir)
+        cmd = "python3 {}src/outbreak_finder.py -db_dir {}".format(exepath, db_dir)
         os.system(cmd)
+
+        moss.complileReport("20th may 2021", target_dir)
 
         logfile.close()
 

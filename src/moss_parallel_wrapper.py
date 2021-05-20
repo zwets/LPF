@@ -44,7 +44,7 @@ parser.add_argument("-parallel_input", action="store", dest="parallel_input", de
 parser.add_argument("-jobs", type=int, action="store", dest="jobs", default = 1, help="Number of jobs to be run in parallel. Default is 4. Consider your computational capabilities!")
 args = parser.parse_args()
 
-def prrtAnalysis(input_type, inputlist, masking_scheme, prune_distance, bc, db_dir, multi_threading, exepath, output_name, i):
+def mossAnalysis(input_type, inputlist, masking_scheme, prune_distance, bc, db_dir, multi_threading, exepath, output_name, i):
     oneliner = "python3 {}moss.py".format(exepath)
     if input_type == "nanopore":
         oneliner += " -i_nanopore {}".format(inputlist[i])
@@ -83,7 +83,7 @@ def main(input_type, masking_scheme, prune_distance, bc, db_dir, multi_threading
             inputstring = "{} {}".format(parallellist[i], parallellist[i+1])
             inputlist.append(inputstring)
 
-    Parallel(n_jobs=jobs)(delayed(prrtAnalysis)(input_type, inputlist, masking_scheme, prune_distance, bc, db_dir, multi_threading, exepath, output_name, i) for i in range(len(inputlist)))
+    Parallel(n_jobs=jobs)(delayed(mossAnalysis)(input_type, inputlist, masking_scheme, prune_distance, bc, db_dir, multi_threading, exepath, output_name, i) for i in range(len(inputlist)))
     print ("Analysis complete")
 
 if __name__== "__main__":

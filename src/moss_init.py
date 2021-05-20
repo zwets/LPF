@@ -247,8 +247,15 @@ elif input_path_fasta == "" and kmaindex_db_path != "":
         json.dump(updatejson, f_out)
     f_out.close()
 
+    # Create runningAnalyses.json
     analysesdict = dict()
-    with open("{}analyticalFiles/runningAnalyses.json".format(args.db_dir), 'w') as f_out:
+    with open("{}analyticalFiles/runningAnalyses.json".format(db_dir), 'w') as f_out:
+        json.dump(analysesdict, f_out)
+    f_out.close()
+
+    # Create finishedAnalyses.json
+    analysesdict = dict()
+    with open("{}analyticalFiles/finishedAnalyses.json".format(db_dir), 'w') as f_out:
         json.dump(analysesdict, f_out)
     f_out.close()
 

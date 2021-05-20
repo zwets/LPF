@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ccphylo" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/kma" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plasmidfinder" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plasmidfinder/plasmidfinder_db" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/resfinder" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/resfinder/cge/kma" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/resfinder/db_pointfinder" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/resfinder/db_resfinder" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/virulencefinder" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/virulencefinder/virulencefinder_db" vcs="Git" />
+  </component>
+</project>
