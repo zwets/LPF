@@ -45,7 +45,7 @@ parser.add_argument("-jobs", type=int, action="store", dest="jobs", default = 1,
 args = parser.parse_args()
 
 def mossAnalysis(input_type, inputlist, masking_scheme, prune_distance, bc, db_dir, multi_threading, exepath, output_name, i):
-    oneliner = "python3 {}moss.py".format(exepath)
+    oneliner = "python3 {}/src/moss.py".format(exepath)
     if input_type == "nanopore":
         oneliner += " -i_nanopore {}".format(inputlist[i])
     elif input_type == "se_illumina":

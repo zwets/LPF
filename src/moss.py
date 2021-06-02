@@ -247,7 +247,7 @@ def SurveillancePipeline(i_illumina, i_nanopore, masking_scheme, prune_distance,
 
             cmd = "rm {}datafiles/isolatefiles/{}/{}_{}_consensus.fsa".format(db_dir, templateaccesion, inputname, templateaccesion, referenceSyncFile, isolatedb, db_dir)
             os.system(cmd)
-
+            """
             semaphore = posix_ipc.Semaphore("/ReferenceJSON", posix_ipc.O_CREAT, initial_value=1)
             try:
                 semaphore.acquire(timeout=3600)
@@ -255,17 +255,21 @@ def SurveillancePipeline(i_illumina, i_nanopore, masking_scheme, prune_distance,
                 semaphore.unlink()
                 print("Could not connect to ReferenceJSON semaphore")
                 print("Unlinking semaphore and reacquiring it")
+                print("Could not connect to ReferenceJSON semaphore", file = logfile)
+                print("Unlinking semaphore and reacquiring it", file = logfile)
                 semaphore = posix_ipc.Semaphore("/ReferenceJSON", posix_ipc.O_CREAT, initial_value=1)
                 semaphore.acquire(timeout=3600)
-
+            """
+    
             with open(referenceSyncFile) as json_file:
-                referenceSyncFile = json.load(json_file)
+                referenceobj = json.load(json_file)
             json_file.close()
-            ReferenceJSON[inputname] = {'MANGLER': "MANGLER"}
+            referenceobj['timestamp'] = str(time.time()) #NEEDS FIX
             with open(referenceSyncFile, 'w') as f_out:
-                json.dump(ReferenceJSON, f_out)
+                json.dump(referenceobj, f_out)
             f_out.close()
-            semaphore.release()
+            #semaphore.release()
+
 
             # Reassemble
             end_time = datetime.datetime.now()
