@@ -12,7 +12,7 @@ function getfolder(id) {
 
 
 function submitinit() {
-  var init_path = document.getElementById("init-path").value;
+  var init_path = document.getElementById("init-path").value + "/";
   var config_name = document.getElementById("config-name").value;
   var exepath = getfolder("exe-path");
 
@@ -74,7 +74,9 @@ function submitinit() {
     //Automatic change of correct system config to
     console.log(exepath)
     console.log(init_path)
+
     storage.set('currentConfig', { exepath: exepath, dbdir: init_path }, function(error) {
+            loader.style.display = 'none';
             if (error) throw error;
         });
     alert("Your database has been set up!");

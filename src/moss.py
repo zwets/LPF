@@ -335,7 +335,7 @@ def SurveillancePipeline(i_illumina, i_nanopore, masking_scheme, prune_distance,
         cmd = "python3 {}src/outbreak_finder.py -db_dir {}".format(exepath, db_dir)
         os.system(cmd)
 
-        moss.complileReport("20th may 2021", target_dir)
+        moss.complileReport("testday", target_dir, entryid)
 
         logfile.close()
 

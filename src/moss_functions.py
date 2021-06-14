@@ -23,8 +23,13 @@ import datetime
 import hashlib
 import gzip
 import posix_ipc
+import pandas as pd
+from tabulate import tabulate
+import matplotlib.pyplot as plt
+from IPython.display import display, HTML
+import gzip
 from fpdf import FPDF
-
+from pandas.plotting import table
 #Utility functions
 def correctPathCheck(pathName):
     if pathName == "":
@@ -888,33 +893,146 @@ def runVirulenceFinder(exepath, total_filenames, target_dir):
     cmd = "python3 {}virulencefinder/virulencefinder.py -i {} -o {}virulenceFinderResults -mp {}kma/kma -p {}virulencefinder/virulencefinder_db".format(exepath, total_filenames, target_dir, exepath, exepath)
     os.system(cmd)
 
-def complileReport(day, target_dir):
-    pdf = FPDF()  # A4 (210 by 297 mm)
-    filename = "report.pdf" #ADD idd
 
-    states = ['Massachusetts', 'New Hampshire']
+def complileReport(day, target_dir, ID):
+    pdf = FPDF()  # A4 (210 by 297 mm)
+    filename = "{}_report.pdf".format(ID) #ADD idd
 
     ''' First Page '''
     pdf.add_page()
-    create_title(day, pdf)
+    create_title(day, pdf, ID)
+    pdf.ln(10)
+    pdf.set_font('Arial', 'BU', 12)
+    pdf.write(5, "Highest scoring reference: SomeReference")
+    pdf.ln(10)
+    pdf.write(5, "REFRENCESCORE")
+    pdf.ln(10)
+    pdf.write(5, "Associated Cluster: INSERT TREE HERE")
+    pdf.ln(10)
+    pdf.write(5, "Cluster information: INSERT HERE")
+    pdf.ln(10)
+    pdf.set_font('Arial', '', 12)
+    pdf.write(5, "Related patients' notes, genes, symptoms")
+    pdf.ln(10)
+    pdf.write(5, "Number of resistance genes: X, number of unique phenotypic resistances: Y symptoms")
+    pdf.ln(10)
+    pdf.write(5, "Virulence overview")
+    pdf.ln(10)
+    pdf.write(5, "Plasmid overview")
+    pdf.ln(10)
+
 
     ''' Second Page '''
-    pdf.add_page()
-    create_title(day, pdf)
 
-    ''' Third Page '''
+    ''' finder pages'''
     pdf.add_page()
-    create_title(day, pdf)
-
+    pdf.ln(20)
+    resfinderPage(target_dir + "resfinderResults/ResFinder_results_tab.txt", pdf, target_dir)
+    pdf.add_page()
+    pdf.ln(20)
+    virulencePage(target_dir + "virulenceFinderResults/data.json", pdf, target_dir)
+    pdf.add_page()
+    pdf.ln(20)
+    plasmidPage(target_dir + "plasmidFinderResults/data.json", pdf, target_dir)
     pdf.output(target_dir + filename, 'F')
 
-def create_title(day, pdf):
+def resfinderPage(tabfile, pdf, target_dir):
+    infile = open(tabfile, 'r')
+    t = 0
+    data = []
+    for line in infile:
+        line = line.rstrip().split("\t")
+        if t == 0:
+            line[2] = "Gene Length"
+        else:
+            if line[7] == "Warning: gene is missing from Notes file. Please inform curator.":
+                line[7] = "NA."
+        data.append(line)
+        t += 1
+    infile.close()
+    pdf.set_font('Arial', 'B', 24)
+    pdf.write(5, "ResFinder Profile:")
+    pdf.ln(10)
+    pdf.set_font('Arial', 'B', 7)
+    table = tabulate(data, headers='firstrow', tablefmt='plain')
+    pdf.write(5, f"{table}")
+
+def virulencePage(jsoninput, pdf, target_dir):
+    pdf.set_font('Arial', 'B', 24)
+    pdf.write(5, "VirulenceFinder Profile:")
+    pdf.ln(10)
+    with open(jsoninput) as json_file:
+        data = json.load(json_file)
+    for species in data['virulencefinder']['results']:
+        pdf.set_font('Arial', 'B', 14)
+        pdf.write(5, f"{species}")
+        pdf.ln(5)
+        for hit in data['virulencefinder']['results'][species]:
+            pdf.set_font('Arial', 'B', 8)
+            if type(data['virulencefinder']['results'][species][hit]) == dict:
+                pdf.set_font('Arial', 'B', 12)
+                pdf.write(5, f"{hit}")
+                pdf.ln(5)
+                pdf.ln(5)
+                for gene in data['virulencefinder']['results'][species][hit]:
+                    pdf.set_font('Arial', 'B', 10)
+                    pdf.write(5, f"{gene}")
+                    pdf.ln(5)
+                    pdf.set_font('Arial', 'B', 8)
+                    for info in data['virulencefinder']['results'][species][hit][gene]:
+                        string = "       {} : {}".format(info, data['virulencefinder']['results'][species][hit][gene][info])
+                        pdf.write(5, f"{string}")
+                        pdf.ln(5)
+                    pdf.ln(10)
+            else:
+                pdf.set_font('Arial', 'B', 12)
+                pdf.write(5, f"{hit}")
+                pdf.ln(5)
+                pdf.set_font('Arial', 'B', 8)
+                pdf.write(5, f"{data['virulencefinder']['results'][species][hit]}")
+                pdf.ln(10)
+
+def plasmidPage(jsoninput, pdf, target_dir):
+    pdf.set_font('Arial', 'B', 24)
+    pdf.write(5, "PlasmidFinder Profile:")
+    pdf.ln(10)
+    with open(jsoninput) as json_file:
+        data = json.load(json_file)
+    for species in data['plasmidfinder']['results']:
+        pdf.set_font('Arial', 'B', 14)
+        pdf.write(5, f"{species}")
+        pdf.ln(5)
+        for hit in data['plasmidfinder']['results'][species]:
+            pdf.set_font('Arial', 'B', 8)
+            if type(data['plasmidfinder']['results'][species][hit]) == dict:
+                pdf.set_font('Arial', 'B', 12)
+                pdf.write(5, f"{hit}")
+                pdf.ln(5)
+                pdf.ln(5)
+                for gene in data['plasmidfinder']['results'][species][hit]:
+                    pdf.set_font('Arial', 'B', 10)
+                    pdf.write(5, f"{gene}")
+                    pdf.ln(5)
+                    pdf.set_font('Arial', 'B', 8)
+                    for info in data['plasmidfinder']['results'][species][hit][gene]:
+                        string = "       {} : {}".format(info, data['plasmidfinder']['results'][species][hit][gene][info])
+                        pdf.write(5, f"{string}")
+                        pdf.ln(5)
+                    pdf.ln(10)
+            else:
+                pdf.set_font('Arial', 'B', 12)
+                pdf.write(5, f"{hit}")
+                pdf.ln(5)
+                pdf.set_font('Arial', 'B', 8)
+                pdf.write(5, f"{data['plasmidfinder']['results'][species][hit]}")
+                pdf.ln(10)
+
+def create_title(day, pdf, id):
   # Unicode is not yet supported in the py3k version; use windows-1252 standard font
-  pdf.set_font('Arial', '', 24)
-  pdf.ln(60)
-  pdf.write(5, f"MOSS Analytics Repotr")
+  pdf.set_font('Arial', '', 32)
+  pdf.ln(25)
+  pdf.write(5, f"MOSS Analytics Report")
   pdf.ln(10)
   pdf.set_font('Arial', '', 16)
-  pdf.write(4, f'{day}')
+  pdf.write(4, f'{day} {id}')
   pdf.ln(5)
-

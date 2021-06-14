@@ -4,10 +4,17 @@ import  os
 #Kma
 
 def main():
+    #Assumes anaconda is installed
     print("Sudo is required for apt update")
     cmd = "sudo apt update"
     os.system(cmd)
     cmd = "sudo apt-get install libz-dev"
+    os.system(cmd)
+    cmd = "sudo apt  install curl"
+    os.system(cmd)
+    cmd = "curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -"
+    os.system(cmd)
+    cmd = "sudo apt install nodejs"
     os.system(cmd)
     print("Installing KMA")
     cmd = "git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma && make; cd ..;"
@@ -23,7 +30,9 @@ def main():
     cmd = "pip install fpdf"
     os.system(cmd)
     print("Installing docker")
-    cmd = "sudo apt install docker.io; sudo systemctl enable --now docker; sudo usermod -a -G docker $USER; newgrp docker;"
+    cmd = "sudo apt install docker.io; sudo systemctl enable --now docker; sudo usermod -a -G docker $USER;"
+    os.system(cmd)
+    cmd = "newgrp docker"
     os.system(cmd)
 
 
