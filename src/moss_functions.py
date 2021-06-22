@@ -521,6 +521,8 @@ def generateFigtree(inputfile, jobid):
     cmd = "docker container rm {}".format(id)
     os.system(cmd)
 
+    return (inputdir + "tree.png")
+
 def inputAssemblyFunction(assemblyType, inputType, target_dir, i_illumina, illumina_name1, illumina_name2, i_nanopore, jobid, inputname, kma_path, kma_database_path, entryid, referenceSyncFile, isolatedb, db_dir):
     with open(referenceSyncFile) as json_file:
         referencejson = json.load(json_file)
@@ -892,7 +894,7 @@ def runVirulenceFinder(exepath, total_filenames, target_dir):
     os.system(cmd)
 
 
-def complileReport(day, target_dir, ID):
+def compileReportIsolate(day, target_dir, ID, db_dir, image_location):
     pdf = FPDF()  # A4 (210 by 297 mm)
     filename = "{}_report.pdf".format(ID) #ADD idd
 
@@ -906,6 +908,7 @@ def complileReport(day, target_dir, ID):
     pdf.write(5, "REFRENCESCORE")
     pdf.ln(10)
     pdf.write(5, "Associated Cluster: INSERT TREE HERE")
+    pdf.image(image_location)  # Works?
     pdf.ln(10)
     pdf.write(5, "Cluster information: INSERT HERE")
     pdf.ln(10)

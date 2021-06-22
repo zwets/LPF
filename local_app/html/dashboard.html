@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <title>Microbial Outbreak Surveillance System 1.0</title>
     <link rel="stylesheet" href="../css/styles.css">
     <script src="../js/dashboard.js" type="text/javascript"></script>
 </head>
@@ -36,12 +37,21 @@
             </div>
             <hr>
             <div class="dashboard-options">
-                <button type="button" id="outbreak-clusters-button" onclick="outbreakClustersCollapsible()">Show outbreak clusters</button>
+                Fetch analysis results of:
+                <br>
+                <button type="button" id="cluster-reference-button" onclick="showClusterReferenceOptions()">Cluster Reference</button>
+                <button type="button" id="individual-isolate-button" onclick="showIndividualIsolateOptions()">Individual isolates</button>
+                <button type="button" id="most-recent-button" onclick="showMostRecentIsolates()">Most recently analysed isolates</button>
+                <br>
+                <!---<button type="button" id="outbreak-clusters-button" onclick="outbreakClustersCollapsible()">Show outbreak clusters</button> -->
             </div>
             <br>
-
-            <div id='showData'>
-
+            <div id='button-panel'></div>
+            <br>
+            <div id='search-area'></div>
+            <br>
+            <div id='showData'></div>
+            <br>
             </div>
             
             

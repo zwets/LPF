@@ -72,8 +72,8 @@ def main(input_type, masking_scheme, prune_distance, bc, db_dir, multi_threading
     cmd = "touch " + db_dir + "multiSampleAnalysisReports/{}/stderr".format(output_name)
     os.system(cmd)
 
-    if jobs > 4:
-        sys.exit("Currently a maximum of 4 jobs are permitted in parallel")
+    if jobs > 8:
+        sys.exit("Currently a maximum of 8 jobs are permitted in parallel")
     inputlist = parallel_input.split(",")
     if input_type == "pe_illumina":
         parallellist = parallel_input.split(",")

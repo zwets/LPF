@@ -59,6 +59,8 @@ function openPDF(id, data, myjson){
 
 
 function tableFromJson(name, data) {
+        var divShowData = document.getElementById('showData');
+        divShowData.innerHTML = "";
 		// the json data. (you can change the values for output.)
 		dbdir = document.getElementById('current-config').innerHTML;
 		const myjson = require(dbdir + "/analyticalFiles/" + name);
@@ -92,6 +94,7 @@ function tableFromJson(name, data) {
 
         // Create a table.
         var table = document.createElement("table");
+        table.innerHTML = "";
 
         // Create table header row using the extracted headers above.
         var tr = table.insertRow(-1);                   // table row.
@@ -132,8 +135,6 @@ function tableFromJson(name, data) {
 
 
         // Now, add the newly created table with json data, to a container.
-        var divShowData = document.getElementById('showData');
-        divShowData.innerHTML = "";
         divShowData.appendChild(table);
 
         /*

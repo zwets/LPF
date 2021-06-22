@@ -1,4 +1,14 @@
 const { _colorStringFilter } = require("gsap/gsap-core");
+var mysql = require('mysql');
+
+//Work on fetches at home when DB is downloaded.
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "yourusername",
+  password: "",
+  database: "mydb"
+});
+
 
 function readSingleFile(e) {
     var file = e.target.files[0];
@@ -37,6 +47,176 @@ function makeUL(array) {
     // Finally, return the constructed list:
     return list;
 }
+
+
+function showMostRecentIsolates() {
+  console.log("Funktion mangler");
+
+
+}
+
+function addSearchField() {
+  var x = document.createElement("INPUT");
+  x.setAttribute("type", "text");
+  x.setAttribute("value", "");
+  x.id = "search_field"
+  x.style.margin='0px 5px';
+  var element = document.getElementById('search-area');
+  element.appendChild(x);
+
+  var search_button = document.createElement("button");
+  search_button.type = "button";
+  search_button.id = "search_button";
+  search_button.style.width = '115px'; // setting the width to 200px
+  search_button.style.height = '23px'; // setting the height to 200px
+  search_button.innerHTML = "Fetch results"
+  search_button.onclick = function() {console.log("fetch results")};
+
+  element.appendChild(search_button);
+
+
+}
+
+function singleSearchArea(string) {
+    var element = document.getElementById('search-area');
+    element.innerHTML = `Enter search query for ${string} :`;
+    addSearchField();
+}
+
+function showIndividualIsolateOptions() {
+    // Create the list element:
+    document.getElementById('search-area').innerHTML = "";
+    document.getElementById('showData').innerHTML = "";
+    var element = document.getElementById('button-panel')
+    element.innerHTML = "";
+    var isolate_name_button = document.createElement("button");
+    isolate_name_button.type = "button";
+    isolate_name_button.id = "isolate_name_button";
+    isolate_name_button.style.width = '125px'; // setting the width to 200px
+    isolate_name_button.style.height = '23px'; // setting the height to 200px
+    isolate_name_button.innerHTML = "Isolate Name"
+    isolate_name_button.onclick = function() {singleSearchArea(isolate_name_button.innerHTML)};
+
+    element.appendChild(isolate_name_button);
+
+    var isolate_genus_species_button = document.createElement("button");
+    isolate_genus_species_button.type = "button";
+    isolate_genus_species_button.id = "isolate_genus_species_button";
+    isolate_genus_species_button.style.width = '125px'; // setting the width to 200px
+    isolate_genus_species_button.style.height = '23px'; // setting the height to 200px
+    isolate_genus_species_button.innerHTML = "Genus/Specie"
+    isolate_genus_species_button.style.margin='0px 2px';
+    isolate_genus_species_button.onclick = function() {singleSearchArea(isolate_genus_species_button.innerHTML)};
+
+
+    element.appendChild(isolate_genus_species_button);
+
+    var run_id_button = document.createElement("button");
+    run_id_button.type = "button";
+    run_id_button.id = "run_id_button";
+    run_id_button.style.width = '125px'; // setting the width to 200px
+    run_id_button.style.height = '23px'; // setting the height to 200px
+    run_id_button.innerHTML = "Run ID"
+    run_id_button.style.margin='0px 2px';
+    run_id_button.onclick = function() {singleSearchArea(run_id_button.innerHTML)};
+
+
+    element.appendChild(run_id_button);
+
+    var outbreak_number_button = document.createElement("button");
+    outbreak_number_button.type = "button";
+    outbreak_number_button.id = "outbreak_number_button";
+    outbreak_number_button.style.width = '125px'; // setting the width to 200px
+    outbreak_number_button.style.height = '23px'; // setting the height to 200px
+    outbreak_number_button.innerHTML = "Outbreak Number"
+    outbreak_number_button.style.margin='0px 2px';
+    outbreak_number_button.onclick = function() {singleSearchArea(outbreak_number_button.innerHTML)};
+
+
+    element.appendChild(outbreak_number_button);
+
+    var sequence_type_button = document.createElement("button");
+    sequence_type_button.type = "button";
+    sequence_type_button.id = "sequence_type_button";
+    sequence_type_button.style.width = '125px'; // setting the width to 200px
+    sequence_type_button.style.height = '23px'; // setting the height to 200px
+    sequence_type_button.innerHTML = "Sequence Type"
+    sequence_type_button.style.margin='0px 2px';
+    sequence_type_button.onclick = function() {singleSearchArea(sequence_type_button.innerHTML)};
+
+
+    element.appendChild(sequence_type_button);
+
+    var resistance_genes_button = document.createElement("button");
+    resistance_genes_button.type = "button";
+    resistance_genes_button.id = "resistance_genes_button";
+    resistance_genes_button.style.width = '125px'; // setting the width to 200px
+    resistance_genes_button.style.height = '23px'; // setting the height to 200px
+    resistance_genes_button.innerHTML = "Resistance Genes"
+    resistance_genes_button.style.margin='0px 2px';
+    resistance_genes_button.onclick = function() {singleSearchArea(resistance_genes_button.innerHTML)};
+
+
+    element.appendChild(resistance_genes_button);
+
+    var plasmid_button = document.createElement("button");
+    plasmid_button.type = "button";
+    plasmid_button.id = "plasmid_button";
+    plasmid_button.style.width = '125px'; // setting the width to 200px
+    plasmid_button.style.height = '23px'; // setting the height to 200px
+    plasmid_button.innerHTML = "Plasmids"
+    plasmid_button.style.margin='0px 2px';
+    plasmid_button.onclick = function() {singleSearchArea(plasmid_button.innerHTML)};
+
+
+    element.appendChild(plasmid_button);
+
+    var virulence_button = document.createElement("button");
+    virulence_button.type = "button";
+    virulence_button.id = "virulence_button";
+    virulence_button.style.width = '125px'; // setting the width to 200px
+    virulence_button.style.height = '23px'; // setting the height to 200px
+    virulence_button.innerHTML = "Virulence Genes"
+    virulence_button.style.margin='0px 2px';
+    virulence_button.onclick = function() {singleSearchArea(virulence_button.innerHTML)};
+
+
+    element.appendChild(virulence_button);
+
+}
+
+function showClusterReferenceOptions() {
+    document.getElementById('search-area').innerHTML = "";
+    document.getElementById('showData').innerHTML = "";
+    // Create the list element:
+    // Also needs to wipe existing Search-area, button-panel etc.
+    var element = document.getElementById('button-panel')
+    element.innerHTML = "";
+    var reference_name_button = document.createElement("button");
+    reference_name_button.type = "button";
+    reference_name_button.id = "reference-name-button";
+    reference_name_button.style.width = '125px'; // setting the width to 200px
+    reference_name_button.style.height = '23px'; // setting the height to 200px
+    reference_name_button.innerHTML = "Reference Name"
+    reference_name_button.onclick = function() {singleSearchArea(reference_name_button.innerHTML)};
+
+
+    element.appendChild(reference_name_button);
+
+    var reference_genus_species_button = document.createElement("button");
+    reference_genus_species_button.type = "button";
+    reference_genus_species_button.id = "reference_genus_species_button";
+    reference_genus_species_button.style.width = '125px'; // setting the width to 200px
+    reference_genus_species_button.style.height = '23px'; // setting the height to 200px
+    reference_genus_species_button.innerHTML = "Genus/Specie"
+    reference_genus_species_button.style.margin='0px 2px';
+    reference_genus_species_button.onclick = function() {singleSearchArea(reference_genus_species_button.innerHTML)};
+
+
+    element.appendChild(reference_genus_species_button);
+
+}
+
 
 function outbreakClustersCollapsible() {
     let dbdir = document.getElementById('current-config').innerHTML

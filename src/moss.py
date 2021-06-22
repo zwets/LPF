@@ -286,7 +286,7 @@ def SurveillancePipeline(i_illumina, i_nanopore, masking_scheme, prune_distance,
         os.system(cmd)
         cmd = "{} tree -i {}/datafiles/distancematrices/{}/distance_matrix_{} -o {}/datafiles/distancematrices/{}/tree.newick".format(ccphylo_path, db_dir, refname, refname, db_dir, refname)
         os.system(cmd)
-        moss.generateFigtree("{}/datafiles/distancematrices/{}/tree.newick".format(db_dir, refname), jobid)
+        image_location = moss.generateFigtree("{}/datafiles/distancematrices/{}/tree.newick".format(db_dir, refname), jobid)
 
         if refdata[0][3] == None:
             isolateid = entryid
@@ -334,7 +334,7 @@ def SurveillancePipeline(i_illumina, i_nanopore, masking_scheme, prune_distance,
         cmd = "python3 {}src/outbreak_finder.py -db_dir {}".format(exepath, db_dir)
         os.system(cmd)
 
-        moss.complileReport("testday", target_dir, entryid)
+        moss.compileReportIsolate("testday", target_dir, entryid, db_dir, image_location) #No report compiled for assemblies! Look into it! #TBD
 
         logfile.close()
 

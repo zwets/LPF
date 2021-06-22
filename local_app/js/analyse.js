@@ -74,9 +74,9 @@ function submitAnalysis() {
     obj.nanopore_input = nanopore_input;
     obj.illumina_input_forward  = illumina_input_forward;
     obj.illumina_input_reverse = illumina_input_reverse;
-    obj.masking_scheme = masking_scheme;
-    obj.prune_distance = prune_distance;
-    obj.base_calling = base_calling;
+    obj.masking_scheme = "";
+    obj.prune_distance = "10";
+    obj.base_calling = "0.7";
     obj.threads = threads;
     obj.output_name = output_name;
     obj.dbdir = document.getElementById('current-config').innerHTML;

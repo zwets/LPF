@@ -16,13 +16,6 @@ function submitinit() {
   var config_name = document.getElementById("config-name").value;
   var exepath = getfolder("exe-path");
 
-  var input_fasta = document.getElementById("input-fasta").value;
-  if (input_fasta == "") {
-    input_fasta = "";
-  } else {
-    var input_fasta = getfolder("input-fasta");
-  }
-
   var kmaindex_path = document.getElementById("kmaindex-path").value;
   if (kmaindex_path == "") {
     kmaindex_path = "";
