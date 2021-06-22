@@ -43,6 +43,14 @@ function showRunningAnalyses() {
     });
 }
 
+function showQueuedAnalyses() {
+    storage.get('currentConfig', function(error, data) {
+      if (error) throw error;
+
+      tableFromJson('queuedAnalyses.json', 'none');
+    });
+}
+
 function openPDF(id, data, myjson){
   console.log(data.dbdir + "analysis/" + document.getElementById(id).name + "/" + id + "_report.pdf");
   window.open(data.dbdir + "analysis/" + document.getElementById(id).name + "/" + id + "_report.pdf");

@@ -846,8 +846,6 @@ def endRunningAnalyses(dbdir, outputname, inputname, entryid):
         referencejson = json.load(json_file)
     json_file.close()
 
-    print ("Current finished: {}".format(referencejson))
-
     time = str(datetime.datetime.now())[0:-7]
 
     class finishedAnalysis:
@@ -1036,3 +1034,57 @@ def create_title(day, pdf, id):
   pdf.set_font('Arial', '', 16)
   pdf.write(4, f'{day} {id}')
   pdf.ln(5)
+
+
+def queueMultiAnalyses(dbdir, outputname, inputlist):
+    with open(dbdir + "analyticalFiles/queuedAnalyses.json") as json_file:
+        _json = json.load(json_file)
+    json_file.close()
+    class Analysis:
+        def __init__(self, name, filename):
+            self.name = outputname
+            self.file_name = filename
+    for i in range(len(inputlist)):
+        _analysis = Analysis(outputname + str(i), inputlist[i].split("/")[-1])
+        jsonStr = json.dumps(_analysis.__dict__)
+        entryid = md5(inputlist[i])
+        _json[entryid] = jsonStr
+
+    with open("{}analyticalFiles/queuedAnalyses.json".format(dbdir), 'w') as f_out:
+        json.dump(_json, f_out)
+    f_out.close()
+
+def processQueuedAnalyses(dbdir, outputname, inputname, entryid):
+    with open(dbdir + "analyticalFiles/queuedAnalyses.json") as json_file:
+        referencejson = json.load(json_file)
+    json_file.close()
+
+    if entryid in referencejson:
+        referencejson.pop(entryid, None)
+        with open("{}analyticalFiles/queuedAnalyses.json".format(dbdir), 'w') as f_out:
+            json.dump(referencejson, f_out)
+        f_out.close()
+
+        with open(dbdir + "analyticalFiles/runningAnalyses.json") as json_file:
+            referencejson = json.load(json_file)
+        json_file.close()
+
+        time = str(datetime.datetime.now())[0:-7]
+
+        class runningAnalysis:
+            def __init__(self, name, starttime, filename):
+                self.name = name
+                self.start_time = starttime
+                self.file_name = filename
+
+        analysis = runningAnalysis(outputname, time, inputname)
+
+        jsonStr = json.dumps(analysis.__dict__)
+
+        referencejson[entryid] = jsonStr
+
+        with open("{}analyticalFiles/runningAnalyses.json".format(dbdir), 'w') as f_out:
+            json.dump(referencejson, f_out)
+        f_out.close()
+    else:
+        initRunningAnalyses(dbdir, outputname, inputname, entryid)

@@ -105,8 +105,7 @@ def SurveillancePipeline(i_illumina, i_nanopore, masking_scheme, prune_distance,
 
     moss.uniqueNameCheck(db_dir, inputType, total_filenames)
 
-
-    moss.initRunningAnalyses(db_dir, output_name, inputname, entryid)
+    moss.processQueuedAnalyses(db_dir, output_name, inputname, entryid)
 
     if output_name[0] == "/":
         target_dir = db_dir + "analysis/" + output_name.split("/")[-1] + "/"
