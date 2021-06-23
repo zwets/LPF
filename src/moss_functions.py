@@ -542,12 +542,12 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, i_illumina, illum
             cmd = "cp {} {}dockertmp/{}".format(i_illumina[1], target_dir, illumina_name2)
             os.system(cmd)
 
-            cmd = "docker run --name illumina_assembly{} -v {}dockertmp/:/dockertmp/ nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -1 /dockertmp/{} -2 /dockertmp/{} -o /dockertmp/illumina_assembly".format(
+            cmd = "docker run --name illumina_assembly{} -v {}dockertmp/:/dockertmp/ nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -1 /dockertmp/{} -2 /dockertmp/{} -o /dockertmp/illumina_assembly -t 4".format(
                 jobid, target_dir, illumina_name1, illumina_name2)
             print(cmd)
             os.system(cmd)
         elif inputType == "se_illumina":
-            cmd = "docker run --name illumina_assembly{} -v {}:/dockertmp/{} nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -s /dockertmp/{} -o /dockertmp/illumina_assembly".format(
+            cmd = "docker run --name illumina_assembly{} -v {}:/dockertmp/{} nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -s /dockertmp/{} -o /dockertmp/illumina_assembly -t 4".format(
                 jobid, i_illumina[0], inputname, inputname)
             os.system(cmd)
 
@@ -569,7 +569,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, i_illumina, illum
         # concatenate all reads into one file
 
         infile = open("{}illumina_assembly/assembly.fasta".format(target_dir), 'r')
-        writefile = open("{}{}_assebmled.fasta".format(target_dir, inputname), 'w')  # Adds all contigs to one sequence
+        writefile = open("{}{}_assembled.fasta".format(target_dir, inputname), 'w')  # Adds all contigs to one sequence
         sequence = ""
         for line in infile:
             if line[0] != ">":
@@ -597,9 +597,9 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, i_illumina, illum
                print("Unlinking semaphore")
                semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
                semaphore.acquire(timeout=3600)
-        cmd = "{} index -t_db {} -i {}{}_assebmled.fasta".format(kma_path, kma_database_path, target_dir, inputname)  # add assembly to references
+        cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir, inputname)  # add assembly to references
         os.system(cmd)
-        referencejson[inputname] = {'entryid': entryid, 'headerid': inputname, 'filename': "{}_assebmled.fasta".format(inputname)}
+        referencejson[inputname] = {'entryid': entryid, 'headerid': inputname, 'filename': "{}_assembled.fasta".format(inputname)}
         with open(referenceSyncFile, 'w') as f_out:
             json.dump(referencejson, f_out)
         f_out.close()
@@ -629,7 +629,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, i_illumina, illum
         print("no template TRUE runnning nanopore assembly")
         # Longread assembly
 
-        cmd = "docker run --name nanopore_assembly{} -v {}:/tmp/{} nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -l /tmp/{} -o /tmp/nanopore_assembly".format(
+        cmd = "docker run --name nanopore_assembly{} -v {}:/tmp/{} nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -l /tmp/{} -o /tmp/nanopore_assembly -t 4".format(
             jobid, i_nanopore, inputname, inputname)
         os.system(cmd)
 
@@ -646,7 +646,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, i_illumina, illum
 
         # Concatenate contigs
         infile = open("{}nanopore_assembly/assembly.fasta".format(target_dir), 'r')
-        writefile = open("{}{}_assebmled.fasta".format(target_dir, inputname), 'w')  # Adds all contigs to one sequence
+        writefile = open("{}{}_assembled.fasta".format(target_dir, inputname), 'w')  # Adds all contigs to one sequence
         sequence = ""
         for line in infile:
             if line[0] != ">":
@@ -675,9 +675,9 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, i_illumina, illum
                 semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
                 semaphore.acquire(timeout=3600)
 
-        cmd = "{} index -t_db {} -i {}{}_assebmled.fasta".format(kma_path, kma_database_path, target_dir, inputname)  # add assembly to references
+        cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir, inputname)  # add assembly to references
         os.system(cmd)
-        referencejson[inputname] = {'entryid': entryid, 'headerid': inputname, 'filename': "{}_assebmled.fasta".format(inputname)}
+        referencejson[inputname] = {'entryid': entryid, 'headerid': inputname, 'filename': "{}_assembled.fasta".format(inputname)}
         with open(referenceSyncFile, 'w') as f_out:
             json.dump(referencejson, f_out)
         f_out.close()
@@ -696,7 +696,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, i_illumina, illum
         cmd = "mkdir {}datafiles/distancematrices/{}".format(db_dir, inputname)
         os.system(cmd)
 
-        cmd = "cp {}{}_assebmled.fasta {}datafiles/distancematrices/{}/{}_assebmled.fasta".format(target_dir, inputname, db_dir, inputname, inputname)
+        cmd = "cp {}{}_assembled.fasta {}datafiles/distancematrices/{}/{}_assembled.fasta".format(target_dir, inputname, db_dir, inputname, inputname)
         os.system(cmd)
 
         # Works

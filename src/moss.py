@@ -238,6 +238,7 @@ def SurveillancePipeline(i_illumina, i_nanopore, masking_scheme, prune_distance,
         distance = moss.ThreshholdDistanceCheck("{}distance_matrix_{}".format(target_dir, refname), refname, "{}_{}_consensus.fsa".format(inputname, templateaccesion))
         print (distance, file = logfile)
         if distance > 300: #SNP distance
+            print("Distance to best template was over 300 basepairs, so input will be defined as reference", file = logfile)
             print("Distance to best template was over 300 basepairs, so input will be defined as reference")
             if assemblyType == "illumina":
                 moss.inputAssemblyFunction(assemblyType, inputType, target_dir, i_illumina, illumina_name1, illumina_name2, "", jobid, inputname, kma_path, kma_database_path, entryid, referenceSyncFile, isolatedb, db_dir)
