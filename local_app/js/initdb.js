@@ -28,9 +28,6 @@ function submitinit() {
 
 
 
-  if (input_fasta != ""){
-    execstring = execstring.concat(` -input_path_fasta ${input_fasta}`);
-    }
 
   if (kmaindex_path != ""){
     execstring = execstring.concat(` -kmaindex_db_path ${kmaindex_path}`);

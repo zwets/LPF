@@ -1,13 +1,6 @@
 const { _colorStringFilter } = require("gsap/gsap-core");
 var mysql = require('mysql');
 
-//Work on fetches at home when DB is downloaded.
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "yourusername",
-  password: "",
-  database: "mydb"
-});
 
 
 function readSingleFile(e) {
@@ -50,7 +43,15 @@ function makeUL(array) {
 
 
 function showMostRecentIsolates() {
-  console.log("Funktion mangler");
+  let dbdir = document.getElementById('current-config').innerHTML
+  var con = mysql.createConnection({
+    host: dbdir + "moss.db"
+  });
+
+  con.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+  });
 
 
 }
