@@ -57,16 +57,16 @@ function submitAnalysis() {
     } else {
         illumina_input_reverse = document.getElementById("illumina-input-reverse").files[0].path;
     }
-
+    /*
     masking_scheme = document.getElementById("masking-scheme").value;
     if (masking_scheme == "") {
         masking_scheme = "";
     } else {
         masking_scheme = document.getElementById("masking-scheme").files[0].path;
-    }
+    }*/
 
-    let prune_distance = document.getElementById("prune-distance").value;
-    let base_calling = document.getElementById("base-calling").value;
+    //let prune_distance = document.getElementById("prune-distance").value;
+    //let base_calling = document.getElementById("base-calling").value;
     let threads = document.getElementById("threads").value;
     let output_name = document.getElementById("output-name").value;
 
