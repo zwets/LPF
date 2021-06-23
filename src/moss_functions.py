@@ -894,6 +894,19 @@ def runVirulenceFinder(exepath, total_filenames, target_dir):
     os.system(cmd)
 
 
+def compileReportAssembly(day, target_dir, ID, db_dir, image_location):
+    pdf = FPDF()  # A4 (210 by 297 mm)
+    filename = "{}_report.pdf".format(ID) #ADD idd
+
+    ''' First Page '''
+    pdf.add_page()
+    create_title(day, pdf, ID)
+    pdf.ln(10)
+    pdf.set_font('Arial', 'BU', 12)
+    pdf.write(5, "ASSEMBLY HERE")
+    pdf.output(target_dir + filename, 'F')
+
+
 def compileReportIsolate(day, target_dir, ID, db_dir, image_location):
     pdf = FPDF()  # A4 (210 by 297 mm)
     filename = "{}_report.pdf".format(ID) #ADD idd
