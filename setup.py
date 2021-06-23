@@ -4,6 +4,7 @@ import  os
 #Kma
 
 def main():
+    #Ret til python3 -m
     #Assumes anaconda is installed
     print("Sudo is required for apt update")
     cmd = "sudo apt update"
