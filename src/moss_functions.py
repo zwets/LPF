@@ -921,7 +921,7 @@ def compileReportIsolate(day, target_dir, ID, db_dir, image_location):
     pdf.write(5, "REFRENCESCORE")
     pdf.ln(10)
     pdf.write(5, "Associated Cluster: INSERT TREE HERE")
-    pdf.image(image_location)  # Works?
+    #pdf.image(image_location)  # Works?
     pdf.ln(10)
     pdf.write(5, "Cluster information: INSERT HERE")
     pdf.ln(10)

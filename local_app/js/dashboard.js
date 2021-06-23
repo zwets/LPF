@@ -45,7 +45,7 @@ function makeUL(array) {
 function showMostRecentIsolates() {
   let dbdir = document.getElementById('current-config').innerHTML
   var con = mysql.createConnection({
-    host: dbdir + "moss.db"
+    database: dbdir + "moss.db"
   });
 
   con.connect(function(err) {
