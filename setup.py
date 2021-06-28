@@ -26,15 +26,15 @@ def main():
     cmd = "sudo apt install python3-pip"
     os.system(cmd)
     findersinstall()
-    cmd = "pip install posix-ipc"
+    cmd = "python3 -m pip install posix-ipc"
     os.system(cmd)
-    cmd = "pip install fpdf"
+    cmd = "python3 -m pip install fpdf"
     os.system(cmd)
     print("Installing docker")
     cmd = "sudo apt install docker.io; sudo systemctl enable --now docker; sudo usermod -a -G docker $USER;"
     os.system(cmd)
-    cmd = "newgrp docker"
-    os.system(cmd)
+    #cmd = "newgrp docker"
+    #os.system(cmd)
 
 
 def findersinstall():
