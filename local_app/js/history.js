@@ -118,10 +118,10 @@ function tableFromJson(name, data) {
                 var tabCell = tr.insertCell(-1);
                 var img = document.createElement('img');
                 img.id = Object.keys(myjson)[i];
-                img.name = myObject[i].name;
+                img.name = myObject[i].entryid;
                 img.src = data.exepath + "local_app/images/report-icon.png";
                 img.setAttribute('height', '17pt');
-                img.innerHTML = myObject[i].name;
+                img.innerHTML = myObject[i].entryid;
                 img.onclick = function() {openPDF(this.id, data, myjson)};
                 //el.addEventListener("click", function(){
                 //    openPDF(Object.keys(myjson)[i]));

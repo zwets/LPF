@@ -1,4 +1,5 @@
 import  os
+#./node_modules/.bin/electron-rebuild
 #cmd = "sudo apt-get install build-essential"
 #os.system(cmd)
 #Kma

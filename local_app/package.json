@@ -17,14 +17,16 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "10.1.1"
+    "electron": "10.1.1",
+    "electron-rebuild": "^2.3.5"
   },
   "dependencies": {
     "@dogstudio/highway": "^2.2.1",
-    "electron-json-storage": "^4.3.0",
-    "electron-store": "^7.0.0",
-    "gsap": "^3.5.1",
-    "parcel-bundler": "^1.12.4",
-    "sqlite3": "^5.0.2"
+    "better-sqlite3": "^7.4.1",
+    "electron-json-storage": "^4.5.0",
+    "electron-store": "^7.0.3",
+    "gsap": "^3.7.0",
+    "mysql2": "^2.2.5",
+    "parcel-bundler": "^1.12.5"
   }
 }

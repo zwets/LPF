@@ -82,8 +82,7 @@ def main(input_type, masking_scheme, prune_distance, bc, db_dir, multi_threading
         for i in range(0, len(parallellist), 2):
             inputstring = "{} {}".format(parallellist[i], parallellist[i+1])
             inputlist.append(inputstring)
-
-    moss.queueMultiAnalyses(db_dir, output_name, inputlist)
+    moss.queueMultiAnalyses(db_dir, inputlist)
 
     Parallel(n_jobs=jobs)(delayed(mossAnalysis)(input_type, inputlist, masking_scheme, prune_distance, bc, db_dir, multi_threading, exepath, output_name, i) for i in range(len(inputlist)))
     print ("Analysis complete")

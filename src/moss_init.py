@@ -145,11 +145,13 @@ if kmaindex_db_path != "":
     conn = sqlite3.connect(db_dir + 'moss.db')
     c = conn.cursor()
 
-    c.execute("""CREATE TABLE IF NOT EXISTS isolatetable(entryid TEXT PRIMARY KEY, isolatename TEXT)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS isolatetable(entryid TEXT PRIMARY KEY, headerid TEXT, isolatename TEXT, timestamp TEXT, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT)""")
     conn.commit()
-    c.execute("""CREATE TABLE IF NOT EXISTS referencetable(entryid TEXT PRIMARY KEY, headerid TEXT, refname TEXT, isolateid TEXT)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS referencetable(entryid TEXT PRIMARY KEY, headerid TEXT, refname TEXT, isolateid TEXT, timestamp TEXT)""") #Mangler finder results. Implement eventually
     conn.commit()
-    c.execute("""CREATE TABLE IF NOT EXISTS metadatatable(entryid TEXT PRIMARY KEY, diseases TEXT, location TEXT, patientID TEXT, amr TEXT, riskscore INT)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS specietable(specie TEXT PRIMARY KEY, entryid TEXT)""")
+    conn.commit()
+    c.execute("""CREATE TABLE IF NOT EXISTS metadatatable(entryid TEXT PRIMARY KEY, diseases TEXT, location TEXT, patientID TEXT, amrgenes TEXT, riskscore INT)""")
     conn.commit()
 
     for i in range(len(referencelist)):

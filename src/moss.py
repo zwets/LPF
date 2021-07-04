@@ -103,6 +103,8 @@ def SurveillancePipeline(i_illumina, i_nanopore, masking_scheme, prune_distance,
         inputname = i_illumina[0].split("/")[-1]
         entryid = moss.md5(i_illumina[0])
 
+    output_name = entryid
+
     moss.uniqueNameCheck(db_dir, inputType, total_filenames)
 
     moss.processQueuedAnalyses(db_dir, output_name, inputname, entryid)
@@ -300,7 +302,7 @@ def SurveillancePipeline(i_illumina, i_nanopore, masking_scheme, prune_distance,
         dbstring = "UPDATE referencetable SET isolateid = '{}' WHERE headerid = '{}'".format(isolateid, templatename)
         c.execute(dbstring)
 
-        dbstring = "INSERT INTO isolatetable(entryid, isolatename) VALUES('{}', '{}')".format(entryid, inputname)
+        dbstring = "INSERT INTO isolatetable(entryid, headerid, isolatename, timestamp) VALUES('{}', '{}', '{}')".format(entryid, templatename, inputname, str(datetime.datetime.now())[0:-7])
         c.execute(dbstring)
 
         conn.commit()

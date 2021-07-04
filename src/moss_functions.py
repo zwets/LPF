@@ -817,12 +817,12 @@ def initRunningAnalyses(dbdir, outputname, inputname, entryid):
     time = str(datetime.datetime.now())[0:-7]
 
     class runningAnalysis:
-        def __init__(self, name, starttime, filename):
-            self.name = name
+        def __init__(self, entryid, starttime, filename):
+            self.entryid = entryid
             self.start_time = starttime
             self.file_name = filename
 
-    analysis = runningAnalysis(outputname,time,inputname)
+    analysis = runningAnalysis(entryid,time,inputname)
 
     jsonStr = json.dumps(analysis.__dict__)
 
@@ -851,12 +851,12 @@ def endRunningAnalyses(dbdir, outputname, inputname, entryid):
     time = str(datetime.datetime.now())[0:-7]
 
     class finishedAnalysis:
-        def __init__(self, name, finishtime, filename):
-            self.name = name
+        def __init__(self, entryid, finishtime, filename):
+            self.entryid = entryid
             self.finish_time = finishtime
             self.file_name = filename
 
-    analysis = finishedAnalysis(outputname, time, inputname)
+    analysis = finishedAnalysis(entryid, time, inputname)
 
     jsonStr = json.dumps(analysis.__dict__)
 
@@ -1052,16 +1052,17 @@ def create_title(day, pdf, id):
   pdf.ln(5)
 
 
-def queueMultiAnalyses(dbdir, outputname, inputlist):
+def queueMultiAnalyses(dbdir, inputlist):
     with open(dbdir + "analyticalFiles/queuedAnalyses.json") as json_file:
         _json = json.load(json_file)
     json_file.close()
     class Analysis:
-        def __init__(self, name, filename):
-            self.name = outputname
+        def __init__(self, entryid, filename):
+            self.entryid = entryid
             self.file_name = filename
     for i in range(len(inputlist)):
-        _analysis = Analysis(outputname + str(i), inputlist[i].split("/")[-1])
+        entryid = md5(inputlist[i])
+        _analysis = Analysis(entryid, inputlist[i].split("/")[-1])
         jsonStr = json.dumps(_analysis.__dict__)
         entryid = md5(inputlist[i])
         _json[entryid] = jsonStr
@@ -1088,12 +1089,12 @@ def processQueuedAnalyses(dbdir, outputname, inputname, entryid):
         time = str(datetime.datetime.now())[0:-7]
 
         class runningAnalysis:
-            def __init__(self, name, starttime, filename):
-                self.name = name
+            def __init__(self, entryid, starttime, filename):
+                self.entryid = entryid
                 self.start_time = starttime
                 self.file_name = filename
 
-        analysis = runningAnalysis(outputname, time, inputname)
+        analysis = runningAnalysis(entryid, time, inputname)
 
         jsonStr = json.dumps(analysis.__dict__)
 
