@@ -147,11 +147,13 @@ if kmaindex_db_path != "":
 
     c.execute("""CREATE TABLE IF NOT EXISTS isolatetable(entryid TEXT PRIMARY KEY, headerid TEXT, isolatename TEXT, timestamp TEXT, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT)""")
     conn.commit()
-    c.execute("""CREATE TABLE IF NOT EXISTS referencetable(entryid TEXT PRIMARY KEY, headerid TEXT, refname TEXT, isolateid TEXT, timestamp TEXT)""") #Mangler finder results. Implement eventually
+    c.execute("""CREATE TABLE IF NOT EXISTS referencetable(entryid TEXT PRIMARY KEY, headerid TEXT, refname TEXT, isolateid TEXT, timestamp TEXT, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT)""") #Mangler finder results. Implement eventually
     conn.commit()
     c.execute("""CREATE TABLE IF NOT EXISTS specietable(specie TEXT PRIMARY KEY, entryid TEXT)""")
     conn.commit()
-    c.execute("""CREATE TABLE IF NOT EXISTS metadatatable(entryid TEXT PRIMARY KEY, diseases TEXT, location TEXT, patientID TEXT, amrgenes TEXT, riskscore INT)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS amrtable(entryid TEXT PRIMARY KEY, isolatename TEXT, timestamp TEXT, amrgenes TEXT, specie TEXT, risklevel TEXT, warning TEXT)""")
+    conn.commit()
+    c.execute("""CREATE TABLE IF NOT EXISTS metadatatable(entryid TEXT PRIMARY KEY, diseases TEXT, location TEXT, patientID TEXT, amrgenes TEXT, riskscore TEXT)""")
     conn.commit()
 
     for i in range(len(referencelist)):

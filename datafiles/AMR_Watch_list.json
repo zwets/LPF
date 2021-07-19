@@ -1,0 +1,27 @@
+{
+  "1": {
+    "Acinetobacter": ["Beta-lactam", "carbapenem"],
+    "Pseudomonas aeruginosa": ["Beta-lactam", "carbapenem"],
+    "Enterobacter": ["carbapenem", "ESBL", "Extended-spectrum", "Beta-lactam"],
+    "Klebsiella": ["carbapenem", "ESBL", "Extended-spectrum", "Beta-lactam"],
+    "Citrobacter": ["carbapenem", "ESBL", "Extended-spectrum", "Beta-lactam"],
+    "Salmonella": ["carbapenem", "ESBL", "Extended-spectrum", "Beta-lactam"],
+    "Escherichia coli": ["carbapenem", "ESBL", "Extended-spectrum", "Beta-lactam"],
+    "Shigella": ["carbapenem", "ESBL", "Extended-spectrum", "Beta-lactam"],
+    "Proteus": ["carbapenem", "ESBL", "Extended-spectrum", "Beta-lactam"],
+    "Serratia": ["carbapenem", "ESBL", "Extended-spectrum", "Beta-lactam"]
+  },
+  "2": {
+    "Enterococcus faecium": "vancomycin",
+    "Staphylococcus aureus": ["methicillin", "vancomycin"],
+    "Helicobacter pylori": "clarithromycin",
+    "Campylobacter": "fluoroquinolone",
+    "Salmonella": "fluoroquinolone",
+    "Neisseria gonorrhoeae": ["cephalosporin", "fluoroquinolone"]
+  },
+  "3": {
+    "Streptococcus": ["Erythromycin", "penicillin", "Clindamycin"],
+    "Haemophilus influenzae": "ampicillin",
+    "Shigella": "fluoroquinolone"
+  }
+}

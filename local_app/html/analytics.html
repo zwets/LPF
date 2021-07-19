@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Microbial Outbreak Surveillance System 1.0</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../js/analytics.js" type="text/javascript"></script>
+</head>
+
+
+<body>
+<!-- Side navigation -->
+<!-- Side navigation -->
+<div class="sidenav" id="mySidebar">
+    <a href="./index.html" id>Home</a>
+    <a href="./services.html">Services</a>
+    <a href="./analytics.html">Analytics</a>
+    <a href="./database.html">Database</a>
+    <a href="./dashboard.html">Dashboard</a>
+    <a href="./update.html">Update</a>
+    <a href="./config.html">Config</a>
+    <a href="./history.html">History</a>
+</div>
+<!-- Page content -->
+
+
+<div class="main" id="main">
+    <main data-router-wrapper>
+        <section data-router-view="home" class="home">
+            <div class="home-content">
+                <div class ="home-presentation">
+                    <h1>Analytics</h1>
+
+                    Your current system configuration is:
+
+                    <pre id="current-config"></pre>
+
+                    <h3></h3>
+                </div>
+                <hr>
+
+                <input type='button' onclick='showAMRtabs()'
+                       value='AMR Genes' />
+                <br><br>
+
+                <div id="AMRtab" class="tab" style = "display: none;">
+                    <button class="tablinks" onclick="openCity(event, 'category1')">Category 1: Urgent</button>
+                    <button class="tablinks" onclick="openCity(event, 'category2')">Category 2: Serious</button>
+                    <button class="tablinks" onclick="openCity(event, 'category3')">Category 3: Concerning</button>
+                    <button class="tablinks" onclick="openCity(event, 'systemwideAMR')">System Wide AMR Analysis</button>
+                </div>
+
+                <div id="category1" class="tabcontent">
+                    <h3>Priority level: Critical</h3>
+                    <p>List of identified critical threats</p>
+                </div>
+
+                <div id="category2" class="tabcontent">
+                    <h3>Priority level: High</h3>
+                    <p>List of identified high threats</p>
+                </div>
+
+                <div id="category3" class="tabcontent">
+                    <h3>Priority level: Medium</h3>
+                    <p>List of identified medium threats</p>
+                </div>
+
+                <div id="systemwideAMR" class="tabcontent">
+                    <h3>systemwideAMR</h3>
+                    <p>systemwideAMR</p>
+                </div>
+
+            </div>
+
+
+
+
+
+
+        </section>
+    </main>
+</div>
+
+<script type="text/javascript">
+
+
+
+
+  </script>
+</body>
+</html>

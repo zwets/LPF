@@ -1105,3 +1105,64 @@ def processQueuedAnalyses(dbdir, outputname, inputname, entryid):
         f_out.close()
     else:
         initRunningAnalyses(dbdir, outputname, inputname, entryid)
+
+def checkAMRrisks(target_dir, entryid, db_dir, templatename, exepath, logfile):
+    warning = []
+    riskcategory = []
+    tabfile = target_dir + "resfinderResults/ResFinder_results_tab.txt"
+    infile = open(tabfile, 'r')
+    allresgenes = []
+    resdata = []
+    for line in infile:
+        if line[0] != "Resistance gene": #Skip first line
+            line = line.rstrip().split("\t")
+            resdata.append(line[7].upper())
+            if line[0] not in allresgenes:
+                allresgenes.append(line[0])
+    infile.close()
+
+
+    with open(exepath + "datafiles/AMR_Watch_list.json") as json_file:
+        amr_list = json.load(json_file)
+    json_file.close()
+
+
+    templatenamelist = templatename.split()
+    speciename = (templatenamelist[1] + " " + templatenamelist[2]).upper()
+
+    for category in amr_list:
+        for specie in amr_list[category]:
+            if specie.upper() in speciename: #If the species from the isolate is in the watch list
+                if type(amr_list[category][specie]) == list:
+                    for risk_gene in amr_list[category][specie]:
+                        for resistance_gene in resdata:
+                            if risk_gene.upper() in resistance_gene:  # If match is found as substring in any resistance hit from ResFinder
+                                msg = "{}: {}".format(speciename, resistance_gene)
+                                risk = category
+                                if msg not in warning:
+                                    warning.append(msg)
+                                if risk not in riskcategory:
+                                    riskcategory.append(risk)
+                else:
+                    for resistance_gene in resdata:
+                        if amr_list[category][specie].upper() in resistance_gene: #If match is found as substring in any resistance hit from ResFinder
+                            msg = "{}: {}".format(speciename, resistance_gene)
+                            risk = category
+                            if msg not in warning:
+                                warning.append(msg)
+                            if risk not in riskcategory:
+                                riskcategory.append(risk)
+    warning = ",".join(warning).replace("'", "''")
+    riskcategory = ",".join(riskcategory).replace("'", "''")
+    allresgenes = ",".join(allresgenes).replace("'", "''")
+    return warning, riskcategory, allresgenes
+
+
+
+
+
+
+
+
+
+
