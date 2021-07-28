@@ -1152,9 +1152,21 @@ def checkAMRrisks(target_dir, entryid, db_dir, templatename, exepath, logfile):
                                 warning.append(msg)
                             if risk not in riskcategory:
                                 riskcategory.append(risk)
-    warning = ",".join(warning).replace("'", "''")
-    riskcategory = ",".join(riskcategory).replace("'", "''")
-    allresgenes = ",".join(allresgenes).replace("'", "''")
+    if warning == []:
+        warning = ""
+    else:
+        warning = ", ".join(warning).replace("'", "''")
+    if len(riskcategory) > 1:
+        riskcategory = str(max(riskcategory))
+    elif len(riskcategory) == 1:
+        riskcategory = str(riskcategory[0])
+    else:
+        riskcategory = "0"
+    #riskcategory = ",".join(riskcategory).replace("'", "''")
+    if allresgenes == []:
+        allresgenes = ""
+    else:
+        allresgenes = ", ".join(allresgenes).replace("'", "''")
     return warning, riskcategory, allresgenes
 
 

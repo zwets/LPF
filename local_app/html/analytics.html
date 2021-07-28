@@ -41,34 +41,47 @@
 
                 <input type='button' onclick='showAMRtabs()'
                        value='AMR Genes' />
+
+                <input type='button' onclick='displayClusterSection()'
+                       value='Cluster Exploration' />
                 <br><br>
+                <div id="analytical-dashboard">
+                    <div id="AMRtab" class="tab" style = "display: none;">
+                        <button class="tablinks" onclick="showamrgenetab(event, 'category1', `SELECT * FROM amrtable WHERE risklevel = 3 ORDER BY timestamp DESC`)">Category 1: Urgent</button>
+                        <button class="tablinks" onclick="showamrgenetab(event, 'category2', `SELECT * FROM amrtable WHERE risklevel = 2 ORDER BY timestamp DESC`)">Category 2: Serious</button>
+                        <button class="tablinks" onclick="showamrgenetab(event, 'category3', `SELECT * FROM amrtable WHERE risklevel = 1 ORDER BY timestamp DESC`)">Category 3: Concerning</button>
+                        <button class="tablinks" onclick="showamrgenetab(event, 'systemwideAMR', `SELECT * FROM amrtable ORDER BY timestamp DESC`)">System Wide AMR Analysis</button>
+                        <br><br>
 
-                <div id="AMRtab" class="tab" style = "display: none;">
-                    <button class="tablinks" onclick="openCity(event, 'category1')">Category 1: Urgent</button>
-                    <button class="tablinks" onclick="openCity(event, 'category2')">Category 2: Serious</button>
-                    <button class="tablinks" onclick="openCity(event, 'category3')">Category 3: Concerning</button>
-                    <button class="tablinks" onclick="openCity(event, 'systemwideAMR')">System Wide AMR Analysis</button>
+                        <div id="category3" class="tabcontent">
+                            <h3>Priority level: Critical</h3>
+                            <p>List of identified critical threats</p>
+                            <div id='showDatacategory3'></div>
+                        </div>
+
+                        <div id="category2" class="tabcontent">
+                            <h3>Priority level: High</h3>
+                            <p>List of identified high threats</p>
+                            <div id='showDatacategory2'></div>
+                        </div>
+
+                        <div id="category1" class="tabcontent">
+                            <h3>Priority level: Medium</h3>
+                            <p>List of identified medium threats</p>
+                            <div id='showDatacategory1'></div>
+                        </div>
+
+                        <div id="systemwideAMR" class="tabcontent">
+                            <h3>systemwideAMR</h3>
+                            <div id='showDatasystemwideAMR'></div>
+                        </div>
+                    </div>
+                    <div id="cluster-exploration-section" style = "display: none;">
+                        <h3>cluster exploration</h3>
+                    </div>
                 </div>
 
-                <div id="category1" class="tabcontent">
-                    <h3>Priority level: Critical</h3>
-                    <p>List of identified critical threats</p>
-                </div>
 
-                <div id="category2" class="tabcontent">
-                    <h3>Priority level: High</h3>
-                    <p>List of identified high threats</p>
-                </div>
-
-                <div id="category3" class="tabcontent">
-                    <h3>Priority level: Medium</h3>
-                    <p>List of identified medium threats</p>
-                </div>
-
-                <div id="systemwideAMR" class="tabcontent">
-                    <h3>systemwideAMR</h3>
-                    <p>systemwideAMR</p>
-                </div>
 
             </div>
 

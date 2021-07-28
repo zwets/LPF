@@ -28,6 +28,8 @@ function displayContents(contents) {
 }
 
 
+
+
 function sql_data_query_table(data_obj, data) {
         var divShowData = document.getElementById('showData');
         divShowData.innerHTML = "";
@@ -199,13 +201,13 @@ function produce_query_table(string) {
 
               sql_data_query_table(sliceddata_obj, data);
             });
-        } else {
-            const sliceddata_obj = data_obj;
-            storage.get('currentConfig', function(error, data) {
-              if (error) throw error;
+    } else {
+        const sliceddata_obj = data_obj;
+        storage.get('currentConfig', function(error, data) {
+          if (error) throw error;
 
-              sql_data_query_table(sliceddata_obj, data);
-            });
+          sql_data_query_table(sliceddata_obj, data);
+        });
     }
 }
 

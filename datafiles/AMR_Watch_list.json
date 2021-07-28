@@ -1,5 +1,5 @@
 {
-  "1": {
+  "3": {
     "Acinetobacter": ["Beta-lactam", "carbapenem"],
     "Pseudomonas aeruginosa": ["Beta-lactam", "carbapenem"],
     "Enterobacter": ["carbapenem", "ESBL", "Extended-spectrum", "Beta-lactam"],
@@ -9,7 +9,10 @@
     "Escherichia coli": ["carbapenem", "ESBL", "Extended-spectrum", "Beta-lactam"],
     "Shigella": ["carbapenem", "ESBL", "Extended-spectrum", "Beta-lactam"],
     "Proteus": ["carbapenem", "ESBL", "Extended-spectrum", "Beta-lactam"],
-    "Serratia": ["carbapenem", "ESBL", "Extended-spectrum", "Beta-lactam"]
+    "Serratia": ["carbapenem", "ESBL", "Extended-spectrum", "Beta-lactam"],
+    "NEISSERIA GONORRHOEAE": "ANY",
+    "CANDIDA AURIS": "ANY",
+    "CLOSTRIDIOIDES DIFFICILE": "ANY"
   },
   "2": {
     "Enterococcus faecium": "vancomycin",
@@ -19,9 +22,10 @@
     "Salmonella": "fluoroquinolone",
     "Neisseria gonorrhoeae": ["cephalosporin", "fluoroquinolone"]
   },
-  "3": {
+  "1": {
     "Streptococcus": ["Erythromycin", "penicillin", "Clindamycin"],
     "Haemophilus influenzae": "ampicillin",
     "Shigella": "fluoroquinolone"
   }
 }
+//Add Clostridioides difficile and like-wise others which are always warnings - should there be an "any watchlist perhaps"?
