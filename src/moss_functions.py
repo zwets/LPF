@@ -509,7 +509,6 @@ def generateFigtree(inputfile, jobid):
     namelenght = len(filelist[-1])
     inputdir = inputfile[0:-namelenght]
 
-
     proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("figtree", jobid), shell=True,
                             stdout=subprocess.PIPE, )
     output = proc.communicate()[0]
@@ -521,7 +520,7 @@ def generateFigtree(inputfile, jobid):
     cmd = "docker container rm {}".format(id)
     os.system(cmd)
 
-    return (inputdir + "tree.png")
+    return ("{}tree.png".format(inputdir))
 
 def inputAssemblyFunction(assemblyType, inputType, target_dir, i_illumina, illumina_name1, illumina_name2, i_nanopore, jobid, inputname, kma_path, kma_database_path, entryid, referenceSyncFile, isolatedb, db_dir):
     with open(referenceSyncFile) as json_file:
@@ -906,23 +905,48 @@ def compileReportAssembly(day, target_dir, ID, db_dir, image_location):
     pdf.write(5, "ASSEMBLY HERE")
     pdf.output(target_dir + filename, 'F')
 
+def matrixClusterSize(db_dir, templatename):
+    isolatedb = db_dir + "moss.db"
+    conn = sqlite3.connect(isolatedb)
+    c = conn.cursor()
 
-def compileReportIsolate(day, target_dir, ID, db_dir, image_location):
+    c.execute("SELECT isolateid FROM referencetable WHERE headerid = '{}'".format(templatename))
+    refdata = c.fetchall()
+    conn.close()
+    length = len(refdata[0][0].split(", "))
+    return length
+
+
+def generate_resistance_profile_table(x_coordinate, y_coordinate):
+    pass
+
+
+
+def compileReportAlignment(day, target_dir, ID, db_dir, image_location, templatename, distance):
     pdf = FPDF()  # A4 (210 by 297 mm)
     filename = "{}_report.pdf".format(ID) #ADD idd
 
     ''' First Page '''
     pdf.add_page()
     create_title(day, pdf, ID)
-    pdf.ln(10)
+    pdf.ln(5)
     pdf.set_font('Arial', 'BU', 12)
-    pdf.write(5, "Highest scoring reference: SomeReference")
+    pdf.ln(2)
+    pdf.write(5, "Highest scoring reference: {}".format(templatename))
     pdf.ln(10)
-    pdf.write(5, "REFRENCESCORE")
+    clusterSize = matrixClusterSize(db_dir, templatename)
+    pdf.set_font('Arial', '', 10)
+    pdf.ln(5)
+    #Cell here
+
+    # Move to 8 cm to the right
+    # Centered text in a framed 20*10 mm cell and line break
+    textstring = "Clustersize = {} \n" \
+                 "".format(clusterSize)
+    pdf.multi_cell(w = 100, h = 20, txt = textstring, border = 0, align = 'J', fill = False)
+    pdf.image(db_dir + "datafiles/distancematrices/" + templatename.split()[0] + "/tree.png", x=125, y=70, w=pdf.w / 2.5, h=pdf.h / 3.0)
     pdf.ln(10)
-    pdf.write(5, "Associated Cluster: INSERT TREE HERE")
-    #pdf.image(image_location)  # Works?
-    pdf.ln(10)
+    pdf.set_xy(x = 10, y = 170)
     pdf.write(5, "Cluster information: INSERT HERE")
     pdf.ln(10)
     pdf.set_font('Arial', '', 12)
@@ -1049,8 +1073,6 @@ def create_title(day, pdf, id):
   pdf.ln(10)
   pdf.set_font('Arial', '', 16)
   pdf.write(4, f'{day} {id}')
-  pdf.ln(5)
-
 
 def queueMultiAnalyses(dbdir, inputlist):
     with open(dbdir + "analyticalFiles/queuedAnalyses.json") as json_file:
@@ -1121,6 +1143,19 @@ def checkAMRrisks(target_dir, entryid, db_dir, templatename, exepath, logfile):
                 allresgenes.append(line[0])
     infile.close()
 
+    pheno_file = target_dir + "resfinderResults/pheno_table.txt"
+    infile = open(pheno_file, 'r')
+    phenotypes = []
+    for line in infile:
+        if line[0] != "#":
+            line = line.rstrip().split("\t")
+            if len(line) > 1:
+                if line[2] == "Resistant":
+                    phenotypes.append("{} {}".format(line[0], line[2]))
+    infile.close()
+
+
+
 
     with open(exepath + "datafiles/AMR_Watch_list.json") as json_file:
         amr_list = json.load(json_file)
@@ -1167,7 +1202,12 @@ def checkAMRrisks(target_dir, entryid, db_dir, templatename, exepath, logfile):
         allresgenes = ""
     else:
         allresgenes = ", ".join(allresgenes).replace("'", "''")
-    return warning, riskcategory, allresgenes
+    if phenotypes == []:
+        phenotypes = ""
+    else:
+        phenotypes = ", ".join(phenotypes).replace("'", "''")
+
+    return warning, riskcategory, allresgenes, phenotypes
 
 
 

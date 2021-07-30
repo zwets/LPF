@@ -284,7 +284,7 @@ def SurveillancePipeline(i_illumina, i_nanopore, masking_scheme, prune_distance,
 
         #Succesfull in finding reference
 
-        warning, riskcategory, allresgenes = moss.checkAMRrisks(target_dir, entryid, db_dir, templatename, exepath, logfile)
+        warning, riskcategory, allresgenes, phenotypes = moss.checkAMRrisks(target_dir, entryid, db_dir, templatename, exepath, logfile)
 
 
         cmd = "cp {}distance_matrix_{} {}/datafiles/distancematrices/{}/distance_matrix_{}".format(target_dir, refname, db_dir, refname, refname)
@@ -306,7 +306,7 @@ def SurveillancePipeline(i_illumina, i_nanopore, masking_scheme, prune_distance,
 
         #DET ER ' som giver SQL fejl. Hvor vigtig er den? evt accession number i stedet?
 
-        dbstring = "INSERT INTO amrtable(entryid, isolatename, timestamp, amrgenes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, inputname, str(datetime.datetime.now())[0:-7], allresgenes, templatename, riskcategory, warning)
+        dbstring = "INSERT INTO amrtable(entryid, isolatename, timestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, inputname, str(datetime.datetime.now())[0:-7], allresgenes, phenotypes, templatename, riskcategory, warning)
         c.execute(dbstring)
 
         dbstring = "INSERT INTO isolatetable(entryid, headerid, isolatename, timestamp) VALUES('{}', '{}', '{}', '{}')".format(entryid, templatename, inputname, str(datetime.datetime.now())[0:-7])
@@ -344,7 +344,7 @@ def SurveillancePipeline(i_illumina, i_nanopore, masking_scheme, prune_distance,
         cmd = "python3 {}src/outbreak_finder.py -db_dir {}".format(exepath, db_dir)
         os.system(cmd)
 
-        moss.compileReportIsolate("testday", target_dir, entryid, db_dir, image_location) #No report compiled for assemblies! Look into it! #TBD
+        moss.compileReportAlignment("ID:", target_dir, entryid, db_dir, image_location, templatename, distance) #No report compiled for assemblies! Look into it! #TBD
 
         logfile.close()
 
