@@ -187,3 +187,136 @@ function search_db_query(sql) {
     const data_obj = db.prepare(sql).all();
     return data_obj
 }
+
+function outbreakClustersCollapsible() {
+    let dbdir = document.getElementById('current-config').innerHTML
+    //var configobj = JSON.parse(configfilecontent);
+
+    readTextFile(dbdir + "analyticalFiles/outbreakfinder.json", function(text){
+        var data = JSON.parse(text);
+        var datalist = [[],[]];
+
+        let objlenght = Object.keys(data).length;
+        for (i = 0; i < objlenght; i++) {
+            datalist[0].push(Object.keys(data)[i]);
+            datalist[1].push(Object.values(data)[i]);
+        }
+        document.getElementById('showData').innerHTML = "";
+
+
+
+        document.getElementById('showData').appendChild(makeUL(datalist, dbdir));
+
+
+    });
+    }
+
+function readTextFile(file, callback) {
+    var rawFile = new XMLHttpRequest();
+    rawFile.overrideMimeType("application/json");
+    rawFile.open("GET", file, true);
+    rawFile.onreadystatechange = function() {
+        if (rawFile.readyState === 4 && rawFile.status == "200") {
+            callback(rawFile.responseText);
+        }
+    }
+    rawFile.send(null);
+}
+
+
+
+function makeUL(array, dbdir) {
+    // Create the list element:
+    var list = document.createElement('div');
+    for (var i = 0; i < array[0].length; i++) {
+        // Create the list item:
+        var item = document.createElement("button");
+        item.className = "collapsible";
+        item.type = "button";
+        item.id = array[0][i];
+        isolatelenght = array[1][i].split(", ").length;
+        item.innerHTML = array[0][i] + ` (isolates: ${isolatelenght})`;
+        item.onclick = function() {collapseFunction(this.id)};
+        list.appendChild(item);
+        var isolatediv = document.createElement('div');
+        isolatediv.className = "collapsible-content";
+        isolatediv.id = array[0][i] + "child";
+        var textmsg = document.createElement('p');
+        textmsg.innerHTML = "The following isolates were associated with this reference:";
+        isolatediv.appendChild(textmsg);
+        var isolatetext = document.createElement('p');
+        isolatetext.innerHTML = `${array[1][i]}`;
+        isolatediv.appendChild(isolatetext);
+        if (isolatelenght > 0) {
+            var matrixbutton = document.createElement("button");
+            matrixbutton.type = "button";
+            accessionID = array[0][i].split(" ")[0];
+            matrixbutton.id = accessionID;
+            matrixbutton.innerHTML = `Fetch distancematrix for ${accessionID}`;
+            var distancematrixstring = document.createElement('p');
+            distancematrixstring.id = array[0][i].split(" ")[0] + "matrixid";
+            distancematrixstring.style = "white-space: pre-line";
+            matrixbutton.onclick = function() {fetchDistanceMatrix(this.id, dbdir, isolatediv)};
+            isolatediv.appendChild(document.createElement("br"));
+            isolatediv.appendChild(matrixbutton);
+            isolatediv.appendChild(document.createElement("br"));
+            isolatediv.appendChild(distancematrixstring);
+
+            var figtreebutton = document.createElement("button");
+            figtreebutton.type = "button";
+            treeaccessionID = array[0][i].split(" ")[0]  + "fb";
+            figtreebutton.id = treeaccessionID;
+            figtreebutton.innerHTML = `Fetch phylogenetic tree for ${accessionID}`;
+            figtreebutton.onclick = function() {insertPicture(this.id, dbdir)};
+
+            var treeimage = document.createElement("figtree");
+            treeimage.id = "figtree" + treeaccessionID;
+
+            isolatediv.appendChild(document.createElement("br"));
+            isolatediv.appendChild(figtreebutton);
+            isolatediv.appendChild(document.createElement("br"));
+            isolatediv.appendChild(treeimage);
+
+        }
+        list.appendChild(isolatediv);
+    }
+    return list;
+}
+
+
+function collapseFunction(id) {
+
+    var content = document.getElementById(id + "child");
+    if (content.style.display === "block") {
+        content.style.display = "none";
+    } else {
+        content.style.display = "block";
+    }
+}
+
+function fetchDistanceMatrix(id, dbdir, isolatediv) {
+
+    readTextFileUpdateDiv(dbdir + `datafiles/distancematrices/${id}/distance_matrix_${id}`, isolatediv, function(text){
+        document.getElementById(id + "matrixid").innerHTML = text;
+    })
+    ;
+
+}
+
+function readTextFileUpdateDiv(file, div, callback) {
+    var rawFile = new XMLHttpRequest();
+    rawFile.overrideMimeType("application/json");
+    rawFile.open("GET", file, true);
+    rawFile.onreadystatechange = function() {
+        if (rawFile.readyState === 4 && rawFile.status == "200") {
+            callback(rawFile.responseText);
+        }
+    }
+    rawFile.send(null);
+}
+
+function insertPicture(id, dbdir) {
+    document.getElementById("figtree"+ id).innerHTML = `<img src ="${dbdir}datafiles/distancematrices/${id.slice(0,-2)}/tree.png" width="500" height="500">`;
+    //document.getElementById("figtree").style.width = "50px";
+    //document.getElementById("figtree").style.height = "50px";
+}

@@ -8,6 +8,7 @@ import os
 import argparse
 import operator
 import time
+import geocoder
 import gc
 import numpy as np
 import array
@@ -30,6 +31,7 @@ from IPython.display import display, HTML
 import gzip
 from fpdf import FPDF
 from pandas.plotting import table
+from geopy.geocoders import Nominatim
 #Utility functions
 def correctPathCheck(pathName):
     if pathName == "":
@@ -39,6 +41,43 @@ def correctPathCheck(pathName):
     else:
         pathName = pathName + "/"
     return pathName
+
+def calc_coordinates_from_location(location):
+    try:
+        geolocator = Nominatim(user_agent="moss")
+        loc = geolocator.geocode(location)
+        coordinates = "[{}, {}]".format(loc.latitude,loc.longitude)
+    except:
+        coordinates = ""
+        location = location
+    return coordinates, location
+
+
+def check_coordinates(coordinates):
+    try:
+        coordinates = geocoder.ip('me').latlng
+        geolocator = Nominatim(user_agent="moss")
+        location = geolocator.reverse(coordinates)
+    except:
+        coordinates = ""
+        location = ""
+    return coordinates, location
+
+
+def check_alignment_kma_cov(file):
+    infile = open(file, 'r')
+    top_score = 0
+    coverage = 0
+    for line in infile:
+        if line[0] != "#":
+            line = line.rstrip()
+            line = line.split("\t")
+            if float(line[1]) > top_score:
+                top_score = float(line[1])
+                coverage = float(line[5])
+    infile.close()
+
+    return coverage
 
 def findTemplateSurveillance(total_filenames, target_dir, kma_database_path, logfile, kma_path):
     #Variable initilization
@@ -193,8 +232,8 @@ def findTemplateSurveillance(total_filenames, target_dir, kma_database_path, log
         return best_template_score, template_found, templatename
     ###
 
-def illuminaMappingForward(illumina_input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion):
-    illumina_name = illumina_input[0][-1]
+def illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion):
+    illumina_name = input[0].split("/")[-1]
 
     #Claim ReafRefDB is IndexRefDB is free
     # Check if an assembly is currently running
@@ -217,10 +256,11 @@ def illuminaMappingForward(illumina_input, best_template, target_dir, kma_databa
         print("100 processes are reading from reference DB -- waiting for free spot")
         try:
             semaphore.acquire(timeout=18000)  # Wait maxium of 5 hours.
-            if illumina_input != "":
+            if input[0] != "":
                 cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {}".format(
-                    kma_path, illumina_input[0], target_dir, illumina_name, templateaccesion, kma_database_path,
+                    kma_path, input[0][0], target_dir, illumina_name, templateaccesion, kma_database_path,
                     str(best_template), str(multi_threading))
+                print(cmd, file=logfile)
                 os.system(cmd)
             print("# Illumina mapping completed succesfully", file=logfile)
             semaphore.release()
@@ -230,16 +270,18 @@ def illuminaMappingForward(illumina_input, best_template, target_dir, kma_databa
                 "IndexRefDB semaphore is jammed, and so ReadRefDB could not be claim")
     else:
         semaphore.acquire(timeout=18000)
-        if illumina_input != "":
-            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {}".format(kma_path, illumina_input[0], target_dir, illumina_name, templateaccesion, kma_database_path, str(best_template), str(multi_threading))
+        if input[0] != "":
+            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {}".format(kma_path, input[0][0], target_dir, illumina_name, templateaccesion, kma_database_path, str(best_template), str(multi_threading))
+            print(cmd, file=logfile)
             os.system(cmd)
         print ("# Illumina mapping completed succesfully", file=logfile)
 
         semaphore.release()
 
 
-def illuminaMappingPE(illumina_input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion):
-    illumina_name = illumina_input[0].split("/")[-1]
+def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion):
+    print (input, file=logfile)
+    illumina_name = input[0].split("/")[-1]
 
     # Claim ReafRefDB is IndexRefDB is free
     # Check if an assembly is currently running
@@ -261,10 +303,11 @@ def illuminaMappingPE(illumina_input, best_template, target_dir, kma_database_pa
         print("100 processes are reading from reference DB -- waiting for free spot")
         try:
             semaphore.acquire(timeout=18000)  # Wait maxium of 5 hours.
-            if illumina_input != "":
+            if input[0] != "":
                 cmd = "{} -ipe {} {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {}".format(
-                    kma_path, illumina_input[0], illumina_input[1], target_dir, illumina_name, templateaccesion,
+                    kma_path, input[0], input[1], target_dir, illumina_name, templateaccesion,
                     kma_database_path, str(best_template), str(multi_threading))
+                print (cmd, file=logfile)
                 os.system(cmd)
             print("# Illumina mapping completed succesfully", file=logfile)
 
@@ -275,16 +318,17 @@ def illuminaMappingPE(illumina_input, best_template, target_dir, kma_database_pa
                 "IndexRefDB semaphore is jammed, and so ReadRefDB could not be claim")
     else:
         semaphore.acquire(timeout=18000)
-        if illumina_input != "":
-            cmd = "{} -ipe {} {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {}".format(kma_path, illumina_input[0], illumina_input[1], target_dir, illumina_name, templateaccesion, kma_database_path, str(best_template), str(multi_threading))
+        if input[0] != "":
+            cmd = "{} -ipe {} {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {}".format(kma_path, input[0], input[0], target_dir, illumina_name, templateaccesion, kma_database_path, str(best_template), str(multi_threading))
+            print(cmd, file=logfile)
             os.system(cmd)
         print ("# Illumina mapping completed succesfully", file=logfile)
 
         semaphore.release()
 
 
-def nanoporeMapping(nanopore_input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, kma_path, templateaccesion):
-    nanopore_name = nanopore_input.split("/")[-1]
+def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, kma_path, templateaccesion):
+    nanopore_name = input[0].split("/")[-1]
 
     # Claim ReafRefDB is IndexRefDB is free
     # Check if an assembly is currently running
@@ -306,10 +350,11 @@ def nanoporeMapping(nanopore_input, best_template, target_dir, kma_database_path
         print("100 processes are reading from reference DB -- waiting for free spot")
         try:
             semaphore.acquire(timeout=18000)  # Wait maxium of 5 hours.
-            if nanopore_input != "":
+            if input[0] != "":
                 cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {}".format(
-                    kma_path, nanopore_input, target_dir, nanopore_name, templateaccesion, kma_database_path,
+                    kma_path, input[0], target_dir, nanopore_name, templateaccesion, kma_database_path,
                     str(best_template), str(multi_threading), str(bc))
+                print(cmd, file=logfile)
                 print(cmd)
                 os.system(cmd)
             print("# Nanopore mapping completed succesfully", file=logfile)
@@ -321,9 +366,9 @@ def nanoporeMapping(nanopore_input, best_template, target_dir, kma_database_path
                 "IndexRefDB semaphore is jammed, and so ReadRefDB could not be claim")
     else:
         semaphore.acquire(timeout=18000)
-        if nanopore_input != "":
-            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {}".format(kma_path, nanopore_input, target_dir, nanopore_name, templateaccesion, kma_database_path, str(best_template), str(multi_threading), str(bc))
-            print (cmd)
+        if input[0] != "":
+            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {}".format(kma_path, input[0], target_dir, nanopore_name, templateaccesion, kma_database_path, str(best_template), str(multi_threading), str(bc))
+            print(cmd, file=logfile)
             os.system(cmd)
         print ("# Nanopore mapping completed succesfully", file=logfile)
 
@@ -425,23 +470,27 @@ def concatenateDraftGenome(input_file):
         writefile.close()
     return id, new_name
 
-def mossCheckInputFiles(i_illumina, i_nanopore):
-    if i_illumina != "" and i_nanopore != "":
-        sys.exit("Please only give one file at a time for the surveillance pipeline.")
-    elif len(i_nanopore) > 0:
+def mossCheckInputFiles(input, seqType):
+    if seqType == "nanopore":
         inputType = "nanopore"
-        total_filenames = i_nanopore
+        total_filenames = input[0]
         assemblyType = "nanopore"
-    elif len(i_illumina) == 2:
-        inputType = "pe_illumina"
-        total_filenames = " ".join(i_illumina)
-        assemblyType = "illumina"
-    elif len(i_illumina) == 1:
-        inputType = "se_illumina"
-        total_filenames = i_illumina[0]
-        assemblyType = "illumina"
+    elif seqType == "pe_illumina":
+        if len(input) != 2:
+            sys.exit("You did not give 2 files, yet seqType was set to be pe_illumina")
+        else:
+            inputType = "pe_illumina"
+            total_filenames = " ".join(input)
+            assemblyType = "illumina"
+    elif seqType == "se_illumina":
+        if len(input) != 1:
+            sys.exit("You gave more than 1 file, yet seqType was set to be se_illumina")
+        else:
+            inputType = "se_illumina"
+            total_filenames = input[0]
+            assemblyType = "illumina"
     else:
-        sys.exit("You did not give input files in the correct format. Make sure you either submit one nanopore readfile, OR either one forward illumina file or two paired end illumina files.")
+        sys.exit("Incorrent input or seqType")
     return inputType, total_filenames, assemblyType
 
 def md5(fname):
@@ -522,7 +571,7 @@ def generateFigtree(inputfile, jobid):
 
     return ("{}tree.png".format(inputdir))
 
-def inputAssemblyFunction(assemblyType, inputType, target_dir, i_illumina, illumina_name1, illumina_name2, i_nanopore, jobid, inputname, kma_path, kma_database_path, entryid, referenceSyncFile, isolatedb, db_dir):
+def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, jobid, inputname, kma_path, kma_database_path, entryid, referenceSyncFile, isolatedb, db_dir):
     with open(referenceSyncFile) as json_file:
         referencejson = json.load(json_file)
     json_file.close()
@@ -536,9 +585,9 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, i_illumina, illum
             cmd = "mkdir {}dockertmp".format(target_dir)
             os.system(cmd)
 
-            cmd = "cp {} {}dockertmp/{}".format(i_illumina[0], target_dir, illumina_name1)
+            cmd = "cp {} {}dockertmp/{}".format(input[0], target_dir, illumina_name1)
             os.system(cmd)
-            cmd = "cp {} {}dockertmp/{}".format(i_illumina[1], target_dir, illumina_name2)
+            cmd = "cp {} {}dockertmp/{}".format(input[1], target_dir, illumina_name2)
             os.system(cmd)
 
             cmd = "docker run --name illumina_assembly{} -v {}dockertmp/:/dockertmp/ nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -1 /dockertmp/{} -2 /dockertmp/{} -o /dockertmp/illumina_assembly -t 4".format(
@@ -547,7 +596,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, i_illumina, illum
             os.system(cmd)
         elif inputType == "se_illumina":
             cmd = "docker run --name illumina_assembly{} -v {}:/dockertmp/{} nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -s /dockertmp/{} -o /dockertmp/illumina_assembly -t 4".format(
-                jobid, i_illumina[0], inputname, inputname)
+                jobid, input[0], inputname, inputname)
             os.system(cmd)
 
         proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("illumina_assembly", jobid), shell=True,
@@ -629,7 +678,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, i_illumina, illum
         # Longread assembly
 
         cmd = "docker run --name nanopore_assembly{} -v {}:/tmp/{} nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -l /tmp/{} -o /tmp/nanopore_assembly -t 4".format(
-            jobid, i_nanopore, inputname, inputname)
+            jobid, input, inputname, inputname)
         os.system(cmd)
 
         proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("nanopore_assembly", jobid), shell=True,
@@ -916,6 +965,17 @@ def matrixClusterSize(db_dir, templatename):
     length = len(refdata[0][0].split(", "))
     return length
 
+def lastClusterAddition(db_dir, templatename):
+    isolatedb = db_dir + "moss.db"
+    conn = sqlite3.connect(isolatedb)
+    c = conn.cursor()
+
+    c.execute("SELECT entryid, timestamp FROM isolatetable WHERE headerid = '{}' ORDER BY timestamp DESC".format(templatename)) #Dårlig løsning, ikke skalerbar til >5M isolates
+    refdata = c.fetchall()
+    conn.close()
+    element = refdata[0][0]
+
+    return refdata
 
 def generate_resistance_profile_table(x_coordinate, y_coordinate):
     pass
@@ -934,17 +994,18 @@ def compileReportAlignment(day, target_dir, ID, db_dir, image_location, template
     pdf.ln(2)
     pdf.write(5, "Highest scoring reference: {}".format(templatename))
     pdf.ln(10)
-    clusterSize = matrixClusterSize(db_dir, templatename)
+    clusterSize = int(matrixClusterSize(db_dir, templatename)) + 2
+    latestAddition = lastClusterAddition(db_dir, templatename)
     pdf.set_font('Arial', '', 10)
-    pdf.ln(5)
+
     #Cell here
 
     # Move to 8 cm to the right
     # Centered text in a framed 20*10 mm cell and line break
-    textstring = "Clustersize = {} \n" \
-                 "".format(clusterSize)
-    pdf.multi_cell(w = 100, h = 20, txt = textstring, border = 0, align = 'J', fill = False)
-    pdf.image(db_dir + "datafiles/distancematrices/" + templatename.split()[0] + "/tree.png", x=125, y=70, w=pdf.w / 2.5, h=pdf.h / 3.0)
+    textstring = "Clustersize: {} \n" \
+                 "Previous cluster addition: {}. \n" \
+                 "".format(clusterSize, latestAddition[0][1])
+    pdf.multi_cell(w = 0, h = 5, txt = textstring, border = "TB", align = 'L', fill = False)
     pdf.ln(10)
     pdf.set_xy(x = 10, y = 170)
     pdf.write(5, "Cluster information: INSERT HERE")
@@ -961,6 +1022,10 @@ def compileReportAlignment(day, target_dir, ID, db_dir, image_location, template
 
 
     ''' Second Page '''
+    pdf.add_page()
+    pdf.ln(20)
+    pdf.image(db_dir + "datafiles/distancematrices/" + templatename.split()[0] + "/tree.png", x=55, y=20, w=pdf.w/1.5, h=pdf.h/2)
+
 
     ''' finder pages'''
     pdf.add_page()

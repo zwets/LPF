@@ -41,96 +41,80 @@
               Would you like to analysis several samples or a single one?
               <br>
               <button type="button" id="single-sample-button" onclick="singleInputFunction()">Single sample analysis</button>
-              <button type="button" id="multiple-samlple-button" onclick="multipleInputFunction()">Multiple samlple analysis</button>
+              <button type="button" id="multiple-sample-button" onclick="multipleInputFunction()">Multiple sample analysis</button>
               <br>
               <br>
                 <div class="multiple-input" id="multiple-input">
-                    <form action="/action_page.php">
-                        <label for="multiple-input-field">multiple:</label>
-                        <input type="file" id="multiple-input-field" name="multiple-input-field" multiple="multiple" value=""><br><br>
-                    </form>
-                    <br>
-                    <label for="input-type">Select type of input:</label>
-                      <select id="input-type" name="input-type">
-                        <option value="nanopore">Nanopore reads</option>
-                        <option value="pe_illumina">Paired end illumina reads</option>
-                        <option value="se_illumina">Single end illumina reads</option>
-                      </select>
+                    <div class="generate-multiple-index-file-section" id="generate-multiple-index-file-section">
+                        <label for="multiple-input-type">Select type of input:</label>
+                        <select id="multiple-input-type" name="multiple-input-type">
+                            <option value="nanopore">Nanopore reads</option>
+                            <option value="pe_illumina">Paired end illumina reads</option>
+                            <option value="se_illumina">Single end illumina reads</option>
+                        </select>
+                        <br>
+                        <form action="/action_page.php">
+                            <input type="file" id="multiple-input-field" name="multiple-input-field" multiple="multiple" value=""><br><br>
+                            <button type="button" id="create-metadata-table" onclick="create_metadata_table()">Create metadata table</button>
+                        </form>
+                        <div id='metadata-table-div'></div>
+                    </div>
+                    <div class="parameter-section" id="parameter-section">
 
-                    <br><br>
+                        <div class="threads">
+                            <label for="threads">Number of threads (default = 1):</label>
+                            <select name="threads" id="threads">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="4">4</option>
+                                <option value="8">8</option>
+                            </select>
+                            <br>
 
-                    <form>
-                      <label for="parallel-jobs"> Number of jobs to be run in parallel (default:1   max:8):</label>
-                      <input type="text" id="parallel-jobs" name="parallel-jobs" value=1>
-                      <br><br>
-                    </form>
+                            <div class="parallel-section" id="parallel-section">
+                                <form>
+                                    <label for="parallel-jobs"> Number of jobs to be run in parallel (default:1   max:8):</label>
+                                    <input type="text" id="parallel-jobs" name="parallel-jobs" value=1>
+                                    <br>
+                                </form>
+                            </div>
+                        </div>
+                        <hr>
+
+                        <button onclick="submitMultiAnalysis()">Submit Analysis</button>
+                    </div>
                 </div>
+
               <div class="single-input" id="single-input">
-                <div class="nanopore-input">
-                    <form action="/action_page.php">
-                        <label for="nanopore-input">Select Nanopore reads:</label>
-                        <input type="file" id="nanopore-input" name="nanopore-input" value=""><br><br>
-                    </form>
-                </div>
-                <div class="illumina-input-forward">
-                    <form action="/action_page.php">
-                        <label for="illumina-input-forward">Select forward Illumina reads:</label>
-                        <input type="file" id="illumina-input-forward" name="illumina-input-forward" value=""><br><br>
-                    </form>
-                </div>
-                <div class="illumina-input-reverse">
-                    <form action="/action_page.php">
-                        <label for="illumina-input-reverse">Select reverse Illumina reads:</label>
-                        <input type="file" id="illumina-input-reverse" name="illumina-input-reverse" value=""><br><br>
-                    </form>
-                </div>
-              </div>
-
-              <div class="parameter-section" id="parameter-section">
-                <!---<div class="masking-scheme">
+                  <label for="single-input-type">Select type of input:</label>
+                  <select id="single-input-type" name="single-input-type">
+                      <option value="nanopore">Nanopore reads</option>
+                      <option value="pe_illumina">Paired end illumina reads</option>
+                      <option value="se_illumina">Single end illumina reads</option>
+                  </select>
+                  <br>
                   <form action="/action_page.php">
-                      <label for="masking-scheme">Masking Scheme:</label>
-                      <input type="file" id="masking-scheme" name="masking-scheme" value=""><br><br>
+                      <input type="file" id="single-input-field" name="single-input-field" multiple="multiple" value=""><br><br>
                   </form>
+                  <div>
+                      <!-- Rounded switch -->
+                      <label>Use current IP address for GEO coordinates of sample: </label>
+                      <label class="switch" onclick="geotooglefunc">
+                          <input type="checkbox" id="geotoggle">
+                          <span class="slider round"></span>
+                      </label>
+
+                      <label>Or give custom location: City:</label>
+                      <input type="text" id="City" name="City" value="">
+                      <label>Country: </label>
+                      <input type="text" id="Country" name="Country" value="">
+                  </div>
+
+                      <button onclick="submitSingleAnalysis()">Submit Analysis</button>
+                  </div>
               </div>
 
-              <div class="prune-distance">
-                <form>
-                <label for="prune-distance"> Prune distance (Default = 5):</label>
-                <input type="text" id="prune-distance" name="prune-distance" value=5>
-                <br><br>
-              </form></div>
-              
 
-              <div class="base-calling">
-                <form>
-                <label for="base-calling"> Nanopore Base Calling Value (Default = 0.7):</label>
-                <input type="text" id="base-calling" name="base-calling" value=0.7>
-                <br><br>
-              </form></div> --->
-
-              <div class="threads">
-                <label for="threads">Number of threads (default = 1):</label>
-                <select name="threads" id="threads">
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="4">4</option>
-                  <option value="8">8</option>
-                </select>
-                <br><br>
-              </div>
-
-              <div class="output-name">
-                <form>
-                <label for="output-name"> Analysis output name:</label>
-                <input type="text" id="output-name" name="output-name" value="">
-                <br><br>
-              </form></div>
-                <hr>
-              
-
-              <button onclick="submitAnalysis()">Submit Analysis</button>
-            </div>
             </div>
             
 
