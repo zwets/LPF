@@ -32,7 +32,31 @@ import gzip
 from fpdf import FPDF
 from pandas.plotting import table
 from geopy.geocoders import Nominatim
+from subprocess import check_output, STDOUT
+
 #Utility functions
+
+def check_to_destroy_shm_db(kma_path, kma_database_path, dbdir, logfile):
+    with open(dbdir + "analyticalFiles/queuedAnalyses.json") as json_file:
+        queue_json = json.load(json_file)
+    json_file.close()
+
+    with open(dbdir + "analyticalFiles/runningAnalyses.json") as json_file:
+        running_json = json.load(json_file)
+    json_file.close()
+
+    if running_json == {} and queue_json == {}: #Take Down DB from shm
+        os.system("{}_shm -t_db {} -destroy".format(kma_path, kma_database_path))
+
+
+def check_shm_kma(kma_path, kma_database_path, cmd, logfile):
+    try: #Check if KMA db in shm
+        cmd_stdout = check_output(cmd, stderr=STDOUT, shell=True).decode()
+    except Exception as e:
+        os.system("{}_shm -t_db {}".format(kma_path, kma_database_path)) #Loads DB
+        os.system(cmd)
+        return True
+
 def correctPathCheck(pathName):
     if pathName == "":
         pass
@@ -86,11 +110,8 @@ def findTemplateSurveillance(total_filenames, target_dir, kma_database_path, log
     best_template_score = 0.0
     templatename = ""
     print("# Finding best template for Surveillance pipeline", file=logfile)
-    #cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 50 -Sparse -mp 20".format(kma_path, total_filenames, target_dir, kma_database_path)
-    #os.system(cmd)
-    cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -mem_mode -sasm -ef".format(kma_path, total_filenames, target_dir, kma_database_path)
-    os.system(cmd)
-
+    cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -mem_mode -sasm -ef -shm".format(kma_path, total_filenames, target_dir, kma_database_path)
+    check_shm_kma(kma_path, kma_database_path, cmd, logfile)
     ###
     #Currently, facing the issue of only have 1 output in reference list. why? ask Philip
     try:
@@ -106,118 +127,8 @@ def findTemplateSurveillance(total_filenames, target_dir, kma_database_path, log
                     templatename = line[0]
 
 
-        #cmd = "sort -n -k 2 -r -t$\'\\t\' {}template_kma_results.res > {}sorted_template_kma_results.res".format(target_dir, target_dir)
-        #print (cmd, file = logfile)
-        #os.system(cmd)
-        #infile_template = open(target_dir + "sorted_template_kma_results.res", 'r')
-        #templateline = infile_template.readlines()[1]
-        #infile_template.close()
-
-        #templatedict = {}
-        ##template_ids = []
-        #templatename = templateline.split("\t")[0]
-        #best_template_score = float(line.split("\t")[1])
-        #template_ids.append(templateid)
-        #templatedict[templatename] = templateid
-        #print("best score:" + str(best_template_score), file=logfile)
         template_found = True
         return best_template_score, template_found, templatename
-
-        #print("Best template: " + str(templatename))
-
-
-        #sasmsparsematch = false#
-        #
-        #infile = open(target_dir + "template_kma_results.spa", 'r')
-        #for line in infile:
-        #    line = line.rstrip()
-        #    line = line.split("\t")
-        #    if line[0] == templatename :
-       #        sasmsparsematch = true
-
-
-        #print("Best templatenum: " + str(best_template))
-        #print("Best template: " + str(templatename))
-        #print("best score:" + str(best_template_score))
-        #print("Best templatenumber: " + str(best_template), file=logfile)
-        #print("Best template: " + str(templatename), file=logfile)
-        #print("best score:" + str(best_template_score), file=logfile)
-        #cmd = "rm {}temp_search*".format(target_dir)
-
-
-        #Optimize getting linenumber using subprocess
-        #cmd = "wc -l {}template_kma_results.spa > {}linenumber".format(target_dir, target_dir)
-        #os.system(cmd)
-        #infile = open(target_dir + "linenumber", 'r')
-        #line = infile.readlines()[0]
-        #linecount = int(line.split(" ")[0])
-        #template_ids = []
-        #if linecount >= 10:
-        #    readinglines = 11
-        #else:
-        #    readinglines = linecount
-        #t = 0
-        #infile_template.close()
-        #infile_template = open(target_dir + "template_kma_results.spa", 'r')
-        ##Look at top-10 (at max) templates
-        #templatedict = {}
-
-        #for templateline in infile_template:
-        #    if t != 0:
-        #        templatename = templateline.split("\t")[0]
-        #        templateid = templateline.split("\t")[1]
-        #        template_ids.append(templateid)
-        #        templatedict[templatename] = templateid
-        #    elif t == readinglines:
-        #        break
-        #    else:
-        #        t = t + 1
-        #print ("template ids are: " + str(template_ids))
-        #print ("template ids are: " + str(template_ids), file=logfile)
-
-
-        #print (templatedict)
-
-        #Create minidatabase of top 10 templates, to confirmed the final template
-        #for i in range(len(template_ids)):
-        #    cmd = "{} seq2fasta -t_db {} -seqs {} > {}temp_template_{}".format(kma_path, kma_database_path, template_ids[i], target_dir, template_ids[i])
-        #    os.system(cmd)
-        #cmd = "{} index -i {}temp_template* -o {}temp_search_db".format(kma_path, target_dir, target_dir)
-        #os.system(cmd)
-
-        #cmd = "{} -i {} -o {}template_kma_results_nonsparse -ID 50 -t_db {}temp_search_db -mp 20".format(kma_path, total_filenames, target_dir, target_dir)
-        #os.system(cmd)
-        #cmd = "rm {}linenumber".format(target_dir)
-        #os.system(cmd)
-        #infile_template.close()
-        #infile_template = open(target_dir + "template_kma_results_nonsparse.res", 'r')
-        #line = infile_template.readlines()[1]
-        #best_template = line.split("\t")[1]
-        #templatename = line.split("\t")[0]
-        # scoring of matches, loop through and fine all maatches of 97%> BTD
-        #qq
-
-        #Retrieve original template number of best template:
-        #best_template = templatedict[templatename]
-
-        #print ("Best templatenum: " + str(best_template))
-        #print ("Best template: " + str(templatename))
-        #print ("best score:" + str(best_template_score))
-        #print("Best templatenumber: " + str(best_template), file=logfile)
-        #print("Best template: " + str(templatename), file=logfile)
-        #print("best score:" + str(best_template_score), file=logfile)
-        #cmd = "rm {}temp_search*".format(target_dir)
-        #os.system(cmd)
-        #infile_template.close()
-        #works
-        #if best_template_score >= 90.00:
-        #    template_found = True
-        #    infile_template.close()
-        #    return best_template, best_template_score, template_found, templatename
-        #else:
-        #    print("The input could not score > 95.00 template score. Thus input will be assembled and be made a new reference.")
-        #    template_found = False
-        #    return best_template, best_template_score, template_found, templatename
 
     #If no match are found, the sample will be defined as a new reference.
     except IndexError as error:
@@ -257,11 +168,11 @@ def illuminaMappingForward(input, best_template, target_dir, kma_database_path, 
         try:
             semaphore.acquire(timeout=18000)  # Wait maxium of 5 hours.
             if input[0] != "":
-                cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {}".format(
+                cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
                     kma_path, input[0][0], target_dir, illumina_name, templateaccesion, kma_database_path,
                     str(best_template), str(multi_threading))
                 print(cmd, file=logfile)
-                os.system(cmd)
+                check_shm_kma(kma_path, kma_database_path, cmd, logfile)
             print("# Illumina mapping completed succesfully", file=logfile)
             semaphore.release()
         except posix_ipc.BusyError as error:
@@ -271,7 +182,7 @@ def illuminaMappingForward(input, best_template, target_dir, kma_database_path, 
     else:
         semaphore.acquire(timeout=18000)
         if input[0] != "":
-            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {}".format(kma_path, input[0][0], target_dir, illumina_name, templateaccesion, kma_database_path, str(best_template), str(multi_threading))
+            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(kma_path, input[0][0], target_dir, illumina_name, templateaccesion, kma_database_path, str(best_template), str(multi_threading))
             print(cmd, file=logfile)
             os.system(cmd)
         print ("# Illumina mapping completed succesfully", file=logfile)
@@ -304,11 +215,11 @@ def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfi
         try:
             semaphore.acquire(timeout=18000)  # Wait maxium of 5 hours.
             if input[0] != "":
-                cmd = "{} -ipe {} {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {}".format(
+                cmd = "{} -ipe {} {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
                     kma_path, input[0], input[1], target_dir, illumina_name, templateaccesion,
                     kma_database_path, str(best_template), str(multi_threading))
                 print (cmd, file=logfile)
-                os.system(cmd)
+                check_shm_kma(kma_path, kma_database_path, cmd, logfile)
             print("# Illumina mapping completed succesfully", file=logfile)
 
             semaphore.release()
@@ -319,7 +230,7 @@ def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfi
     else:
         semaphore.acquire(timeout=18000)
         if input[0] != "":
-            cmd = "{} -ipe {} {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {}".format(kma_path, input[0], input[0], target_dir, illumina_name, templateaccesion, kma_database_path, str(best_template), str(multi_threading))
+            cmd = "{} -ipe {} {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(kma_path, input[0], input[0], target_dir, illumina_name, templateaccesion, kma_database_path, str(best_template), str(multi_threading))
             print(cmd, file=logfile)
             os.system(cmd)
         print ("# Illumina mapping completed succesfully", file=logfile)
@@ -351,12 +262,11 @@ def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile
         try:
             semaphore.acquire(timeout=18000)  # Wait maxium of 5 hours.
             if input[0] != "":
-                cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {}".format(
+                cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {} -shm".format(
                     kma_path, input[0], target_dir, nanopore_name, templateaccesion, kma_database_path,
                     str(best_template), str(multi_threading), str(bc))
                 print(cmd, file=logfile)
-                print(cmd)
-                os.system(cmd)
+                check_shm_kma(kma_path, kma_database_path, cmd, logfile)
             print("# Nanopore mapping completed succesfully", file=logfile)
 
             semaphore.release()
@@ -367,7 +277,7 @@ def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile
     else:
         semaphore.acquire(timeout=18000)
         if input[0] != "":
-            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {}".format(kma_path, input[0], target_dir, nanopore_name, templateaccesion, kma_database_path, str(best_template), str(multi_threading), str(bc))
+            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {} -shm".format(kma_path, input[0], target_dir, nanopore_name, templateaccesion, kma_database_path, str(best_template), str(multi_threading), str(bc))
             print(cmd, file=logfile)
             os.system(cmd)
         print ("# Nanopore mapping completed succesfully", file=logfile)
@@ -590,21 +500,21 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
             cmd = "cp {} {}dockertmp/{}".format(input[1], target_dir, illumina_name2)
             os.system(cmd)
 
-            cmd = "docker run --name illumina_assembly{} -v {}dockertmp/:/dockertmp/ nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -1 /dockertmp/{} -2 /dockertmp/{} -o /dockertmp/illumina_assembly -t 4".format(
+            cmd = "docker run --name assembly_results{} -v {}dockertmp/:/dockertmp/ nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -1 /dockertmp/{} -2 /dockertmp/{} -o /dockertmp/assembly_results -t 4".format(
                 jobid, target_dir, illumina_name1, illumina_name2)
             print(cmd)
             os.system(cmd)
         elif inputType == "se_illumina":
-            cmd = "docker run --name illumina_assembly{} -v {}:/dockertmp/{} nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -s /dockertmp/{} -o /dockertmp/illumina_assembly -t 4".format(
+            cmd = "docker run --name assembly_results{} -v {}:/dockertmp/{} nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -s /dockertmp/{} -o /dockertmp/assembly_results -t 4".format(
                 jobid, input[0], inputname, inputname)
             os.system(cmd)
 
-        proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("illumina_assembly", jobid), shell=True,
+        proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_results", jobid), shell=True,
                                 stdout=subprocess.PIPE, )
         output = proc.communicate()[0]
         id = output.decode().rstrip()
 
-        cmd = "docker cp {}:/dockertmp/illumina_assembly {}.".format(id, target_dir)
+        cmd = "docker cp {}:/dockertmp/assembly_results {}.".format(id, target_dir)
         os.system(cmd)
 
         cmd = "docker container rm {}".format(id)
@@ -616,7 +526,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
 
         # concatenate all reads into one file
 
-        infile = open("{}illumina_assembly/assembly.fasta".format(target_dir), 'r')
+        infile = open("{}assembly_results/assembly.fasta".format(target_dir), 'r')
         writefile = open("{}{}_assembled.fasta".format(target_dir, inputname), 'w')  # Adds all contigs to one sequence
         sequence = ""
         for line in infile:
@@ -677,23 +587,23 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
         print("no template TRUE runnning nanopore assembly")
         # Longread assembly
 
-        cmd = "docker run --name nanopore_assembly{} -v {}:/tmp/{} nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -l /tmp/{} -o /tmp/nanopore_assembly -t 4".format(
-            jobid, input, inputname, inputname)
+        cmd = "docker run --name assembly_results{} -v {}:/tmp/{} nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -l /tmp/{} -o /tmp/assembly_results -t 4".format(
+            jobid, input[0], inputname, inputname)
         os.system(cmd)
 
-        proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("nanopore_assembly", jobid), shell=True,
+        proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_results", jobid), shell=True,
                                 stdout=subprocess.PIPE, )
         output = proc.communicate()[0]
         id = output.decode().rstrip()
 
-        cmd = "docker cp {}:/tmp/nanopore_assembly {}.".format(id, target_dir)
+        cmd = "docker cp {}:/tmp/assembly_results {}.".format(id, target_dir)
         os.system(cmd)
 
         cmd = "docker container rm {}".format(id)
         os.system(cmd)
 
         # Concatenate contigs
-        infile = open("{}nanopore_assembly/assembly.fasta".format(target_dir), 'r')
+        infile = open("{}assembly_results/assembly.fasta".format(target_dir), 'r')
         writefile = open("{}{}_assembled.fasta".format(target_dir, inputname), 'w')  # Adds all contigs to one sequence
         sequence = ""
         for line in infile:
@@ -941,6 +851,28 @@ def runVirulenceFinder(exepath, total_filenames, target_dir):
     cmd = "python3 {}virulencefinder/virulencefinder.py -i {} -o {}virulenceFinderResults -mp {}kma/kma -p {}virulencefinder/virulencefinder_db".format(exepath, total_filenames, target_dir, exepath, exepath)
     os.system(cmd)
 
+def run_quast(target_dir, jobid):
+    cmd = "docker run --name quast{} -v {}/assembly_results/:/data/assembly_results/ staphb/quast quast.py /data/assembly_results/assembly.fasta -o /output/quast_output".format(
+        jobid, target_dir)
+    os.system(cmd)
+
+    filelist = inputfile.split("/")
+    namelenght = len(filelist[-1])
+    inputdir = inputfile[0:-namelenght]
+
+    proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("quast", jobid), shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0]
+    id = output.decode().rstrip()
+
+    cmd = "docker cp {}:/output/quast_output {}quast_output".format(id, target_dir)
+    os.system(cmd)
+
+    #cmd = "docker container rm {}".format(id)
+    #os.system(cmd)
+
+
+
 
 def compileReportAssembly(day, target_dir, ID, db_dir, image_location):
     pdf = FPDF()  # A4 (210 by 297 mm)
@@ -952,6 +884,7 @@ def compileReportAssembly(day, target_dir, ID, db_dir, image_location):
     pdf.ln(10)
     pdf.set_font('Arial', 'BU', 12)
     pdf.write(5, "ASSEMBLY HERE")
+    run_quast(target_dir, ID)
     pdf.output(target_dir + filename, 'F')
 
 def matrixClusterSize(db_dir, templatename):
@@ -973,71 +906,261 @@ def lastClusterAddition(db_dir, templatename):
     c.execute("SELECT entryid, timestamp FROM isolatetable WHERE headerid = '{}' ORDER BY timestamp DESC".format(templatename)) #Dårlig løsning, ikke skalerbar til >5M isolates
     refdata = c.fetchall()
     conn.close()
-    element = refdata[0][0]
-
     return refdata
 
-def generate_resistance_profile_table(x_coordinate, y_coordinate):
-    pass
+def isolate_file_name(db_dir, entryid):
+    isolatedb = db_dir + "moss.db"
+    conn = sqlite3.connect(isolatedb)
+    c = conn.cursor()
+
+    c.execute("SELECT isolatename FROM isolatetable WHERE entryid = '{}'".format(entryid))
+    refdata = c.fetchall()
+    conn.close()
+    element = refdata[0][0]
+
+    return element
+
+
+def generate_amr_resistance_profile_table(db_dir, entryid, pdf, target_dir, exepath, templatename):
+
+    panel_found = False
+    panel_list = []
+
+    genus = templatename.split()[1]
+    species = templatename.split()[2]
+
+    panels = []
+    antimicrobials = dict()
+
+    infile = open(exepath + "resfinder/db_resfinder/phenotype_panels.txt" ,'r')
+    add_amr_flag = False
+    for line in infile:
+        line = line.rstrip()
+        if line != "" and line[0] != "#":
+            line = line.split()
+            if line[0] == ":Panel:":
+                if len(line) == 3:
+                    panels.append("{} {}".format(line[1], line[2]))
+                    antimicrobials["{} {}".format(line[1], line[2])] = []
+                    add_amr_flag = True
+                else:
+                    panels.append(line[1])
+                    antimicrobials[line[1]] = []
+                    add_amr_flag = True
+            elif add_amr_flag == True:
+                if line[0] == ":Include:":
+                    for item in antimicrobials[line[1]]:
+                        antimicrobials[panels[-1]].append(item)
+                else:
+                    antimicrobials[panels[-1]].append(line[0])
+        else:
+            add_amr_flag = False
+    infile.close()
+
+    if "{} {}".format(genus, species) in panels:
+        panel_found = True
+        panel_list = antimicrobials["{} {}".format(genus, species)]
+    elif genus in panels:
+        if len(antimicrobials[genus]) > 1:
+            panel_found = True
+            panel_list = antimicrobials[genus]
+
+
+    # antiomicrobial, Class, Resistant/no resitance, match, genes.
+    isolatedb = db_dir + "moss.db"
+    conn = sqlite3.connect(isolatedb)
+    c = conn.cursor()
+
+    c.execute("SELECT phenotypes FROM amrtable WHERE entryid = '{}'".format(entryid))
+    refdata = c.fetchall()
+    conn.close()
+
+    outfile = open(target_dir + "amr.csv", 'w')
+    header = "Antimicrobial,Class,Resistance,Match,Genes"
+    reflist = refdata[0][0].split(";")
+
+    print (header, file=outfile)
+
+    if panel_found:
+        for item in reflist:
+            item = item.split(",")
+            if (item[0][0].upper() + item[0][1:]) in panel_list:
+                if item[4] != "":
+                    item[4] = "\"" + item[4].replace("@", ", ") + "\""
+                item = ",".join(item)
+                print(item, file=outfile)
+    else:
+        #Are we missing potential genes?
+        for item in reflist:
+            item = item.split(",")
+            if item[0].split()[0] != "unknown":
+                if item[4] != "":
+                    item[4] = "\"" + item[4].replace("@", ", ") + "\""
+                item = ",".join(item)
+                print (item, file=outfile)
+    outfile.close()
+
+    return reflist, panel_found, panel_list
+
+def time_of_analysis(db_dir, entryid):
+    isolatedb = db_dir + "moss.db"
+    conn = sqlite3.connect(isolatedb)
+    c = conn.cursor()
+
+    c.execute("SELECT timestamp FROM isolatetable WHERE entryid = '{}'".format(entryid))
+    refdata = c.fetchall()
+    conn.close()
+    element = refdata[0][0]
 
 
 
-def compileReportAlignment(day, target_dir, ID, db_dir, image_location, templatename, distance):
+    return element
+
+def compileReportAssembly(day, target_dir, ID, db_dir, image_location, templatename, exepath):
+    #QA checks?
+    #Quast?
+
     pdf = FPDF()  # A4 (210 by 297 mm)
-    filename = "{}_report.pdf".format(ID) #ADD idd
+    filename = "{}_report.pdf".format(ID)  # ADD idd
 
     ''' First Page '''
     pdf.add_page()
-    create_title(day, pdf, ID)
+    pdf.image(exepath + "/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
+    create_title(day, pdf, ID, "MOSS analytical report")
     pdf.ln(5)
-    pdf.set_font('Arial', 'BU', 12)
-    pdf.ln(2)
-    pdf.write(5, "Highest scoring reference: {}".format(templatename))
+    file_name = isolate_file_name(db_dir, ID)
+    pdf.set_font('Arial', '', 12)
+    textstring = "ID: {} \n" \
+                 "Sample name: {} \n" \
+                 "No reference cluster was identified. \n" \
+                 "".format(ID, file_name)
+    pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(10)
+
+
+
+
+
+
+
+def compileReportAlignment(day, target_dir, ID, db_dir, image_location, templatename, exepath):
+
+    pdf = FPDF()  # A4 (210 by 297 mm)
+    filename = "{}_report.pdf".format(ID) #ADD idd
     clusterSize = int(matrixClusterSize(db_dir, templatename)) + 2
     latestAddition = lastClusterAddition(db_dir, templatename)
-    pdf.set_font('Arial', '', 10)
+    phenotypes, panel_found, panel_list = generate_amr_resistance_profile_table(db_dir, ID, pdf, target_dir, exepath, templatename)
 
+    ''' First Page '''
+    pdf.add_page()
+    pdf.image(exepath + "/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
+    create_title(day, pdf, ID, "MOSS analytical report")
+    pdf.ln(5)
+    file_name = isolate_file_name(db_dir, ID)
+    pdf.set_font('Arial', '', 12)
+    textstring = "ID: {} \n" \
+                 "Sample name: {} \n" \
+                 "Identifilessed reference: {} \n" \
+                 "".format(ID, file_name, templatename)
+    pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
+    pdf.ln(10)
+    timestamp = time_of_analysis(db_dir, ID)
+    pdf.set_font('Arial', '', 10)
     #Cell here
 
-    # Move to 8 cm to the right
-    # Centered text in a framed 20*10 mm cell and line break
-    textstring = "Clustersize: {} \n" \
-                 "Previous cluster addition: {}. \n" \
-                 "".format(clusterSize, latestAddition[0][1])
-    pdf.multi_cell(w = 0, h = 5, txt = textstring, border = "TB", align = 'L', fill = False)
-    pdf.ln(10)
-    pdf.set_xy(x = 10, y = 170)
-    pdf.write(5, "Cluster information: INSERT HERE")
-    pdf.ln(10)
     pdf.set_font('Arial', '', 12)
-    pdf.write(5, "Related patients' notes, genes, symptoms")
-    pdf.ln(10)
-    pdf.write(5, "Number of resistance genes: X, number of unique phenotypic resistances: Y symptoms")
-    pdf.ln(10)
-    pdf.write(5, "Virulence overview")
-    pdf.ln(10)
-    pdf.write(5, "Plasmid overview")
+    pdf.set_text_color(51, 153, 255)
+    pdf.set_xy(x=10, y=60)
+    pdf.cell(85, 5, "Sample information: ", 0, 1, 'L')
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font('Arial', '', 10)
+    textstring = "Copenhagen, Denmark \n" \
+                 "Time of sampling: 2019-06-11 18:03:00. \n" \
+                 "Number of associated isolates: {} \n" \
+                 "Latest addition to cluster: {}. \n" \
+                 "".format(clusterSize, latestAddition[0][1])
+    pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
+    pdf.ln(5)
+    pdf.set_text_color(51, 153, 255)
+    pdf.set_font('Arial', '', 12)
+    pdf.cell(85, 5, "CGE results: ", 0, 1, 'L')
+    textstring = "AMR phenotypes in this sample: 17<HardCoded>. \n" \
+                 "AMR phenotypes in this cluster: 16<HardCoded>. \n" \
+                 "Plasmids in this sample: 5<HardCoded>. \n" \
+                 "Plasmids in this cluster: 5<HardCoded>. \n" \
+                 "Virulence genes in this sample: 55<HardCoded>. \n" \
+                 "Virulence genes in this cluster: 61<HardCoded>. \n"
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font('Arial', '', 10)
+    pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
+    pdf.ln(5)
+    pdf.set_text_color(51, 153, 255)
+    pdf.set_font('Arial', '', 12)
+    pdf.cell(85, 5, "MLST results: ", 0, 1, 'L')
+    textstring = "Genotype: ST410<HardCoded>. \n" \
+                 "cgMLST: 32654<HardCoded>. \n"
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font('Arial', '', 10)
+    pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
+
+
+    pdf.set_xy(x=105, y=65)
+    if panel_found:
+        cmd = "Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir)
+        os.system(cmd)
+        pdf.image("{}amr_table.png".format(target_dir), x=90, y=60, w=pdf.w / 1.95, h=pdf.h / 1.4)
+    else:
+        pdf.cell(85, 5, "Organism was not in annotated panel. The following AMR genes were found:", 0, 1, 'L')
+        cmd = "Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir)
+        os.system(cmd)
+        pdf.image("{}amr_table.png".format(target_dir), x=90, y=60, w=pdf.w / 1.95, h=pdf.h / 1.4)
     pdf.ln(10)
 
+    pdf.set_font('Arial', '', 12)
 
     ''' Second Page '''
     pdf.add_page()
+    pdf.image(exepath + "/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
+    create_title(day, pdf, ID, "Phylogeny results")
     pdf.ln(20)
-    pdf.image(db_dir + "datafiles/distancematrices/" + templatename.split()[0] + "/tree.png", x=55, y=20, w=pdf.w/1.5, h=pdf.h/2)
+    pdf.image(image_location, x=10, y=35, w=pdf.w/1.2, h=pdf.h/1.2)
 
+
+    pdf.output(target_dir + filename, 'F')
+"""
 
     ''' finder pages'''
-    pdf.add_page()
-    pdf.ln(20)
-    resfinderPage(target_dir + "resfinderResults/ResFinder_results_tab.txt", pdf, target_dir)
+    #pdf.add_page()
+    #pdf.ln(20)
+    #resfinderPage(target_dir + "resfinderResults/ResFinder_results_tab.txt", pdf, target_dir)
     pdf.add_page()
     pdf.ln(20)
     virulencePage(target_dir + "virulenceFinderResults/data.json", pdf, target_dir)
     pdf.add_page()
     pdf.ln(20)
     plasmidPage(target_dir + "plasmidFinderResults/data.json", pdf, target_dir)
+    plasmid_count, plasmid_list = plasmid_data_for_report(target_dir + "plasmidFinderResults/data.json", pdf, target_dir)
     pdf.output(target_dir + filename, 'F')
+
+    compare_plasmid_isolate_vs_cluster(plasmid_list, templatename, db_dir)"""
+
+def compare_plasmid_isolate_vs_cluster(plasmid_list, templatename, db_dir):
+    isolatedb = db_dir + "moss.db"
+    conn = sqlite3.connect(isolatedb)
+    c = conn.cursor()
+
+    c.execute("SELECT plasmids FROM referencetable WHERE headerid = '{}'".format(templatename))
+    refdata = c.fetchall()
+    conn.close()
+    element = refdata[0]
+
+
+    if refdata[0][0] == None:
+        list = []
+    else:
+        list = refdata[0][0].split(",")
+    return list
+
 
 def resfinderPage(tabfile, pdf, target_dir):
     infile = open(tabfile, 'r')
@@ -1095,6 +1218,22 @@ def virulencePage(jsoninput, pdf, target_dir):
                 pdf.write(5, f"{data['virulencefinder']['results'][species][hit]}")
                 pdf.ln(10)
 
+
+def plasmid_data_for_report(jsoninput, target_dir):
+    with open(jsoninput) as json_file:
+        data = json.load(json_file)
+    count1 = 0
+    plasmid_list = []
+    for species in data['plasmidfinder']['results']:
+        for hit in data['plasmidfinder']['results'][species]:
+            if type(data['plasmidfinder']['results'][species][hit]) == dict:
+                print (data['plasmidfinder']['results'][species][hit])
+                for gene in data['plasmidfinder']['results'][species][hit]:
+                    count1 += 1
+                    plasmid_list.append(gene)
+    return count1, plasmid_list
+
+
 def plasmidPage(jsoninput, pdf, target_dir):
     pdf.set_font('Arial', 'B', 24)
     pdf.write(5, "PlasmidFinder Profile:")
@@ -1130,14 +1269,14 @@ def plasmidPage(jsoninput, pdf, target_dir):
                 pdf.write(5, f"{data['plasmidfinder']['results'][species][hit]}")
                 pdf.ln(10)
 
-def create_title(day, pdf, id):
+def create_title(day, pdf, id, string):
   # Unicode is not yet supported in the py3k version; use windows-1252 standard font
-  pdf.set_font('Arial', '', 32)
-  pdf.ln(25)
-  pdf.write(5, f"MOSS Analytics Report")
+  pdf.set_text_color(51, 153, 255)
+  pdf.set_font('Arial', 'BU', 36)
   pdf.ln(10)
-  pdf.set_font('Arial', '', 16)
-  pdf.write(4, f'{day} {id}')
+  pdf.write(5, f"{string}")
+  pdf.ln(10)
+  pdf.set_text_color(0, 0, 0)
 
 def queueMultiAnalyses(dbdir, inputlist):
     with open(dbdir + "analyticalFiles/queuedAnalyses.json") as json_file:
@@ -1210,16 +1349,24 @@ def checkAMRrisks(target_dir, entryid, db_dir, templatename, exepath, logfile):
 
     pheno_file = target_dir + "resfinderResults/pheno_table.txt"
     infile = open(pheno_file, 'r')
-    phenotypes = []
+    amrinfo = []
     for line in infile:
         if line[0] != "#":
             line = line.rstrip().split("\t")
             if len(line) > 1:
-                if line[2] == "Resistant":
-                    phenotypes.append("{} {}".format(line[0], line[2]))
+                if len(line) == 5:
+                    nlist = line[4].split(", ")
+                    tlist = []
+                    for item in nlist:
+                        id = item.split(" ")[0]
+                        tlist.append(id)
+                    line[4] = "@".join(tlist)
+                else:
+                    line.append("")
+                line = ",".join(line)
+                amrinfo.append(line)
+
     infile.close()
-
-
 
 
     with open(exepath + "datafiles/AMR_Watch_list.json") as json_file:
@@ -1267,12 +1414,13 @@ def checkAMRrisks(target_dir, entryid, db_dir, templatename, exepath, logfile):
         allresgenes = ""
     else:
         allresgenes = ", ".join(allresgenes).replace("'", "''")
-    if phenotypes == []:
-        phenotypes = ""
+    if amrinfo == []:
+        amrinfo = ""
     else:
-        phenotypes = ", ".join(phenotypes).replace("'", "''")
-
-    return warning, riskcategory, allresgenes, phenotypes
+        amrinfo = ";".join(amrinfo).replace("'", "''")
+    #AMRinfo:
+    #antiomicrobial, Class, Resistant/no resitance, match, genes.
+    return warning, riskcategory, allresgenes, amrinfo
 
 
 

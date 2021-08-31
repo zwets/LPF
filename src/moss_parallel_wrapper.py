@@ -44,6 +44,21 @@ def main(input, jobs):
         sys.exit("Currently a maximum of 8 jobs are permitted in parallel")
     inputlist = input.split(";")
 
+
+
+    filelist = []
+    dbdir = ""
+    for item in inputlist:
+        tmplist = item.split()
+        for i in range(len(tmplist)):
+            if tmplist[i] == "-db_dir":
+                dbdir = tmplist[i+1]
+            if tmplist[i] == "-i":
+                filelist.append(tmplist[i+1])
+
+
+    moss.queueMultiAnalyses(dbdir, filelist)
+
     Parallel(n_jobs=jobs)(delayed(mossAnalysis)(inputlist, i) for i in range(len(inputlist)))
     print ("Analysis complete")
 

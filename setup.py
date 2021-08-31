@@ -5,6 +5,7 @@ import  os
 #Kma
 
 #sudo apt-get install r-base
+#GET R
 
 def main():
     #Ret til python3 -m

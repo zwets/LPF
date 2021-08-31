@@ -225,6 +225,9 @@ def SurveillancePipeline(input, seqType, masking_scheme, prune_distance, bc,
     refdata = c.fetchall()
     conn.close()
 
+    print ("here")
+    print (refdata, file=logfile)
+
     refname = refdata[0][2]
 
 
@@ -281,7 +284,7 @@ def SurveillancePipeline(input, seqType, masking_scheme, prune_distance, bc,
 
         #Succesfull in finding reference
 
-        warning, riskcategory, allresgenes, phenotypes = moss.checkAMRrisks(target_dir, entryid, db_dir, templatename, exepath, logfile)
+        warning, riskcategory, allresgenes, amrinfo = moss.checkAMRrisks(target_dir, entryid, db_dir, templatename, exepath, logfile)
 
 
         cmd = "cp {}distance_matrix_{} {}/datafiles/distancematrices/{}/distance_matrix_{}".format(target_dir, refname, db_dir, refname, refname)
@@ -295,6 +298,11 @@ def SurveillancePipeline(input, seqType, masking_scheme, prune_distance, bc,
         else:
             isolateid = refdata[0][3] + ", " + entryid
 
+        plasmid_count, plasmid_list = moss.plasmid_data_for_report(target_dir + "plasmidFinderResults/data.json", target_dir)
+        plasmid_string = ",".join(plasmid_list)
+
+
+
 
         conn = sqlite3.connect(isolatedb)
         c = conn.cursor()
@@ -303,11 +311,12 @@ def SurveillancePipeline(input, seqType, masking_scheme, prune_distance, bc,
         c.execute(dbstring)
 
         #DET ER ' som giver SQL fejl. Hvor vigtig er den? evt accession number i stedet?
-
-        dbstring = "INSERT INTO amrtable(entryid, isolatename, timestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, inputname, str(datetime.datetime.now())[0:-7], allresgenes, phenotypes, templatename, riskcategory, warning)
+        #print (amrinfo, file=logfile)
+        dbstring = "INSERT INTO amrtable(entryid, isolatename, timestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, inputname, str(datetime.datetime.now())[0:-7], allresgenes, amrinfo, templatename, riskcategory, warning)
+        #dbstring = "INSERT INTO amrtable(entryid, isolatename, timestamp, amrgenes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, inputname, str(datetime.datetime.now())[0:-7], allresgenes, templatename, riskcategory, warning)
         c.execute(dbstring)
 
-        dbstring = "INSERT INTO isolatetable(entryid, headerid, isolatename, timestamp) VALUES('{}', '{}', '{}', '{}')".format(entryid, templatename, inputname, str(datetime.datetime.now())[0:-7])
+        dbstring = "INSERT INTO isolatetable(entryid, headerid, isolatename, timestamp, plasmids) VALUES('{}', '{}', '{}', '{}', '{}')".format(entryid, templatename, inputname, str(datetime.datetime.now())[0:-7], plasmid_string)
         c.execute(dbstring)
 
         dbstring = "INSERT INTO metadatatable(entryid, location, geocoordinates) VALUES('{}', '{}', '{}')".format(entryid, location, coordinates)
@@ -346,9 +355,11 @@ def SurveillancePipeline(input, seqType, masking_scheme, prune_distance, bc,
         os.system(cmd)
 
 
-        moss.compileReportAlignment("ID:", target_dir, entryid, db_dir, image_location, templatename, distance) #No report compiled for assemblies! Look into it! #TBD
+        moss.compileReportAlignment("ID:", target_dir, entryid, db_dir, image_location, templatename, exepath) #No report compiled for assemblies! Look into it! #TBD
+        moss.check_to_destroy_shm_db(kma_path, kma_database_path, db_dir, logfile)
 
         logfile.close()
+
 
 
 

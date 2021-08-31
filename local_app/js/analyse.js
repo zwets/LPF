@@ -275,7 +275,7 @@ function submitSingleAnalysis() {
         console.log(input_array.length);
         alert("More than one file was given. For multiple file analyses, use the multiple analyses function, not the single analyses function.");
     } else {
-                moss_string = `python3 ${srcpath}moss.py -i ${input_array[0]} -seqType ${sequence_type} -thread 2 -db_dir ${dbdir} -exepath ${exepath}`;
+                moss_string = `python3 ${srcpath}moss.py -seqType ${sequence_type} -thread 2 -db_dir ${dbdir} -exepath ${exepath}`;
                 if (sequence_type == "pe_illumina") {
                     moss_string = moss_string.concat(` -i ${input_array[0]} ${input_array[1]}`);
                 } else {
