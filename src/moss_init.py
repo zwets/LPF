@@ -48,7 +48,7 @@ if kmaindex_db_path != "":
         os.makedirs(db_dir)
     except OSError as e:
         if e.errno != errno.EEXIST:
-            print ("dbdir already exists")
+            print ("db_dir already exists")
             raise
 
     # Generate localDBAddition.json
@@ -145,13 +145,13 @@ if kmaindex_db_path != "":
     conn = sqlite3.connect(db_dir + 'moss.db')
     c = conn.cursor()
 
-    c.execute("""CREATE TABLE IF NOT EXISTS isolatetable(entryid TEXT PRIMARY KEY, headerid TEXT, isolatename TEXT, timestamp TEXT, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS isolatetable(entryid TEXT PRIMARY KEY, headerid TEXT, isolatename TEXT, analysistimestamp TEXT, samplingtimestamp TEXT, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT)""")
     conn.commit()
-    c.execute("""CREATE TABLE IF NOT EXISTS referencetable(entryid TEXT PRIMARY KEY, headerid TEXT, refname TEXT, isolateid TEXT, timestamp TEXT, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT)""") #Mangler finder results. Implement eventually
+    c.execute("""CREATE TABLE IF NOT EXISTS referencetable(entryid TEXT PRIMARY KEY, headerid TEXT, refname TEXT, isolateid TEXT, analysistimestamp TEXT, samplingtimestamp TEXT, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT)""") #Mangler finder results. Implement eventually
     conn.commit()
     c.execute("""CREATE TABLE IF NOT EXISTS specietable(specie TEXT PRIMARY KEY, entryid TEXT)""")
     conn.commit()
-    c.execute("""CREATE TABLE IF NOT EXISTS amrtable(entryid TEXT PRIMARY KEY, isolatename TEXT, timestamp TEXT, amrgenes TEXT, phenotypes TEXT, specie TEXT, risklevel TEXT, warning TEXT)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS amrtable(entryid TEXT PRIMARY KEY, isolatename TEXT, analysistimestamp TEXT, amrgenes TEXT, phenotypes TEXT, specie TEXT, risklevel TEXT, warning TEXT)""")
     conn.commit()
     c.execute("""CREATE TABLE IF NOT EXISTS metadatatable(entryid TEXT PRIMARY KEY, diseases TEXT, location TEXT, geocoordinates TEXT)""")
     conn.commit()
@@ -172,7 +172,7 @@ if kmaindex_db_path != "":
 
     # Generate config.json file
     jsondict = dict()
-    jsondict["dbdir"] = db_dir
+    jsondict["db_dir"] = db_dir
     jsondict["exepath"] = exepath
     jsondict["syncpath"] = syncpath
     with open("{}{}_moss_config.json".format(db_dir, args.configname), 'w') as f_out:
@@ -180,14 +180,14 @@ if kmaindex_db_path != "":
     f_out.close()
 
     # Generate localDBAddition.json
-    referenceadditionjsondict['timestamp'] = str(time.time())
+    referenceadditionjsondict['analysistimestamp'] = str(time.time())
     with open("{}syncFiles/referenceSync.json".format(db_dir), 'w') as f_out:
         json.dump(referenceadditionjsondict, f_out)
     f_out.close()
 
     # Initialize isolate sync
     isolateadditionjson = dict()
-    isolateadditionjson['timestamp'] = str(time.time())
+    isolateadditionjson['analysistimestamp'] = str(time.time())
     with open("{}syncFiles/isolateSync.json".format(db_dir), 'w') as f_out:
         json.dump(isolateadditionjson, f_out)
     f_out.close()

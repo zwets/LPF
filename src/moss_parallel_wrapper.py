@@ -47,17 +47,17 @@ def main(input, jobs):
 
 
     filelist = []
-    dbdir = ""
+    db_dir = ""
     for item in inputlist:
         tmplist = item.split()
         for i in range(len(tmplist)):
             if tmplist[i] == "-db_dir":
-                dbdir = tmplist[i+1]
+                db_dir = tmplist[i+1]
             if tmplist[i] == "-i":
                 filelist.append(tmplist[i+1])
 
 
-    moss.queueMultiAnalyses(dbdir, filelist)
+    moss.queueMultiAnalyses(db_dir, filelist)
 
     Parallel(n_jobs=jobs)(delayed(mossAnalysis)(inputlist, i) for i in range(len(inputlist)))
     print ("Analysis complete")

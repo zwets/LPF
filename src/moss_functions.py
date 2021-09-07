@@ -36,17 +36,18 @@ from subprocess import check_output, STDOUT
 
 #Utility functions
 
-def check_to_destroy_shm_db(kma_path, kma_database_path, dbdir, logfile):
-    with open(dbdir + "analyticalFiles/queuedAnalyses.json") as json_file:
+def check_to_destroy_shm_db(kma_path, kma_database_path, db_dir, logfile):
+    with open(db_dir + "analyticalFiles/queuedAnalyses.json") as json_file:
         queue_json = json.load(json_file)
     json_file.close()
 
-    with open(dbdir + "analyticalFiles/runningAnalyses.json") as json_file:
+    with open(db_dir + "analyticalFiles/runningAnalyses.json") as json_file:
         running_json = json.load(json_file)
     json_file.close()
 
     if running_json == {} and queue_json == {}: #Take Down DB from shm
         os.system("{}_shm -t_db {} -destroy".format(kma_path, kma_database_path))
+        print ("{}_shm -t_db {} -destroy".format(kma_path, kma_database_path), file=logfile)
 
 
 def check_shm_kma(kma_path, kma_database_path, cmd, logfile):
@@ -111,6 +112,7 @@ def findTemplateSurveillance(total_filenames, target_dir, kma_database_path, log
     templatename = ""
     print("# Finding best template for Surveillance pipeline", file=logfile)
     cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -mem_mode -sasm -ef -shm".format(kma_path, total_filenames, target_dir, kma_database_path)
+    print (cmd, file = logfile)
     check_shm_kma(kma_path, kma_database_path, cmd, logfile)
     ###
     #Currently, facing the issue of only have 1 output in reference list. why? ask Philip
@@ -460,6 +462,69 @@ def ThreshholdDistanceCheck(distancematrixfile, reference, isolate):
                 secondentry = True
         linecount += 1
 
+def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string, templatename, db_dir):
+
+    plasmids_isolate = plasmid_string.split(",")
+    amrgenes_isolate = allresgenes.split(",")
+    virulencegenes_isolate = virulence_string.split(",")
+
+    #This function checks if an isolate has any unique amrgenes, virulencegenes or plasmids vs the cluster and returns them if any are found
+    isolatedb = db_dir + "moss.db"
+    conn = sqlite3.connect(isolatedb)
+    c = conn.cursor()
+
+    c.execute("SELECT plasmids FROM isolatetable WHERE headerid = '{}'".format(templatename))
+    refdata = c.fetchall()
+
+    if refdata[0][0] == None:
+        plasmids_reference = []
+    else:
+        plasmids_reference = refdata[0][0].split(",")
+
+    c.execute("SELECT virulencegenes FROM isolatetable WHERE headerid = '{}'".format(templatename))
+    refdata = c.fetchall()
+
+    if refdata[0][0] == None:
+        virulencegenes_reference = []
+    else:
+        virulencegenes_reference = refdata[0][0].split(",")
+
+    c.execute("SELECT amrgenes FROM isolatetable WHERE headerid = '{}'".format(templatename))
+    refdata = c.fetchall()
+
+    if refdata[0][0] == None:
+        amrgenes_reference = []
+    else:
+        amrgenes_reference = refdata[0][0].split(",")
+
+    conn.close()
+
+    unique_plasmids = list(set(plasmids_isolate).symmetric_difference(set(plasmids_reference)))
+    unique_virulence_genes = list(set(virulencegenes_isolate).symmetric_difference(set(virulencegenes_reference)))
+    unique_amr_genes = list(set(amrgenes_isolate).symmetric_difference(set(amrgenes_reference)))
+
+    if len(unique_plasmids) > 0:
+        new_plasmid_string = plasmid_string + "," + ",".join(unique_plasmids)
+    else:
+        new_plasmid_string = None
+
+    if len(unique_virulence_genes) > 0:
+        new_virulence_string = virulence_string + "," + ",".join(unique_virulence_genes)
+    else:
+        new_virulence_string = None
+
+    if len(unique_amr_genes) > 0:
+        new_amr_string = allresgenes + "," + ",".join(unique_amr_genes)
+    else:
+        new_amr_string = None
+
+
+    return new_plasmid_string, new_virulence_string, new_amr_string
+
+
+
+
+
 def generateFigtree(inputfile, jobid):
     cmd = "docker run --name figtree{} -v {}:/tmp/tree.tree biocontainers/figtree:v1.4.4-3-deb_cv1 figtree -graphic PNG -width 500 -height 500 /tmp/tree.tree /tmp/tree.png".format(jobid, inputfile)
     os.system(cmd)
@@ -481,7 +546,7 @@ def generateFigtree(inputfile, jobid):
 
     return ("{}tree.png".format(inputdir))
 
-def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, jobid, inputname, kma_path, kma_database_path, entryid, referenceSyncFile, isolatedb, db_dir):
+def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, jobid, inputname, kma_path, kma_database_path, entryid, referenceSyncFile, isolatedb, db_dir, associated_species):
     with open(referenceSyncFile) as json_file:
         referencejson = json.load(json_file)
     json_file.close()
@@ -565,7 +630,8 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
 
         conn = sqlite3.connect(isolatedb)
         c = conn.cursor()
-        dbstring = "INSERT INTO referencetable(entryid, headerid, refname) VALUES ('{}', '{}', '{}')".format(entryid, inputname, inputname)
+        #Here, check and insert amrgenes, virulencegenes, plasmids.
+        dbstring = "INSERT INTO referencetable(entryid, headerid, refname) VALUES ('{}', '{}', '{}')".format(entryid, associated_species, inputname)
         c.execute(dbstring)
         conn.commit()  # Need IPC
         conn.close()
@@ -643,7 +709,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
 
         conn = sqlite3.connect(isolatedb)
         c = conn.cursor()
-        dbstring = "INSERT INTO referencetable(entryid, headerid, refname) VALUES('{}', '{}', '{}')".format(entryid, inputname, inputname)
+        dbstring = "INSERT INTO referencetable(entryid, headerid, refname) VALUES('{}', '{}', '{}')".format(entryid, associated_species, inputname)
         c.execute(dbstring)
         conn.commit()  # Need IPC
         conn.close()
@@ -660,7 +726,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
         # Works
 
 
-def uniqueNameCheck(dbdir, inputType, total_filenames):
+def uniqueNameCheck(db_dir, inputType, total_filenames):
     if inputType == "nanopore":
         inputpath = total_filenames
         isolatename = inputpath.split("/")[-1]
@@ -697,7 +763,7 @@ def uniqueNameCheck(dbdir, inputType, total_filenames):
     else:
         accession = inputpath.split("/")[-1]
 
-    conn = sqlite3.connect(dbdir + "moss.db")
+    conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
 
     c.execute("SELECT * FROM isolatetable WHERE isolatename = '{}'".format(isolatename))
@@ -766,9 +832,9 @@ def findTemplateNumber(db_dir, name):
             t = t + 1
 
 
-def initRunningAnalyses(dbdir, outputname, inputname, entryid):
+def initRunningAnalyses(db_dir, outputname, inputname, entryid):
 
-    with open(dbdir + "analyticalFiles/runningAnalyses.json") as json_file:
+    with open(db_dir + "analyticalFiles/runningAnalyses.json") as json_file:
         referencejson = json.load(json_file)
     json_file.close()
 
@@ -786,23 +852,23 @@ def initRunningAnalyses(dbdir, outputname, inputname, entryid):
 
     referencejson[entryid] = jsonStr
 
-    with open("{}analyticalFiles/runningAnalyses.json".format(dbdir), 'w') as f_out:
+    with open("{}analyticalFiles/runningAnalyses.json".format(db_dir), 'w') as f_out:
         json.dump(referencejson, f_out)
     f_out.close()
 
-def endRunningAnalyses(dbdir, outputname, inputname, entryid):
-    with open(dbdir + "analyticalFiles/runningAnalyses.json") as json_file:
+def endRunningAnalyses(db_dir, outputname, inputname, entryid):
+    with open(db_dir + "analyticalFiles/runningAnalyses.json") as json_file:
         referencejson = json.load(json_file)
     json_file.close()
 
     referencejson.pop(entryid, None)
 
-    with open("{}analyticalFiles/runningAnalyses.json".format(dbdir), 'w') as f_out:
+    with open("{}analyticalFiles/runningAnalyses.json".format(db_dir), 'w') as f_out:
         json.dump(referencejson, f_out)
     f_out.close()
 
 
-    with open(dbdir + "analyticalFiles/finishedAnalyses.json") as json_file:
+    with open(db_dir + "analyticalFiles/finishedAnalyses.json") as json_file:
         referencejson = json.load(json_file)
     json_file.close()
 
@@ -820,7 +886,7 @@ def endRunningAnalyses(dbdir, outputname, inputname, entryid):
 
     referencejson[entryid] = jsonStr
 
-    with open("{}analyticalFiles/finishedAnalyses.json".format(dbdir), 'w') as f_out:
+    with open("{}analyticalFiles/finishedAnalyses.json".format(db_dir), 'w') as f_out:
         json.dump(referencejson, f_out)
     f_out.close()
 
@@ -856,10 +922,6 @@ def run_quast(target_dir, jobid):
         jobid, target_dir)
     os.system(cmd)
 
-    filelist = inputfile.split("/")
-    namelenght = len(filelist[-1])
-    inputdir = inputfile[0:-namelenght]
-
     proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("quast", jobid), shell=True,
                             stdout=subprocess.PIPE, )
     output = proc.communicate()[0]
@@ -868,24 +930,10 @@ def run_quast(target_dir, jobid):
     cmd = "docker cp {}:/output/quast_output {}quast_output".format(id, target_dir)
     os.system(cmd)
 
-    #cmd = "docker container rm {}".format(id)
-    #os.system(cmd)
+    cmd = "docker container rm {}".format(id)
+    os.system(cmd)
 
 
-
-
-def compileReportAssembly(day, target_dir, ID, db_dir, image_location):
-    pdf = FPDF()  # A4 (210 by 297 mm)
-    filename = "{}_report.pdf".format(ID) #ADD idd
-
-    ''' First Page '''
-    pdf.add_page()
-    create_title(day, pdf, ID)
-    pdf.ln(10)
-    pdf.set_font('Arial', 'BU', 12)
-    pdf.write(5, "ASSEMBLY HERE")
-    run_quast(target_dir, ID)
-    pdf.output(target_dir + filename, 'F')
 
 def matrixClusterSize(db_dir, templatename):
     isolatedb = db_dir + "moss.db"
@@ -903,7 +951,7 @@ def lastClusterAddition(db_dir, templatename):
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT entryid, timestamp FROM isolatetable WHERE headerid = '{}' ORDER BY timestamp DESC".format(templatename)) #Dårlig løsning, ikke skalerbar til >5M isolates
+    c.execute("SELECT entryid, analysistimestamp FROM isolatetable WHERE headerid = '{}' ORDER BY analysistimestamp DESC".format(templatename)) #Dårlig løsning, ikke skalerbar til >5M isolates
     refdata = c.fetchall()
     conn.close()
     return refdata
@@ -1007,7 +1055,7 @@ def time_of_analysis(db_dir, entryid):
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT timestamp FROM isolatetable WHERE entryid = '{}'".format(entryid))
+    c.execute("SELECT analysistimestamp FROM isolatetable WHERE entryid = '{}'".format(entryid))
     refdata = c.fetchall()
     conn.close()
     element = refdata[0][0]
@@ -1016,7 +1064,24 @@ def time_of_analysis(db_dir, entryid):
 
     return element
 
-def compileReportAssembly(day, target_dir, ID, db_dir, image_location, templatename, exepath):
+def run_bandage(target_dir, jobid):
+    cmd = "docker run --name bandage{} -v {}/assembly_results/:/data/assembly_results/ nanozoo/bandage Bandage image /data/assembly_results/assembly.gfa contigs.jpg".format(
+        jobid, target_dir)
+    os.system(cmd)
+
+    proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("bandage", jobid), shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0]
+    id = output.decode().rstrip()
+
+    cmd = "docker cp {}:contigs.jpg {}contigs.jpg".format(id, target_dir)
+    os.system(cmd)
+
+    cmd = "docker container rm {}".format(id)
+    os.system(cmd)
+
+
+def compileReportAssembly(target_dir, ID, db_dir, image_location, associated_species, exepath):
     #QA checks?
     #Quast?
 
@@ -1026,24 +1091,96 @@ def compileReportAssembly(day, target_dir, ID, db_dir, image_location, templaten
     ''' First Page '''
     pdf.add_page()
     pdf.image(exepath + "/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
-    create_title(day, pdf, ID, "MOSS analytical report")
+    create_title(pdf, ID, "MOSS analytical report")
     pdf.ln(5)
-    file_name = isolate_file_name(db_dir, ID)
     pdf.set_font('Arial', '', 12)
     textstring = "ID: {} \n" \
                  "Sample name: {} \n" \
                  "No reference cluster was identified. \n" \
-                 "".format(ID, file_name)
+                 "".format(ID, associated_species) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
-    pdf.ln(10)
+    run_quast(target_dir, ID)
+
+    cmd = "Rscript {}src/quast_tsv_table.R {}".format(exepath, target_dir)
+    os.system(cmd)
+    run_bandage(target_dir, ID)
+    pdf.image("{}quast_table.png".format(target_dir), x=118, y=60, w=pdf.w / 2.7, h=pdf.h / 2.1)
+    pdf.set_xy(x=10, y=58)
+    pdf.set_font('Arial', '', 14)
+    pdf.set_text_color(51, 153, 255)
+    pdf.cell(85, 5, "Contig visualization:", 0, 1, 'L')
+    pdf.image("{}contigs.jpg".format(target_dir), x=15, y=70, w=pdf.w / 2.2, h=pdf.h / 2.7)
+
+
+
+    pdf.output(target_dir + filename, 'F')
+
+
+def retrieve_cge_counts(target_dir, ID, db_dir, image_location, templatename, exepath):
+    isolatedb = db_dir + "moss.db"
+    conn = sqlite3.connect(isolatedb)
+    c = conn.cursor()
+
+    c.execute("SELECT plasmids FROM isolatetable WHERE entryid = '{}'".format(ID))
+    refdata = c.fetchall()
+
+    if refdata[0][0] == None:
+        plasmids_isolate = []
+    else:
+        plasmids_isolate = refdata[0][0].split(",")
+
+    c.execute("SELECT virulencegenes FROM isolatetable WHERE entryid = '{}'".format(ID))
+    refdata = c.fetchall()
+
+    if refdata[0][0] == None:
+        virulencegenes_isolate = []
+    else:
+        virulencegenes_isolate = refdata[0][0].split(",")
+
+    c.execute("SELECT amrgenes FROM isolatetable WHERE entryid = '{}'".format(ID))
+    refdata = c.fetchall()
+
+    if refdata[0][0] == None:
+        amrgenes_isolate = []
+    else:
+        amrgenes_isolate = refdata[0][0].split(",")
+
+    c.execute("SELECT plasmids FROM referencetable WHERE headerid = '{}'".format(templatename))
+    refdata = c.fetchall()
+
+    if refdata[0][0] == None:
+        plasmids_reference = []
+    else:
+        plasmids_reference = refdata[0][0].split(",")
+
+    c.execute("SELECT virulencegenes FROM referencetable WHERE headerid = '{}'".format(templatename))
+    refdata = c.fetchall()
+
+    if refdata[0][0] == None:
+        virulencegenes_reference = []
+    else:
+        virulencegenes_reference = refdata[0][0].split(",")
+
+    c.execute("SELECT amrgenes FROM referencetable WHERE headerid = '{}'".format(templatename))
+    refdata = c.fetchall()
+
+    if refdata[0][0] == None:
+        amrgenes_reference = []
+    else:
+        amrgenes_reference = refdata[0][0].split(",")
+
+    conn.close()
+
+
+
+    return plasmids_isolate, virulencegenes_isolate, amrgenes_isolate, plasmids_reference, virulencegenes_reference, amrgenes_reference
 
 
 
 
 
 
-
-def compileReportAlignment(day, target_dir, ID, db_dir, image_location, templatename, exepath):
+def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename, exepath):
 
     pdf = FPDF()  # A4 (210 by 297 mm)
     filename = "{}_report.pdf".format(ID) #ADD idd
@@ -1054,7 +1191,7 @@ def compileReportAlignment(day, target_dir, ID, db_dir, image_location, template
     ''' First Page '''
     pdf.add_page()
     pdf.image(exepath + "/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
-    create_title(day, pdf, ID, "MOSS analytical report")
+    create_title(pdf, ID, "MOSS analytical report")
     pdf.ln(5)
     file_name = isolate_file_name(db_dir, ID)
     pdf.set_font('Arial', '', 12)
@@ -1064,7 +1201,7 @@ def compileReportAlignment(day, target_dir, ID, db_dir, image_location, template
                  "".format(ID, file_name, templatename)
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(10)
-    timestamp = time_of_analysis(db_dir, ID)
+    analysistimestamp = time_of_analysis(db_dir, ID)
     pdf.set_font('Arial', '', 10)
     #Cell here
 
@@ -1084,12 +1221,14 @@ def compileReportAlignment(day, target_dir, ID, db_dir, image_location, template
     pdf.set_text_color(51, 153, 255)
     pdf.set_font('Arial', '', 12)
     pdf.cell(85, 5, "CGE results: ", 0, 1, 'L')
-    textstring = "AMR phenotypes in this sample: 17<HardCoded>. \n" \
-                 "AMR phenotypes in this cluster: 16<HardCoded>. \n" \
-                 "Plasmids in this sample: 5<HardCoded>. \n" \
-                 "Plasmids in this cluster: 5<HardCoded>. \n" \
-                 "Virulence genes in this sample: 55<HardCoded>. \n" \
-                 "Virulence genes in this cluster: 61<HardCoded>. \n"
+    plasmids_isolate, virulencegenes_isolate, amrgenes_isolate, plasmids_reference, virulencegenes_reference, amrgenes_reference = retrieve_cge_counts(target_dir, ID, db_dir, image_location, templatename, exepath)
+    textstring = "AMR genes in this sample: {}. \n" \
+                 "AMR genes in this cluster: {}. \n" \
+                 "Plasmids in this sample: {}. \n" \
+                 "Plasmids in this cluster: {}. \n" \
+                 "Virulence genes in this sample: {}. \n" \
+                 "Virulence genes in this cluster: {}. \n" \
+                 "".format(len(amrgenes_isolate), len(amrgenes_reference), len(plasmids_isolate), len(plasmids_reference), len(virulencegenes_reference), len(virulencegenes_reference))
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('Arial', '', 10)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
@@ -1097,8 +1236,8 @@ def compileReportAlignment(day, target_dir, ID, db_dir, image_location, template
     pdf.set_text_color(51, 153, 255)
     pdf.set_font('Arial', '', 12)
     pdf.cell(85, 5, "MLST results: ", 0, 1, 'L')
-    textstring = "Genotype: ST410<HardCoded>. \n" \
-                 "cgMLST: 32654<HardCoded>. \n"
+    textstring = "Genotype: ST410<HardCoded, TBD>. \n" \
+                 "cgMLST: 32654<HardCoded, TBD>. \n"
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('Arial', '', 10)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
@@ -1121,7 +1260,7 @@ def compileReportAlignment(day, target_dir, ID, db_dir, image_location, template
     ''' Second Page '''
     pdf.add_page()
     pdf.image(exepath + "/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
-    create_title(day, pdf, ID, "Phylogeny results")
+    create_title(pdf, ID, "Phylogeny results")
     pdf.ln(20)
     pdf.image(image_location, x=10, y=35, w=pdf.w/1.2, h=pdf.h/1.2)
 
@@ -1233,6 +1372,21 @@ def plasmid_data_for_report(jsoninput, target_dir):
                     plasmid_list.append(gene)
     return count1, plasmid_list
 
+def virulence_data_for_report(jsoninput, target_dir):
+    with open(jsoninput) as json_file:
+        data = json.load(json_file)
+    count1 = 0
+    virulence_list = []
+    for species in data['virulencefinder']['results']:
+        for hit in data['virulencefinder']['results'][species]:
+            if type(data['virulencefinder']['results'][species][hit]) == dict:
+                print (data['virulencefinder']['results'][species][hit])
+                for gene in data['virulencefinder']['results'][species][hit]:
+                    count1 += 1
+                    virulence_list.append(gene)
+    return count1, virulence_list
+
+
 
 def plasmidPage(jsoninput, pdf, target_dir):
     pdf.set_font('Arial', 'B', 24)
@@ -1269,7 +1423,7 @@ def plasmidPage(jsoninput, pdf, target_dir):
                 pdf.write(5, f"{data['plasmidfinder']['results'][species][hit]}")
                 pdf.ln(10)
 
-def create_title(day, pdf, id, string):
+def create_title(pdf, id, string):
   # Unicode is not yet supported in the py3k version; use windows-1252 standard font
   pdf.set_text_color(51, 153, 255)
   pdf.set_font('Arial', 'BU', 36)
@@ -1278,8 +1432,8 @@ def create_title(day, pdf, id, string):
   pdf.ln(10)
   pdf.set_text_color(0, 0, 0)
 
-def queueMultiAnalyses(dbdir, inputlist):
-    with open(dbdir + "analyticalFiles/queuedAnalyses.json") as json_file:
+def queueMultiAnalyses(db_dir, inputlist):
+    with open(db_dir + "analyticalFiles/queuedAnalyses.json") as json_file:
         _json = json.load(json_file)
     json_file.close()
     class Analysis:
@@ -1293,22 +1447,22 @@ def queueMultiAnalyses(dbdir, inputlist):
         entryid = md5(inputlist[i])
         _json[entryid] = jsonStr
 
-    with open("{}analyticalFiles/queuedAnalyses.json".format(dbdir), 'w') as f_out:
+    with open("{}analyticalFiles/queuedAnalyses.json".format(db_dir), 'w') as f_out:
         json.dump(_json, f_out)
     f_out.close()
 
-def processQueuedAnalyses(dbdir, outputname, inputname, entryid):
-    with open(dbdir + "analyticalFiles/queuedAnalyses.json") as json_file:
+def processQueuedAnalyses(db_dir, outputname, inputname, entryid):
+    with open(db_dir + "analyticalFiles/queuedAnalyses.json") as json_file:
         referencejson = json.load(json_file)
     json_file.close()
 
     if entryid in referencejson:
         referencejson.pop(entryid, None)
-        with open("{}analyticalFiles/queuedAnalyses.json".format(dbdir), 'w') as f_out:
+        with open("{}analyticalFiles/queuedAnalyses.json".format(db_dir), 'w') as f_out:
             json.dump(referencejson, f_out)
         f_out.close()
 
-        with open(dbdir + "analyticalFiles/runningAnalyses.json") as json_file:
+        with open(db_dir + "analyticalFiles/runningAnalyses.json") as json_file:
             referencejson = json.load(json_file)
         json_file.close()
 
@@ -1326,11 +1480,11 @@ def processQueuedAnalyses(dbdir, outputname, inputname, entryid):
 
         referencejson[entryid] = jsonStr
 
-        with open("{}analyticalFiles/runningAnalyses.json".format(dbdir), 'w') as f_out:
+        with open("{}analyticalFiles/runningAnalyses.json".format(db_dir), 'w') as f_out:
             json.dump(referencejson, f_out)
         f_out.close()
     else:
-        initRunningAnalyses(dbdir, outputname, inputname, entryid)
+        initRunningAnalyses(db_dir, outputname, inputname, entryid)
 
 def checkAMRrisks(target_dir, entryid, db_dir, templatename, exepath, logfile):
     warning = []
@@ -1340,8 +1494,8 @@ def checkAMRrisks(target_dir, entryid, db_dir, templatename, exepath, logfile):
     allresgenes = []
     resdata = []
     for line in infile:
+        line = line.rstrip().split("\t")
         if line[0] != "Resistance gene": #Skip first line
-            line = line.rstrip().split("\t")
             resdata.append(line[7].upper())
             if line[0] not in allresgenes:
                 allresgenes.append(line[0])

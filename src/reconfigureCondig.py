@@ -28,7 +28,7 @@ with open(args.file) as json_file:
     referencejson = json.load(json_file)
 json_file.close()
 
-referencejson["dbdir"] = localPath
+referencejson["db_dir"] = localPath
 
 referencejson["exepath"] = exepath
 
