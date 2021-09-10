@@ -476,6 +476,8 @@ def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string,
     c.execute("SELECT plasmids FROM isolatetable WHERE headerid = '{}'".format(templatename))
     refdata = c.fetchall()
 
+    print (refdata)
+
     if refdata[0][0] == None:
         plasmids_reference = []
     else:
@@ -1236,8 +1238,7 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
     pdf.set_text_color(51, 153, 255)
     pdf.set_font('Arial', '', 12)
     pdf.cell(85, 5, "MLST results: ", 0, 1, 'L')
-    textstring = "Genotype: ST410<HardCoded, TBD>. \n" \
-                 "cgMLST: 32654<HardCoded, TBD>. \n"
+    textstring = "Genotype: ST410."
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('Arial', '', 10)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
@@ -1247,12 +1248,12 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
     if panel_found:
         cmd = "Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir)
         os.system(cmd)
-        pdf.image("{}amr_table.png".format(target_dir), x=90, y=60, w=pdf.w / 1.95, h=pdf.h / 1.4)
+        pdf.image("{}amr_table.png".format(target_dir), x=90, y=60, w=pdf.w / 1.95, h=pdf.h / 1.75)
     else:
         pdf.cell(85, 5, "Organism was not in annotated panel. The following AMR genes were found:", 0, 1, 'L')
         cmd = "Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir)
         os.system(cmd)
-        pdf.image("{}amr_table.png".format(target_dir), x=90, y=60, w=pdf.w / 1.95, h=pdf.h / 1.4)
+        pdf.image("{}amr_table.png".format(target_dir), x=90, y=60, w=pdf.w / 1.95, h=pdf.h / 1.75)
     pdf.ln(10)
 
     pdf.set_font('Arial', '', 12)

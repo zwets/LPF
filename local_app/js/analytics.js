@@ -63,7 +63,7 @@ function sql_data_query_table(data_obj, data, divid) {
 
         var col = [];
         col.push('isolatename');
-        col.push('timestamp');
+        col.push('analysistimestamp');
         col.push('specie');
         col.push('amrgenes');
         col.push('risklevel');
@@ -96,7 +96,7 @@ function sql_data_query_table(data_obj, data, divid) {
             var tabCell = tr.insertCell(-1);
             var img = document.createElement('img');
             img.isolatename = data_obj[i].isolatename;
-            img.timestamp = data_obj[i].timestamp;
+            img.analysistimestamp = data_obj[i].analysistimestamp;
             img.specie = data_obj[i].specie;
             img.amrgenes = data_obj[i].amrgenes;
             img.risklevel = data_obj[i].risklevel;
@@ -123,7 +123,7 @@ function most_recent_isolates_table(data_obj, data) {
         var col = [];
         col.push('entryid');
         col.push('isolatename');
-        col.push('timestamp');
+        col.push('analysistimestamp');
         col.push('risklevel');
 
         // Create a table.
@@ -147,13 +147,13 @@ function most_recent_isolates_table(data_obj, data) {
             var tabCell = tr.insertCell(-1);
             tabCell.innerHTML = data_obj[i].isolatename;
             var tabCell = tr.insertCell(-1);
-            tabCell.innerHTML = data_obj[i].timestamp;
+            tabCell.innerHTML = data_obj[i].analysistimestamp;
 
             var tabCell = tr.insertCell(-1);
             var img = document.createElement('img');
             img.entryid = data_obj[i].entryid;
             img.isolatename = data_obj[i].isolatename;
-            img.timestamp = data_obj[i].timestamp;
+            img.analysistimestamp = data_obj[i].analysistimestamp;
             img.risklevel = data_obj[i].risklevel;
             img.setAttribute('height', '17pt');
             img.innerHTML = data_obj[i].entryid;
@@ -172,7 +172,7 @@ function make_table_from_obj(obj) {
     for(i = 0;i < obj.length; i++){
             k+= '<tr>';
             k+= '<td>' + obj[i].isolatename + '</td>';
-            k+= '<td>' + obj[i].timestamp + '</td>';
+            k+= '<td>' + obj[i].analysistimestamp + '</td>';
             k+= '</tr>';
         }
 

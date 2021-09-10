@@ -19,8 +19,8 @@ import datetime
 import threading
 import posix_ipc
 
-target_dir = "/home/malte/testdir/mosstest/nt1/analysis/72dd88b419a634ec250f4ae8c56182da/"
-entryid = "72dd88b419a634ec250f4ae8c56182da"
+target_dir = "/home/malte/testdir/mosstest/nt1/analysis/4a6969f363a074488ae75c99a1640bec/"
+entryid = "4a6969f363a074488ae75c99a1640bec"
 db_dir = "/home/malte/testdir/mosstest/nt1/"
 image_location = "/home/malte/testdir/mosstest/nt1/datafiles/distancematrices/NZ_CP024801.1/tree.png"
 templatename = "NZ_CP024801.1 Escherichia coli strain AMA1167 chromosome, complete genome"

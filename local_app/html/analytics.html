@@ -47,15 +47,15 @@
                 <br><br>
                 <div id="analytical-dashboard">
                     <div id="AMRtab" class="tab" style = "display: none;">
-                        <button class="tablinks" onclick="showamrgenetab(event, 'category1', `SELECT * FROM amrtable WHERE risklevel = 3 ORDER BY timestamp DESC`)">Category 1: Urgent</button>
-                        <button class="tablinks" onclick="showamrgenetab(event, 'category2', `SELECT * FROM amrtable WHERE risklevel = 2 ORDER BY timestamp DESC`)">Category 2: Serious</button>
-                        <button class="tablinks" onclick="showamrgenetab(event, 'category3', `SELECT * FROM amrtable WHERE risklevel = 1 ORDER BY timestamp DESC`)">Category 3: Concerning</button>
-                        <button class="tablinks" onclick="showamrgenetab(event, 'systemwideAMR', `SELECT * FROM amrtable ORDER BY timestamp DESC`)">System Wide AMR Analysis</button>
+                        <button class="tablinks" onclick="showamrgenetab(event, 'category1', `SELECT * FROM amrtable WHERE risklevel = 3 ORDER BY analysistimestamp DESC`)">Category 1: Urgent</button>
+                        <button class="tablinks" onclick="showamrgenetab(event, 'category2', `SELECT * FROM amrtable WHERE risklevel = 2 ORDER BY analysistimestamp DESC`)">Category 2: Serious</button>
+                        <button class="tablinks" onclick="showamrgenetab(event, 'category3', `SELECT * FROM amrtable WHERE risklevel = 1 ORDER BY analysistimestamp DESC`)">Category 3: Concerning</button>
+                        <button class="tablinks" onclick="showamrgenetab(event, 'systemwideAMR', `SELECT * FROM amrtable ORDER BY analysistimestamp DESC`)">System Wide AMR Analysis</button>
                         <br><br>
 
                         <div id="category3" class="tabcontent">
-                            <h3>Priority level: Critical</h3>
-                            <p>List of identified critical threats</p>
+                            <h3>Priority level: Medium</h3>
+                            <p>List of identified medium threats</p>
                             <div id='showDatacategory3'></div>
                         </div>
 
@@ -66,8 +66,8 @@
                         </div>
 
                         <div id="category1" class="tabcontent">
-                            <h3>Priority level: Medium</h3>
-                            <p>List of identified medium threats</p>
+                            <h3>Priority level: Critical</h3>
+                            <p>List of identified Critical threats</p>
                             <div id='showDatacategory1'></div>
                         </div>
 
