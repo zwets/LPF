@@ -1,6 +1,59 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow} = require('electron')
 const path = require('path')
+const fs = require('fs')
+const storage = require('electron-json-storage');
+
+/*
+function reset_ipc_sql(cmd, srcpath, dbdir) {
+
+    storage.get('currentConfig', function(error, data) {
+      if (error) throw error;
+      var srcpath = data.exepath + "src/";
+
+      var cmd = `python3 ${srcpath}reset_ipc_sql.py -i "${data.dbdir}"`;
+
+      exec(cmd, (error, stdout, stderr) => {
+
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return;
+        }
+
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+
+        outbreakfinderstring = `python3 ${srcpath}outbreak_finder.py -db_dir ${dbdir}`
+        console.log(outbreakfinderstring);
+
+
+        exec(outbreakfinderstring, (error, stdout, stderr) => {
+
+            if (error) {
+              //If error, change accepted ui to failure, which attached message.
+              console.error(`exec error: ${error}`);
+              return;
+            }
+
+            console.log(`stdout: ${stdout}`);
+            console.error(`stderr: ${stderr}`);
+
+            alert("Analysis complete!");
+
+
+
+          });
+
+
+
+      });
+
+    });
+
+
+
+}
+*/
 
 function createWindow () {
   // Create the browser window.
@@ -14,6 +67,8 @@ function createWindow () {
       preload: path.join(__dirname, 'preload.js')
     }
   })
+
+  // reset semaphores in SQL db
 
   // and load the index.html of the app.
   mainWindow.loadFile('html/index.html')

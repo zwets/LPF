@@ -155,6 +155,8 @@ if kmaindex_db_path != "":
     conn.commit()
     c.execute("""CREATE TABLE IF NOT EXISTS metadatatable(entryid TEXT PRIMARY KEY, diseases TEXT, location TEXT, geocoordinates TEXT)""")
     conn.commit()
+    c.execute("""CREATE TABLE IF NOT EXISTS ipctable(IndexRefDB TEXT, IsolateJSON TEXT, ReferenceJSON TEXT, ReadRefDB TEXT)""")
+    conn.commit()
 
     for i in range(len(referencelist)):
         entryid = moss.md5("{}datafiles/isolatefiles/{}/{}".format(db_dir, referencelist[i], referencelist[i]))

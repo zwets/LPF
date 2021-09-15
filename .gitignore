@@ -8,6 +8,7 @@
 /kma
 /resfinder
 /plasmidfinder
+/__pycache__
 /virulencefinder
 # testing
 /local_app/coverage
