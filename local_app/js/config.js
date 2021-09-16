@@ -6,7 +6,7 @@ storage.get('currentConfig', function(error, data) {
   if (error) throw error;
 
   var element = document.getElementById('current-config');
-  element.textContent = data.dbdir;
+  element.textContent = data.db_dir;
 
 });
 
@@ -48,10 +48,10 @@ function multipleInputFunction() {
 function submitAnalysis() {
     var element = document.getElementById('file-content').innerHTML;
     var configobj = JSON.parse(element);
-    var init_path = configobj.dbdir;
+    var init_path = configobj.db_dir;
     console.log(init_path);
 
-    storage.set('currentConfig', { exepath: configobj.exepath, dbdir: configobj.dbdir }, function(error) {
+    storage.set('currentConfig', { exepath: configobj.exepath, db_dir: configobj.db_dir }, function(error) {
         if (error) throw error;
     });
 

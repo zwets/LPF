@@ -145,14 +145,14 @@ def findTemplateSurveillance(total_filenames, target_dir, kma_database_path, log
         return best_template_score, template_found, templatename
     ###
 
-def illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion):
+def illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion,db_dir):
     illumina_name = input[0].split("/")[-1]
 
     #Claim ReafRefDB is IndexRefDB is free
     # Check if an assembly is currently running
-    result, action = acquire_semaphore("IndexRefDB", dbdir, 1, 7200)
+    result, action = acquire_semaphore("IndexRefDB", db_dir, 1, 7200)
     if result == 'acquired' and action == False:
-        release_semaphore("IndexRefDB", dbdir)
+        release_semaphore("IndexRefDB", db_dir)
     elif result != 'acquired' and action == True:
         result += " : IndexRefDB, didn't map due to running assembly"
         sys.exit(result)
@@ -199,16 +199,16 @@ def illuminaMappingForward(input, best_template, target_dir, kma_database_path, 
     #            "IndexRefDB semaphore is jammed, and so ReadRefDB could not be claim")
 
 
-def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion):
+def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion, db_dir):
     print (input, file=logfile)
     illumina_name = input[0].split("/")[-1]
 
     # Claim ReafRefDB is IndexRefDB is free
     # Check if an assembly is currently running
 
-    result, action = acquire_semaphore("IndexRefDB", dbdir, 1, 7200)
+    result, action = acquire_semaphore("IndexRefDB", db_dir, 1, 7200)
     if result == 'acquired' and action == False:
-        release_semaphore("IndexRefDB", dbdir)
+        release_semaphore("IndexRefDB", db_dir)
     elif result != 'acquired' and action == True:
         result += " : IndexRefDB, didn't map due to running assembly"
         sys.exit(result)
@@ -267,15 +267,15 @@ def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfi
     """
 
 
-def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, kma_path, templateaccesion):
+def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, kma_path, templateaccesion, db_dir):
     nanopore_name = input[0].split("/")[-1]
 
     # Claim ReafRefDB is IndexRefDB is free
     # Check if an assembly is currently running
 
-    result, action = acquire_semaphore("IndexRefDB", dbdir, 1, 7200)
+    result, action = acquire_semaphore("IndexRefDB", db_dir, 1, 7200)
     if result == 'acquired' and action == False:
-        release_semaphore("IndexRefDB", dbdir)
+        release_semaphore("IndexRefDB", db_dir)
     elif result != 'acquired' and action == True:
         result += " : IndexRefDB, didn't map due to running assembly"
         sys.exit(result)
@@ -462,54 +462,59 @@ def md5(fname):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
-def claim_semaphore(semaphore, dbdir, value):
-    isolatedb = dbdir + "moss.db"
+def claim_semaphore(semaphore, db_dir, value):
+    isolatedb = db_dir + "moss.db"
 
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
-    dbstring = "UPDATE ipctable SET {} = '{}'".format(semaphore, value-1)
-
+    dbstring = "UPDATE ipctable SET {} = '{}' WHERE ipc = '{}'".format(semaphore, int(value)-1, 'IPC')
     c.execute(dbstring)
+    conn.commit()
     conn.close()
 
-def acquire_semaphore(semaphore, dbdir, expected, time_limit):
+def acquire_semaphore(semaphore, db_dir, expected, time_limit):
+
     running_time = 0
     result = ""
     action = False
     semaphore_status = False
-    value = check_sql_semaphore_value(dbdir, semaphore)
+    value = check_sql_semaphore_value(db_dir, semaphore)
+
     if value != expected:
         while value != expected:
             print (running_time)
             time.sleep(10)
             running_time += 10
-            value = check_sql_semaphore_value(dbdir, semaphore)
+            value = check_sql_semaphore_value(db_dir, semaphore)
             if running_time >= time_limit:
                 result = "Running time exceeded the 7200, a semaphore is likely jammed"
                 action = True
                 break
-        claim_semaphore(semaphore, dbdir, value)
+        claim_semaphore(semaphore, db_dir, value)
+        result = "acquired"
+    else:
+        claim_semaphore(semaphore, db_dir, value)
         result = "acquired"
 
     return result, action
 
-def release_semaphore(semaphore, dbdir):
-    value = check_sql_semaphore_value(dbdir, semaphore)
+def release_semaphore(semaphore, db_dir):
+    value = check_sql_semaphore_value(db_dir, semaphore)
 
-    isolatedb = dbdir + "moss.db"
+    isolatedb = db_dir + "moss.db"
 
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
-    dbstring = "UPDATE ipctable SET {} = '{}'".format(semaphore, value + 1)
-
+    dbstring = "UPDATE ipctable SET {} = '{}'".format(semaphore, int(value) + 1)
     c.execute(dbstring)
+    conn.commit()
     conn.close()
 
 
 
 
-def check_sql_semaphore_value(dbdir, semaphore):
-    isolatedb = dbdir + "moss.db"
+def check_sql_semaphore_value(db_dir, semaphore):
+    isolatedb = db_dir + "moss.db"
 
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
@@ -587,26 +592,34 @@ def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string,
 
     print (refdata)
 
-    if refdata[0][0] == None:
-        plasmids_reference = []
+    if refdata != []:
+        if refdata[0][0] == None:
+            plasmids_reference = []
+        else:
+            plasmids_reference = refdata[0][0].split(",")
     else:
-        plasmids_reference = refdata[0][0].split(",")
+        plasmids_reference= []
 
     c.execute("SELECT virulencegenes FROM isolatetable WHERE headerid = '{}'".format(templatename))
     refdata = c.fetchall()
-
-    if refdata[0][0] == None:
-        virulencegenes_reference = []
+    if refdata != []:
+        if refdata[0][0] == None:
+            virulencegenes_reference = []
+        else:
+            virulencegenes_reference = refdata[0][0].split(",")
     else:
-        virulencegenes_reference = refdata[0][0].split(",")
+        virulencegenes_reference = []
 
     c.execute("SELECT amrgenes FROM isolatetable WHERE headerid = '{}'".format(templatename))
     refdata = c.fetchall()
-
-    if refdata[0][0] == None:
-        amrgenes_reference = []
+    if refdata != []:
+        if refdata[0][0] == None:
+            amrgenes_reference = []
+        else:
+            amrgenes_reference = refdata[0][0].split(",")
     else:
-        amrgenes_reference = refdata[0][0].split(",")
+        amrgenes_reference = []
+
 
     conn.close()
 
@@ -661,6 +674,9 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
     with open(referenceSyncFile) as json_file:
         referencejson = json.load(json_file)
     json_file.close()
+
+
+
     if assemblyType == "illumina":
         # IF NO GOOD REFERENCE FOUND; QUIT WITH MESSAGE
         # Not yet working, fix soon
@@ -716,7 +732,9 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
 
         #Assembly complete
 
-        result, action = acquire_semaphore("IndexRefDB", dbdir, 1, 7200)
+        #Here, prior to indexeing recheck with kma mapping for new reference hit, else add #DEVELOP
+
+        result, action = acquire_semaphore("IndexRefDB", db_dir, 1, 7200)
         if result == 'acquired' and action == False:
             cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir,
                                                                      inputname)  # add assembly to references
@@ -727,7 +745,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
                 json.dump(referencejson, f_out)
             f_out.close()
 
-            release_semaphore("IndexRefDB", dbdir)
+            release_semaphore("IndexRefDB", db_dir)
 
         elif result != 'acquired' and action == True:
             result += " : IndexRefDB"
@@ -813,7 +831,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
 
         # Assembly complete
 
-        result, action = acquire_semaphore("IndexRefDB", dbdir, 1, 7200)
+        result, action = acquire_semaphore("IndexRefDB", db_dir, 1, 7200)
         if result == 'acquired' and action == False:
             cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir,
                                                                      inputname)  # add assembly to references
@@ -824,7 +842,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
                 json.dump(referencejson, f_out)
             f_out.close()
 
-            release_semaphore("IndexRefDB", dbdir)
+            release_semaphore("IndexRefDB", db_dir)
 
         elif result != 'acquired' and action == True:
             result += " : IndexRefDB"
@@ -871,7 +889,6 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
 
         cmd = "cp {}{}_assembled.fasta {}datafiles/distancematrices/{}/{}_assembled.fasta".format(target_dir, inputname, db_dir, inputname, inputname)
         os.system(cmd)
-
         # Works
 
 
@@ -1697,24 +1714,21 @@ def checkAMRrisks(target_dir, entryid, db_dir, templatename, exepath, logfile):
     if warning == []:
         warning = ""
     else:
-        warning = ", ".join(warning).replace("'", "''")
+        warning = ", ".join(warning)
     if len(riskcategory) > 1:
         riskcategory = str(max(riskcategory))
     elif len(riskcategory) == 1:
         riskcategory = str(riskcategory[0])
     else:
         riskcategory = "0"
-    #riskcategory = ",".join(riskcategory).replace("'", "''")
     if allresgenes == []:
         allresgenes = ""
     else:
-        allresgenes = ", ".join(allresgenes).replace("'", "''")
+        allresgenes = ", ".join(allresgenes)
     if amrinfo == []:
         amrinfo = ""
     else:
-        amrinfo = ";".join(amrinfo).replace("'", "''")
-    #AMRinfo:
-    #antiomicrobial, Class, Resistant/no resitance, match, genes.
+        amrinfo = ";".join(amrinfo)
     return warning, riskcategory, allresgenes, amrinfo
 
 

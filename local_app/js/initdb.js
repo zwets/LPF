@@ -65,7 +65,7 @@ function submitinit() {
     console.log(exepath)
     console.log(init_path)
 
-    storage.set('currentConfig', { exepath: exepath, dbdir: init_path }, function(error) {
+    storage.set('currentConfig', { exepath: exepath, db_dir: init_path }, function(error) {
             loader.style.display = 'none';
             if (error) throw error;
         });

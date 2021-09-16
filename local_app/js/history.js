@@ -6,7 +6,7 @@ storage.get('currentConfig', function(error, data) {
   if (error) throw error;
 
   var element = document.getElementById('current-config');
-  element.textContent = data.dbdir;
+  element.textContent = data.db_dir;
   var exe_path = data.exepath;
 });
 
@@ -52,8 +52,8 @@ function showQueuedAnalyses() {
 }
 
 function openPDF(id, data, myjson){
-  console.log(data.dbdir + "analysis/" + document.getElementById(id).name + "/" + id + "_report.pdf");
-  window.open(data.dbdir + "analysis/" + document.getElementById(id).name + "/" + id + "_report.pdf");
+  console.log(data.db_dir + "analysis/" + document.getElementById(id).name + "/" + id + "_report.pdf");
+  window.open(data.db_dir + "analysis/" + document.getElementById(id).name + "/" + id + "_report.pdf");
   //return false;
 }
 
@@ -62,8 +62,8 @@ function tableFromJson(name, data) {
         var divShowData = document.getElementById('showData');
         divShowData.innerHTML = "";
 		// the json data. (you can change the values for output.)
-		dbdir = document.getElementById('current-config').innerHTML;
-		const myjson = require(dbdir + "/analyticalFiles/" + name);
+		db_dir = document.getElementById('current-config').innerHTML;
+		const myjson = require(db_dir + "/analyticalFiles/" + name);
 		var myObjectlist = Object.values(myjson)
 
 		var myObject = [];

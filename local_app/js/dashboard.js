@@ -4,7 +4,7 @@ storage.get('currentConfig', function(error, data) {
   if (error) throw error;
 
   var element = document.getElementById('current-config');
-  element.textContent = data.dbdir;
+  element.textContent = data.db_dir;
   var exepath = data.exepath;
 });
 
@@ -92,8 +92,8 @@ function showMostRecentIsolates() {
     document.getElementById('button-panel').innerHTML = "";
     document.getElementById('search-area').innerHTML = "";
     let sql = `SELECT * FROM isolatetable`;
-    let dbdir = document.getElementById('current-config').innerHTML
-    const db = require('better-sqlite3')(dbdir + 'moss.db');
+    let db_dir = document.getElementById('current-config').innerHTML
+    const db = require('better-sqlite3')(db_dir + 'moss.db');
     const data_obj = db.prepare(sql).all();
     if (data_obj.length > 50) {
         var size = 50;
@@ -168,7 +168,7 @@ function most_recent_isolates_table(data_obj, data) {
     }
 
 function openPDF(id, data){
-  window.open(data.dbdir + "analysis/" + id + "/" + id + "_report.pdf");
+  window.open(data.db_dir + "analysis/" + id + "/" + id + "_report.pdf");
   //return false;
 }
 
@@ -212,8 +212,8 @@ function produce_query_table(string) {
 }
 
 function search_db_query(sql) {
-    let dbdir = document.getElementById('current-config').innerHTML
-    const db = require('better-sqlite3')(dbdir + 'moss.db');
+    let db_dir = document.getElementById('current-config').innerHTML
+    const db = require('better-sqlite3')(db_dir + 'moss.db');
     const data_obj = db.prepare(sql).all();
     return data_obj
 }
@@ -441,11 +441,11 @@ function showClusterReferenceOptions() {
 }
 /*
 function sqlResultsTable(sqlobj) {
-    let dbdir = document.getElementById('current-config').innerHTML
+    let db_dir = document.getElementById('current-config').innerHTML
     //var configobj = JSON.parse(configfilecontent);
     document.getElementById('showData').innerHTML = "";
 
-    document.getElementById('showData').appendChild(makeUL(datalist, dbdir));
+    document.getElementById('showData').appendChild(makeUL(datalist, db_dir));
 
     // Create the list element:
     var list = document.createElement('div');
@@ -477,7 +477,7 @@ function sqlResultsTable(sqlobj) {
             var distancematrixstring = document.createElement('p');
             distancematrixstring.id = array[0][i].split(" ")[0] + "matrixid";
             distancematrixstring.style = "white-space: pre-line";
-            matrixbutton.onclick = function() {fetchDistanceMatrix(this.id, dbdir, isolatediv)};
+            matrixbutton.onclick = function() {fetchDistanceMatrix(this.id, db_dir, isolatediv)};
             isolatediv.appendChild(document.createElement("br"));
             isolatediv.appendChild(matrixbutton);
             isolatediv.appendChild(document.createElement("br"));
@@ -488,7 +488,7 @@ function sqlResultsTable(sqlobj) {
             treeaccessionID = array[0][i].split(" ")[0]  + "fb";
             figtreebutton.id = treeaccessionID;
             figtreebutton.innerHTML = `Fetch phylogenetic tree for ${accessionID}`;
-            figtreebutton.onclick = function() {insertPicture(this.id, dbdir)};
+            figtreebutton.onclick = function() {insertPicture(this.id, db_dir)};
 
             var treeimage = document.createElement("figtree");
             treeimage.id = "figtree" + treeaccessionID;
@@ -506,10 +506,10 @@ function sqlResultsTable(sqlobj) {
 */
 
 function outbreakClustersCollapsible() {
-    let dbdir = document.getElementById('current-config').innerHTML
+    let db_dir = document.getElementById('current-config').innerHTML
     //var configobj = JSON.parse(configfilecontent);
 
-    readTextFile(dbdir + "analyticalFiles/outbreakfinder.json", function(text){
+    readTextFile(db_dir + "analyticalFiles/outbreakfinder.json", function(text){
         var data = JSON.parse(text);
         var datalist = [[],[]];
 
@@ -522,7 +522,7 @@ function outbreakClustersCollapsible() {
 
 
 
-        document.getElementById('showData').appendChild(makeUL(datalist, dbdir));
+        document.getElementById('showData').appendChild(makeUL(datalist, db_dir));
         
         
     });
@@ -552,7 +552,7 @@ function readTextFileUpdateDiv(file, div, callback) {
     rawFile.send(null);
 }
 
-function makeUL(array, dbdir) {
+function makeUL(array, db_dir) {
     // Create the list element:
     var list = document.createElement('div');
     for (var i = 0; i < array[0].length; i++) {
@@ -583,7 +583,7 @@ function makeUL(array, dbdir) {
             var distancematrixstring = document.createElement('p');
             distancematrixstring.id = array[0][i].split(" ")[0] + "matrixid";
             distancematrixstring.style = "white-space: pre-line";
-            matrixbutton.onclick = function() {fetchDistanceMatrix(this.id, dbdir, isolatediv)};
+            matrixbutton.onclick = function() {fetchDistanceMatrix(this.id, db_dir, isolatediv)};
             isolatediv.appendChild(document.createElement("br"));
             isolatediv.appendChild(matrixbutton);
             isolatediv.appendChild(document.createElement("br"));
@@ -594,7 +594,7 @@ function makeUL(array, dbdir) {
             treeaccessionID = array[0][i].split(" ")[0]  + "fb";
             figtreebutton.id = treeaccessionID;
             figtreebutton.innerHTML = `Fetch phylogenetic tree for ${accessionID}`;
-            figtreebutton.onclick = function() {insertPicture(this.id, dbdir)};
+            figtreebutton.onclick = function() {insertPicture(this.id, db_dir)};
 
             var treeimage = document.createElement("figtree");
             treeimage.id = "figtree" + treeaccessionID;
@@ -621,17 +621,17 @@ function collapseFunction(id) {
     }
 }
 
-function fetchDistanceMatrix(id, dbdir, isolatediv) {
+function fetchDistanceMatrix(id, db_dir, isolatediv) {
     
-    readTextFileUpdateDiv(dbdir + `datafiles/distancematrices/${id}/distance_matrix_${id}`, isolatediv, function(text){
+    readTextFileUpdateDiv(db_dir + `datafiles/distancematrices/${id}/distance_matrix_${id}`, isolatediv, function(text){
         document.getElementById(id + "matrixid").innerHTML = text;
     })
     ;
     
 }
 
-function insertPicture(id, dbdir) {
-    document.getElementById("figtree"+ id).innerHTML = `<img src ="${dbdir}datafiles/distancematrices/${id.slice(0,-2)}/tree.png" width="500" height="500">`;
+function insertPicture(id, db_dir) {
+    document.getElementById("figtree"+ id).innerHTML = `<img src ="${db_dir}datafiles/distancematrices/${id.slice(0,-2)}/tree.png" width="500" height="500">`;
     //document.getElementById("figtree").style.width = "50px";
     //document.getElementById("figtree").style.height = "50px";
 }

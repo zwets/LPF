@@ -23,9 +23,9 @@ function displayContents(contents) {
 }
 
 //db.serialize(function() {
-//    dbdir = document.getElementById('current-config').innerHTML;
-//    console.log(dbdir);
- //   const database = new sqlite3.Database(dbdir + 'PRTT.db', (err) => {
+//    db_dir = document.getElementById('current-config').innerHTML;
+//    console.log(db_dir);
+ //   const database = new sqlite3.Database(db_dir + 'PRTT.db', (err) => {
 //        if (err) console.error('Database opening error: ', err);
  //   });
   //db.run("CREATE TABLE lorem (info TEXT)");
@@ -43,13 +43,13 @@ function displayContents(contents) {
 //});
 
 function logdb() {
-    dbdir = document.getElementById('current-config').innerHTML;
+    db_dir = document.getElementById('current-config').innerHTML;
     var sqlite3 = require('sqlite3').verbose();
-    //var db = new sqlite3.Database(dbdir + 'PRTT.db');
+    //var db = new sqlite3.Database(db_dir + 'PRTT.db');
 
-    console.log(dbdir + 'PRTT.db');
+    console.log(db_dir + 'PRTT.db');
 
-    let db = new sqlite3.Database(dbdir + 'PRTT.db', (err) => {
+    let db = new sqlite3.Database(db_dir + 'PRTT.db', (err) => {
       if (err) {
         console.error(err.message);
       }

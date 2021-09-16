@@ -5,13 +5,13 @@ const fs = require('fs')
 const storage = require('electron-json-storage');
 
 /*
-function reset_ipc_sql(cmd, srcpath, dbdir) {
+function reset_ipc_sql(cmd, srcpath, db_dir) {
 
     storage.get('currentConfig', function(error, data) {
       if (error) throw error;
       var srcpath = data.exepath + "src/";
 
-      var cmd = `python3 ${srcpath}reset_ipc_sql.py -i "${data.dbdir}"`;
+      var cmd = `python3 ${srcpath}reset_ipc_sql.py -i "${data.db_dir}"`;
 
       exec(cmd, (error, stdout, stderr) => {
 
@@ -23,7 +23,7 @@ function reset_ipc_sql(cmd, srcpath, dbdir) {
         console.log(`stdout: ${stdout}`);
         console.error(`stderr: ${stderr}`);
 
-        outbreakfinderstring = `python3 ${srcpath}outbreak_finder.py -db_dir ${dbdir}`
+        outbreakfinderstring = `python3 ${srcpath}outbreak_finder.py -db_dir ${db_dir}`
         console.log(outbreakfinderstring);
 
 

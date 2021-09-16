@@ -71,9 +71,9 @@ def SurveillancePipeline(input, seqType, masking_scheme, prune_distance, bc,
                          db_dir, multi_threading, exepath, coordinates, location):
 
 
+
     #Check if an assembly is currently running and status on other semaphores
     #moss.semaphoreInitCheck() #Wait here is writing is taking place in reference DB.
-    print ("semaphore check complete")
 
 
 
@@ -130,7 +130,6 @@ def SurveillancePipeline(input, seqType, masking_scheme, prune_distance, bc,
         coordinates = ""
         location = ""
 
-
     # Print messages
     startTime = time.time()
     print("# Running MinION-Typer 1.0.0 with following input conditions:", file=logfile)
@@ -148,9 +147,9 @@ def SurveillancePipeline(input, seqType, masking_scheme, prune_distance, bc,
         print("# -ref: " + reference, file=logfile)
     print("loading input")
 
-    #moss.runResFinder(exepath, total_filenames, target_dir)
-    #moss.runPlasmidFinder(exepath, total_filenames, target_dir)
-    #moss.runVirulenceFinder(exepath, total_filenames, target_dir)
+    moss.runResFinder(exepath, total_filenames, target_dir)
+    moss.runPlasmidFinder(exepath, total_filenames, target_dir)
+    moss.runVirulenceFinder(exepath, total_filenames, target_dir)
     best_template_score, template_found, templatename = moss.findTemplateSurveillance(total_filenames, target_dir, kma_database_path, logfile, kma_path)
 
     best_template = moss.findTemplateNumber(db_dir, templatename)
@@ -196,14 +195,14 @@ def SurveillancePipeline(input, seqType, masking_scheme, prune_distance, bc,
 
     #Check that no assembly started during template finding
 
-    result, action = moss.acquire_semaphore("IndexRefDB", dbdir, 1, 7200)
+    result, action = moss.acquire_semaphore("IndexRefDB", db_dir, 1, 7200)
     if result == 'acquired' and action == False:
-        release_semaphore("IndexRefDB", dbdir)
+        moss.release_semaphore("IndexRefDB", db_dir)
     elif result != 'acquired' and action == True:
         result += " : IndexRefDB"
         sys.exit(result)
     else:
-        sys.exit('A semaphore related issue has occured.')
+        sys.exit('A semaphore related issue has occured. IndexRefDB update')
 
 
     #semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
@@ -227,11 +226,11 @@ def SurveillancePipeline(input, seqType, masking_scheme, prune_distance, bc,
         templateaccesion = templatename
 
     if inputType == "pe_illumina":
-        moss.illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion)
+        moss.illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion, db_dir)
     elif inputType == "se_illumina":
-        moss.illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion)
+        moss.illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion, db_dir)
     if inputType == "nanopore":
-        moss.nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, kma_path, templateaccesion)
+        moss.nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, kma_path, templateaccesion, db_dir)
     #Make function to look up and write template_kma scores to logfile
 
 
@@ -340,37 +339,41 @@ def SurveillancePipeline(input, seqType, masking_scheme, prune_distance, bc,
 
         #DET ER ' som giver SQL fejl. Hvor vigtig er den? evt accession number i stedet?
 
-        dbstring = "INSERT INTO amrtable(entryid, isolatename, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, inputname, str(datetime.datetime.now())[0:-7], allresgenes, amrinfo, templatename, riskcategory, warning)
-        #dbstring = "INSERT INTO amrtable(entryid, isolatename, analysistimestamp, amrgenes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, inputname, str(datetime.datetime.now())[0:-7], allresgenes, templatename, riskcategory, warning)
+        dbstring = "INSERT INTO amrtable(entryid, isolatename, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, inputname, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), templatename, riskcategory.replace("'", "''"), warning.replace("'", "''"))
         c.execute(dbstring)
 
-        dbstring = "INSERT INTO isolatetable(entryid, headerid, isolatename, analysistimestamp, plasmids, amrgenes, virulencegenes) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, templatename, inputname, str(datetime.datetime.now())[0:-7], plasmid_string, allresgenes.replace(", ", ","), virulence_string)
+        dbstring = "INSERT INTO isolatetable(entryid, headerid, isolatename, analysistimestamp, plasmids, amrgenes, virulencegenes) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, templatename, inputname, str(datetime.datetime.now())[0:-7], plasmid_string.replace("'", "''"), allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''"))
+        print (plasmid_string)
+        print (allresgenes)
+        print (virulence_string)
+
         c.execute(dbstring)
 
-        dbstring = "INSERT INTO metadatatable(entryid, location, geocoordinates) VALUES('{}', '{}', '{}')".format(entryid, location, coordinates)
+        dbstring = "INSERT INTO metadatatable(entryid, location, geocoordinates) VALUES('{}', '{}', '{}')".format(entryid.replace("'", "''"), location.replace("'", "''"), coordinates.replace("'", "''"))
         c.execute(dbstring)
 
         #Here, check for new unique genes, plasmids, virulence found in samlple both not in referencelcuster. if found, add
 
         new_plasmid_string, new_virulence_string, new_amr_string = moss.scan_reference_vs_isolate_cge(plasmid_string, allresgenes.replace(", ", ","), virulence_string, templatename, db_dir)
 
-        if new_plasmid_string != None:
-            dbstring = "UPDATE referencetable SET amrgenes = '{}' WHERE headerid = '{}'".format(new_plasmid_string, templatename)
+        if new_amr_string != None:
+            dbstring = "UPDATE referencetable SET amrgenes = '{}' WHERE headerid = '{}'".format(new_amr_string.replace("'", "''"), templatename)
             c.execute(dbstring)
 
         if new_plasmid_string != None:
-            dbstring = "UPDATE referencetable SET virulencegenes = '{}' WHERE headerid = '{}'".format(new_virulence_string, templatename)
+            dbstring = "UPDATE referencetable SET virulencegenes = '{}' WHERE headerid = '{}'".format(new_virulence_string.replace("'", "''"), templatename)
             c.execute(dbstring)
 
         if new_plasmid_string != None:
-            dbstring = "UPDATE referencetable SET plasmids = '{}' WHERE headerid = '{}'".format(new_amr_string, templatename)
+            dbstring = "UPDATE referencetable SET plasmids = '{}' WHERE headerid = '{}'".format(new_plasmid_string.replace("'", "''"), templatename)
+            print (dbstring)
             c.execute(dbstring)
 
         conn.commit()
         conn.close()
 
         #semaphore = posix_ipc.Semaphore("/IsolateJSON", posix_ipc.O_CREAT, initial_value=1)
-        result, action = moss.acquire_semaphore("IsolateJSON", dbdir, 1, 7200)
+        result, action = moss.acquire_semaphore("IsolateJSON", db_dir, 1, 7200)
         if result == 'acquired' and action == False:
             with open(isolateSyncFile) as json_file:
                 IsolateJSON = json.load(json_file)
@@ -379,12 +382,12 @@ def SurveillancePipeline(input, seqType, masking_scheme, prune_distance, bc,
             with open(isolateSyncFile, 'w') as f_out:
                 json.dump(IsolateJSON, f_out)
 
-            release_semaphore("IsolateJSON", dbdir)
+            moss.release_semaphore("IsolateJSON", db_dir)
 
         elif result != 'acquired' and action == True:
             sys.exit(result)
         else:
-            sys.exit('A semaphore related issue has occured.')
+            sys.exit('A semaphore related issue has occured. ISOLATEJSON UPDATE')
 
         #try:
         #    semaphore.acquire(timeout=3600)

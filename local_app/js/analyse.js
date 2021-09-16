@@ -6,7 +6,7 @@ storage.get('currentConfig', function(error, data) {
   if (error) throw error;
 
   var element = document.getElementById('current-config');
-  element.textContent = data.dbdir;
+  element.textContent = data.db_dir;
   var element = document.getElementById('current-exepath');
   element.textContent = data.exepath;
 
@@ -179,7 +179,7 @@ function submitMultiAnalysis() {
 
 
     var sequence_type = document.getElementById("multiple-input-type").value;
-    var dbdir = document.getElementById('current-config').innerHTML;
+    var db_dir = document.getElementById('current-config').innerHTML;
     var exepath = document.getElementById('current-exepath').innerHTML;
     var srcpath = exepath + "src/";
     var threads = document.getElementById('threads').value;
@@ -193,7 +193,7 @@ function submitMultiAnalysis() {
         if (sequence_type == 'pe_illumina') {
 
             for (var i = 0; i < (sorted_input_array.length/2); ++i) {
-                moss_string = `python3 ${srcpath}moss.py -seqType ${sequence_type} -thread ${threads} -db_dir ${dbdir} -exepath ${exepath}`;
+                moss_string = `python3 ${srcpath}moss.py -seqType ${sequence_type} -thread ${threads} -db_dir ${db_dir} -exepath ${exepath}`;
                 var checkstatus = document.getElementById(`input${i}2`).checked;
                 if (checkstatus) {
                     moss_string = moss_string.concat(` -coordinates`);
@@ -217,7 +217,7 @@ function submitMultiAnalysis() {
             }
         } else {
             for (var i = 0; i < (sorted_input_array.length); ++i) {
-                moss_string = `python3 ${srcpath}moss.py -seqType ${sequence_type} -thread ${threads} -db_dir ${dbdir} -exepath ${exepath}`;
+                moss_string = `python3 ${srcpath}moss.py -seqType ${sequence_type} -thread ${threads} -db_dir ${db_dir} -exepath ${exepath}`;
                 var checkstatus = document.getElementById(`input${i}2`).checked;
                 if (checkstatus) {
                     moss_string = moss_string.concat(` -coordinates`);
@@ -246,7 +246,7 @@ function submitMultiAnalysis() {
 
     parallel_wrapper_string = `python3 ${srcpath}moss_parallel_wrapper.py -i "${final_moss_string}" -jobs ${jobs}`;
 
-    execute_command_as_subprocess(parallel_wrapper_string, srcpath, dbdir);
+    execute_command_as_subprocess(parallel_wrapper_string, srcpath, db_dir);
 
 
 }
@@ -264,7 +264,7 @@ function submitSingleAnalysis() {
 
 
     var sequence_type = document.getElementById("single-input-type").value;
-    var dbdir = document.getElementById('current-config').innerHTML;
+    var db_dir = document.getElementById('current-config').innerHTML;
     var exepath = document.getElementById('current-exepath').innerHTML;
     var srcpath = exepath + "src/";
 
@@ -275,7 +275,7 @@ function submitSingleAnalysis() {
         console.log(input_array.length);
         alert("More than one file was given. For multiple file analyses, use the multiple analyses function, not the single analyses function.");
     } else {
-                moss_string = `python3 ${srcpath}moss.py -seqType ${sequence_type} -thread 2 -db_dir ${dbdir} -exepath ${exepath}`;
+                moss_string = `python3 ${srcpath}moss.py -seqType ${sequence_type} -thread 2 -db_dir ${db_dir} -exepath ${exepath}`;
                 if (sequence_type == "pe_illumina") {
                     moss_string = moss_string.concat(` -i ${input_array[0]} ${input_array[1]}`);
                 } else {
@@ -300,12 +300,12 @@ function submitSingleAnalysis() {
                 parallel_wrapper_string = `python3 ${srcpath}moss_parallel_wrapper.py -i "${moss_string}"`;
 
 
-                execute_command_as_subprocess(parallel_wrapper_string, srcpath, dbdir);
+                execute_command_as_subprocess(parallel_wrapper_string, srcpath, db_dir);
     }
 
 }
 
-function execute_command_as_subprocess(cmd, srcpath, dbdir) {
+function execute_command_as_subprocess(cmd, srcpath, db_dir) {
     console.log(cmd);
 
     console.log("job submitted");
@@ -324,7 +324,7 @@ function execute_command_as_subprocess(cmd, srcpath, dbdir) {
         console.log(`stdout: ${stdout}`);
         console.error(`stderr: ${stderr}`);
 
-        outbreakfinderstring = `python3 ${srcpath}outbreak_finder.py -db_dir ${dbdir}`
+        outbreakfinderstring = `python3 ${srcpath}outbreak_finder.py -db_dir ${db_dir}`
         console.log(outbreakfinderstring);
 
 
@@ -394,7 +394,7 @@ function submitAnalysis() {
     obj.prune_distance = "10";
     obj.base_calling = "0.7";
     obj.threads = threads;
-    obj.dbdir = document.getElementById('current-config').innerHTML;
+    obj.db_dir = document.getElementById('current-config').innerHTML;
     obj.exepath = document.getElementById('current-exepath').innerHTML;
     obj.srcpath = obj.exepath + "src/";
 
@@ -402,10 +402,10 @@ function submitAnalysis() {
 
     if (combinedilluminacheck != "") {
         combinedillumina = obj.illumina_input_forward + " " + obj.illumina_input_reverse;
-        moss_string = `python3 ${obj.srcpath}moss.py -i_illumina ${combinedillumina} -prune_distance ${obj.prune_distance} -bc ${obj.base_calling} -thread ${obj.threads} -db_dir ${obj.dbdir} -exepath ${obj.exepath}`;
+        moss_string = `python3 ${obj.srcpath}moss.py -i_illumina ${combinedillumina} -prune_distance ${obj.prune_distance} -bc ${obj.base_calling} -thread ${obj.threads} -db_dir ${obj.db_dir} -exepath ${obj.exepath}`;
     } else if (nanopore_input != "") {
         combinedillumina = combinedilluminacheck;
-        moss_string = `python3 ${obj.srcpath}moss.py -i_nanopore ${obj.nanopore_input} -prune_distance ${obj.prune_distance} -bc ${obj.base_calling} -thread ${obj.threads} -db_dir ${obj.dbdir} -exepath ${obj.exepath}`;
+        moss_string = `python3 ${obj.srcpath}moss.py -i_nanopore ${obj.nanopore_input} -prune_distance ${obj.prune_distance} -bc ${obj.base_calling} -thread ${obj.threads} -db_dir ${obj.db_dir} -exepath ${obj.exepath}`;
     } else if (document.getElementById('multiple-input-field').value != "") {
         var input = document.getElementById('multiple-input-field');
         var children = "";
@@ -415,7 +415,7 @@ function submitAnalysis() {
         var parallel_input = children.slice(0, -1);
         var input_type = document.getElementById("input-type").value;
         var parallel_jobs = document.getElementById("parallel-jobs").value;
-        moss_string = `python3 ${obj.srcpath}moss_parallel_wrapper.py -input_type ${input_type} -prune_distance ${obj.prune_distance} -bc ${obj.base_calling} -thread ${obj.threads} -db_dir ${obj.dbdir} -exepath ${obj.exepath} -parallel_input ${parallel_input} -jobs ${parallel_jobs}`;
+        moss_string = `python3 ${obj.srcpath}moss_parallel_wrapper.py -input_type ${input_type} -prune_distance ${obj.prune_distance} -bc ${obj.base_calling} -thread ${obj.threads} -db_dir ${obj.db_dir} -exepath ${obj.exepath} -parallel_input ${parallel_input} -jobs ${parallel_jobs}`;
     }
 
     if (obj.masking_scheme != ""){
@@ -442,7 +442,7 @@ function submitAnalysis() {
 
     //Her, skift UI til accepteret job
 
-    //let output_path = obj.dbdir + "multiSampleAnalysisReports/" + obj.output_name + "/"
+    //let output_path = obj.db_dir + "multiSampleAnalysisReports/" + obj.output_name + "/"
 
     alert("job submitted.");
 
@@ -471,7 +471,7 @@ function submitAnalysis() {
             if (err) throw err; 
         })
         */
-        outbreakfinderstring = `python3 ${obj.srcpath}outbreak_finder.py -db_dir ${obj.dbdir}`
+        outbreakfinderstring = `python3 ${obj.srcpath}outbreak_finder.py -db_dir ${obj.db_dir}`
         console.log(outbreakfinderstring);
 
 

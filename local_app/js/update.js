@@ -20,7 +20,7 @@ function readSingleFile(e) {
 
 function displayUpdateData(contents) {
     var configobj = JSON.parse(contents);
-    var updateFile = configobj.dbdir + "syncFiles/update.log";
+    var updateFile = configobj.db_dir + "syncFiles/update.log";
 
     readTextFile(updateFile, function(text){
             var data = JSON.parse(text);
