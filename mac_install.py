@@ -15,7 +15,7 @@ def main():
     os.system(cmd)
     cmd = "xcode-select --install"
     os.system(cmd)
-    cmd = "brew install node"
+    cmd = "brew install node@10"
     os.system(cmd)
     cmd = "brew install curl"
     os.system(cmd)

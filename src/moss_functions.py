@@ -150,46 +150,53 @@ def illuminaMappingForward(input, best_template, target_dir, kma_database_path, 
 
     #Claim ReafRefDB is IndexRefDB is free
     # Check if an assembly is currently running
-    semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
-    assembly_semaphore_value = semaphore.value
-    if assembly_semaphore_value == 0:
-        print("Another subprocess is currently writing to the reference database")
-        try:
-            semaphore.acquire(timeout=18000)  # Wait maxium of 5 hours.
-            semaphore.release()  # No database writing, clear to go
-
-        except posix_ipc.BusyError as error:
-            semaphore.unlink()
-            sys.exit(
-                "IndexRefDB semaphore is jammed, and so ReadRefDB could not be claim")
-
-    semaphore = posix_ipc.Semaphore("/ReadRefDB", posix_ipc.O_CREAT, initial_value=100)
-    assembly_semaphore_value = semaphore.value
-    if assembly_semaphore_value == 0:
-        print("100 processes are reading from reference DB -- waiting for free spot")
-        try:
-            semaphore.acquire(timeout=18000)  # Wait maxium of 5 hours.
-            if input[0] != "":
-                cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
-                    kma_path, input[0][0], target_dir, illumina_name, templateaccesion, kma_database_path,
-                    str(best_template), str(multi_threading))
-                print(cmd, file=logfile)
-                check_shm_kma(kma_path, kma_database_path, cmd, logfile)
-            print("# Illumina mapping completed succesfully", file=logfile)
-            semaphore.release()
-        except posix_ipc.BusyError as error:
-            semaphore.unlink()
-            sys.exit(
-                "IndexRefDB semaphore is jammed, and so ReadRefDB could not be claim")
+    result, action = acquire_semaphore("IndexRefDB", dbdir, 1, 7200)
+    if result == 'acquired' and action == False:
+        release_semaphore("IndexRefDB", dbdir)
+    elif result != 'acquired' and action == True:
+        result += " : IndexRefDB, didn't map due to running assembly"
+        sys.exit(result)
     else:
-        semaphore.acquire(timeout=18000)
-        if input[0] != "":
-            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(kma_path, input[0][0], target_dir, illumina_name, templateaccesion, kma_database_path, str(best_template), str(multi_threading))
-            print(cmd, file=logfile)
-            os.system(cmd)
-        print ("# Illumina mapping completed succesfully", file=logfile)
+        sys.exit('A semaphore related issue has occured.')
 
-        semaphore.release()
+    if input[0] != "":
+        cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
+            kma_path, input[0][0], target_dir, illumina_name, templateaccesion, kma_database_path,
+            str(best_template), str(multi_threading))
+        print(cmd, file=logfile)
+        check_shm_kma(kma_path, kma_database_path, cmd, logfile)
+        print("# Illumina mapping completed succesfully", file=logfile)
+    #semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
+    #assembly_semaphore_value = semaphore.value
+    #if assembly_semaphore_value == 0:
+    #    print("Another subprocess is currently writing to the reference database")
+    #    try:
+    #        semaphore.acquire(timeout=18000)  # Wait maxium of 5 hours.
+    #        semaphore.release()  # No database writing, clear to go#
+    #
+    #    except posix_ipc.BusyError as error:
+    #        semaphore.unlink()
+    #        sys.exit(
+    #            "IndexRefDB semaphore is jammed, and so ReadRefDB could not be claim")
+
+   # semaphore = posix_ipc.Semaphore("/ReadRefDB", posix_ipc.O_CREAT, initial_value=100)
+    #assembly_semaphore_value = semaphore.value
+    #if assembly_semaphore_value == 0:
+    #    print("100 processes are reading from reference DB -- waiting for free spot")
+    #    try:
+    #        semaphore.acquire(timeout=18000)  # Wait maxium of 5 hours.
+    #        if input[0] != "":
+    #            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
+    #                kma_path, input[0][0], target_dir, illumina_name, templateaccesion, kma_database_path,
+    #                str(best_template), str(multi_threading))
+    #            print(cmd, file=logfile)
+    #            check_shm_kma(kma_path, kma_database_path, cmd, logfile)
+    #        print("# Illumina mapping completed succesfully", file=logfile)
+    #        semaphore.release()
+    #    except posix_ipc.BusyError as error:
+    #        semaphore.unlink()
+    #        sys.exit(
+    #            "IndexRefDB semaphore is jammed, and so ReadRefDB could not be claim")
 
 
 def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion):
@@ -198,6 +205,25 @@ def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfi
 
     # Claim ReafRefDB is IndexRefDB is free
     # Check if an assembly is currently running
+
+    result, action = acquire_semaphore("IndexRefDB", dbdir, 1, 7200)
+    if result == 'acquired' and action == False:
+        release_semaphore("IndexRefDB", dbdir)
+    elif result != 'acquired' and action == True:
+        result += " : IndexRefDB, didn't map due to running assembly"
+        sys.exit(result)
+    else:
+        sys.exit('A semaphore related issue has occured.')
+
+    if input[0] != "":
+        cmd = "{} -ipe {} {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
+            kma_path, input[0], input[1], target_dir, illumina_name, templateaccesion,
+            kma_database_path, str(best_template), str(multi_threading))
+        print(cmd, file=logfile)
+        check_shm_kma(kma_path, kma_database_path, cmd, logfile)
+        print("# Illumina mapping completed succesfully", file=logfile)
+
+    """
     semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
     assembly_semaphore_value = semaphore.value
     if assembly_semaphore_value == 0:
@@ -238,6 +264,7 @@ def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfi
         print ("# Illumina mapping completed succesfully", file=logfile)
 
         semaphore.release()
+    """
 
 
 def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, kma_path, templateaccesion):
@@ -245,6 +272,27 @@ def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile
 
     # Claim ReafRefDB is IndexRefDB is free
     # Check if an assembly is currently running
+
+    result, action = acquire_semaphore("IndexRefDB", dbdir, 1, 7200)
+    if result == 'acquired' and action == False:
+        release_semaphore("IndexRefDB", dbdir)
+    elif result != 'acquired' and action == True:
+        result += " : IndexRefDB, didn't map due to running assembly"
+        sys.exit(result)
+    else:
+        sys.exit('A semaphore related issue has occured.')
+
+    if input[0] != "":
+        cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {} -shm".format(
+            kma_path, input[0], target_dir, nanopore_name, templateaccesion, kma_database_path,
+            str(best_template), str(multi_threading), str(bc))
+        print(cmd, file=logfile)
+        check_shm_kma(kma_path, kma_database_path, cmd, logfile)
+        print("# Nanopore mapping completed succesfully", file=logfile)
+
+    """
+    
+    
     semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
     assembly_semaphore_value = semaphore.value
     if assembly_semaphore_value == 0:
@@ -285,6 +333,8 @@ def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile
         print ("# Nanopore mapping completed succesfully", file=logfile)
 
         semaphore.release()
+        
+    """
 
 
 def loadFiles(path):
@@ -411,6 +461,65 @@ def md5(fname):
         for chunk in iter(lambda: f.read(4096), b""):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
+
+def claim_semaphore(semaphore, dbdir, value):
+    isolatedb = dbdir + "moss.db"
+
+    conn = sqlite3.connect(isolatedb)
+    c = conn.cursor()
+    dbstring = "UPDATE ipctable SET {} = '{}'".format(semaphore, value-1)
+
+    c.execute(dbstring)
+    conn.close()
+
+def acquire_semaphore(semaphore, dbdir, expected, time_limit):
+    running_time = 0
+    result = ""
+    action = False
+    semaphore_status = False
+    value = check_sql_semaphore_value(dbdir, semaphore)
+    if value != expected:
+        while value != expected:
+            print (running_time)
+            time.sleep(10)
+            running_time += 10
+            value = check_sql_semaphore_value(dbdir, semaphore)
+            if running_time >= time_limit:
+                result = "Running time exceeded the 7200, a semaphore is likely jammed"
+                action = True
+                break
+        claim_semaphore(semaphore, dbdir, value)
+        result = "acquired"
+
+    return result, action
+
+def release_semaphore(semaphore, dbdir):
+    value = check_sql_semaphore_value(dbdir, semaphore)
+
+    isolatedb = dbdir + "moss.db"
+
+    conn = sqlite3.connect(isolatedb)
+    c = conn.cursor()
+    dbstring = "UPDATE ipctable SET {} = '{}'".format(semaphore, value + 1)
+
+    c.execute(dbstring)
+    conn.close()
+
+
+
+
+def check_sql_semaphore_value(dbdir, semaphore):
+    isolatedb = dbdir + "moss.db"
+
+    conn = sqlite3.connect(isolatedb)
+    c = conn.cursor()
+
+    c.execute("SELECT {} FROM ipctable".format(semaphore))
+    refdata = c.fetchall()
+    conn.close()
+
+    return int(refdata[0][0])
+
 
 def inputHeader(total_files, inputType):
     if inputType == "nanopore" or inputType == "se_illumina":
@@ -607,28 +716,47 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
 
         #Assembly complete
 
-        semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
-        assembly_semaphore_value = semaphore.value
-        if assembly_semaphore_value == 1:
-           semaphore.acquire(timeout=3600)
+        result, action = acquire_semaphore("IndexRefDB", dbdir, 1, 7200)
+        if result == 'acquired' and action == False:
+            cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir,
+                                                                     inputname)  # add assembly to references
+            os.system(cmd)
+            referencejson[inputname] = {'entryid': entryid, 'headerid': inputname,
+                                        'filename': "{}_assembled.fasta".format(inputname)}
+            with open(referenceSyncFile, 'w') as f_out:
+                json.dump(referencejson, f_out)
+            f_out.close()
+
+            release_semaphore("IndexRefDB", dbdir)
+
+        elif result != 'acquired' and action == True:
+            result += " : IndexRefDB"
+            sys.exit(result)
         else:
-           print ("Another subprocess is currently writing to the reference database.")
-           print ("Another subprocess is currently writing to the reference database.", file=logfile)
-           try:
-               semaphore.acquire(timeout=18000) #Wait maxium of 5 hours.
-           except posix_ipc.BusyError as error:
-               semaphore.unlink()
-               print("IndexRefDB is jammed.")
-               print("Unlinking semaphore")
-               semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
-               semaphore.acquire(timeout=3600)
-        cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir, inputname)  # add assembly to references
-        os.system(cmd)
-        referencejson[inputname] = {'entryid': entryid, 'headerid': inputname, 'filename': "{}_assembled.fasta".format(inputname)}
-        with open(referenceSyncFile, 'w') as f_out:
-            json.dump(referencejson, f_out)
-        f_out.close()
-        semaphore.release()
+            sys.exit('A semaphore related issue has occured.')
+
+        #semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
+        #assembly_semaphore_value = semaphore.value
+        #if assembly_semaphore_value == 1:
+        #   semaphore.acquire(timeout=3600)
+        #else:
+        #   print ("Another subprocess is currently writing to the reference database.")
+        #   print ("Another subprocess is currently writing to the reference database.", file=logfile)
+        #   try:
+        #       semaphore.acquire(timeout=18000) #Wait maxium of 5 hours.
+        #   except posix_ipc.BusyError as error:
+        #       semaphore.unlink()
+        #       print("IndexRefDB is jammed.")
+        #       print("Unlinking semaphore")
+        #       semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
+        #       semaphore.acquire(timeout=3600)
+        #cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir, inputname)  # add assembly to references
+        #os.system(cmd)
+        #referencejson[inputname] = {'entryid': entryid, 'headerid': inputname, 'filename': "{}_assembled.fasta".format(inputname)}
+        #with open(referenceSyncFile, 'w') as f_out:
+        #    json.dump(referencejson, f_out)
+        #f_out.close()
+        #semaphore.release()
 
         conn = sqlite3.connect(isolatedb)
         c = conn.cursor()
@@ -685,29 +813,48 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
 
         # Assembly complete
 
-        semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
-        assembly_semaphore_value = semaphore.value
-        if assembly_semaphore_value == 1:
-            semaphore.acquire(timeout=3600)
-        else:
-            print("Another subprocess is currently writing to the reference database.")
-            print("Another subprocess is currently writing to the reference database.", file=logfile)
-            try:
-                semaphore.acquire(timeout=18000)  # Wait maxium of 5 hours.
-            except posix_ipc.BusyError as error:
-                semaphore.unlink()
-                print("IndexRefDB is jammed.")
-                print("Unlinking semaphore")
-                semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
-                semaphore.acquire(timeout=3600)
+        result, action = acquire_semaphore("IndexRefDB", dbdir, 1, 7200)
+        if result == 'acquired' and action == False:
+            cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir,
+                                                                     inputname)  # add assembly to references
+            os.system(cmd)
+            referencejson[inputname] = {'entryid': entryid, 'headerid': inputname,
+                                        'filename': "{}_assembled.fasta".format(inputname)}
+            with open(referenceSyncFile, 'w') as f_out:
+                json.dump(referencejson, f_out)
+            f_out.close()
 
-        cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir, inputname)  # add assembly to references
-        os.system(cmd)
-        referencejson[inputname] = {'entryid': entryid, 'headerid': inputname, 'filename': "{}_assembled.fasta".format(inputname)}
-        with open(referenceSyncFile, 'w') as f_out:
-            json.dump(referencejson, f_out)
-        f_out.close()
-        semaphore.release()
+            release_semaphore("IndexRefDB", dbdir)
+
+        elif result != 'acquired' and action == True:
+            result += " : IndexRefDB"
+            sys.exit(result)
+        else:
+            sys.exit('A semaphore related issue has occured.')
+
+        #semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
+        #assembly_semaphore_value = semaphore.value
+        #if assembly_semaphore_value == 1:
+        #    semaphore.acquire(timeout=3600)
+        #else:
+        #    print("Another subprocess is currently writing to the reference database.")
+        #    print("Another subprocess is currently writing to the reference database.", file=logfile)
+        #    try:
+        #        semaphore.acquire(timeout=18000)  # Wait maxium of 5 hours.
+        #    except posix_ipc.BusyError as error:
+        #        semaphore.unlink()
+        #        print("IndexRefDB is jammed.")
+        #        print("Unlinking semaphore")
+        #        semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
+        #        semaphore.acquire(timeout=3600)
+
+        #cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir, inputname)  # add assembly to references
+        #os.system(cmd)
+        #referencejson[inputname] = {'entryid': entryid, 'headerid': inputname, 'filename': "{}_assembled.fasta".format(inputname)}
+        #with open(referenceSyncFile, 'w') as f_out:
+        #    json.dump(referencejson, f_out)
+        #f_out.close()
+        #semaphore.release()
 
         conn = sqlite3.connect(isolatedb)
         c = conn.cursor()
@@ -791,6 +938,10 @@ def uniqueNameCheck(db_dir, inputType, total_filenames):
 
 def semaphoreInitCheck():
     # Check if an assembly is currently running
+
+    #Mangler, check for value, if 0, ergo assembly quit
+
+
     semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1) 
     assembly_semaphore_value = semaphore.value
     if assembly_semaphore_value == 0:
@@ -812,17 +963,6 @@ def semaphoreInitCheck():
         except posix_ipc.BusyError as error:
             print("ReadRefDB semaphore is jammed. Unlinking it by running cleanSemaphore.py")
             semaphore.unlink()
-
-    # Check if an assembly is currently running
-    #semaphore = posix_ipc.Semaphore("/IsolateJSON", posix_ipc.O_CREAT, initial_value=1)
-    #assembly_semaphore_value = semaphore.value
-    #if assembly_semaphore_value == 0:
-    #    try:
-    #        semaphore.acquire(timeout=3600)  # Wait max 1h to see if someone is writing to database
-    #    except posix_ipc.BusyError as error:
-    #        print("IsolateJSON semaphore is jammed. Unlinking it now.")
-    #        semaphore.unlink()
-    #semaphore.release()  # No assembly running, clear to go
 
 def findTemplateNumber(db_dir, name):
     infile = open(db_dir + "REFDB.ATG.name", 'r')

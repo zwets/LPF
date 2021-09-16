@@ -72,7 +72,7 @@ def SurveillancePipeline(input, seqType, masking_scheme, prune_distance, bc,
 
 
     #Check if an assembly is currently running and status on other semaphores
-    moss.semaphoreInitCheck() #Wait here is writing is taking place in reference DB.
+    #moss.semaphoreInitCheck() #Wait here is writing is taking place in reference DB.
     print ("semaphore check complete")
 
 
@@ -148,9 +148,9 @@ def SurveillancePipeline(input, seqType, masking_scheme, prune_distance, bc,
         print("# -ref: " + reference, file=logfile)
     print("loading input")
 
-    moss.runResFinder(exepath, total_filenames, target_dir)
-    moss.runPlasmidFinder(exepath, total_filenames, target_dir)
-    moss.runVirulenceFinder(exepath, total_filenames, target_dir)
+    #moss.runResFinder(exepath, total_filenames, target_dir)
+    #moss.runPlasmidFinder(exepath, total_filenames, target_dir)
+    #moss.runVirulenceFinder(exepath, total_filenames, target_dir)
     best_template_score, template_found, templatename = moss.findTemplateSurveillance(total_filenames, target_dir, kma_database_path, logfile, kma_path)
 
     best_template = moss.findTemplateNumber(db_dir, templatename)
@@ -195,18 +195,31 @@ def SurveillancePipeline(input, seqType, masking_scheme, prune_distance, bc,
     #If reference found:
 
     #Check that no assembly started during template finding
-    semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
-    assembly_semaphore_value = semaphore.value
-    if assembly_semaphore_value == 0: #Extremely rare, so not a big deal and this potentially only could lead to a slide missplacement which can then be fixed the the redistribution algorithm
-        print ("An assembly started during template finding. Consider running the redistribution algorithm of {} if you think the two current inputs could be closely related. This is unlikely but possible!".format(templatename))
-        try:
-            semaphore.acquire(timeout=18000)  # Wait maxium of 5 hours. Illumina assemblies can take a lot of time, but should not exceed 5h.
-            semaphore.release()  # No assembly running, clear to go
 
-        except posix_ipc.BusyError as error:
-            semaphore.unlink()
-            print("IndexRefDB semaphore is jammed")
-            print("Unlinking IndexRefDB semaphore")
+    result, action = moss.acquire_semaphore("IndexRefDB", dbdir, 1, 7200)
+    if result == 'acquired' and action == False:
+        release_semaphore("IndexRefDB", dbdir)
+    elif result != 'acquired' and action == True:
+        result += " : IndexRefDB"
+        sys.exit(result)
+    else:
+        sys.exit('A semaphore related issue has occured.')
+
+
+    #semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
+    #assembly_semaphore_value = semaphore.value
+    #if assembly_semaphore_value == 0: #Extremely rare, so not a big deal and this potentially only could lead to a slide missplacement which can then be fixed the the redistribution algorithm
+    #    print ("An assembly started during template finding. Consider running the redistribution algorithm of {} if you think the two current inputs could be closely related. This is unlikely but possible!".format(templatename))
+    #    try:
+    ##        semaphore.acquire(timeout=18000)  # Wait maxium of 5 hours. Illumina assemblies can take a lot of time, but should not exceed 5h.
+    #        semaphore.release()  # No assembly running, clear to g
+    #
+    #    except posix_ipc.BusyError as error:
+    #        semaphore.unlink()
+    #        print("IndexRefDB semaphore is jammed")
+    #        print("Unlinking IndexRefDB semaphore")
+
+
 
     if " " in templatename:
         templateaccesion = templatename.split(" ")[0]
@@ -356,24 +369,40 @@ def SurveillancePipeline(input, seqType, masking_scheme, prune_distance, bc,
         conn.commit()
         conn.close()
 
-        semaphore = posix_ipc.Semaphore("/IsolateJSON", posix_ipc.O_CREAT, initial_value=1)
-        try:
-            semaphore.acquire(timeout=3600)
-        except posix_ipc.BusyError as error:
-            semaphore.unlink()
-            print ("Could not connect to IsolateJSON semaphore")
-            print ("Unlinking semaphore and reacquiring it")
-            semaphore = posix_ipc.Semaphore("/IsolateJSON", posix_ipc.O_CREAT, initial_value=1)
-            semaphore.acquire(timeout=3600)
+        #semaphore = posix_ipc.Semaphore("/IsolateJSON", posix_ipc.O_CREAT, initial_value=1)
+        result, action = moss.acquire_semaphore("IsolateJSON", dbdir, 1, 7200)
+        if result == 'acquired' and action == False:
+            with open(isolateSyncFile) as json_file:
+                IsolateJSON = json.load(json_file)
+            json_file.close()
+            IsolateJSON[inputname] = {'entryid': entryid, 'headerid': templatename, 'refname': refname}
+            with open(isolateSyncFile, 'w') as f_out:
+                json.dump(IsolateJSON, f_out)
 
-        with open(isolateSyncFile) as json_file:
-            IsolateJSON = json.load(json_file)
-        json_file.close()
-        IsolateJSON[inputname] = {'entryid': entryid, 'headerid': templatename, 'refname': refname}
-        with open(isolateSyncFile, 'w') as f_out:
-            json.dump(IsolateJSON, f_out)
-        f_out.close()
-        semaphore.release()
+            release_semaphore("IsolateJSON", dbdir)
+
+        elif result != 'acquired' and action == True:
+            sys.exit(result)
+        else:
+            sys.exit('A semaphore related issue has occured.')
+
+        #try:
+        #    semaphore.acquire(timeout=3600)
+        #except posix_ipc.BusyError as error:
+        #    semaphore.unlink()
+        #    print ("Could not connect to IsolateJSON semaphore")
+        #    print ("Unlinking semaphore and reacquiring it")
+        #    semaphore = posix_ipc.Semaphore("/IsolateJSON", posix_ipc.O_CREAT, initial_value=1)
+        #    semaphore.acquire(timeout=3600)
+
+        #with open(isolateSyncFile) as json_file:
+        #    IsolateJSON = json.load(json_file)
+        #json_file.close()
+        #IsolateJSON[inputname] = {'entryid': entryid, 'headerid': templatename, 'refname': refname}
+        #with open(isolateSyncFile, 'w') as f_out:
+        #    json.dump(IsolateJSON, f_out)
+        #f_out.close()
+        #semaphore.release()
 
         end_time = datetime.datetime.now()
         run_time = end_time - start_time

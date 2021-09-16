@@ -8,10 +8,7 @@ import argparse
 import operator
 import time
 import json
-import asyncio
-import websockets
-import paramiko
-from scp import SCPClient
+import sqlite3
 import moss_functions as moss
 
 
@@ -23,8 +20,9 @@ isolatedb = args.input + "moss.db"
 
 conn = sqlite3.connect(isolatedb)
 c = conn.cursor()
-
-dbstring = "UPDATE referencetable SET isolateid = '{}' WHERE headerid = '{}'".format(isolateid, templatename)
+#c.execute("""CREATE TABLE IF NOT EXISTS ipctable(IndexRefDB TEXT, IsolateJSON TEXT, ReferenceJSON TEXT, ReadRefDB TEXT, running_analyses TEXT, queued_analyses TEXT, finished_analyses TEXT)""")
+#dbstring = "UPDATE ipctable SET IndexRefDB = '{}'".format(1)
+dbstring = "UPDATE ipctable SET IndexRefDB = 1, IsolateJSON = 1, ReferenceJSON = 1, ReadRefDB = 100, running_analyses = \"\", queued_analyses = \"\""
 c.execute(dbstring)
 
 conn.commit()
