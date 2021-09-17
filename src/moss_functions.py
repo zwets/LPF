@@ -104,16 +104,22 @@ def check_alignment_kma_cov(file):
 
     return coverage
 
-def findTemplateSurveillance(total_filenames, target_dir, kma_database_path, logfile, kma_path):
+def findTemplateSurveillance(total_filenames, target_dir, kma_database_path, logfile, kma_path, mac):
     #Variable initilization
     template_found = False
     best_template = ""
     best_template_score = 0.0
     templatename = ""
     print("# Finding best template for Surveillance pipeline", file=logfile)
-    cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -mem_mode -sasm -ef -shm".format(kma_path, total_filenames, target_dir, kma_database_path)
-    print (cmd, file = logfile)
-    check_shm_kma(kma_path, kma_database_path, cmd, logfile)
+    if mac:
+        cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -mem_mode -sasm -ef".format(kma_path,
+                                                                                                  total_filenames,
+                                                                                                  target_dir,
+                                                                                                  kma_database_path)
+        os.system(cmd)
+    else:
+        cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -mem_mode -sasm -ef -shm".format(kma_path, total_filenames, target_dir, kma_database_path)
+        check_shm_kma(kma_path, kma_database_path, cmd, logfile)
     ###
     #Currently, facing the issue of only have 1 output in reference list. why? ask Philip
     try:
@@ -145,7 +151,7 @@ def findTemplateSurveillance(total_filenames, target_dir, kma_database_path, log
         return best_template_score, template_found, templatename
     ###
 
-def illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion,db_dir):
+def illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion,db_dir, mac):
     illumina_name = input[0].split("/")[-1]
 
     #Claim ReafRefDB is IndexRefDB is free
@@ -160,11 +166,18 @@ def illuminaMappingForward(input, best_template, target_dir, kma_database_path, 
         sys.exit('A semaphore related issue has occured.')
 
     if input[0] != "":
-        cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
-            kma_path, input[0][0], target_dir, illumina_name, templateaccesion, kma_database_path,
-            str(best_template), str(multi_threading))
-        print(cmd, file=logfile)
-        check_shm_kma(kma_path, kma_database_path, cmd, logfile)
+        if mac:
+            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {}".format(
+                kma_path, input[0][0], target_dir, illumina_name, templateaccesion, kma_database_path,
+                str(best_template), str(multi_threading))
+            os.system(cmd)
+        else:
+
+            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
+                kma_path, input[0][0], target_dir, illumina_name, templateaccesion, kma_database_path,
+                str(best_template), str(multi_threading))
+            print(cmd, file=logfile)
+            check_shm_kma(kma_path, kma_database_path, cmd, logfile)
         print("# Illumina mapping completed succesfully", file=logfile)
     #semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
     #assembly_semaphore_value = semaphore.value
@@ -199,7 +212,7 @@ def illuminaMappingForward(input, best_template, target_dir, kma_database_path, 
     #            "IndexRefDB semaphore is jammed, and so ReadRefDB could not be claim")
 
 
-def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion, db_dir):
+def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion, db_dir, mac):
     print (input, file=logfile)
     illumina_name = input[0].split("/")[-1]
 
@@ -216,11 +229,17 @@ def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfi
         sys.exit('A semaphore related issue has occured.')
 
     if input[0] != "":
-        cmd = "{} -ipe {} {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
-            kma_path, input[0], input[1], target_dir, illumina_name, templateaccesion,
-            kma_database_path, str(best_template), str(multi_threading))
-        print(cmd, file=logfile)
-        check_shm_kma(kma_path, kma_database_path, cmd, logfile)
+        if mac:
+            cmd = "{} -ipe {} {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
+                kma_path, input[0], input[1], target_dir, illumina_name, templateaccesion,
+                kma_database_path, str(best_template), str(multi_threading))
+            os.system(cmd)
+        else:
+            cmd = "{} -ipe {} {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
+                kma_path, input[0], input[1], target_dir, illumina_name, templateaccesion,
+                kma_database_path, str(best_template), str(multi_threading))
+            print(cmd, file=logfile)
+            check_shm_kma(kma_path, kma_database_path, cmd, logfile)
         print("# Illumina mapping completed succesfully", file=logfile)
 
     """
@@ -267,7 +286,7 @@ def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfi
     """
 
 
-def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, kma_path, templateaccesion, db_dir):
+def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, kma_path, templateaccesion, db_dir, mac):
     nanopore_name = input[0].split("/")[-1]
 
     # Claim ReafRefDB is IndexRefDB is free
@@ -283,11 +302,17 @@ def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile
         sys.exit('A semaphore related issue has occured.')
 
     if input[0] != "":
-        cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {} -shm".format(
-            kma_path, input[0], target_dir, nanopore_name, templateaccesion, kma_database_path,
-            str(best_template), str(multi_threading), str(bc))
-        print(cmd, file=logfile)
-        check_shm_kma(kma_path, kma_database_path, cmd, logfile)
+        if mac:
+            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {}".format(
+                kma_path, input[0], target_dir, nanopore_name, templateaccesion, kma_database_path,
+                str(best_template), str(multi_threading), str(bc))
+            os.system(cmd)
+        else:
+            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {} -shm".format(
+                kma_path, input[0], target_dir, nanopore_name, templateaccesion, kma_database_path,
+                str(best_template), str(multi_threading), str(bc))
+            print(cmd, file=logfile)
+            check_shm_kma(kma_path, kma_database_path, cmd, logfile)
         print("# Nanopore mapping completed succesfully", file=logfile)
 
     """
