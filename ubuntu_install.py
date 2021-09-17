@@ -4,9 +4,6 @@ import  os
 #os.system(cmd)
 #Kma
 
-#sudo apt-get install r-base
-#GET R
-
 def main():
     #Ret til python3 -m
     #Assumes anaconda is installed
@@ -16,6 +13,8 @@ def main():
     cmd = "sudo apt-get install libz-dev"
     os.system(cmd)
     cmd = "sudo apt  install curl"
+    os.system(cmd)
+    cmd = "sudo apt-get install r-base"
     os.system(cmd)
     cmd = "curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -"
     os.system(cmd)
@@ -44,6 +43,8 @@ def main():
     os.system(cmd)
     print("Installing docker")
     cmd = "sudo apt install docker.io; sudo systemctl enable --now docker; sudo usermod -a -G docker $USER;"
+    os.system(cmd)
+    cmd = "Rscript r_packages_install.R"
     os.system(cmd)
     #cmd = "newgrp docker"
     #os.system(cmd)
