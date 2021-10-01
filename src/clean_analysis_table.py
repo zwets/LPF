@@ -16,17 +16,22 @@ parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
 parser.add_argument('-i', action="store", type=str, dest='input', default="", help='db_dir for moss directory')
 args = parser.parse_args()
 
+runningfile = args.input + "/analyticalFiles/runningAnalyses.json"
+
+referencejson= dict()
+with open(runningfile, 'w') as f_out:
+    json.dump(referencejson, f_out)
+f_out.close()
+
+queuedfile = args.input + "/analyticalFiles/queuedAnalyses.json"
+
+referencejson= dict()
+with open(queuedfile, 'w') as f_out:
+    json.dump(referencejson, f_out)
+f_out.close()
 
 
-isolatedb = args.input + "moss.db"
+#TBD: Here remove directories created, and perhaps look in the SQL db to remove anyhing that may have been placed there
 
-conn = sqlite3.connect(isolatedb)
-c = conn.cursor()
-#c.execute("""CREATE TABLE IF NOT EXISTS ipctable(IndexRefDB TEXT, IsolateJSON TEXT, ReferenceJSON TEXT, ReadRefDB TEXT, running_analyses TEXT, queued_analyses TEXT, finished_analyses TEXT)""")
-#dbstring = "UPDATE ipctable SET IndexRefDB = '{}'".format(1)
-dbstring = "UPDATE ipctable SET IndexRefDB = 1, IsolateJSON = 1, ReferenceJSON = 1, ReadRefDB = 100, running_analyses = \"\", queued_analyses = \"\""
-c.execute(dbstring)
 
-conn.commit()
-conn.close()
 

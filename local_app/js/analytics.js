@@ -189,6 +189,8 @@ function search_db_query(sql) {
 }
 
 function outbreakClustersCollapsible() {
+    document.getElementById("AMRtab").style.display = "none";
+    document.getElementById("cluster-exploration-section").style.display = "block";
     let db_dir = document.getElementById('current-config').innerHTML
     //var configobj = JSON.parse(configfilecontent);
 

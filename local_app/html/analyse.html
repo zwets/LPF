@@ -11,57 +11,53 @@
   <body>
   <!-- Side navigation -->
   <div class="sidenav" id="mySidebar">
-      <a href="./index.html" id>Home</a>
+      <a href="./index.html" id>Guide</a>
       <a href="./services.html">Services</a>
       <a href="./analytics.html">Analytics</a>
-      <a href="./database.html">Database</a>
+      <!-- <a href="./database.html">Database</a> -->
       <a href="./dashboard.html">Dashboard</a>
-      <a href="./update.html">Update</a>
+      <!-- <a href="./update.html">Update</a> -->
       <a href="./config.html">Config</a>
-      <a href="./history.html">History</a>
+      <a href="./results.html">Results</a>
   </div>
   <!-- Page content https://www.who.int/news/item/27-02-2017-who-publishes-list-of-bacteria-for-which-new-antibiotics-are-urgently-needed https://www.cdc.gov/drugresistance/biggest-threats.html  -->
 
 
   <div class="main" id="main">
     <main data-router-wrapper>
-      <section data-router-view="home" class="home">
-        <div class="home-content">
-            <div class ="home-presentation">
+      <section data-router-view="Guide" class="Guide">
+        <div class="Guide-content">
+            <div class ="Guide-presentation"n>
+            <h1>Analyse new isolates</h1></div>
+
+            <div class ="Guide-presentation" hidden>
                 <h1>Analyse new isolates</h1>
 
                 Your current system configuration is:
 
                 <pre id="current-config"></pre>
 
-                MOSS path: <pre id="current-exepath"></pre>
+                <div hidden >
+                                    MOSS path: <pre id="current-exepath"></pre>
+                </div>
+
             </div>
 
             <div class="MOSS-arguments" id="MOSS-arguments">
-              Would you like to analysis several samples or a single one?
-              <br>
-              <button type="button" id="single-sample-button" onclick="singleInputFunction()">Single sample analysis</button>
-              <button type="button" id="multiple-sample-button" onclick="multipleInputFunction()">Multiple sample analysis</button>
-              <br>
-              <br>
-                <div class="multiple-input" id="multiple-input">
-                    <div class="generate-multiple-index-file-section" id="generate-multiple-index-file-section">
-                        <label for="multiple-input-type">Select type of input:</label>
-                        <select id="multiple-input-type" name="multiple-input-type">
-                            <option value="nanopore">Nanopore reads</option>
-                            <option value="pe_illumina">Paired end illumina reads</option>
-                            <option value="se_illumina">Single end illumina reads</option>
-                        </select>
-                        <br>
-                        <form action="/action_page.php">
-                            <input type="file" id="multiple-input-field" name="multiple-input-field" multiple="multiple" value=""><br><br>
-                            <button type="button" id="create-metadata-table" onclick="create_metadata_table()">Create metadata table</button>
-                        </form>
-                        <div id='metadata-table-div'></div>
-                    </div>
-                    <div class="parameter-section" id="parameter-section">
-
-                        <div class="threads">
+                <div class="choose-metadata-csv-section" id="choose-metadata-csv-section">
+                  <label for="single-input-type">Select type of input:</label>
+                  <select id="single-input-type" name="single-input-type">
+                      <option value="nanopore">Nanopore reads</option>
+                      <option value="pe_illumina">Paired end illumina reads</option>
+                      <option value="se_illumina">Single end illumina reads</option>
+                  </select>
+                  <br><br>
+                    Select a metadata.csv file to analyze:<form action="/action_page.php">
+                      <input type="file" id="single-input-field" name="single-input-field" multiple="multiple" value=""><br><br>
+                  </form>
+                  <div>
+                  </div>
+                    <div class="threads">
                             <label for="threads">Number of threads (default = 1):</label>
                             <select name="threads" id="threads">
                                 <option value="1">1</option>
@@ -71,7 +67,7 @@
                             </select>
                             <br>
 
-                            <div class="parallel-section" id="parallel-section">
+                            <div class="parallel-section-submit" id="parallel-section-submit">
                                 <form>
                                     <label for="parallel-jobs"> Number of jobs to be run in parallel (default:1   max:8):</label>
                                     <input type="text" id="parallel-jobs" name="parallel-jobs" value=1>
@@ -79,38 +75,10 @@
                                 </form>
                             </div>
                         </div>
-                        <hr>
-
-                        <button onclick="submitMultiAnalysis()">Submit Analysis</button>
-                    </div>
-                </div>
-
-              <div class="single-input" id="single-input">
-                  <label for="single-input-type">Select type of input:</label>
-                  <select id="single-input-type" name="single-input-type">
-                      <option value="nanopore">Nanopore reads</option>
-                      <option value="pe_illumina">Paired end illumina reads</option>
-                      <option value="se_illumina">Single end illumina reads</option>
-                  </select>
-                  <br>
-                  <form action="/action_page.php">
-                      <input type="file" id="single-input-field" name="single-input-field" multiple="multiple" value=""><br><br>
-                  </form>
-                  <div>
-                      <!-- Rounded switch -->
-                      <label>Use current IP address for GEO coordinates of sample: </label>
-                      <label class="switch" onclick="geotooglefunc">
-                          <input type="checkbox" id="geotoggle">
-                          <span class="slider round"></span>
-                      </label>
-
-                      <label>Or give custom location: City:</label>
-                      <input type="text" id="City" name="City" value="">
-                      <label>Country: </label>
-                      <input type="text" id="Country" name="Country" value="">
-                  </div>
 
                       <button onclick="submitSingleAnalysis()">Submit Analysis</button>
+                    <pre id="analysis-msg"></pre>
+
                   </div>
               </div>
 

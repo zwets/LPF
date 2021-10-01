@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Microbial Outbreak Surveillance System 1.0</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../js/generate_metadata_sheet.js" type="text/javascript"></script>
+</head>
+
+
+  <body>
+  <!-- Side navigation -->
+  <div class="sidenav" id="mySidebar">
+      <a href="./index.html" id>Guide</a>
+      <a href="./services.html">Services</a>
+      <a href="./analytics.html">Analytics</a>
+      <!-- <a href="./database.html">Database</a> -->
+      <a href="./dashboard.html">Dashboard</a>
+      <!-- <a href="./update.html">Update</a> -->
+      <a href="./config.html">Config</a>
+      <a href="./results.html">Results</a>
+  </div>
+  <!-- Page content https://www.who.int/news/item/27-02-2017-who-publishes-list-of-bacteria-for-which-new-antibiotics-are-urgently-needed https://www.cdc.gov/drugresistance/biggest-threats.html  -->
+
+
+  <div class="main" id="main">
+    <main data-router-wrapper>
+      <section data-router-view="Guide" class="Guide">
+        <div class="Guide-content">
+            <div class ="Guide-presentation">
+                <h1>Generate a metadata sheet for analysis</h1></div>
+            <div class ="Guide-presentation" hidden>
+                <h1>Generate a metadata sheet for analysis</h1>
+
+                Your current system configuration is:
+
+                <pre id="current-config"></pre>
+                <div hidden>
+                    MOSS path: <pre id="current-exepath"></pre>
+
+                </div>
+            </div>
+
+            <div class="MOSS-arguments" id="MOSS-arguments">
+                <b>Select input files to generate metadata sheet</b>
+              <br>
+                <div class="generate-metadata-sheet" id="generate-metadata-sheet">
+                    <div class="generate-multiple-index-file-section" id="generate-multiple-index-file-section">
+                        <label for="multiple-input-type">Read Type:</label>
+                        <select id="multiple-input-type" name="multiple-input-type">
+                            <option value="se">Long Reads</option>
+                            <option value="se">Single end</option>
+                            <option value="pe">Paired end</option>
+                        </select>
+                        <form action="/action_page.php">
+                            <input type="file" id="multiple-input-field" name="multiple-input-field" multiple="multiple" value=""><br>
+                            Name your metadata sheet: <input type="text" id="metadata_sheet_name" name="metadata_sheet_name">
+                            <br>
+                            <button type="button" id="create-metadata-table" onclick="create_metadata_sheet()">Create metadata sheet</button>
+                        </form>
+                        <pre id="metadata-sheet-msg"></pre>
+                    </div>
+                </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <script type="text/javascript">
+      document.getElementById('upload-config-file').addEventListener('change', readSingleFile, false);
+  </script>
+  </body>
+</html>

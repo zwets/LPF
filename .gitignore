@@ -12,7 +12,7 @@
 /virulencefinder
 # testing
 /local_app/coverage
-
+setuptools-33.1.1.zip
 # production
 /local_app/build
 

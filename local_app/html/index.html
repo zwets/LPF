@@ -10,23 +10,25 @@
   <body>
   <!-- Side navigation -->
   <div class="sidenav" id="mySidebar">
-    <a href="./index.html" id>Home</a>
-    <a href="./services.html">Services</a>
-    <a href="./analytics.html">Analytics</a>
-    <a href="./database.html">Database</a>
-    <a href="./dashboard.html">Dashboard</a>
-    <a href="./update.html">Update</a>
-    <a href="./config.html">Config</a>
-    <a href="./history.html">History</a>
+      <a href="./index.html" id>Guide</a>
+      <a href="./services.html">Services</a>
+      <a href="./analytics.html">Analytics</a>
+      <!-- <a href="./database.html">Database</a> -->
+      <a href="./dashboard.html">Dashboard</a>
+      <!-- <a href="./update.html">Update</a> -->
+      <a href="./config.html">Config</a>
+      <a href="./results.html">Results</a>
   </div>
   <!-- Page content -->
 
 
   <div class="main" id="main">
     <main data-router-wrapper>
-      <section data-router-view="home" class="home">
-        <div class="home-content">
-          <div class ="home-presentation">
+      <section data-router-view="Guide" class="Guide">
+        <div class="Guide-content">
+          <div class ="Guide-presentation">
+                <h1>Welcome to Microbial Outbreak Surveillance System 1.0</h1></div>
+          <div class ="Guide-presentation" hidden>
             <h1>Welcome to Microbial Outbreak Surveillance System 1.0</h1>
             <b>For additional documentation on Microbial Outbreak Surveillance System, please visit: GITHUB LINK</b><br>
             <u>If this is your first time installing and using Microbial Outbreak Surveillance System (MOSS), please read and follow the set-up guide carefully.<br>
@@ -40,15 +42,10 @@
              <ol>
                <li><b>Initializing a new MOSS system</b></li>
                Go to the Service tab in the left menu and select "Initialize database". Here to will have to give the following input: 1.) Path to the location in which the
-               database system in to be stored (I.e. "/home/usr/dev/MOSSSYSTEM/"), path to where the MOSS software was installed (I.e. "/home/usr/programs/MOSS/"), and finally the
+               database system in to be stored (I.e. "/Guide/usr/dev/MOSSSYSTEM/"), path to where the MOSS software was installed (I.e. "/Guide/usr/programs/MOSS/"), and finally the
                path to a KMA indexed database which contains reference sequences.
-               <li><b>Downloading and configuring an existing MOSS system</b></li>
-               MANGLER
-             </ol>
-              <li><b>Analyzing isolate samples</b></li>
-              <li><b>Analysis reports</b></li>
               <li><b>Analysis status</b></li>
-              In order to check the status of an analysis, click the History tab in the action bar to the left.
+              In order to check the status of an analysis, click the results tab in the action bar to the left.
              If the analysis has finished, it will be shown under "Show Finished Analyses". Otherwise, it will be shown under "Show Running Analyses".
              <li><b>General considerations when using MOSS</b></li>
              Some of the bioinformatical programs run during the MOSS pipeline can be quite computationally requiring,
@@ -60,6 +57,26 @@
              For these reasons, it is <b>strongly</b> recommended that a computer build for running MOSS has atleast 16 gb ram - Ideally 32 or even 64.
              <br>Additionally, a good CPU should be utilized, especially if isolate samples are to be run in parallel. The recommended number of cores are <b>atleast</b> 12.
            </ol>
+          </div>
+          <div class="usage-guide">
+            <h2><b><u>How to use MOSS:</u></b></h2>
+           <ol>
+              <li><b>Creating a metadata .csv sheet.</b></li>
+             Once a database system has been initialized as described above, the analysis of isolates can begin.<br>
+             In order to analyse one or more samples, a metadata sheet must first be created. <br>
+             A metadata sheet is a csv-file (comma-separated-values) and can be generated in the <b>Services</b> section of the left menu.
+             <li><b>Filling in metadata information.</b></li>
+             After the metadata sheet has been created it has to filled in with metadata related to the samples.<br>
+             Open the .csv file with an editor of your choosing (excel, etc.) and fill in the data. <br>
+             Once the data has been filled in make sure to <b>save the file as a .csv file</b>. Make sure to use the save-as function when saving.<br>
+             <li><b>Submit a metadata .csv file for analysis.</b></li>
+             Once the metadata has been inserted the .csv file can be submitted for analysis.<br>
+             This is done in the <b>Service > Submit metadata sheet for analysis</b> section in the left-side menu. <br>
+             Choose either Ubuntu/linux system or MacOS depending on your operating system. For MacOS multiple-parallel analysis is not available. <br>
+             <b>Do not turn off the computer/close the MOSS app during analysis.</b>
+             <li><b>Reviewing results.</b></li>
+             Once the analysis has been completed, the results can be found in the left-side menu under <b>Results</b>.<br>
+
           </div>
         </div>
 

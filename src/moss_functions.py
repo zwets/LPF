@@ -36,6 +36,36 @@ from subprocess import check_output, STDOUT
 
 #Utility functions
 
+
+
+
+def sql_string_metadata(metadict):
+    entries = ""
+    values = ""
+    for item in metadict:
+        entries += item + ","
+        values += "'{}',".format(metadict[item])
+    entries = entries[:-1]
+    values = values[:-1]
+    return entries.replace("'", "''"), values
+
+
+
+
+def prod_metadata_dict(metadata, metadata_headers):
+    metadict = dict()
+    if '\ufeff' in metadata:
+        metadata = metadata.replace(u'\ufeff','').split(",")
+    else:
+        metadata = metadata.split(",")
+    if '\ufeff' in metadata_headers:
+        metadata_headers = metadata_headers.replace(u'\ufeff', '').split(",")
+    else:
+        metadata_headers = metadata_headers.split(",")
+    for i in range(len(metadata_headers)):
+        metadict[metadata_headers[i]] = metadata[i]
+    return metadict
+
 def check_to_destroy_shm_db(kma_path, kma_database_path, db_dir, logfile):
     with open(db_dir + "analyticalFiles/queuedAnalyses.json") as json_file:
         queue_json = json.load(json_file)
@@ -67,15 +97,16 @@ def correctPathCheck(pathName):
         pathName = pathName + "/"
     return pathName
 
-def calc_coordinates_from_location(location):
+def calc_coordinates_from_location(city, country):
     try:
         geolocator = Nominatim(user_agent="moss")
-        loc = geolocator.geocode(location)
-        coordinates = "[{}, {}]".format(loc.latitude,loc.longitude)
+        loc = geolocator.geocode("{},{}".format(city, country))
+        latitude = loc.latitude
+        longitude = loc.longitude
     except:
-        coordinates = ""
-        location = location
-    return coordinates, location
+        latitude = ""
+        longitude = ""
+    return latitude, longitude
 
 
 def check_coordinates(coordinates):
@@ -112,13 +143,13 @@ def findTemplateSurveillance(total_filenames, target_dir, kma_database_path, log
     templatename = ""
     print("# Finding best template for Surveillance pipeline", file=logfile)
     if mac:
-        cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -mem_mode -sasm -ef".format(kma_path,
+        cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -nf -mem_mode -sasm -ef".format(kma_path,
                                                                                                   total_filenames,
                                                                                                   target_dir,
                                                                                                   kma_database_path)
         os.system(cmd)
     else:
-        cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -mem_mode -sasm -ef -shm".format(kma_path, total_filenames, target_dir, kma_database_path)
+        cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -nf -mem_mode -sasm -ef -shm".format(kma_path, total_filenames, target_dir, kma_database_path)
         check_shm_kma(kma_path, kma_database_path, cmd, logfile)
     ###
     #Currently, facing the issue of only have 1 output in reference list. why? ask Philip
@@ -167,13 +198,13 @@ def illuminaMappingForward(input, best_template, target_dir, kma_database_path, 
 
     if input[0] != "":
         if mac:
-            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {}".format(
+            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -nf -cge -vcf -bc90 -Mt1 {} -t {}".format(
                 kma_path, input[0][0], target_dir, illumina_name, templateaccesion, kma_database_path,
                 str(best_template), str(multi_threading))
             os.system(cmd)
         else:
 
-            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
+            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -nf -vcf -bc90 -Mt1 {} -t {} -shm".format(
                 kma_path, input[0][0], target_dir, illumina_name, templateaccesion, kma_database_path,
                 str(best_template), str(multi_threading))
             print(cmd, file=logfile)
@@ -230,12 +261,12 @@ def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfi
 
     if input[0] != "":
         if mac:
-            cmd = "{} -ipe {} {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
+            cmd = "{} -ipe {} {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -nf -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
                 kma_path, input[0], input[1], target_dir, illumina_name, templateaccesion,
                 kma_database_path, str(best_template), str(multi_threading))
             os.system(cmd)
         else:
-            cmd = "{} -ipe {} {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
+            cmd = "{} -ipe {} {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -nf -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
                 kma_path, input[0], input[1], target_dir, illumina_name, templateaccesion,
                 kma_database_path, str(best_template), str(multi_threading))
             print(cmd, file=logfile)
@@ -303,12 +334,12 @@ def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile
 
     if input[0] != "":
         if mac:
-            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {}".format(
+            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {}".format(
                 kma_path, input[0], target_dir, nanopore_name, templateaccesion, kma_database_path,
                 str(best_template), str(multi_threading), str(bc))
             os.system(cmd)
         else:
-            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {} -shm".format(
+            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {} -shm".format(
                 kma_path, input[0], target_dir, nanopore_name, templateaccesion, kma_database_path,
                 str(best_template), str(multi_threading), str(bc))
             print(cmd, file=logfile)
@@ -1364,13 +1395,16 @@ def retrieve_cge_counts(target_dir, ID, db_dir, image_location, templatename, ex
 
 
 
-def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename, exepath):
-
+def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename, exepath, logfile):
+    print ("no init=", file=logfile)
     pdf = FPDF()  # A4 (210 by 297 mm)
+    print ("step 0", file = logfile)
+
     filename = "{}_report.pdf".format(ID) #ADD idd
     clusterSize = int(matrixClusterSize(db_dir, templatename)) + 2
     latestAddition = lastClusterAddition(db_dir, templatename)
     phenotypes, panel_found, panel_list = generate_amr_resistance_profile_table(db_dir, ID, pdf, target_dir, exepath, templatename)
+    print ("step 1", file = logfile)
 
     ''' First Page '''
     pdf.add_page()
@@ -1385,9 +1419,11 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
                  "".format(ID, file_name, templatename)
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(10)
+
     analysistimestamp = time_of_analysis(db_dir, ID)
     pdf.set_font('Arial', '', 10)
     #Cell here
+    print ("step 2", file = logfile)
 
     pdf.set_font('Arial', '', 12)
     pdf.set_text_color(51, 153, 255)
@@ -1405,6 +1441,8 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
     pdf.set_text_color(51, 153, 255)
     pdf.set_font('Arial', '', 12)
     pdf.cell(85, 5, "CGE results: ", 0, 1, 'L')
+    print ("step 3", file = logfile)
+
     plasmids_isolate, virulencegenes_isolate, amrgenes_isolate, plasmids_reference, virulencegenes_reference, amrgenes_reference = retrieve_cge_counts(target_dir, ID, db_dir, image_location, templatename, exepath)
     textstring = "AMR genes in this sample: {}. \n" \
                  "AMR genes in this cluster: {}. \n" \
@@ -1417,25 +1455,28 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
     pdf.set_font('Arial', '', 10)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(5)
-    pdf.set_text_color(51, 153, 255)
-    pdf.set_font('Arial', '', 12)
-    pdf.cell(85, 5, "MLST results: ", 0, 1, 'L')
-    textstring = "Genotype: ST410."
-    pdf.set_text_color(0, 0, 0)
-    pdf.set_font('Arial', '', 10)
-    pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
-
 
     pdf.set_xy(x=105, y=65)
+    print("pre-r", file=outfile)
+
+    #Rsub-script is not called when page is left
     if panel_found:
-        cmd = "Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir)
-        os.system(cmd)
+        cmd = "Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir).split()
+        subprocess.run(cmd)
+        print ("did it work?", file=outfile)
+        time.sleep(5)
+        #here the r script does not produce an image #Sub process stops
         pdf.image("{}amr_table.png".format(target_dir), x=90, y=60, w=pdf.w / 1.95, h=pdf.h / 1.75)
+
     else:
         pdf.cell(85, 5, "Organism was not in annotated panel. The following AMR genes were found:", 0, 1, 'L')
-        cmd = "Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir)
-        os.system(cmd)
+        cmd = "Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir).split()
+        subprocess.run(cmd)
+        print ("did it work?", file=outfile)
+        time.sleep(5)
+
         pdf.image("{}amr_table.png".format(target_dir), x=90, y=60, w=pdf.w / 1.95, h=pdf.h / 1.75)
+
     pdf.ln(10)
 
     pdf.set_font('Arial', '', 12)
@@ -1445,7 +1486,7 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
     pdf.image(exepath + "/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
     create_title(pdf, ID, "Phylogeny results")
     pdf.ln(20)
-    pdf.image(image_location, x=10, y=35, w=pdf.w/1.2, h=pdf.h/1.2)
+    pdf.image(image_location, x=10, y=35, w=pdf.w/1.6, h=pdf.h/1.6)
 
 
     pdf.output(target_dir + filename, 'F')
@@ -1542,31 +1583,49 @@ def virulencePage(jsoninput, pdf, target_dir):
 
 
 def plasmid_data_for_report(jsoninput, target_dir):
-    with open(jsoninput) as json_file:
-        data = json.load(json_file)
-    count1 = 0
-    plasmid_list = []
-    for species in data['plasmidfinder']['results']:
-        for hit in data['plasmidfinder']['results'][species]:
-            if type(data['plasmidfinder']['results'][species][hit]) == dict:
-                print (data['plasmidfinder']['results'][species][hit])
-                for gene in data['plasmidfinder']['results'][species][hit]:
-                    count1 += 1
-                    plasmid_list.append(gene)
+    if os.path.isfile(jsoninput):
+        with open(jsoninput) as json_file:
+            data = json.load(json_file)
+        count1 = 0
+        plasmid_list = []
+        for species in data['plasmidfinder']['results']:
+            for hit in data['plasmidfinder']['results'][species]:
+                if type(data['plasmidfinder']['results'][species][hit]) == dict:
+                    print (data['plasmidfinder']['results'][species][hit])
+                    for gene in data['plasmidfinder']['results'][species][hit]:
+                        count1 += 1
+                        plasmid_list.append(gene)
+    else:
+        count1 = 0
+        plasmid_list = []
     return count1, plasmid_list
 
-def virulence_data_for_report(jsoninput, target_dir):
-    with open(jsoninput) as json_file:
-        data = json.load(json_file)
-    count1 = 0
-    virulence_list = []
-    for species in data['virulencefinder']['results']:
-        for hit in data['virulencefinder']['results'][species]:
-            if type(data['virulencefinder']['results'][species][hit]) == dict:
-                print (data['virulencefinder']['results'][species][hit])
-                for gene in data['virulencefinder']['results'][species][hit]:
-                    count1 += 1
-                    virulence_list.append(gene)
+def virulence_data_for_report(jsoninput, target_dir, logfile):
+    print("#t1 ", file=logfile)
+    #HERE SOMETHINIG HAPPEND CHECK
+    if os.path.isfile(jsoninput):
+        with open(jsoninput) as json_file:
+            data = json.load(json_file)
+        count1 = 0
+        print("#t2 ", file=logfile)
+
+        virulence_list = []
+        for species in data['virulencefinder']['results']:
+            print("#t3 ", file=logfile)
+
+            for hit in data['virulencefinder']['results'][species]:
+                if type(data['virulencefinder']['results'][species][hit]) == dict:
+                    print (data['virulencefinder']['results'][species][hit])
+                    print("#t4 ", file=logfile)
+
+                    for gene in data['virulencefinder']['results'][species][hit]:
+                        count1 += 1
+                        virulence_list.append(gene)
+                        print("#t5 ", file=logfile)
+    else:
+        count1 = 0
+        virulence_list = []
+
     return count1, virulence_list
 
 

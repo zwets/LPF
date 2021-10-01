@@ -119,7 +119,7 @@ body {
   display: block;
 }
 
-.home-presentation {
+.Guide-presentation {
     margin: auto;
     text-align: center;
     width: 50%;
@@ -190,13 +190,13 @@ body {
     animation: overlay 3s forwards;
 }
 
-.home, .services {
+.Guide, .services {
     height: 100%;
     width: 90%;
     position: absolute;
 }
 
-.home-content, .services-content {
+.Guide-content, .services-content {
     height: 100%;
 }
 

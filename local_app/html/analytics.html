@@ -12,23 +12,25 @@
 <!-- Side navigation -->
 <!-- Side navigation -->
 <div class="sidenav" id="mySidebar">
-    <a href="./index.html" id>Home</a>
-    <a href="./services.html">Services</a>
-    <a href="./analytics.html">Analytics</a>
-    <a href="./database.html">Database</a>
-    <a href="./dashboard.html">Dashboard</a>
-    <a href="./update.html">Update</a>
-    <a href="./config.html">Config</a>
-    <a href="./history.html">History</a>
-</div>
+      <a href="./index.html" id>Guide</a>
+      <a href="./services.html">Services</a>
+      <a href="./analytics.html">Analytics</a>
+      <!-- <a href="./database.html">Database</a> -->
+      <a href="./dashboard.html">Dashboard</a>
+      <!-- <a href="./update.html">Update</a> -->
+      <a href="./config.html">Config</a>
+      <a href="./results.html">Results</a>
+  </div>
 <!-- Page content -->
 
 
 <div class="main" id="main">
     <main data-router-wrapper>
-        <section data-router-view="home" class="home">
-            <div class="home-content">
-                <div class ="home-presentation">
+        <section data-router-view="Guide" class="Guide">
+            <div class="Guide-content">
+                <div class ="Guide-presentation">
+                <h1>Analytics</h1></div>
+                <div class ="Guide-presentation" hidden>
                     <h1>Analytics</h1>
 
                     Your current system configuration is:
@@ -42,7 +44,7 @@
                 <input type='button' onclick='showAMRtabs()'
                        value='AMR Genes' />
 
-                <input type='button' onclick='displayClusterSection()'
+                <input type='button' onclick='outbreakClustersCollapsible()'
                        value='Cluster Exploration' />
                 <br><br>
                 <div id="analytical-dashboard">
@@ -77,9 +79,6 @@
                         </div>
                     </div>
                     <div id="cluster-exploration-section" style = "display: none;">
-                        <h3>cluster exploration</h3>
-                         <button type="button" id="outbreak-clusters-button" onclick="outbreakClustersCollapsible()">Show outbreak clusters</button>
-                        <br>
                         <div id='showData'></div>
                         <br>
                     </div>

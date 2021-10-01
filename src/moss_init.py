@@ -43,6 +43,8 @@ kmaindex_db_path = moss.correctPathCheck(args.kmaindex_db_path)
 db_dir = moss.correctPathCheck(args.db_dir)
 exepath = moss.correctPathCheck(args.exepath)
 syncpath = moss.correctPathCheck(args.syncpath)
+
+
 if kmaindex_db_path != "":
     try:
         os.makedirs(db_dir)
@@ -67,6 +69,9 @@ if kmaindex_db_path != "":
     print ("cloning reference DB complete")
 
     cmd = "mkdir " + db_dir + "analyticalFiles"
+    os.system(cmd)
+
+    cmd = "mkdir " + db_dir + "analyticalFiles/metadata_csv"
     os.system(cmd)
 
     cmd = "mkdir " + db_dir + "analysis"
@@ -145,6 +150,18 @@ if kmaindex_db_path != "":
     conn = sqlite3.connect(db_dir + 'moss.db')
     c = conn.cursor()
 
+    metadata_string = ""
+    infile = open(exepath + "datafiles/ENA_list.csv", 'r')
+    for line in infile:
+        if '\ufeff' in line:
+            line = line.replace(u'\ufeff', '').split(",")
+        else:
+            line = line.split(",")
+        for item in line:
+            metadata_string += "{} TEXT,".format(item)
+    infile.close()
+    metadata_string = metadata_string[:-1]
+
     c.execute("""CREATE TABLE IF NOT EXISTS isolatetable(entryid TEXT PRIMARY KEY, headerid TEXT, isolatename TEXT, analysistimestamp TEXT, samplingtimestamp TEXT, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT)""")
     conn.commit()
     c.execute("""CREATE TABLE IF NOT EXISTS referencetable(entryid TEXT PRIMARY KEY, headerid TEXT, refname TEXT, isolateid TEXT, analysistimestamp TEXT, samplingtimestamp TEXT, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT)""") #Mangler finder results. Implement eventually
@@ -153,7 +170,7 @@ if kmaindex_db_path != "":
     conn.commit()
     c.execute("""CREATE TABLE IF NOT EXISTS amrtable(entryid TEXT PRIMARY KEY, isolatename TEXT, analysistimestamp TEXT, amrgenes TEXT, phenotypes TEXT, specie TEXT, risklevel TEXT, warning TEXT)""")
     conn.commit()
-    c.execute("""CREATE TABLE IF NOT EXISTS metadatatable(entryid TEXT PRIMARY KEY, diseases TEXT, location TEXT, geocoordinates TEXT)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS metadatatable(entryid TEXT PRIMARY KEY, {})""".format(metadata_string))
     conn.commit()
     c.execute("""CREATE TABLE IF NOT EXISTS ipctable(ipc TEXT PRIMARY KEY, IndexRefDB TEXT, IsolateJSON TEXT, ReferenceJSON TEXT, ReadRefDB TEXT, running_analyses TEXT, queued_analyses TEXT, finished_analyses TEXT)""")
     conn.commit()

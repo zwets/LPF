@@ -124,7 +124,7 @@ function most_recent_isolates_table(data_obj, data) {
 
         var col = [];
         col.push('Name');
-        col.push('Timestamp');
+        col.push('Collection_date');
 
         // Create a table.
         var table = document.createElement("table");
@@ -147,7 +147,7 @@ function most_recent_isolates_table(data_obj, data) {
             var tabCell = tr.insertCell(-1);
             tabCell.innerHTML = data_obj[i].isolatename;
             var tabCell = tr.insertCell(-1);
-            tabCell.innerHTML = data_obj[i].timestamp;
+            tabCell.innerHTML = data_obj[i].collection_date;
 
             var tabCell = tr.insertCell(-1);
             var img = document.createElement('img');
