@@ -334,12 +334,12 @@ def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile
 
     if input[0] != "":
         if mac:
-            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {}".format(
+            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {} -mct 0.1 -ml 400 -proxi -0.9 -mrc 0.7 -mrs 0.25".format(
                 kma_path, input[0], target_dir, nanopore_name, templateaccesion, kma_database_path,
                 str(best_template), str(multi_threading), str(bc))
             os.system(cmd)
         else:
-            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {} -shm".format(
+            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {} -shm -mct 0.1 -ml 400 -proxi -0.9 -mrc 0.7 -mrs 0.25".format(
                 kma_path, input[0], target_dir, nanopore_name, templateaccesion, kma_database_path,
                 str(best_template), str(multi_threading), str(bc))
             print(cmd, file=logfile)
@@ -1316,7 +1316,7 @@ def compileReportAssembly(target_dir, ID, db_dir, image_location, associated_spe
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     run_quast(target_dir, ID)
 
-    cmd = "Rscript {}src/quast_tsv_table.R {}".format(exepath, target_dir)
+    cmd = "/opt/homebrew/bin/Rscript {}src/quast_tsv_table.R {}".format(exepath, target_dir)
     os.system(cmd)
     run_bandage(target_dir, ID)
     pdf.image("{}quast_table.png".format(target_dir), x=118, y=60, w=pdf.w / 2.7, h=pdf.h / 2.1)
@@ -1457,22 +1457,24 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
     pdf.ln(5)
 
     pdf.set_xy(x=105, y=65)
-    print("pre-r", file=outfile)
+    print("pre-r", file=logfile)
 
     #Rsub-script is not called when page is left
     if panel_found:
-        cmd = "Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir).split()
-        subprocess.run(cmd)
-        print ("did it work?", file=outfile)
-        time.sleep(5)
+        cmd = "/opt/homebrew/bin/Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir)
+        print (cmd, file =logfile)
+        os.system(cmd)
+        print ("did it work?", file=logfile)
+        time.sleep(35)
         #here the r script does not produce an image #Sub process stops
         pdf.image("{}amr_table.png".format(target_dir), x=90, y=60, w=pdf.w / 1.95, h=pdf.h / 1.75)
 
     else:
         pdf.cell(85, 5, "Organism was not in annotated panel. The following AMR genes were found:", 0, 1, 'L')
-        cmd = "Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir).split()
-        subprocess.run(cmd)
-        print ("did it work?", file=outfile)
+        cmd = "/opt/homebrew/bin/Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir)
+        os.system(cmd)
+        #subprocess.run(cmd)
+        print ("did it work?", file=logfile)
         time.sleep(5)
 
         pdf.image("{}amr_table.png".format(target_dir), x=90, y=60, w=pdf.w / 1.95, h=pdf.h / 1.75)

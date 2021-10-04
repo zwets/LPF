@@ -384,15 +384,15 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
 
         cmd = "python3 {}src/outbreak_finder.py -db_dir {}".format(exepath, db_dir)
         os.system(cmd)
-        print("# STOP CHECK OUTBREAK FINDER ", file=logfile)
 
 
-        moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, templatename, exepath) #No report compiled for assemblies! Look into it! #TBD
         if not mac:
             moss.check_to_destroy_shm_db(kma_path, kma_database_path, db_dir, logfile)
         moss.endRunningAnalyses(db_dir, entryid, inputname, entryid)
 
         print("# STOP CHECK last ", file=logfile)
+
+        moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, templatename, exepath, logfile) #No report compiled for assemblies! Look into it! #TBD
 
         logfile.close()
 
