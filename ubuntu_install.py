@@ -20,6 +20,8 @@ def main():
     os.system(cmd)
     cmd = "sudo apt install nodejs"
     os.system(cmd)
+    cmd = "sudo apt install npm"
+    os.system(cmd)
     print("Installing KMA")
     cmd = "git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; git checkout nano; make; cd ..;"
     os.system(cmd)
@@ -53,7 +55,7 @@ def main():
 def findersinstall():
     cmd = "python3 -m pip install tabulate biopython cgecore gitpython python-dateutil"
     os.system(cmd)
-    cmd = "git clone https://git@bitbucket.org/genomicepidemiology/resfinder.git; cd resfinder; cd cge; git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma && make; cd ..; curl -O ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.10.1/ncbi-blast-2.10.1+-x64-linux.tar.gz; tar zxvpf ncbi-blast-2.10.1+-x64-linux.tar.gz; cd ..; git clone https://git@bitbucket.org/genomicepidemiology/resfinder_db.git db_resfinder; cd db_resfinder; python3 ../../src/resfinder_install_minimizer.py ../../kma non_interactive; cd ..; git clone https://git@bitbucket.org/genomicepidemiology/pointfinder_db.git db_pointfinder; cd db_pointfinder; python3 INSTALL.py ../../kma non_interactive; cd ..; cd ..;"
+    cmd = "git clone https://git@bitbucket.org/genomicepidemiology/resfinder.git; cd resfinder; cd cge; git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma && make; cd ..; curl -O ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.10.1/ncbi-blast-2.10.1+-x64-linux.tar.gz; tar zxvpf ncbi-blast-2.10.1+-x64-linux.tar.gz; cd ..; git clone https://git@bitbucket.org/genomicepidemiology/resfinder_db.git db_resfinder; cd db_resfinder; cp ../../src/resfinder_install_minimizer.py .;python3 resfinder_install_minimizer.py ../../kma non_interactive; cd ..; git clone https://git@bitbucket.org/genomicepidemiology/pointfinder_db.git db_pointfinder; cd db_pointfinder; python3 INSTALL.py ../../kma non_interactive; cd ..; cd ..;"
     os.system(cmd)
     cmd = "git clone https://bitbucket.org/genomicepidemiology/plasmidfinder.git; cd plasmidfinder; git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git; cd plasmidfinder_db; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;"
     os.system(cmd)

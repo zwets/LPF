@@ -108,6 +108,13 @@ while shutil.which(kma_index) is None:
 
 # Index databases
 
+print (kma_index)
+
+kma_index = kma_index.split()[:-1]
+kma_index = " ".join(kma_index) + "kma_index"
+
+print (kma_index)
+
 # Use config_file to go through database dirs
 config_file = open("config", "r")
 for line in config_file:
