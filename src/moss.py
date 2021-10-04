@@ -165,6 +165,7 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
     print("Score of the best template was: " + str(best_template_score))
 
     if template_found == False: #NO TEMPLATE FOUND #Being assembly
+        print ('mpr: false', file=logfile)
         print ("assebly stop", file = logfile)
         associated_species = "No related reference identified, required manual curation. ID: {} name: {}".format(entryid, inputname)
 
@@ -199,9 +200,7 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
     else:
         sys.exit('A semaphore related issue has occured. IndexRefDB update')
 
-
-
-
+    print('mpr: true', file=logfile)
 
     if " " in templatename:
         templateaccesion = templatename.split(" ")[0]
@@ -214,7 +213,6 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
         moss.illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion, db_dir, mac)
     if inputType == "nanopore":
         moss.nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, kma_path, templateaccesion, db_dir, mac)
-    print("# STOP CHECK MAPPING " + reference, file=logfile)
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
@@ -222,7 +220,6 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
     refdata = c.fetchall()
     conn.close()
 
-    print (refdata, file=logfile)
 
     refname = refdata[0][2]
 
@@ -289,25 +286,19 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
         cmd = "{} tree -i {}/datafiles/distancematrices/{}/distance_matrix_{} -o {}/datafiles/distancematrices/{}/tree.newick".format(ccphylo_path, db_dir, refname, refname, db_dir, refname)
         os.system(cmd)
         image_location = moss.generateFigtree("{}/datafiles/distancematrices/{}/tree.newick".format(db_dir, refname), jobid)
-        print("# STOP CHECK MAPPING ", file=logfile)
 
         if refdata[0][3] == None:
-            print("#12 ", file=logfile)
             isolateid = entryid
         else:
             isolateid = refdata[0][3] + ", " + entryid
-        print("#1 ", file=logfile)
 
 
         plasmid_count, plasmid_list = moss.plasmid_data_for_report(target_dir + "plasmidFinderResults/data.json", target_dir)
         plasmid_string = ",".join(plasmid_list)
-        print("#2 ", file=logfile)
         virulence_count, virulence_list = moss.virulence_data_for_report(target_dir + "virulenceFinderResults/data.json", target_dir, logfile)
         virulence_string = ",".join(virulence_list)
-        print("#3 ", file=logfile)
 
 
-        print("# STOP CHECK SQL TIME ", file=logfile)
 
 
         conn = sqlite3.connect(isolatedb)
@@ -329,7 +320,6 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
         c.execute(dbstring)
 
         entries, values = moss.sql_string_metadata(metadata_dict)
-        print("# STOP CHECK metadata ", file=logfile)
 
         dbstring = "INSERT INTO metadatatable(entryid, {}) VALUES('{}', {})".format(entries, entryid.replace("'", "''"), values)
         c.execute(dbstring)
@@ -338,7 +328,6 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
 
         new_plasmid_string, new_virulence_string, new_amr_string = moss.scan_reference_vs_isolate_cge(plasmid_string, allresgenes.replace(", ", ","), virulence_string, templatename, db_dir)
 
-        print("# STOP before sql updates ", file=logfile)
 
         if new_amr_string != None:
             dbstring = "UPDATE referencetable SET amrgenes = '{}' WHERE headerid = '{}'".format(new_amr_string.replace("'", "''"), templatename)
@@ -355,7 +344,6 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
 
         conn.commit()
         conn.close()
-        print("# STOP CHECK end SQL ", file=logfile)
 
 
         result, action = moss.acquire_semaphore("IsolateJSON", db_dir, 1, 7200)
@@ -374,7 +362,6 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
         else:
             sys.exit('A semaphore related issue has occured. ISOLATEJSON UPDATE')
 
-        print("# STOP CHECK END OF ANALYSIS ", file=logfile)
 
         end_time = datetime.datetime.now()
         run_time = end_time - start_time
@@ -390,9 +377,8 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
             moss.check_to_destroy_shm_db(kma_path, kma_database_path, db_dir, logfile)
         moss.endRunningAnalyses(db_dir, entryid, inputname, entryid)
 
-        print("# STOP CHECK last ", file=logfile)
 
-        moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, templatename, exepath, logfile) #No report compiled for assemblies! Look into it! #TBD
+        moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, templatename, exepath) #No report compiled for assemblies! Look into it! #TBD
 
         logfile.close()
 

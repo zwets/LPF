@@ -151,11 +151,8 @@ def findTemplateSurveillance(total_filenames, target_dir, kma_database_path, log
     else:
         #tmp disabled shm
         cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -nf -mem_mode -sasm -ef".format(kma_path, total_filenames, target_dir, kma_database_path)
-        print ("started here")
-        print (cmd)
         os.system(cmd)
         #check_shm_kma(kma_path, kma_database_path, cmd, logfile)
-    print (cmd, file = logfile)
     ###
     #Currently, facing the issue of only have 1 output in reference list. why? ask Philip
     try:
@@ -722,7 +719,6 @@ def generateFigtree(inputfile, jobid):
                             stdout=subprocess.PIPE, )
     output = proc.communicate()[0]
     id = output.decode().rstrip()
-
     cmd = "docker cp {}:/tmp/tree.png {}tree.png".format(id, inputdir)
     os.system(cmd)
 
@@ -1400,16 +1396,13 @@ def retrieve_cge_counts(target_dir, ID, db_dir, image_location, templatename, ex
 
 
 
-def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename, exepath, logfile):
-    print ("no init=", file=logfile)
+def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename, exepath):
     pdf = FPDF()  # A4 (210 by 297 mm)
-    print ("step 0", file = logfile)
 
     filename = "{}_report.pdf".format(ID) #ADD idd
     clusterSize = int(matrixClusterSize(db_dir, templatename)) + 2
     latestAddition = lastClusterAddition(db_dir, templatename)
     phenotypes, panel_found, panel_list = generate_amr_resistance_profile_table(db_dir, ID, pdf, target_dir, exepath, templatename)
-    print ("step 1", file = logfile)
 
     ''' First Page '''
     pdf.add_page()
@@ -1428,7 +1421,6 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
     analysistimestamp = time_of_analysis(db_dir, ID)
     pdf.set_font('Arial', '', 10)
     #Cell here
-    print ("step 2", file = logfile)
 
     pdf.set_font('Arial', '', 12)
     pdf.set_text_color(51, 153, 255)
@@ -1446,7 +1438,6 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
     pdf.set_text_color(51, 153, 255)
     pdf.set_font('Arial', '', 12)
     pdf.cell(85, 5, "CGE results: ", 0, 1, 'L')
-    print ("step 3", file = logfile)
 
     plasmids_isolate, virulencegenes_isolate, amrgenes_isolate, plasmids_reference, virulencegenes_reference, amrgenes_reference = retrieve_cge_counts(target_dir, ID, db_dir, image_location, templatename, exepath)
     textstring = "AMR genes in this sample: {}. \n" \
@@ -1462,14 +1453,11 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
     pdf.ln(5)
 
     pdf.set_xy(x=105, y=65)
-    print("pre-r", file=logfile)
 
     #Rsub-script is not called when page is left
     if panel_found:
         cmd = "/opt/homebrew/bin/Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir)
-        print (cmd, file =logfile)
         os.system(cmd)
-        print ("did it work?", file=logfile)
         time.sleep(35)
         #here the r script does not produce an image #Sub process stops
         pdf.image("{}amr_table.png".format(target_dir), x=90, y=60, w=pdf.w / 1.95, h=pdf.h / 1.75)
@@ -1479,7 +1467,6 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
         cmd = "/opt/homebrew/bin/Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir)
         os.system(cmd)
         #subprocess.run(cmd)
-        print ("did it work?", file=logfile)
         time.sleep(5)
 
         pdf.image("{}amr_table.png".format(target_dir), x=90, y=60, w=pdf.w / 1.95, h=pdf.h / 1.75)
@@ -1497,22 +1484,6 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
 
 
     pdf.output(target_dir + filename, 'F')
-"""
-
-    ''' finder pages'''
-    #pdf.add_page()
-    #pdf.ln(20)
-    #resfinderPage(target_dir + "resfinderResults/ResFinder_results_tab.txt", pdf, target_dir)
-    pdf.add_page()
-    pdf.ln(20)
-    virulencePage(target_dir + "virulenceFinderResults/data.json", pdf, target_dir)
-    pdf.add_page()
-    pdf.ln(20)
-    plasmidPage(target_dir + "plasmidFinderResults/data.json", pdf, target_dir)
-    plasmid_count, plasmid_list = plasmid_data_for_report(target_dir + "plasmidFinderResults/data.json", pdf, target_dir)
-    pdf.output(target_dir + filename, 'F')
-
-    compare_plasmid_isolate_vs_cluster(plasmid_list, templatename, db_dir)"""
 
 def compare_plasmid_isolate_vs_cluster(plasmid_list, templatename, db_dir):
     isolatedb = db_dir + "moss.db"
@@ -1608,27 +1579,22 @@ def plasmid_data_for_report(jsoninput, target_dir):
     return count1, plasmid_list
 
 def virulence_data_for_report(jsoninput, target_dir, logfile):
-    print("#t1 ", file=logfile)
     #HERE SOMETHINIG HAPPEND CHECK
     if os.path.isfile(jsoninput):
         with open(jsoninput) as json_file:
             data = json.load(json_file)
         count1 = 0
-        print("#t2 ", file=logfile)
 
         virulence_list = []
         for species in data['virulencefinder']['results']:
-            print("#t3 ", file=logfile)
 
             for hit in data['virulencefinder']['results'][species]:
                 if type(data['virulencefinder']['results'][species][hit]) == dict:
                     print (data['virulencefinder']['results'][species][hit])
-                    print("#t4 ", file=logfile)
 
                     for gene in data['virulencefinder']['results'][species][hit]:
                         count1 += 1
                         virulence_list.append(gene)
-                        print("#t5 ", file=logfile)
     else:
         count1 = 0
         virulence_list = []

@@ -33,6 +33,8 @@
                     Overview of currently running and completed analyses for database configuration: <pre id="current-config"></pre> </div>
 
                 <div>
+                    <input type='button' onclick='recompilereports()'
+                           value='Recompile all analytical reports' />
                     <h3>
                         Click the button to create a dynamic table using data extracted from a JSON array.
                     </h3>
@@ -44,6 +46,11 @@
                            value='Show Queued Analyses' />
 
                     <p id='showData'></p>
+                    <br><br>
+
+                    <div class="loader" id="loader">
+                      </div>
+                      <pre id="loadermessage"></pre>
 
                 </div>
             </div>
