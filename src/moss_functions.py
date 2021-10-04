@@ -150,6 +150,7 @@ def findTemplateSurveillance(total_filenames, target_dir, kma_database_path, log
         os.system(cmd)
     else:
         cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -nf -mem_mode -sasm -ef -shm -mrs 0.25 -1t1".format(kma_path, total_filenames, target_dir, kma_database_path)
+        print ("started here")
         check_shm_kma(kma_path, kma_database_path, cmd, logfile)
     print (cmd, file = logfile)
     ###
