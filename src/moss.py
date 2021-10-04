@@ -145,7 +145,6 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
     print("loading input")
 
     moss.runResFinder(exepath, total_filenames, target_dir)
-    sys.exit()
     moss.runPlasmidFinder(exepath, total_filenames, target_dir)
     moss.runVirulenceFinder(exepath, total_filenames, target_dir)
     best_template_score, template_found, templatename = moss.findTemplateSurveillance(total_filenames, target_dir, kma_database_path, logfile, kma_path, mac)
