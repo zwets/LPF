@@ -336,12 +336,12 @@ def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile
 
     if input[0] != "":
         if mac:
-            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {} -mct 0.1 -ml 400 -proxi -0.9 -mrc 0.7 -mrs 0.25".format(
+            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {}".format(
                 kma_path, input[0], target_dir, nanopore_name, templateaccesion, kma_database_path,
                 str(best_template), str(multi_threading), str(bc))
             os.system(cmd)
         else:
-            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {} -shm -mct 0.1 -ml 400 -proxi -0.9 -mrc 0.7 -mrs 0.25".format(
+            cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {} -shm".format(
                 kma_path, input[0], target_dir, nanopore_name, templateaccesion, kma_database_path,
                 str(best_template), str(multi_threading), str(bc))
             print(cmd, file=logfile)
@@ -1118,7 +1118,8 @@ def makeDBinfo(isolatedb):
     conn.close()
 
 def runResFinder(exepath, total_filenames, target_dir):
-    cmd = "python3 {}resfinder/run_resfinder.py -ifq {} -o {}resfinderResults -b {}resfinder/cge/ncbi-blast-2.10.1+/bin/blastn -acq".format(exepath, total_filenames, target_dir, exepath)
+    #cmd = "python3 {}resfinder/run_resfinder.py -ifq {} -o {}resfinderResults -b {}resfinder/cge/ncbi-blast-2.10.1+/bin/blastn -acq".format(exepath, total_filenames, target_dir, exepath)
+    cmd = "python3 {}resfinder/run_resfinder.py -ifq {} -o {}resfinderResults -k {}kma/kma -acq".format(exepath, total_filenames, target_dir, exepath)
     os.system(cmd)
 
 def runPlasmidFinder(exepath, total_filenames, target_dir):
