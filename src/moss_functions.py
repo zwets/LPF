@@ -152,6 +152,7 @@ def findTemplateSurveillance(total_filenames, target_dir, kma_database_path, log
         #tmp disabled shm
         cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -nf -mem_mode -sasm -ef".format(kma_path, total_filenames, target_dir, kma_database_path)
         print ("started here")
+        print (cmd)
         os.system(cmd)
         #check_shm_kma(kma_path, kma_database_path, cmd, logfile)
     print (cmd, file = logfile)
