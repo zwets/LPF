@@ -143,15 +143,17 @@ def findTemplateSurveillance(total_filenames, target_dir, kma_database_path, log
     templatename = ""
     print("# Finding best template for Surveillance pipeline", file=logfile)
     if mac:
-        cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -nf -mem_mode -sasm -ef -mrs 0.".format(kma_path,
+        cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -nf -mem_mode -sasm -ef".format(kma_path,
                                                                                                   total_filenames,
                                                                                                   target_dir,
                                                                                                   kma_database_path)
         os.system(cmd)
     else:
-        cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -nf -mem_mode -sasm -ef -shm -mrs 0".format(kma_path, total_filenames, target_dir, kma_database_path)
+        #tmp disabled shm
+        cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -nf -mem_mode -sasm -ef".format(kma_path, total_filenames, target_dir, kma_database_path)
         print ("started here")
-        check_shm_kma(kma_path, kma_database_path, cmd, logfile)
+        os.system(cmd)
+        #check_shm_kma(kma_path, kma_database_path, cmd, logfile)
     print (cmd, file = logfile)
     ###
     #Currently, facing the issue of only have 1 output in reference list. why? ask Philip
