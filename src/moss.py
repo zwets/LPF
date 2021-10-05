@@ -272,7 +272,7 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
             run_time = end_time - start_time
             print("Run time: {}".format(run_time))
 
-            moss.compileReportAssembly(target_dir, ID, db_dir, image_location, associated_species, exepath)
+            moss.compileReportAssembly(target_dir, entryid, db_dir, image_location, associated_species, exepath)
 
             moss.endRunningAnalyses(db_dir, entryid, inputname, entryid)
             #Claim semaphore
