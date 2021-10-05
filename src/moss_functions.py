@@ -1660,6 +1660,7 @@ def queueMultiAnalyses(db_dir, inputlist):
             self.file_name = filename
     for i in range(len(inputlist)):
         if len(inputlist[i]) > 1:
+            inputlist[i] = inputlist[i].split()
             entryid = md5(inputlist[i][0])
             _analysis = Analysis(entryid, inputlist[i][0].split("/")[-1])
             jsonStr = json.dumps(_analysis.__dict__)
