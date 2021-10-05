@@ -43,6 +43,7 @@ for file in onlyfiles:
 
     entryid = file
     target_dir = db_dir + "analysis/" + entryid + "/"
+    sys.exit(target_dir)
     logfile = db_dir + "/analysis/" + file + "/logf*"
     inputdir = "{}/datafiles/distancematrices/{}/".format(db_dir, refname)
     image_location = "{}tree.png".format(inputdir)
