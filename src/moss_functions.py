@@ -1650,7 +1650,6 @@ def create_title(pdf, id, string):
   pdf.set_text_color(0, 0, 0)
 
 def queueMultiAnalyses(db_dir, inputlist):
-    sys.exit(inputlist)
     with open(db_dir + "analyticalFiles/queuedAnalyses.json") as json_file:
         _json = json.load(json_file)
     json_file.close()
