@@ -1241,6 +1241,7 @@ def generate_amr_resistance_profile_table(db_dir, entryid, pdf, target_dir, exep
     conn.close()
 
     outfile = open(target_dir + "amr.csv", 'w')
+    print ("Opened amr.csv")
     header = "Antimicrobial,Class,Resistance,Match,Genes"
     reflist = refdata[0][0].split(";")
 
@@ -1457,7 +1458,7 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
 
     #Rsub-script is not called when page is left
     if panel_found:
-        cmd = "/opt/homebrew/bin/Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir)
+        cmd = "Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir)
         os.system(cmd)
         time.sleep(35)
         #here the r script does not produce an image #Sub process stops
@@ -1465,7 +1466,7 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
 
     else:
         pdf.cell(85, 5, "Organism was not in annotated panel. The following AMR genes were found:", 0, 1, 'L')
-        cmd = "/opt/homebrew/bin/Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir)
+        cmd = "Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir)
         os.system(cmd)
         #subprocess.run(cmd)
         time.sleep(5)
