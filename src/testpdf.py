@@ -43,11 +43,9 @@ for file in onlyfiles:
 
     entryid = file
     target_dir = db_dir + "analysis/" + entryid + "/"
-    sys.exit(target_dir)
     logfile = db_dir + "/analysis/" + file + "/logf*"
     inputdir = "{}/datafiles/distancematrices/{}/".format(db_dir, refname)
     image_location = "{}tree.png".format(inputdir)
-    target_dir = db_dir + "analysis/"
     cmd = "grep \"mpr:\" {}".format(logfile)
     proc = subprocess.Popen(cmd, shell=True,
                             stdout=subprocess.PIPE, )
