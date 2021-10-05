@@ -60,7 +60,7 @@ for file in onlyfiles:
     if result == 'true':
         moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, templatename, exepath)  # No report compiled for assemblies! Look into it! #TBD
     elif result == 'false':
-        moss.compileReportAssembly(target_dir, entryid, db_dir, image_location, associated_species, exepath)
+        moss.compileReportAssembly(target_dir, entryid, db_dir, associated_species, exepath)
 
 #value = moss.check_sql_semaphore_value(db_dir, 'IndexRefDB')
 #moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, templatename, exepath)  # No report compiled for assemblies! Look into it! #TBD

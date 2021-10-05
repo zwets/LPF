@@ -1299,7 +1299,7 @@ def run_bandage(target_dir, jobid):
     os.system(cmd)
 
 
-def compileReportAssembly(target_dir, ID, db_dir, image_location, associated_species, exepath):
+def compileReportAssembly(target_dir, ID, db_dir, associated_species, exepath):
     #QA checks?
     #Quast?
 
