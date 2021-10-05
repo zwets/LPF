@@ -1658,11 +1658,18 @@ def queueMultiAnalyses(db_dir, inputlist):
             self.entryid = entryid
             self.file_name = filename
     for i in range(len(inputlist)):
-        entryid = md5(inputlist[i])
-        _analysis = Analysis(entryid, inputlist[i].split("/")[-1])
-        jsonStr = json.dumps(_analysis.__dict__)
-        entryid = md5(inputlist[i])
-        _json[entryid] = jsonStr
+        if len(inputlist[i]) > 1:
+            entryid = md5(inputlist[i][0])
+            _analysis = Analysis(entryid, inputlist[i][0].split("/")[-1])
+            jsonStr = json.dumps(_analysis.__dict__)
+            entryid = md5(inputlist[i][0])
+            _json[entryid] = jsonStr
+        else:
+            entryid = md5(inputlist[i])
+            _analysis = Analysis(entryid, inputlist[i].split("/")[-1])
+            jsonStr = json.dumps(_analysis.__dict__)
+            entryid = md5(inputlist[i])
+            _json[entryid] = jsonStr
 
     with open("{}analyticalFiles/queuedAnalyses.json".format(db_dir), 'w') as f_out:
         json.dump(_json, f_out)

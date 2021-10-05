@@ -76,6 +76,7 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
 
 
 
+
     if metadata_dict['latitude'] == '' or metadata_dict['longitude'] == '':
         latitude, longitude = moss.calc_coordinates_from_location(metadata_dict['city'], metadata_dict['country'])
         metadata_dict['latitude'] = latitude
