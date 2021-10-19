@@ -7,6 +7,7 @@ import  os
 def main():
     #Ret til python3 -m
     #Assumes anaconda is installed
+    #Assumes manual installation of 
     print("Sudo is required for apt update")
     cmd = "sudo apt update"
     os.system(cmd)

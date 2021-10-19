@@ -29,7 +29,7 @@
       <section data-router-view="Guide" class="Guide">
         <div class="Guide-content">
             <div class ="Guide-presentation">
-                <h1>Generate a metadata sheet for analysis</h1></div>
+                <h1>Base calling with Guppy version XXX/YYY</h1></div>
             <div class ="Guide-presentation" hidden>
                 <h1>Generate a metadata sheet for analysis</h1>
 
@@ -43,21 +43,30 @@
             </div>
 
             <div class="MOSS-arguments" id="MOSS-arguments">
-                <b>Select input files to generate metadata sheet</b>
-              <br>
+                <b>NB: Base calling is only available on ubuntu machines with NVIDIA GPUs!  </b>
+              <br><br>
                 <div class="generate-metadata-sheet" id="generate-metadata-sheet">
-                    <div class="generate-multiple-index-file-section" id="generate-multiple-index-file-section">
-                        <label for="multiple-input-type">Read Type:</label>
-                        <select id="multiple-input-type" name="multiple-input-type">
-                            <option value="se">Long Reads</option>
-                            <option value="se">Single end</option>
-                            <option value="pe">Paired end</option>
-                        </select>
+                    <div class="base-call-fast5-section" id="base-call-fast5-section">
                         <form action="/action_page.php">
-                            <input type="file" id="multiple-input-field" name="multiple-input-field" multiple="multiple" value=""><br>
-                            Name your metadata sheet: <input type="text" id="metadata_sheet_name" name="metadata_sheet_name">
-                            <br>
-                            <button type="button" id="create-metadata-table" onclick="create_metadata_sheet()">Create metadata sheet</button>
+                            Select Fast5:
+                            <input type="file" id="multiple-input-field" name="multiple-input-field" multiple="multiple" value=""><br> <br>
+                            Select output directory for FastQ's:
+                            <input type="file" id="multiple-input-field" name="multiple-input-field" multiple="multiple" value=""><br> <br>
+                            Flow-cell type:
+                            <select name="flow-cell" id="flow-cell">
+                                <option value="volvo">Volvo</option>
+                                <option value="saab">Saab</option>
+                                <option value="opel">Opel</option>
+                                <option value="audi">Audi</option>
+                              </select> <br><br>
+                            Nanopore kit:
+                            <select name="flow-cell" id="flow-cell">
+                                <option value="volvo">Volvo</option>
+                                <option value="saab">Saab</option>
+                                <option value="opel">Opel</option>
+                                <option value="audi">Audi</option>
+                              </select> <br><br>
+                            <button type="button" id="start-base-calling-button" onclick="start_base_calling()">Start Base Calling</button>
                         </form>
                         <pre id="metadata-sheet-msg"></pre>
                     </div>
