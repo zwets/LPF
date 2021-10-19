@@ -213,3 +213,6 @@ if kmaindex_db_path != "":
     with open("{}syncFiles/isolateSync.json".format(db_dir), 'w') as f_out:
         json.dump(isolateadditionjson, f_out)
     f_out.close()
+
+cmd = "python3 {}/src/createGuppyWorkflowDict.py -db_dir {}".format(exepath, db_dir)
+os.system(cmd)
