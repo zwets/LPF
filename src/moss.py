@@ -150,6 +150,10 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
     moss.runVirulenceFinder(exepath, total_filenames, target_dir)
     best_template_score, template_found, templatename = moss.findTemplateSurveillance(total_filenames, target_dir, kma_database_path, logfile, kma_path, mac)
 
+    moss.run_mlst(exepath, total_filenames, target_dir, templatename, seqType)
+
+    sys.exit()
+
     best_template = moss.findTemplateNumber(db_dir, templatename)
 
     print ("Best template number: {}".format(best_template), file = logfile)

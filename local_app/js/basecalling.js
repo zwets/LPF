@@ -91,6 +91,7 @@ function select_output(){
 }
 
 function start_base_calling(){
+
     var flowcell = document.getElementById('flow-cell').value;
     var kit = document.getElementById('kit').value;
     var barcoding_config_name = document.getElementById('barcoding_config_name').value;
@@ -105,34 +106,35 @@ function start_base_calling(){
     var path_slice= path_list.slice(1, -1);
     var input_path = "/" + path_slice.join("/") + "/";
 
-    cmd = `guppy_basecaller -i ${input_path} -s ${output_dir}/ --flowcell ${flowcell} --kit ${kit} --device "cuda:0"`;
+    cmd = `guppy_basecaller -i ${input_path} -s ${output_dir}/ --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq`;
     console.log(cmd);
+    /*
+    if (fs.existsSync(output_dir)) {
+        console.log("Base calling has begun.");
 
-    console.log("Base calling has begun.");
+        alert("Base calling has begun.");
 
-    alert("Base calling has begun.");
+        exec(cmd, (error, stdout, stderr) => {
 
-    exec(cmd, (error, stdout, stderr) => {
+            if (error) {
+                alert(`exec error: ${error}`);
+                document.getElementById('metadata-sheet-msg').innerHTML = `Basecalling has failed: ${error}`;
+              console.error(`exec error: ${error}`);
+              return;
+            } else {
+                alert("Analysis has been completed.");
+                document.getElementById('metadata-sheet-msg').innerHTML = `Basecalling has been completed`;
+            }
 
-        if (error) {
-            alert(`exec error: ${error}`);
-            document.getElementById('metadata-sheet-msg').innerHTML = `Basecalling has failed: ${error}`;
-          console.error(`exec error: ${error}`);
-          return;
-        } else {
-            alert("Analysis has been completed.");
-            document.getElementById('metadata-sheet-msg').innerHTML = `Basecalling has been completed`;
-        }
-
-        console.log(`stdout: ${stdout}`);
-        console.error(`stderr: ${stderr}`);
+            console.log(`stdout: ${stdout}`);
+            console.error(`stderr: ${stderr}`);
 
 
 
       });
-
-
-
+    } else {
+        alert("The given output directory does not exist");
+    }*/
 }
 
 function execute_command_as_subprocess(cmd, print_msg) {

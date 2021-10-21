@@ -36,6 +36,35 @@ from subprocess import check_output, STDOUT
 
 #Utility functions
 
+def run_mlst(exepath, total_filenames, target_dir, templatename, seqType):
+
+    specie = templatename.split()[1].lower() + " " + templatename.split()[2].lower() #Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
+
+    mlst_dict = dict()
+    infile = open(exepath + "mlst/mlst_db/config", 'r')
+    for line in infile:
+        if line[0] != "#":
+            line = line.split("\t")
+            mlst_dict[line[1].lower() + " " + line[2].lower()] = line[0]
+            mlst_dict.append(name)
+    infile.close()
+
+    if specie in mlst_dict:
+        if seqType == 'nanopore':
+            cmd = "python3 {}mlst/mlst.py -i {} -o {} -mp {}kma/kma -p {}/mlst/mlst_db/ -s {} -nano".format(exepath, total_filenames, target_dir, exepath, exepath, mlst_dict[specie])
+            os.system(cmd)
+        else:
+            cmd = "python3 {}mlst/mlst.py -i {} -o {} -mp {}kma/kma -p {}/mlst/mlst_db/ -s {}".format(exepath,
+                                                                                                            total_filenames,
+                                                                                                            target_dir,
+                                                                                                            exepath,
+                                                                                                            exepath,
+                                                                                                            mlst_dict[specie])
+            os.system(cmd)
+        return specie
+    else:
+        return "MLST scheme not found for specie"
+
 
 
 
@@ -48,7 +77,6 @@ def sql_string_metadata(metadict):
     entries = entries[:-1]
     values = values[:-1]
     return entries.replace("'", "''"), values
-
 
 
 
@@ -1117,10 +1145,17 @@ def makeDBinfo(isolatedb):
     referencenumber = len(refdata)
     conn.close()
 
-def runResFinder(exepath, total_filenames, target_dir):
+def runResFinder(exepath, total_filenames, target_dir, seqType):
     #cmd = "python3 {}resfinder/run_resfinder.py -ifq {} -o {}resfinderResults -b {}resfinder/cge/ncbi-blast-2.10.1+/bin/blastn -acq".format(exepath, total_filenames, target_dir, exepath)
-    cmd = "python3 {}resfinder/run_resfinder.py -ifq {} -o {}resfinderResults -k {}kma/kma -acq".format(exepath, total_filenames, target_dir, exepath)
-    os.system(cmd)
+    if seqType == 'nanopore':
+        cmd = "python3 {}resfinder/run_resfinder.py -ifq {} -o {}resfinderResults -k {}kma/kma -acq -nano".format(exepath, total_filenames, target_dir, exepath)
+        os.system(cmd)
+    else:
+        cmd = "python3 {}resfinder/run_resfinder.py -ifq {} -o {}resfinderResults -k {}kma/kma -acq".format(exepath,
+                                                                                                            total_filenames,
+                                                                                                            target_dir,
+                                                                                                            exepath)
+        os.system(cmd)
 
 def runPlasmidFinder(exepath, total_filenames, target_dir):
     cmd = "mkdir {}plasmidFinderResults".format(target_dir)
