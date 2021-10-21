@@ -49,29 +49,29 @@
                     <div class="base-call-fast5-section" id="base-call-fast5-section">
                         <form action="/action_page.php">
                             Select directory containing Fast5 files:
-                            <input type="file" id="fast5-input-field" name="fast5-input-field" webkitdirectory directory multiple value=""><br> <br>
-                            Select output directory for FastQ's:
-                            <input type="file" id="output-field" name="output-field" webkitdirectory directory multiple value="" onchange="test();"><br> <br>
+                            <input type="file" id="fast5-input-field" name="fast5-input-field" webkitdirectory directory multiple value="" onchange="select_output();"><br> <br>
+                            Enter the complete path to the output directory, where you wish for the FASTQ's to be placed (I.e. '(/home/usr/data/fastq/')
+                            <input type="text" id="output-field" name="output-field" value=""><br><br>
                             Flow-cell type:
-                            <select name="flow-cell" id="flow-cell" onchange="test();">
-                            <option value="volvo">Volvo</option>
-                              <option value="saab">Saab</option>
-                              <option value="mercedes">Mercedes</option>
-                              <option value="audi">Audi</option>
+                            <select name="flow-cell" id="flow-cell">
                               </select>
                             <br><br>
                             Nanopore kit:
                             <select name="kit" id="kit">
                               </select> <br><br>
                             Barcoding config_name:
-                            <select name="barcoding config_name" id="barcoding config_name">
+                            <select name="barcoding_config_name" id="barcoding_config_name">
                               </select> <br><br>
                             Model version:
-                            <select name="model version" id="model version">
+                            <select name="model_version" id="model_version">
                               </select> <br><br>
                             <button type="button" id="start-base-calling-button" onclick="start_base_calling()">Start Base Calling</button>
                         </form>
                         <pre id="metadata-sheet-msg"></pre>
+                        <div hidden>
+                            <pre id="workflowjson"></pre>
+
+                        </div>
                     </div>
                 </div>
         </div>

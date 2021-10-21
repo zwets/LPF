@@ -16,80 +16,122 @@ storage.get('currentConfig', function(error, data) {
 
 });
 
-function select_flow_cell(flow_cell, data_json){
-    console.log
-}
-
 function select_output(){
-    console.log
-}
-
-function start_base_calling(){
     var db_dir = document.getElementById('current-config').innerHTML;
-    var exepath = document.getElementById('current-exepath').innerHTML;
-    var fast5 = document.getElementById('fast5-input-field');
-    var output = document.getElementById('output-field');
-    var flowcell = document.getElementById('flow-cell');
-    var kit = document.getElementById('flow-cell');
 
     readTextFile(db_dir + "analyticalFiles/workflow.json", function(text){
         var data = JSON.parse(text);
         console.log(data);
+        document.getElementById('workflowjson').innerHTML = data;
 
-        var lookup = {};
         var items = data;
 
-        var result = [];
+        var result_flowcell = [];
+        var result_kit = [];
+        var result_barcoding_config_name = [];
+        var result_model_version = [];
 
         for (var item, i = 0; item = items[i++];) {
           var flowcell = item.flowcell;
-
-
-          if (!(name in lookup)) {
-            lookup[flowcell] = 1;
-            result.push(flowcell);
-          }
+          var kit = item.kit;
+          var barcoding_config_name = item.barcoding_config_name;
+          var model_version = item.model_version;
+          result_flowcell.push(flowcell);
+          result_kit.push(kit);
+          result_barcoding_config_name.push(barcoding_config_name);
+          result_model_version.push(model_version);
         }
 
+        const unique_flowcell = [...new Set(result_flowcell)];
+        const unique_kit = [...new Set(result_kit)];
+        const unique_barcoding_config_name = [...new Set(result_barcoding_config_name)];
+        const unique_model_version = [...new Set(result_model_version)];
 
-        console.log(result);
+        var select = document.getElementById("flow-cell");
+        //var unames = ["Alpha", "Bravo", "Charlie", "Delta", "Echo"];
+        for (var i = 0; i < unique_flowcell.length; i++) {
+            var opt = unique_flowcell[i];
+            var el = document.createElement("option");
+            el.textContent = opt;
+            el.value = opt;
+            select.appendChild(el);
+          }
 
+        var select = document.getElementById("kit");
+        //var unames = ["Alpha", "Bravo", "Charlie", "Delta", "Echo"];
+        for (var i = 0; i < unique_kit.length; i++) {
+            var opt = unique_kit[i];
+            var el = document.createElement("option");
+            el.textContent = opt;
+            el.value = opt;
+            select.appendChild(el);
+          }
 
+        var select = document.getElementById("barcoding_config_name");
+        //var unames = ["Alpha", "Bravo", "Charlie", "Delta", "Echo"];
+        for (var i = 0; i < unique_barcoding_config_name.length; i++) {
+            var opt = unique_barcoding_config_name[i];
+            var el = document.createElement("option");
+            el.textContent = opt;
+            el.value = opt;
+            select.appendChild(el);
+          }
 
-
-
-
+        var select = document.getElementById("model_version");
+        //var unames = ["Alpha", "Bravo", "Charlie", "Delta", "Echo"];
+        for (var i = 0; i < unique_model_version.length; i++) {
+            var opt = unique_model_version[i];
+            var el = document.createElement("option");
+            el.textContent = opt;
+            el.value = opt;
+            select.appendChild(el);
+          }
 
     });
+}
+
+function start_base_calling(){
+    var flowcell = document.getElementById('flow-cell').value;
+    var kit = document.getElementById('kit').value;
+    var barcoding_config_name = document.getElementById('barcoding_config_name').value;
+    var model_version = document.getElementById('model_version').value;
+    var db_dir = document.getElementById('current-config').innerHTML;
+
+    var input = document.getElementById('fast5-input-field');
+    var output_dir = document.getElementById('output-field').value;
+
+    var single_path = input.files.item(0).path;
+    var path_list = single_path.split("/");
+    var path_slice= path_list.slice(1, -1);
+    var input_path = "/" + path_slice.join("/") + "/";
+
+    cmd = `guppy_basecaller -i ${input_path} -s ${output_dir}/ --flowcell ${flowcell} --kit ${kit} --device "cuda:0"`;
+    console.log(cmd);
+
+    console.log("Base calling has begun.");
+
+    alert("Base calling has begun.");
+
+    exec(cmd, (error, stdout, stderr) => {
+
+        if (error) {
+            alert(`exec error: ${error}`);
+            document.getElementById('metadata-sheet-msg').innerHTML = `Basecalling has failed: ${error}`;
+          console.error(`exec error: ${error}`);
+          return;
+        } else {
+            alert("Analysis has been completed.");
+            document.getElementById('metadata-sheet-msg').innerHTML = `Basecalling has been completed`;
+        }
+
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
 
 
 
-
-    /*
-
-    var sequence_type = document.getElementById("multiple-input-type").value;
-    var csv_name = document.getElementById("metadata_sheet_name").value;
-    var children = "";
-    for (var i = 0; i < input.files.length; ++i) {
-        children +=  input.files.item(i).path + ',';
-     }
-    var parallel_input = children.slice(0, -1);
-    var input_array = parallel_input.split(",");
-
-    var cmd_msg = `python3 ${exepath}src/create_metadata_csv.py -i ${parallel_input} -input_type ${sequence_type} -db_dir ${db_dir} -exepath ${exepath} -name ${csv_name}`;
-    console.log(cmd_msg);
-    var print_msg = `Your metadata sheet has been created at: ${db_dir}analyticalFiles/metadata_csv/${csv_name}.csv. <br>You may open it in excel or another program of your own choosing and fill in the metadata. <b>Remember to save it as a csv file afterwards.</b> <br>Once the metadata has been filled in, the sheet is ready to be submitted for analysis. <br>It is recommended to fill in as many of the data collumns as possible, but none are required. <br>Additional metadata can be added later, and the given metadata also be changed after the analysis`;
-
-    execute_command_as_subprocess(cmd_msg, print_msg);
+      });
 
 
-
-    //All in python script:
-        //load files
-        //Copy template to db_dir/analyticalFiles/tmp_metadata_csv/chosen_name
-        //Insert files into csv and safe file
-    //Msg or open button, whichever is easiest
-    */
 
 }
 
