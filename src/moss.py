@@ -143,16 +143,17 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
         print("# -thread: " + str(multi_threading), file=logfile)
     if reference != "":
         print("# -ref: " + reference, file=logfile)
-    print("loading input")
+    print("Running Resfinder")
 
-    moss.runResFinder(exepath, total_filenames, target_dir)
+    moss.runResFinder(exepath, total_filenames, target_dir, seqType)
+    print("Running PlasmidFinder")
     moss.runPlasmidFinder(exepath, total_filenames, target_dir)
+    print("Running Virulence")
     moss.runVirulenceFinder(exepath, total_filenames, target_dir)
+    print("Mapping")
     best_template_score, template_found, templatename = moss.findTemplateSurveillance(total_filenames, target_dir, kma_database_path, logfile, kma_path, mac)
-
-    moss.run_mlst(exepath, total_filenames, target_dir, templatename, seqType)
-
-    sys.exit()
+    print("Running MLST")
+    mlst_result = moss.run_mlst(exepath, total_filenames, target_dir, templatename, seqType)
 
     best_template = moss.findTemplateNumber(db_dir, templatename)
 

@@ -45,25 +45,32 @@ def run_mlst(exepath, total_filenames, target_dir, templatename, seqType):
     for line in infile:
         if line[0] != "#":
             line = line.split("\t")
-            mlst_dict[line[1].lower() + " " + line[2].lower()] = line[0]
-            mlst_dict.append(name)
+            mlst_dict[line[1].lower()] = line[0]
     infile.close()
 
+    if specie == "escherichia coli":
+        mlst_dict['escherichia coli'] = 'ecoli'
+
+
     if specie in mlst_dict:
+        cmd = "mkdir {}/mlstresults".format(target_dir)
+        os.system(cmd)
         if seqType == 'nanopore':
-            cmd = "python3 {}mlst/mlst.py -i {} -o {} -mp {}kma/kma -p {}/mlst/mlst_db/ -s {} -nano".format(exepath, total_filenames, target_dir, exepath, exepath, mlst_dict[specie])
+            cmd = "python3 {}mlst/mlst.py -i {} -o {}mlstresults -mp {}kma/kma -p {}/mlst/mlst_db/ -s {} -nano".format(exepath, total_filenames, target_dir, exepath, exepath, mlst_dict[specie])
             os.system(cmd)
         else:
-            cmd = "python3 {}mlst/mlst.py -i {} -o {} -mp {}kma/kma -p {}/mlst/mlst_db/ -s {}".format(exepath,
+            cmd = "python3 {}mlst/mlst.py -i {} -o {}mlstresults -mp {}kma/kma -p {}/mlst/mlst_db/ -s {}".format(exepath,
                                                                                                             total_filenames,
                                                                                                             target_dir,
                                                                                                             exepath,
                                                                                                             exepath,
                                                                                                             mlst_dict[specie])
             os.system(cmd)
-        return specie
+        print (cmd)
+        return True
     else:
-        return "MLST scheme not found for specie"
+        print ("no mlst")
+        return False
 
 
 
@@ -1430,6 +1437,14 @@ def retrieve_cge_counts(target_dir, ID, db_dir, image_location, templatename, ex
 
 
 
+def mlst_sequence_type(target_dir):
+    try:
+        with open(target_dir + "mlstresults/data.json") as json_file:
+            data = json.load(json_file)
+        sequence_type = data['mlst']['results']['sequence_type']
+        return sequence_type
+    except:
+        return "No MLST Found"
 
 
 
@@ -1476,6 +1491,8 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
     pdf.set_font('Arial', '', 12)
     pdf.cell(85, 5, "CGE results: ", 0, 1, 'L')
 
+    sequence_type = mlst_sequence_type(target_dir)
+
     plasmids_isolate, virulencegenes_isolate, amrgenes_isolate, plasmids_reference, virulencegenes_reference, amrgenes_reference = retrieve_cge_counts(target_dir, ID, db_dir, image_location, templatename, exepath)
     textstring = "AMR genes in this sample: {}. \n" \
                  "AMR genes in this cluster: {}. \n" \
@@ -1483,7 +1500,8 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
                  "Plasmids in this cluster: {}. \n" \
                  "Virulence genes in this sample: {}. \n" \
                  "Virulence genes in this cluster: {}. \n" \
-                 "".format(len(amrgenes_isolate), len(amrgenes_reference), len(plasmids_isolate), len(plasmids_reference), len(virulencegenes_reference), len(virulencegenes_reference))
+                 "MLST: ST{}. \n" \
+                 "".format(len(amrgenes_isolate), len(amrgenes_reference), len(plasmids_isolate), len(plasmids_reference), len(virulencegenes_reference), len(virulencegenes_reference), sequence_type)
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('Arial', '', 10)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
