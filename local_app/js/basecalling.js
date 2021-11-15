@@ -112,6 +112,8 @@ function start_base_calling(){
     if (fs.existsSync(output_dir)) {
         var loader = document.getElementById('loader');
         loader.style.display = 'block';
+        document.getElementById('loadermessage').innerHTML = "Basecalling is running";
+
         console.log("Base calling has begun.");
 
         alert("Base calling has begun.");
@@ -120,13 +122,13 @@ function start_base_calling(){
 
             if (error) {
                 alert(`exec error: ${error}`);
-                document.getElementById('metadata-sheet-msg').innerHTML = `Basecalling has failed: ${error}`;
+                document.getElementById('loadermessage').innerHTML = `Basecalling has failed: ${error}`;
                 loader.style.display = 'none';
               console.error(`exec error: ${error}`);
               return;
             } else {
                 alert("Base calling has completed.");
-                document.getElementById('metadata-sheet-msg').innerHTML = `Basecalling has been completed`;
+                document.getElementById('loadermessage').innerHTML = `Basecalling has been completed: ${stdout}`;
                 loader.style.display = 'none';
             }
 
