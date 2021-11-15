@@ -108,8 +108,10 @@ function start_base_calling(){
 
     cmd = `guppy_basecaller -i ${input_path} -s ${output_dir}/ --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq`;
     console.log(cmd);
-    /*
+
     if (fs.existsSync(output_dir)) {
+        var loader = document.getElementById('loader');
+        loader.style.display = 'block';
         console.log("Base calling has begun.");
 
         alert("Base calling has begun.");
@@ -119,11 +121,13 @@ function start_base_calling(){
             if (error) {
                 alert(`exec error: ${error}`);
                 document.getElementById('metadata-sheet-msg').innerHTML = `Basecalling has failed: ${error}`;
+                loader.style.display = 'none';
               console.error(`exec error: ${error}`);
               return;
             } else {
-                alert("Analysis has been completed.");
+                alert("Base calling has completed.");
                 document.getElementById('metadata-sheet-msg').innerHTML = `Basecalling has been completed`;
+                loader.style.display = 'none';
             }
 
             console.log(`stdout: ${stdout}`);
@@ -134,7 +138,7 @@ function start_base_calling(){
       });
     } else {
         alert("The given output directory does not exist");
-    }*/
+    }
 }
 
 function execute_command_as_subprocess(cmd, print_msg) {
