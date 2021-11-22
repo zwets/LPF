@@ -1,68 +1,178 @@
 const { exec } = require('child_process');
 const fs = require('fs')
+const storage = require('electron-json-storage');
 
 
-var configfile = "None";
-document.getElementById("configfile").innerHTML = configfile;
 
-function readSingleFile(e) {
-    var file = e.target.files[0];
-    if (!file) {
-        return;
-    }
-    var reader = new FileReader();
-    reader.onload = function(e) {
-        var contents = e.target.result;
-        displayUpdateData(contents);
-    };
-    reader.readAsText(file);
+
+storage.get('currentConfig', function(error, data) {
+  if (error) throw error;
+
+  var element = document.getElementById('current-config');
+  element.textContent = data.db_dir;
+  var element = document.getElementById('current-exepath');
+  element.textContent = data.exepath;
+
+
+});
+
+function ubuntu_show() {
+    document.getElementById("ubuntu_section").style.display = "block";
+    document.getElementById("mac_section").style.display = "none";
 }
 
-function displayUpdateData(contents) {
-    var configobj = JSON.parse(contents);
-    var updateFile = configobj.db_dir + "syncFiles/update.log";
+function mac_show() {
+    document.getElementById("mac_section").style.display = "block";
+    document.getElementById("ubuntu_section").style.display = "none";
 
-    readTextFile(updateFile, function(text){
-            var data = JSON.parse(text);
-            var datalist = [[],[]];
-
-            let objlenght = Object.keys(data).length;
-            for (i = 0; i < objlenght; i++) {
-                datalist[0].push(Object.keys(data)[i]);
-                datalist[1].push(Object.values(data)[i]);
-            }
-
-            console.log(datalist);
-
-            //document.getElementById('showData').innerHTML = "";
-
-            //document.getElementById('showData').appendChild(makeUL(datalist, configobj));
-
-
-        });
 }
 
-function readTextFile(file, callback) {
-    var rawFile = new XMLHttpRequest();
-    rawFile.overrideMimeType("application/json");
-    rawFile.open("GET", file, true);
-    rawFile.onreadystatechange = function() {
-        if (rawFile.readyState === 4 && rawFile.status == "200") {
-            callback(rawFile.responseText);
+function ubuntu_update_soft() {
+    var exepath = document.getElementById('current-exepath').innerHTML;
+    var loader = document.getElementById('loader');
+    loader.style.display = 'block';
+
+    cmd = `python3 ${exepath}src/moss_update.py -exepath ${exepath}`;
+    console.log(cmd);
+
+    document.getElementById('loadermessage').innerHTML = "Updating dependencies";
+
+    console.log("Moss dependency update has begun.");
+
+    alert("Moss dependency update has begun.");
+
+    exec(cmd, (error, stdout, stderr) => {
+
+        if (error) {
+            alert(`exec error: ${error}`);
+            document.getElementById('loadermessage').innerHTML = `Updating dependencies has failed: ${error}`;
+            loader.style.display = 'none';
+          console.error(`exec error: ${error}`);
+          return;
+        } else {
+            alert("Update has completed.");
+            document.getElementById('loadermessage').innerHTML = `Updating dependencies has been completed: ${stdout}`;
+            loader.style.display = 'none';
         }
-    }
-    rawFile.send(null);
+
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+
+
+
+      });
+
 }
 
-function readTextFileUpdateDiv(file, div, callback) {
-    var rawFile = new XMLHttpRequest();
-    rawFile.overrideMimeType("application/json");
-    rawFile.open("GET", file, true);
-    rawFile.onreadystatechange = function() {
-        if (rawFile.readyState === 4 && rawFile.status == "200") {
-            callback(rawFile.responseText);
+function ubuntu_update_force() {
+
+    var exepath = document.getElementById('current-exepath').innerHTML;
+    var loader = document.getElementById('loader');
+    loader.style.display = 'block';
+
+    cmd = `python3 ${exepath}src/moss_update.py -exepath ${exepath} -force`;
+    console.log(cmd);
+
+    document.getElementById('loadermessage').innerHTML = "Updating dependencies";
+
+    console.log("Moss dependency update has begun.");
+
+    alert("Moss dependency update has begun.");
+
+    exec(cmd, (error, stdout, stderr) => {
+
+        if (error) {
+            alert(`exec error: ${error}`);
+            document.getElementById('loadermessage').innerHTML = `Updating dependencies has failed: ${error}`;
+            loader.style.display = 'none';
+          console.error(`exec error: ${error}`);
+          return;
+        } else {
+            alert("Base calling has completed.");
+            document.getElementById('loadermessage').innerHTML = `Updating dependencies has been completed: ${stdout}`;
+            loader.style.display = 'none';
         }
-    }
-    rawFile.send(null);
+
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+
+
+
+      });
+
 }
 
+function mac_update_soft() {
+
+    var exepath = document.getElementById('current-exepath').innerHTML;
+    var loader = document.getElementById('loader');
+    loader.style.display = 'block';
+
+    cmd = `python3 ${exepath}src/moss_update.py -exepath ${exepath} -mac`;
+    console.log(cmd);
+
+    document.getElementById('loadermessage').innerHTML = "Updating dependencies";
+
+    console.log("Moss dependency update has begun.");
+
+    alert("Moss dependency update has begun.");
+
+    exec(cmd, (error, stdout, stderr) => {
+
+        if (error) {
+            alert(`exec error: ${error}`);
+            document.getElementById('loadermessage').innerHTML = `Updating dependencies has failed: ${error}`;
+            loader.style.display = 'none';
+          console.error(`exec error: ${error}`);
+          return;
+        } else {
+            alert("Base calling has completed.");
+            document.getElementById('loadermessage').innerHTML = `Updating dependencies has been completed: ${stdout}`;
+            loader.style.display = 'none';
+        }
+
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+
+
+
+      });;
+
+}
+
+function mac_update_force() {
+
+    var exepath = document.getElementById('current-exepath').innerHTML;
+    var loader = document.getElementById('loader');
+    loader.style.display = 'block';
+
+    cmd = `python3 ${exepath}src/moss_update.py -exepath ${exepath} -mac -force`;
+    console.log(cmd);
+
+    document.getElementById('loadermessage').innerHTML = "Updating dependencies";
+
+    console.log("Moss dependency update has begun.");
+
+    alert("Moss dependency update has begun.");
+
+    exec(cmd, (error, stdout, stderr) => {
+
+        if (error) {
+            alert(`exec error: ${error}`);
+            document.getElementById('loadermessage').innerHTML = `Updating dependencies has failed: ${error}`;
+            loader.style.display = 'none';
+          console.error(`exec error: ${error}`);
+          return;
+        } else {
+            alert("Base calling has completed.");
+            document.getElementById('loadermessage').innerHTML = `Updating dependencies has been completed: ${stdout}`;
+            loader.style.display = 'none';
+        }
+
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+
+
+
+      });
+}

@@ -55,11 +55,7 @@ def main():
     os.system(cmd)
     cmd = "sudo apt install python3-pip"
     os.system(cmd)
-    cmd = "sudo apt-get install r-base"
-    os.system(cmd)
     findersinstall()
-    cmd = "python3 -m pip install posix-ipc"
-    os.system(cmd)
     cmd = "python3 -m pip install fpdf"
     os.system(cmd)
     cmd = "pip install geocoder; pip install pandas"

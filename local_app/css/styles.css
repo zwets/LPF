@@ -39,6 +39,13 @@ body {
   display: inline-block;
 }
 
+.ubuntu_section {
+  display: none;
+}
+
+.mac_section {
+  display: none;
+}
 /* Dropdown Content (Hidden by Default) */
 .dropdown-content {
   display: none;

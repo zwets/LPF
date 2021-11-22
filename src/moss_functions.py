@@ -36,6 +36,114 @@ from subprocess import check_output, STDOUT
 
 #Utility functions
 
+def update_pip_dependencies():
+    cmd = "python3 -m pip install --upgrade fpdf"
+    os.system(cmd)
+    cmd = "python3 -m pip install --upgrade tabulate biopython cgecore gitpython python-dateutil"
+    os.system(cmd)
+    pip_list = ["geocoder", "pandas", "geopy", "Nominatim"]
+    for item in pip_list:
+        cmd = "pip install --upgrade {}".format(item)
+        os.system(cmd)
+
+
+def update_moss_dependencies(exepath, mac, update_list, force):
+    if force:
+        if mac:
+            print ("MAC FORCE TBD")
+        else:
+            cmd = "cd {}".format(exepath)
+            os.system(cmd)
+            cmd = "rm -rf kma; rm -rf ccphylo; rm -rf mlst; rm -rf resfinder; rm -rf plasmidfinder; rm -rf virulencefinder;"
+            os.system(cmd)
+            cmd = "git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; git checkout nano; make; cd ..;"
+            os.system(cmd)
+            cmd = "git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;"
+            os.system(cmd)
+            cmd = "git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;"
+            os.system(cmd)
+            cmd = "git clone https://git@bitbucket.org/genomicepidemiology/resfinder.git; cd resfinder; git checkout nanopore_flag; git clone https://git@bitbucket.org/genomicepidemiology/resfinder_db.git db_resfinder; cd db_resfinder; git checkout minimizer_implementation; python3 INSTALL.py ../../kma/kma_index non_interactive; cd ..; git clone https://git@bitbucket.org/genomicepidemiology/pointfinder_db.git db_pointfinder; cd db_pointfinder; python3 INSTALL.py ../../kma/kma_index non_interactive; cd ..; cd ..;"
+            os.system(cmd)
+            cmd = "git clone https://bitbucket.org/genomicepidemiology/plasmidfinder.git; cd plasmidfinder; git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git; cd plasmidfinder_db; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;"
+            os.system(cmd)
+            cmd = "git clone https://bitbucket.org/genomicepidemiology/virulencefinder.git; cd virulencefinder; git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git; cd virulencefinder_db; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;"
+            os.system(cmd)
+            cmd = "apt-get install r-base"
+            os.system(cmd)
+            cmd = "apt install nodejs"
+            os.system(cmd)
+            cmd = "apt install npm"
+            os.system(cmd)
+            cmd = "apt install python3-pip"
+            os.system(cmd)
+            cmd = "apt install docker.io;  systemctl enable --now docker;  usermod -a -G docker $USER;"
+            os.system(cmd)
+
+    else:
+        if mac:
+            print ("MAC SOFT TBD")
+        else:
+            if "kma" in update_list:
+                cmd = "cd {}".format(exepath)
+                os.system(cmd)
+                cmd = "git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; git checkout nano; make; cd ..;"
+                os.system(cmd)
+            if "ccphylo" in update_list:
+                cmd = "cd {}".format(exepath)
+                os.system(cmd)
+                cmd = "git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;"
+                os.system(cmd)
+            if "docker" in update_list:
+                print ("Please make a manual installation of Docker and then run the python docker_images.py script")
+            if "r" in update_list:
+                cmd = " apt-get install r-base"
+                os.system(cmd)
+            if "npm" in update_list:
+                cmd = " apt install npm"
+                os.system(cmd)
+            if "python3-pip" in update_list:
+                cmd = " apt install python3-pip"
+                os.system(cmd)
+            if "conda" in update_list:
+                print ("Please download conda manually for a full installation!")
+    update_pip_dependencies()
+
+
+def varify_tool(cmd, expected, index_start, index_end):
+    proc = subprocess.Popen(cmd, shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0].decode()
+    version = output[index_start:index_end]
+    print ("{} => {}".format(cmd, version))
+    if version >= expected:
+        return True
+    else:
+        return False
+
+def varify_all_dependencies(exepath, mac):
+    update_list = []
+    if not varify_tool("{}/kma/kma -v".format(exepath), '1.3.24', -8, -2):#KMA, expected: KMA-1.3.24+
+        update_list.append("kma")
+    if not varify_tool("{}/ccphylo/ccphylo -v".format(exepath), '0.5.3', -6, -1): #ccphylo, expected: CCPhylo-0.5.3
+        update_list.append("ccphylo")
+    if not varify_tool("docker -v".format(exepath), '20.10.8', 15, 22): #docker, Docker version 20.10.8, build 3967b7d28e
+        update_list.append("docker")
+    if not mac:
+        pass #Test CUDA
+        #ont-guppy test
+    if not varify_tool("R --version".format(exepath), '4.0.0', 10, 15): #R
+        update_list.append("r")
+    if not varify_tool("npm -v".format(exepath), '7.0.0', 0, -1): #npm 7.21.1
+        update_list.append("npm")
+    if not varify_tool("pip --version".format(exepath), '21.0.0', 4, 10): #pip, pip 21.3.1 from /user/etc/etc
+        update_list.append("python3-pip")
+    if not varify_tool("conda --version".format(exepath), '4.0.0', 6, -1): #conda, conda 4.10.1
+        update_list.append("conda")
+    return update_list
+
+
+
+
 def run_mlst(exepath, total_filenames, target_dir, templatename, seqType):
 
     specie = templatename.split()[1].lower() + " " + templatename.split()[2].lower() #Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
@@ -743,6 +851,8 @@ def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string,
 
 
 def generateFigtree(inputfile, jobid):
+    #Figtree doesnt work on mac
+
     cmd = "docker run --name figtree{} -v {}:/tmp/tree.tree biocontainers/figtree:v1.4.4-3-deb_cv1 figtree -graphic PNG -width 500 -height 500 /tmp/tree.tree /tmp/tree.png".format(jobid, inputfile)
     os.system(cmd)
 
@@ -1465,7 +1575,7 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
     pdf.set_font('Arial', '', 12)
     textstring = "ID: {} \n" \
                  "Sample name: {} \n" \
-                 "Identifilessed reference: {} \n" \
+                 "Identified reference: {} \n" \
                  "".format(ID, file_name, templatename)
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(10)

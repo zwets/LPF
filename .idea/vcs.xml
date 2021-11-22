@@ -4,6 +4,10 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/ccphylo" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/kma" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/local_app/ccphylo" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/local_app/kma" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/local_app/mlst" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/local_app/mlst/mlst_db" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/mlst" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/mlst/mlst_db" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plasmidfinder" vcs="Git" />

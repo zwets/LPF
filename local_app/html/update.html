@@ -4,51 +4,89 @@
     <meta charset="UTF-8">
     <title>Microbial Outbreak Surveillance System 1.0</title>
     <link rel="stylesheet" href="../css/styles.css">
-    <script src="../js/analyse.js" type="text/javascript"></script>
+    <script src="../js/update.js" type="text/javascript"></script>
 </head>
 
 
-<body>
-<!-- Side navigation -->
-<div class="sidenav" id="mySidebar">
+  <body>
+  <!-- Side navigation -->
+  <div class="sidenav" id="mySidebar">
       <a href="./index.html" id>Guide</a>
       <a href="./services.html">Services</a>
       <a href="./analytics.html">Analytics</a>
       <!-- <a href="./database.html">Database</a> -->
       <a href="./dashboard.html">Dashboard</a>
-      <!-- <a href="./update.html">Update</a> -->
       <a href="./config.html">Config</a>
       <a href="./results.html">Results</a>
     <a href="./basecalling.html">Base Calling</a>
+      <a href="./update.html">Update</a>
   </div>
-<!-- Page content -->
+  <!-- Page content https://www.who.int/news/item/27-02-2017-who-publishes-list-of-bacteria-for-which-new-antibiotics-are-urgently-needed https://www.cdc.gov/drugresistance/biggest-threats.html  -->
 
 
-<div class="main" id="main">
+  <div class="main" id="main">
     <main data-router-wrapper>
-        <section data-router-view="Guide" class="Guide">
-            <div class="Guide-content">
-                <div class ="Guide-presentation">
-                    <h1>Update and Synchronization</h1>
-                </div>
-                <div class="upload-config-file">
-                    <img src="../images/work-in-progress.jpg" alt="work-in-progress">
-                    <pre id="file-content"></pre>
-                </div>
+      <section data-router-view="Guide" class="Guide">
+        <div class="Guide-content">
+            <div class ="Guide-presentation">
+                <h1>Update MOSS dependencies</h1></div>
+            <div class ="Guide-presentation" hidden>
+                <h1>Generate a metadata sheet for analysis</h1>
 
-                <div class="update-section" id="update-section">
+                Your current system configuration is:
+
+                <pre id="current-config"></pre>
+                <div hidden>
+                    MOSS path: <pre id="current-exepath"></pre>
+
+                </div>
+            </div>
+
+            <div class="MOSS-arguments" id="MOSS-arguments">
+                <input type='button' onclick='ubuntu_show()'
+                       value='Ubuntu/Linux distribution' />
+
+                <input type='button' onclick='mac_show()'
+                       value='MacOS' />
+              <br><br>
+                <div class="ubuntu_section" id="ubuntu_section">
+                    <input type='button' onclick='ubuntu_update_soft()'
+                       value='Soft Ubuntu/linux update' />
+
+                    <input type='button' onclick='ubuntu_update_force()'
+                           value='Force Ubuntu/linux update' />
+                    <br><br>
+                    A <b>soft update</b> will only check to see if dependencies are recent enough to be compatible with MOSS.
+                    Updates will only be made to dependencies that are out-of-date.
+                    <br><br>
+                    A <b>force update</b> installs all dependencies to their newest version. This may take substantially longer than the soft update.
+                    </div>
+                <div class="mac_section" id="mac_section">
+                    <input type='button' onclick='mac_update_soft()'
+                       value='Soft MacOS update' />
+
+                    <input type='button' onclick='mac_update_force()'
+                           value='Force MacOS update' />
+                    <br><br>
+                    A <b>soft update</b> will only check to see if dependencies are recent enough to be compatible with MOSS.
+                    Updates will only be made to dependencies that are out-of-date.
+                    <br><br>
+                    A <b>force update</b> installs all dependencies to their newest version. This may take substantially longer than the soft update.
                     </div>
                 </div>
 
+          <div class="loader" id="loader">
+              </div>
+              <pre id="loadermessage"></pre>
+        </div>
 
 
-
-        </section>
+      </section>
     </main>
-</div>
+  </div>
 
-<script type="text/javascript">
+  <script type="text/javascript">
       document.getElementById('upload-config-file').addEventListener('change', readSingleFile, false);
   </script>
-</body>
+  </body>
 </html>
