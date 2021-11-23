@@ -36,6 +36,33 @@ from subprocess import check_output, STDOUT
 
 #Utility functions
 
+def init_status_table(entryid, status, type, level_current, level_max, result, db_dir):
+    conn = sqlite3.connect(db_dir + "moss.db")
+    c = conn.cursor()
+
+    dbstring = "INSERT INTO statustable(entryid, status, type, level_current, level_max, result) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
+        entryid, status, type, level_current, level_max, result)
+    c.execute(dbstring)
+    conn.commit()
+    conn.close()
+
+def update_status_table(entryid, status, type, level_current, level_max, result, db_dir):
+    conn = sqlite3.connect(db_dir + "moss.db")
+    c = conn.cursor()
+    entryid_statement = "entryid = '{}'".format(entryid)
+    status_statement = "status = '{}'".format(status)
+    type_statement = "type = '{}'".format(type)
+    level_current_statement = "level_current = '{}'".format(level_current)
+    level_max_statement = "level_max = '{}'".format(level_max)
+    result_statement = "result = '{}'".format(result)
+
+    dbstring = "UPDATE statustable SET {}, {}, {}, {}, {} WHERE {}".format(status_statement, type_statement, level_current_statement, level_max_statement, result_statement, entryid_statement)
+    print (dbstring)
+    c.execute(dbstring)
+
+    conn.commit()
+    conn.close()
+
 def update_pip_dependencies():
     cmd = "python3 -m pip install --upgrade fpdf"
     os.system(cmd)
@@ -1471,7 +1498,7 @@ def compileReportAssembly(target_dir, ID, db_dir, associated_species, exepath):
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     run_quast(target_dir, ID)
 
-    cmd = "/opt/homebrew/bin/Rscript {}src/quast_tsv_table.R {}".format(exepath, target_dir)
+    cmd = "Rscript {}src/quast_tsv_table.R {}".format(exepath, target_dir)
     os.system(cmd)
     run_bandage(target_dir, ID)
     pdf.image("{}quast_table.png".format(target_dir), x=118, y=60, w=pdf.w / 2.7, h=pdf.h / 2.1)

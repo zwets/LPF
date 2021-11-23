@@ -52,9 +52,6 @@ args = parser.parse_args()
 jobid = random.randint(1,100000000)
 
 
-
-
-
 if args.db_dir != "":
     db_dir = moss.correctPathCheck(args.db_dir)
 else:
@@ -109,6 +106,12 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
 
     moss.uniqueNameCheck(db_dir, inputType, total_filenames)
 
+
+    #insert sql status
+    moss.init_status_table(entryid, "Initializing", "Not Determined", "1", "10", "Running", db_dir)
+    #moss.update_status_table(entryid, "Initializing", "Not Determined", "2", "10", "Running", db_dir)
+
+
     moss.processQueuedAnalyses(db_dir, entryid, inputname, entryid)
 
     if entryid[0] == "/":
@@ -145,6 +148,9 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
         print("# -ref: " + reference, file=logfile)
     print("Running Resfinder")
 
+    moss.update_status_table(entryid, "CGE_finders", "Not Determined", "2", "10", "Running", db_dir)
+
+
     moss.runResFinder(exepath, total_filenames, target_dir, seqType)
     print("Running PlasmidFinder")
     moss.runPlasmidFinder(exepath, total_filenames, target_dir)
@@ -154,6 +160,8 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
     best_template_score, template_found, templatename = moss.findTemplateSurveillance(total_filenames, target_dir, kma_database_path, logfile, kma_path, mac)
     print("Running MLST")
     mlst_result = moss.run_mlst(exepath, total_filenames, target_dir, templatename, seqType)
+
+    moss.update_status_table(entryid, "KMA Mapping", "Not Determined", "3", "10", "Running", db_dir)
 
     best_template = moss.findTemplateNumber(db_dir, templatename)
 
@@ -171,6 +179,7 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
     print("Score of the best template was: " + str(best_template_score))
 
     if template_found == False: #NO TEMPLATE FOUND #Being assembly
+        moss.update_status_table(entryid, "Unicycler Assembly", "Assembly", "4", "5", "Running", db_dir)
         print ('mpr: false', file=logfile)
         print ("assebly stop", file = logfile)
         associated_species = "No related reference identified, required manual curation. ID: {} name: {}".format(entryid, inputname)
@@ -185,17 +194,23 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
         run_time = end_time - start_time
         print("Run time: {}".format(run_time))
         print("Run time: {}".format(run_time), file=logfile)
+        moss.update_status_table(entryid, "Compiling Assembly PDF", "Assembly", "5", "5", "Running", db_dir)
+
 
         moss.compileReportAssembly(target_dir, ID, db_dir, associated_species, exepath)
 
         moss.endRunningAnalyses(db_dir, entryid, inputname, entryid)
 
         logfile.close()
+        moss.update_status_table(entryid, "Assembly completed", "Assembly", "5", "5", "Finished", db_dir)
         sys.exit("No template was found, so input was added to references.")
 
     #If reference found:
 
     #Check that no assembly started during template finding
+
+    moss.update_status_table(entryid, "IPC check", "Alignment", "4", "10", "Running", db_dir)
+
 
     result, action = moss.acquire_semaphore("IndexRefDB", db_dir, 1, 7200)
     if result == 'acquired' and action == False:
@@ -237,6 +252,8 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
     ######## KØR FREM PÅ CCPHYLO COMMANDO
     #CCind her. single fil som skal appendes til eksisterende matrix med samme, gemte conditions.
     if len(moss.loadFiles("{}datafiles/isolatefiles/{}/".format(db_dir, refname))) > 1:
+        moss.update_status_table(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir)
+
         print ("CCPHYLO")
         cmd = "{} dist -i {}datafiles/isolatefiles/{}/* -r \"{}\" -mc 0.01 -nm 0 -o {}distance_matrix_{}".format(ccphylo_path, db_dir, refname, templatename, target_dir, refname)
         print (cmd, file = logfile)
@@ -248,6 +265,7 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
         distance = moss.ThreshholdDistanceCheck("{}distance_matrix_{}".format(target_dir, refname), refname, "{}_{}_consensus.fsa".format(inputname, templateaccesion))
         print (distance, file = logfile)
         if distance > 300: #SNP distance
+            moss.update_status_table(entryid, "Unicycler Assembly", "Assembly", "4", "5", "Running", db_dir)
             print("Distance to best template was over 300 basepairs, so input will be defined as reference", file = logfile)
             print("Distance to best template was over 300 basepairs, so input will be defined as reference")
 
@@ -277,20 +295,27 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
             run_time = end_time - start_time
             print("Run time: {}".format(run_time))
 
+            moss.update_status_table(entryid, "Compiling Assembly PDF", "Assembly", "5", "5", "Running", db_dir)
+
             moss.compileReportAssembly(target_dir, entryid, db_dir, associated_species, exepath)
 
             moss.endRunningAnalyses(db_dir, entryid, inputname, entryid)
             #Claim semaphore
+            moss.update_status_table(entryid, "Compiling Assembly PDF", "Assembly", "5", "5", "Finished", db_dir)
+
             sys.exit("Found template, but input fra over 300bp away, and input was assembled and defied as new reference")
 
 
         warning, riskcategory, allresgenes, amrinfo = moss.checkAMRrisks(target_dir, entryid, db_dir, templatename, exepath, logfile)
+        moss.update_status_table(entryid, "Distance Matrix", "Alignment", "6", "10", "Running", db_dir)
 
 
         cmd = "cp {}distance_matrix_{} {}/datafiles/distancematrices/{}/distance_matrix_{}".format(target_dir, refname, db_dir, refname, refname)
         os.system(cmd)
         cmd = "{} tree -i {}/datafiles/distancematrices/{}/distance_matrix_{} -o {}/datafiles/distancematrices/{}/tree.newick".format(ccphylo_path, db_dir, refname, refname, db_dir, refname)
         os.system(cmd)
+        moss.update_status_table(entryid, "Phylo Tree imaging", "Alignment", "7", "10", "Running", db_dir)
+
         image_location = moss.generateFigtree("{}/datafiles/distancematrices/{}/tree.newick".format(db_dir, refname), jobid)
 
         if refdata[0][3] == None:
@@ -305,6 +330,7 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
         virulence_string = ",".join(virulence_list)
 
 
+        moss.update_status_table(entryid, "Database updating", "Alignment", "8", "10", "Running", db_dir)
 
 
         conn = sqlite3.connect(isolatedb)
@@ -374,6 +400,9 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
         print("Run time: {}".format(run_time))
         print("Run time: {}".format(run_time), file=logfile)
 
+        moss.update_status_table(entryid, "Outbreak Finder", "Alignment", "9", "10", "Running", db_dir)
+
+
 
         cmd = "python3 {}src/outbreak_finder.py -db_dir {}".format(exepath, db_dir)
         os.system(cmd)
@@ -382,11 +411,14 @@ def SurveillancePipeline(seqType, masking_scheme, prune_distance, bc,
         if not mac:
             moss.check_to_destroy_shm_db(kma_path, kma_database_path, db_dir, logfile)
         moss.endRunningAnalyses(db_dir, entryid, inputname, entryid)
+        moss.update_status_table(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Running", db_dir)
 
 
         moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, templatename, exepath) #No report compiled for assemblies! Look into it! #TBD
 
         logfile.close()
+        moss.update_status_table(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Finished", db_dir)
+
 
 
 
