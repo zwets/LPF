@@ -106,7 +106,7 @@ function start_base_calling(){
     var path_slice= path_list.slice(1, -1);
     var input_path = "/" + path_slice.join("/") + "/";
 
-    cmd = `guppy_basecaller -i ${input_path} -s ${output_dir}/ --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq`;
+    cmd = `guppy_basecaller -i ${input_path} -s ${output_dir}/ --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq --trim_barcodes`;
     console.log(cmd);
 
     if (fs.existsSync(output_dir)) {
