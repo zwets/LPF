@@ -47,3 +47,13 @@ output = proc.communicate()[0].decode()
 lines = output.split("\n")
 
 print (lines)
+
+barcodes = set()
+
+for item in lines:
+    selects = item.split(" = ")[-1]
+    selects = selects.split(",")
+    for barcode in selects:
+        barcodes.add(barcode)
+
+print (barcodes)
