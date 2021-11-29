@@ -40,9 +40,10 @@ os.system(cmd)
 #Get barcodes
 
 cmd = "grep \"kits\" /opt/ont/guppy/data/barcoding/*".format(args.db_dir)
-print (cmd)
 proc = subprocess.Popen(cmd, shell=True,
                             stdout=subprocess.PIPE, )
 output = proc.communicate()[0].decode()
 
-print (output)
+lines = output.split("\n")
+
+print (lines)
