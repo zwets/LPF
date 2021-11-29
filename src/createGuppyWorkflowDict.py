@@ -60,7 +60,7 @@ for barcode in barcodes:
         jsonlist.append({
             "barcode": barcode
         })
-outfile = open("{}/analyticalFiles/basecodes.json".format(args.db_dir), 'w')
+outfile = open("{}/analyticalFiles/barcodes.json".format(args.db_dir), 'w')
 
 print (json.dumps(jsonlist, indent=2), file=outfile)
 outfile.close()
