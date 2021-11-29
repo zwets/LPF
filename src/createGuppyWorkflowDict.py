@@ -46,8 +46,6 @@ output = proc.communicate()[0].decode()
 
 lines = output.split("\n")
 
-print (lines)
-
 barcodes = set()
 
 for item in lines:
@@ -56,4 +54,14 @@ for item in lines:
     for barcode in selects:
         barcodes.add(barcode)
 
-print (barcodes)
+jsonlist = []
+for barcode in barcodes:
+    if barcode != "":
+        jsonlist.append({
+            "barcode": barcode
+        })
+outfile = open("{}/analyticalFiles/basecodes.json".format(args.db_dir), 'w')
+
+print (json.dumps(jsonlist, indent=2), file=outfile)
+outfile.close()
+
