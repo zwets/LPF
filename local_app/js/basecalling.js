@@ -102,6 +102,11 @@ function select_output(){
         const unique_barcode = [...new Set(result_barcode)];
 
         var select = document.getElementById("demux");
+        var opt = "No multiplexing";
+        var el = document.createElement("option");
+        el.textContent = opt;
+        el.value = opt;
+        select.appendChild(el);
         //var unames = ["Alpha", "Bravo", "Charlie", "Delta", "Echo"];
         for (var i = 0; i < unique_barcode.length; i++) {
             var opt = unique_barcode[i];
