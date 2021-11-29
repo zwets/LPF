@@ -1,6 +1,7 @@
 import os
 import argparse
 import json
+import subprocess
 
 parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
 parser.add_argument('-db_dir', action="store", type=str, dest='db_dir', default="", help='db_dir')
@@ -31,3 +32,16 @@ outfile = open("{}/analyticalFiles/workflow.json".format(args.db_dir), 'w')
 
 print (json.dumps(jsonlist, indent=2), file=outfile)
 outfile.close()
+
+
+cmd = "rm {}/analyticalFiles/tmpworkflowdict.txt".format(args.db_dir)
+os.system(cmd)
+
+#Get barcodes
+
+cmd = "grep \"kits\" * >  {}/analyticalFiles/tmpbarcodes.txt".format(args.db_dir)
+proc = subprocess.Popen(cmd, shell=True,
+                            stdout=subprocess.PIPE, )
+output = proc.communicate()[0].decode()
+
+print (output)    

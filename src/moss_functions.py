@@ -36,6 +36,11 @@ from subprocess import check_output, STDOUT
 
 #Utility functions
 
+def init_moss_variables(exepath, db_dir, ):
+    referenceSyncFile = db_dir + "syncFiles/referenceSync.json"
+    isolateSyncFile = db_dir + "syncFiles/isolateSync.json"
+    return kma_path
+
 def init_status_table(entryid, status, type, level_current, level_max, result, db_dir):
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
@@ -74,10 +79,10 @@ def update_pip_dependencies():
         os.system(cmd)
 
 
-def update_moss_dependencies(exepath, mac, update_list, force):
+def update_moss_dependencies(exepath, laptop, update_list, force):
     if force:
-        if mac:
-            print ("MAC FORCE TBD")
+        if laptop:
+            print ("laptop FORCE TBD")
         else:
             cmd = "cd {}".format(exepath)
             os.system(cmd)
@@ -107,8 +112,8 @@ def update_moss_dependencies(exepath, mac, update_list, force):
             os.system(cmd)
 
     else:
-        if mac:
-            print ("MAC SOFT TBD")
+        if laptop:
+            print ("laptop SOFT TBD")
         else:
             if "kma" in update_list:
                 cmd = "cd {}".format(exepath)
@@ -147,7 +152,7 @@ def varify_tool(cmd, expected, index_start, index_end):
     else:
         return False
 
-def varify_all_dependencies(exepath, mac):
+def varify_all_dependencies(exepath, laptop):
     update_list = []
     if not varify_tool("{}/kma/kma -v".format(exepath), '1.3.24', -8, -2):#KMA, expected: KMA-1.3.24+
         update_list.append("kma")
@@ -155,7 +160,7 @@ def varify_all_dependencies(exepath, mac):
         update_list.append("ccphylo")
     if not varify_tool("docker -v".format(exepath), '20.10.8', 15, 22): #docker, Docker version 20.10.8, build 3967b7d28e
         update_list.append("docker")
-    if not mac:
+    if not laptop:
         pass #Test CUDA
         #ont-guppy test
     if not varify_tool("R --version".format(exepath), '4.0.0', 10, 15): #R
@@ -305,14 +310,13 @@ def check_alignment_kma_cov(file):
 
     return coverage
 
-def findTemplateSurveillance(total_filenames, target_dir, kma_database_path, logfile, kma_path, mac):
-    #Variable initilization
+def KMA_mapping(total_filenames, target_dir, kma_database_path, logfile, kma_path, laptop):
     template_found = False
     best_template = ""
     best_template_score = 0.0
     templatename = ""
-    print("# Finding best template for Surveillance pipeline", file=logfile)
-    if mac:
+    
+    if laptop:
         cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -nf -mem_mode -sasm -ef".format(kma_path,
                                                                                                   total_filenames,
                                                                                                   target_dir,
@@ -323,11 +327,7 @@ def findTemplateSurveillance(total_filenames, target_dir, kma_database_path, log
         cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -nf -mem_mode -sasm -ef".format(kma_path, total_filenames, target_dir, kma_database_path)
         os.system(cmd)
         #check_shm_kma(kma_path, kma_database_path, cmd, logfile)
-    ###
-    #Currently, facing the issue of only have 1 output in reference list. why? ask Philip
     try:
-        best_template_score = 0
-        templatename = ""
         infile = open("{}template_kma_results.res".format(target_dir), 'r')
         for line in infile:
             line = line.rstrip()
@@ -354,7 +354,7 @@ def findTemplateSurveillance(total_filenames, target_dir, kma_database_path, log
         return best_template_score, template_found, templatename
     ###
 
-def illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion,db_dir, mac):
+def illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion,db_dir, laptop):
     illumina_name = input[0].split("/")[-1]
 
     #Claim ReafRefDB is IndexRefDB is free
@@ -369,7 +369,7 @@ def illuminaMappingForward(input, best_template, target_dir, kma_database_path, 
         sys.exit('A semaphore related issue has occured.')
 
     if input[0] != "":
-        if mac:
+        if laptop:
             cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -nf -cge -vcf -bc90 -Mt1 {} -t {}".format(
                 kma_path, input[0][0], target_dir, illumina_name, templateaccesion, kma_database_path,
                 str(best_template), str(multi_threading))
@@ -415,7 +415,7 @@ def illuminaMappingForward(input, best_template, target_dir, kma_database_path, 
     #            "IndexRefDB semaphore is jammed, and so ReadRefDB could not be claim")
 
 
-def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion, db_dir, mac):
+def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion, db_dir, laptop):
     print (input, file=logfile)
     illumina_name = input[0].split("/")[-1]
 
@@ -432,7 +432,7 @@ def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfi
         sys.exit('A semaphore related issue has occured.')
 
     if input[0] != "":
-        if mac:
+        if laptop:
             cmd = "{} -ipe {} {} -o {}{}_{}_consensus -t_db {} -ref_fsa -ca -dense -nf -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
                 kma_path, input[0], input[1], target_dir, illumina_name, templateaccesion,
                 kma_database_path, str(best_template), str(multi_threading))
@@ -489,7 +489,7 @@ def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfi
     """
 
 
-def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, kma_path, templateaccesion, db_dir, mac):
+def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, kma_path, templateaccesion, db_dir, laptop):
     nanopore_name = input[0].split("/")[-1]
 
     # Claim ReafRefDB is IndexRefDB is free
@@ -505,7 +505,7 @@ def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile
         sys.exit('A semaphore related issue has occured.')
 
     if input[0] != "":
-        if mac:
+        if laptop:
             cmd = "{} -i {} -o {}{}_{}_consensus -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {}".format(
                 kma_path, input[0], target_dir, nanopore_name, templateaccesion, kma_database_path,
                 str(best_template), str(multi_threading), str(bc))
@@ -878,7 +878,7 @@ def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string,
 
 
 def generateFigtree(inputfile, jobid):
-    #Figtree doesnt work on mac
+    #Figtree doesnt work on laptop
 
     cmd = "docker run --name figtree{} -v {}:/tmp/tree.tree biocontainers/figtree:v1.4.4-3-deb_cv1 figtree -graphic PNG -width 500 -height 500 /tmp/tree.tree /tmp/tree.png".format(jobid, inputfile)
     os.system(cmd)
@@ -899,7 +899,7 @@ def generateFigtree(inputfile, jobid):
 
     return ("{}tree.png".format(inputdir))
 
-def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, jobid, inputname, kma_path, kma_database_path, entryid, referenceSyncFile, isolatedb, db_dir, associated_species):
+def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, jobid, inputname, kma_path, kma_database_path, entryid, isolatedb, db_dir, associated_species):
     with open(referenceSyncFile) as json_file:
         referencejson = json.load(json_file)
     json_file.close()
@@ -1215,9 +1215,13 @@ def findTemplateNumber(db_dir, name):
     t = 1
     for line in infile:
         if line.rstrip() == name:
+            infile.close()
             return t
         else:
             t = t + 1
+    infile.close()
+
+
 
 
 def initRunningAnalyses(db_dir, outputname, inputname, entryid):
@@ -1668,7 +1672,7 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
     pdf.set_font('Arial', '', 12)
 
     ''' Second Page '''
-    pdf.add_page()
+    pdf.add_page()f
     pdf.image(exepath + "/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
     create_title(pdf, ID, "Phylogeny results")
     pdf.ln(20)

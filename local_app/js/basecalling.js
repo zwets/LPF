@@ -68,7 +68,6 @@ function select_output(){
           }
 
         var select = document.getElementById("barcoding_config_name");
-        //var unames = ["Alpha", "Bravo", "Charlie", "Delta", "Echo"];
         for (var i = 0; i < unique_barcoding_config_name.length; i++) {
             var opt = unique_barcoding_config_name[i];
             var el = document.createElement("option");
@@ -78,9 +77,34 @@ function select_output(){
           }
 
         var select = document.getElementById("model_version");
-        //var unames = ["Alpha", "Bravo", "Charlie", "Delta", "Echo"];
         for (var i = 0; i < unique_model_version.length; i++) {
             var opt = unique_model_version[i];
+            var el = document.createElement("option");
+            el.textContent = opt;
+            el.value = opt;
+            select.appendChild(el);
+          }
+
+    });
+
+
+    readTextFile(db_dir + "analyticalFiles/barcodes.json", function(text){
+        var data = JSON.parse(text);
+        var items = data;
+
+        var result_barcode = [];
+
+        for (var item, i = 0; item = items[i++];) {
+          var barcode = item.barcode;
+          result_barcode.push(barcode);
+        }
+
+        const unique_barcode = [...new Set(result_barcode)];
+
+        var select = document.getElementById("demux");
+        //var unames = ["Alpha", "Bravo", "Charlie", "Delta", "Echo"];
+        for (var i = 0; i < unique_barcode.length; i++) {
+            var opt = unique_barcode[i];
             var el = document.createElement("option");
             el.textContent = opt;
             el.value = opt;

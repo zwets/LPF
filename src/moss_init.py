@@ -176,6 +176,8 @@ if kmaindex_db_path != "":
     conn.commit()
     c.execute("""CREATE TABLE IF NOT EXISTS statustable(entryid TEXT PRIMARY KEY, status TEXT, type TEXT, level_current TEXT, level_max TEXT, result TEXT)""")
     conn.commit()
+    c.execute( """CREATE TABLE IF NOT EXISTS local_sync_table(entryid TEXT PRIMARY KEY, time_of_analysis TEXT)""")
+    conn.commit()
     dbstring = "INSERT INTO ipctable(ipc, IndexRefDB, IsolateJSON, ReferenceJSON, ReadRefDB, running_analyses, queued_analyses, finished_analyses) VALUES('{}' ,'{}', '{}', '{}', '{}', '{}', '{}', '{}')".format('IPC',1,1,1, 100, "", "", "")
     c.execute(dbstring)
 
@@ -201,19 +203,6 @@ if kmaindex_db_path != "":
     jsondict["syncpath"] = syncpath
     with open("{}{}_moss_config.json".format(db_dir, args.configname), 'w') as f_out:
       json.dump(jsondict, f_out)
-    f_out.close()
-
-    # Generate localDBAddition.json
-    referenceadditionjsondict['analysistimestamp'] = str(time.time())
-    with open("{}syncFiles/referenceSync.json".format(db_dir), 'w') as f_out:
-        json.dump(referenceadditionjsondict, f_out)
-    f_out.close()
-
-    # Initialize isolate sync
-    isolateadditionjson = dict()
-    isolateadditionjson['analysistimestamp'] = str(time.time())
-    with open("{}syncFiles/isolateSync.json".format(db_dir), 'w') as f_out:
-        json.dump(isolateadditionjson, f_out)
     f_out.close()
 
 cmd = "python3 {}/src/createGuppyWorkflowDict.py -db_dir {}".format(exepath, db_dir)
