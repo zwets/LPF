@@ -40,8 +40,9 @@ os.system(cmd)
 #Get barcodes
 
 cmd = "grep \"kits\" * >  {}/analyticalFiles/tmpbarcodes.txt".format(args.db_dir)
+print (cmd)
 proc = subprocess.Popen(cmd, shell=True,
                             stdout=subprocess.PIPE, )
 output = proc.communicate()[0].decode()
 
-print (output)    
+print (output)
