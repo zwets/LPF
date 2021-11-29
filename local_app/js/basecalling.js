@@ -124,6 +124,7 @@ function start_base_calling(){
     var flowcell = document.getElementById('flow-cell').value;
     var kit = document.getElementById('kit').value;
     var barcoding_config_name = document.getElementById('barcoding_config_name').value;
+    var barcodes = document.getElementById('demux').value;
     var model_version = document.getElementById('model_version').value;
     var db_dir = document.getElementById('current-config').innerHTML;
 
@@ -135,7 +136,7 @@ function start_base_calling(){
     var path_slice= path_list.slice(1, -1);
     var input_path = "/" + path_slice.join("/") + "/";
 
-    cmd = `guppy_basecaller -i ${input_path} -s ${output_dir}/ --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq --trim_barcodes`;
+    cmd = `guppy_basecaller -i ${input_path} -s ${output_dir}/ --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq --trim_barcodes --barcode_kits \"${barcodes}\"`;
     console.log(cmd);
 
     if (fs.existsSync(output_dir)) {
