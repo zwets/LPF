@@ -137,10 +137,10 @@ function start_base_calling(){
     var input_path = "/" + path_slice.join("/") + "/";
 
     cmd = `guppy_basecaller -i ${input_path} -s ${output_dir}/ --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq --trim_barcodes`;
+    if barcodes != "No multiplexing":
+        cmd = cmd.concat(` --barcode_kits \"${barcodes}\"`)
     console.log(cmd);
-    console.log(barcodes)
-    //if barcodes != "No multiplexing":
-    //    cmd.concat(` --barcode_kits \"${barcodes}\"`)
+
 
     if (fs.existsSync(output_dir)) {
         var loader = document.getElementById('loader');
