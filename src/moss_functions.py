@@ -41,33 +41,6 @@ def init_moss_variables(exepath, db_dir, ):
     isolateSyncFile = db_dir + "syncFiles/isolateSync.json"
     return kma_path
 
-def init_status_table(entryid, status, type, level_current, level_max, result, db_dir):
-    conn = sqlite3.connect(db_dir + "moss.db")
-    c = conn.cursor()
-
-    dbstring = "INSERT INTO statustable(entryid, status, type, level_current, level_max, result) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
-        entryid, status, type, level_current, level_max, result)
-    c.execute(dbstring)
-    conn.commit()
-    conn.close()
-
-def update_status_table(entryid, status, type, level_current, level_max, result, db_dir):
-    conn = sqlite3.connect(db_dir + "moss.db")
-    c = conn.cursor()
-    entryid_statement = "entryid = '{}'".format(entryid)
-    status_statement = "status = '{}'".format(status)
-    type_statement = "type = '{}'".format(type)
-    level_current_statement = "level_current = '{}'".format(level_current)
-    level_max_statement = "level_max = '{}'".format(level_max)
-    result_statement = "result = '{}'".format(result)
-
-    dbstring = "UPDATE statustable SET {}, {}, {}, {}, {} WHERE {}".format(status_statement, type_statement, level_current_statement, level_max_statement, result_statement, entryid_statement)
-    print (dbstring)
-    c.execute(dbstring)
-
-    conn.commit()
-    conn.close()
-
 def update_pip_dependencies():
     cmd = "python3 -m pip install --upgrade fpdf"
     os.system(cmd)
@@ -176,9 +149,9 @@ def varify_all_dependencies(exepath, laptop):
 
 
 
-def run_mlst(exepath, total_filenames, target_dir, templatename, seqType):
+def run_mlst(exepath, total_filenames, target_dir, header_text, seqType):
 
-    specie = templatename.split()[1].lower() + " " + templatename.split()[2].lower() #Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
+    specie = header_text.split()[1].lower() + " " + header_text.split()[2].lower() #Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
 
     mlst_dict = dict()
     infile = open(exepath + "mlst/mlst_db/config", 'r')
@@ -314,7 +287,7 @@ def KMA_mapping(total_filenames, target_dir, kma_database_path, logfile, kma_pat
     template_found = False
     best_template = ""
     best_template_score = 0.0
-    templatename = ""
+    header_text = ""
     
     if laptop:
         cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -nf -mem_mode -sasm -ef".format(kma_path,
@@ -335,11 +308,11 @@ def KMA_mapping(total_filenames, target_dir, kma_database_path, logfile, kma_pat
             if line[0][0] != "#":
                 if float(line[1]) > best_template_score:
                     best_template_score = float(line[1])
-                    templatename = line[0]
+                    header_text = line[0]
 
 
         template_found = True
-        return best_template_score, template_found, templatename
+        return best_template_score, template_found, header_text
 
     #If no match are found, the sample will be defined as a new reference.
     except IndexError as error:
@@ -351,7 +324,7 @@ def KMA_mapping(total_filenames, target_dir, kma_database_path, logfile, kma_pat
         # Perform assembly based on input
         template_found = False
         print("FoundnoTemplate")
-        return best_template_score, template_found, templatename
+        return best_template_score, template_found, header_text
     ###
 
 def illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion,db_dir, laptop):
@@ -804,7 +777,7 @@ def ThreshholdDistanceCheck(distancematrixfile, reference, isolate):
                 secondentry = True
         linecount += 1
 
-def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string, templatename, db_dir):
+def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string, header_text, db_dir):
 
     plasmids_isolate = plasmid_string.split(",")
     amrgenes_isolate = allresgenes.split(",")
@@ -815,7 +788,7 @@ def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string,
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT plasmids FROM isolatetable WHERE headerid = '{}'".format(templatename))
+    c.execute("SELECT plasmids FROM isolatetable WHERE headerid = '{}'".format(header_text))
     refdata = c.fetchall()
 
     print (refdata)
@@ -828,7 +801,7 @@ def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string,
     else:
         plasmids_reference= []
 
-    c.execute("SELECT virulencegenes FROM isolatetable WHERE headerid = '{}'".format(templatename))
+    c.execute("SELECT virulencegenes FROM isolatetable WHERE headerid = '{}'".format(header_text))
     refdata = c.fetchall()
     if refdata != []:
         if refdata[0][0] == None:
@@ -838,7 +811,7 @@ def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string,
     else:
         virulencegenes_reference = []
 
-    c.execute("SELECT amrgenes FROM isolatetable WHERE headerid = '{}'".format(templatename))
+    c.execute("SELECT amrgenes FROM isolatetable WHERE headerid = '{}'".format(header_text))
     refdata = c.fetchall()
     if refdata != []:
         if refdata[0][0] == None:
@@ -899,7 +872,7 @@ def generateFigtree(inputfile, jobid):
 
     return ("{}tree.png".format(inputdir))
 
-def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, jobid, inputname, kma_path, kma_database_path, entryid, isolatedb, db_dir, associated_species):
+def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, jobid, samplename, kma_path, kma_database_path, entryid, isolatedb, db_dir, associated_species):
     with open(referenceSyncFile) as json_file:
         referencejson = json.load(json_file)
     json_file.close()
@@ -927,7 +900,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
             os.system(cmd)
         elif inputType == "se_illumina":
             cmd = "docker run --name assembly_results{} -v {}:/dockertmp/{} nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -s /dockertmp/{} -o /dockertmp/assembly_results -t 4".format(
-                jobid, input[0], inputname, inputname)
+                jobid, input[0], samplename, samplename)
             os.system(cmd)
 
         proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_results", jobid), shell=True,
@@ -948,13 +921,13 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
         # concatenate all reads into one file
 
         infile = open("{}assembly_results/assembly.fasta".format(target_dir), 'r')
-        writefile = open("{}{}_assembled.fasta".format(target_dir, inputname), 'w')  # Adds all contigs to one sequence
+        writefile = open("{}{}_assembled.fasta".format(target_dir, samplename), 'w')  # Adds all contigs to one sequence
         sequence = ""
         for line in infile:
             if line[0] != ">":
                 line = line.rstrip()
                 sequence += line
-        print(">" + inputname, file=writefile)
+        print(">" + samplename, file=writefile)
         print(sequence, file=writefile)
         infile.close()
         writefile.close()
@@ -966,10 +939,10 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
         result, action = acquire_semaphore("IndexRefDB", db_dir, 1, 7200)
         if result == 'acquired' and action == False:
             cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir,
-                                                                     inputname)  # add assembly to references
+                                                                     samplename)  # add assembly to references
             os.system(cmd)
-            referencejson[inputname] = {'entryid': entryid, 'headerid': inputname,
-                                        'filename': "{}_assembled.fasta".format(inputname)}
+            referencejson[samplename] = {'entryid': entryid, 'headerid': samplename,
+                                        'filename': "{}_assembled.fasta".format(samplename)}
             with open(referenceSyncFile, 'w') as f_out:
                 json.dump(referencejson, f_out)
             f_out.close()
@@ -997,9 +970,9 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
         #       print("Unlinking semaphore")
         #       semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
         #       semaphore.acquire(timeout=3600)
-        #cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir, inputname)  # add assembly to references
+        #cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir, samplename)  # add assembly to references
         #os.system(cmd)
-        #referencejson[inputname] = {'entryid': entryid, 'headerid': inputname, 'filename': "{}_assembled.fasta".format(inputname)}
+        #referencejson[samplename] = {'entryid': entryid, 'headerid': samplename, 'filename': "{}_assembled.fasta".format(samplename)}
         #with open(referenceSyncFile, 'w') as f_out:
         #    json.dump(referencejson, f_out)
         #f_out.close()
@@ -1008,15 +981,15 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
         conn = sqlite3.connect(isolatedb)
         c = conn.cursor()
         #Here, check and insert amrgenes, virulencegenes, plasmids.
-        dbstring = "INSERT INTO referencetable(entryid, headerid, refname) VALUES ('{}', '{}', '{}')".format(entryid, associated_species, inputname)
+        dbstring = "INSERT INTO referencetable(entryid, headerid, refname) VALUES ('{}', '{}', '{}')".format(entryid, associated_species, samplename)
         c.execute(dbstring)
         conn.commit()  # Need IPC
         conn.close()
 
-        cmd = "mkdir {}datafiles/isolatefiles/{}".format(db_dir, inputname)
+        cmd = "mkdir {}datafiles/isolatefiles/{}".format(db_dir, samplename)
         os.system(cmd)
 
-        cmd = "mkdir {}datafiles/distancematrices/{}".format(db_dir, inputname)
+        cmd = "mkdir {}datafiles/distancematrices/{}".format(db_dir, samplename)
         os.system(cmd)
 
         # Works
@@ -1031,7 +1004,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
         # Longread assembly
 
         cmd = "docker run --name assembly_results{} -v {}:/tmp/{} nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -l /tmp/{} -o /tmp/assembly_results -t 4".format(
-            jobid, input[0], inputname, inputname)
+            jobid, input[0], samplename, samplename)
         os.system(cmd)
 
         proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_results", jobid), shell=True,
@@ -1047,13 +1020,13 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
 
         # Concatenate contigs
         infile = open("{}assembly_results/assembly.fasta".format(target_dir), 'r')
-        writefile = open("{}{}_assembled.fasta".format(target_dir, inputname), 'w')  # Adds all contigs to one sequence
+        writefile = open("{}{}_assembled.fasta".format(target_dir, samplename), 'w')  # Adds all contigs to one sequence
         sequence = ""
         for line in infile:
             if line[0] != ">":
                 line = line.rstrip()
                 sequence += line
-        print(">" + inputname, file=writefile)
+        print(">" + samplename, file=writefile)
         print(sequence, file=writefile)
         infile.close()
         writefile.close()
@@ -1063,10 +1036,10 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
         result, action = acquire_semaphore("IndexRefDB", db_dir, 1, 7200)
         if result == 'acquired' and action == False:
             cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir,
-                                                                     inputname)  # add assembly to references
+                                                                     samplename)  # add assembly to references
             os.system(cmd)
-            referencejson[inputname] = {'entryid': entryid, 'headerid': inputname,
-                                        'filename': "{}_assembled.fasta".format(inputname)}
+            referencejson[samplename] = {'entryid': entryid, 'headerid': samplename,
+                                        'filename': "{}_assembled.fasta".format(samplename)}
             with open(referenceSyncFile, 'w') as f_out:
                 json.dump(referencejson, f_out)
             f_out.close()
@@ -1095,9 +1068,9 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
         #        semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1)
         #        semaphore.acquire(timeout=3600)
 
-        #cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir, inputname)  # add assembly to references
+        #cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir, samplename)  # add assembly to references
         #os.system(cmd)
-        #referencejson[inputname] = {'entryid': entryid, 'headerid': inputname, 'filename': "{}_assembled.fasta".format(inputname)}
+        #referencejson[samplename] = {'entryid': entryid, 'headerid': samplename, 'filename': "{}_assembled.fasta".format(samplename)}
         #with open(referenceSyncFile, 'w') as f_out:
         #    json.dump(referencejson, f_out)
         #f_out.close()
@@ -1105,18 +1078,18 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
 
         conn = sqlite3.connect(isolatedb)
         c = conn.cursor()
-        dbstring = "INSERT INTO referencetable(entryid, headerid, refname) VALUES('{}', '{}', '{}')".format(entryid, associated_species, inputname)
+        dbstring = "INSERT INTO referencetable(entryid, headerid, refname) VALUES('{}', '{}', '{}')".format(entryid, associated_species, samplename)
         c.execute(dbstring)
         conn.commit()  # Need IPC
         conn.close()
 
-        cmd = "mkdir {}datafiles/isolatefiles/{}".format(db_dir, inputname)
+        cmd = "mkdir {}datafiles/isolatefiles/{}".format(db_dir, samplename)
         os.system(cmd)
 
-        cmd = "mkdir {}datafiles/distancematrices/{}".format(db_dir, inputname)
+        cmd = "mkdir {}datafiles/distancematrices/{}".format(db_dir, samplename)
         os.system(cmd)
 
-        cmd = "cp {}{}_assembled.fasta {}datafiles/distancematrices/{}/{}_assembled.fasta".format(target_dir, inputname, db_dir, inputname, inputname)
+        cmd = "cp {}{}_assembled.fasta {}datafiles/distancematrices/{}/{}_assembled.fasta".format(target_dir, samplename, db_dir, samplename, samplename)
         os.system(cmd)
         # Works
 
@@ -1124,13 +1097,13 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
 def uniqueNameCheck(db_dir, inputType, total_filenames):
     if inputType == "nanopore":
         inputpath = total_filenames
-        isolatename = inputpath.split("/")[-1]
+        samplename = inputpath.split("/")[-1]
     elif inputType == "pe_illumina":
         inputpath = total_filenames.split(" ")[0]
-        isolatename = inputpath.split("/")[-1]
+        samplename = inputpath.split("/")[-1]
     elif inputType == "se_illumina":
         inputpath = total_filenames
-        isolatename = inputpath.split("/")[-1]
+        samplename = inputpath.split("/")[-1]
 
     if inputType == "nanopore" or inputType == "se_illumina":
         if total_filenames[-3:] == ".gz":
@@ -1161,7 +1134,7 @@ def uniqueNameCheck(db_dir, inputType, total_filenames):
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
 
-    c.execute("SELECT * FROM isolatetable WHERE isolatename = '{}'".format(isolatename))
+    c.execute("SELECT * FROM isolatetable WHERE samplename = '{}'".format(samplename))
     refdata = c.fetchall()
 
     if refdata != []:
@@ -1224,7 +1197,7 @@ def findTemplateNumber(db_dir, name):
 
 
 
-def initRunningAnalyses(db_dir, outputname, inputname, entryid):
+def initRunningAnalyses(db_dir, outputname, samplename, entryid):
 
     with open(db_dir + "analyticalFiles/runningAnalyses.json") as json_file:
         referencejson = json.load(json_file)
@@ -1238,7 +1211,7 @@ def initRunningAnalyses(db_dir, outputname, inputname, entryid):
             self.start_time = starttime
             self.file_name = filename
 
-    analysis = runningAnalysis(entryid,time,inputname)
+    analysis = runningAnalysis(entryid,time,samplename)
 
     jsonStr = json.dumps(analysis.__dict__)
 
@@ -1248,7 +1221,7 @@ def initRunningAnalyses(db_dir, outputname, inputname, entryid):
         json.dump(referencejson, f_out)
     f_out.close()
 
-def endRunningAnalyses(db_dir, outputname, inputname, entryid):
+def endRunningAnalyses(db_dir, outputname, samplename, entryid):
     with open(db_dir + "analyticalFiles/runningAnalyses.json") as json_file:
         referencejson = json.load(json_file)
     json_file.close()
@@ -1272,7 +1245,7 @@ def endRunningAnalyses(db_dir, outputname, inputname, entryid):
             self.finish_time = finishtime
             self.file_name = filename
 
-    analysis = finishedAnalysis(entryid, time, inputname)
+    analysis = finishedAnalysis(entryid, time, samplename)
 
     jsonStr = json.dumps(analysis.__dict__)
 
@@ -1335,23 +1308,23 @@ def run_quast(target_dir, jobid):
 
 
 
-def matrixClusterSize(db_dir, templatename):
+def matrixClusterSize(db_dir, header_text):
     isolatedb = db_dir + "moss.db"
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT isolateid FROM referencetable WHERE headerid = '{}'".format(templatename))
+    c.execute("SELECT isolateid FROM referencetable WHERE headerid = '{}'".format(header_text))
     refdata = c.fetchall()
     conn.close()
     length = len(refdata[0][0].split(", "))
     return length
 
-def lastClusterAddition(db_dir, templatename):
+def lastClusterAddition(db_dir, header_text):
     isolatedb = db_dir + "moss.db"
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT entryid, analysistimestamp FROM isolatetable WHERE headerid = '{}' ORDER BY analysistimestamp DESC".format(templatename)) #Dårlig løsning, ikke skalerbar til >5M isolates
+    c.execute("SELECT entryid, analysistimestamp FROM isolatetable WHERE headerid = '{}' ORDER BY analysistimestamp DESC".format(header_text)) #Dårlig løsning, ikke skalerbar til >5M isolates
     refdata = c.fetchall()
     conn.close()
     return refdata
@@ -1361,7 +1334,7 @@ def isolate_file_name(db_dir, entryid):
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT isolatename FROM isolatetable WHERE entryid = '{}'".format(entryid))
+    c.execute("SELECT samplename FROM isolatetable WHERE entryid = '{}'".format(entryid))
     refdata = c.fetchall()
     conn.close()
     element = refdata[0][0]
@@ -1369,13 +1342,13 @@ def isolate_file_name(db_dir, entryid):
     return element
 
 
-def generate_amr_resistance_profile_table(db_dir, entryid, pdf, target_dir, exepath, templatename):
+def generate_amr_resistance_profile_table(db_dir, entryid, pdf, target_dir, exepath, header_text):
 
     panel_found = False
     panel_list = []
 
-    genus = templatename.split()[1]
-    species = templatename.split()[2]
+    genus = header_text.split()[1]
+    species = header_text.split()[2]
 
     panels = []
     antimicrobials = dict()
@@ -1517,7 +1490,7 @@ def compileReportAssembly(target_dir, ID, db_dir, associated_species, exepath):
     pdf.output(target_dir + filename, 'F')
 
 
-def retrieve_cge_counts(target_dir, ID, db_dir, image_location, templatename, exepath):
+def retrieve_cge_counts(target_dir, ID, db_dir, image_location, header_text, exepath):
     isolatedb = db_dir + "moss.db"
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
@@ -1546,7 +1519,7 @@ def retrieve_cge_counts(target_dir, ID, db_dir, image_location, templatename, ex
     else:
         amrgenes_isolate = refdata[0][0].split(",")
 
-    c.execute("SELECT plasmids FROM referencetable WHERE headerid = '{}'".format(templatename))
+    c.execute("SELECT plasmids FROM referencetable WHERE headerid = '{}'".format(header_text))
     refdata = c.fetchall()
 
     if refdata[0][0] == None:
@@ -1554,7 +1527,7 @@ def retrieve_cge_counts(target_dir, ID, db_dir, image_location, templatename, ex
     else:
         plasmids_reference = refdata[0][0].split(",")
 
-    c.execute("SELECT virulencegenes FROM referencetable WHERE headerid = '{}'".format(templatename))
+    c.execute("SELECT virulencegenes FROM referencetable WHERE headerid = '{}'".format(header_text))
     refdata = c.fetchall()
 
     if refdata[0][0] == None:
@@ -1562,7 +1535,7 @@ def retrieve_cge_counts(target_dir, ID, db_dir, image_location, templatename, ex
     else:
         virulencegenes_reference = refdata[0][0].split(",")
 
-    c.execute("SELECT amrgenes FROM referencetable WHERE headerid = '{}'".format(templatename))
+    c.execute("SELECT amrgenes FROM referencetable WHERE headerid = '{}'".format(header_text))
     refdata = c.fetchall()
 
     if refdata[0][0] == None:
@@ -1589,13 +1562,13 @@ def mlst_sequence_type(target_dir):
 
 
 
-def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename, exepath):
+def compileReportAlignment(target_dir, ID, db_dir, image_location, header_text, exepath):
     pdf = FPDF()  # A4 (210 by 297 mm)
 
     filename = "{}_report.pdf".format(ID) #ADD idd
-    clusterSize = int(matrixClusterSize(db_dir, templatename)) + 2
-    latestAddition = lastClusterAddition(db_dir, templatename)
-    phenotypes, panel_found, panel_list = generate_amr_resistance_profile_table(db_dir, ID, pdf, target_dir, exepath, templatename)
+    clusterSize = int(matrixClusterSize(db_dir, header_text)) + 2
+    latestAddition = lastClusterAddition(db_dir, header_text)
+    phenotypes, panel_found, panel_list = generate_amr_resistance_profile_table(db_dir, ID, pdf, target_dir, exepath, header_text)
 
     ''' First Page '''
     pdf.add_page()
@@ -1607,7 +1580,7 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
     textstring = "ID: {} \n" \
                  "Sample name: {} \n" \
                  "Identified reference: {} \n" \
-                 "".format(ID, file_name, templatename)
+                 "".format(ID, file_name, header_text)
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(10)
 
@@ -1634,7 +1607,7 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
 
     sequence_type = mlst_sequence_type(target_dir)
 
-    plasmids_isolate, virulencegenes_isolate, amrgenes_isolate, plasmids_reference, virulencegenes_reference, amrgenes_reference = retrieve_cge_counts(target_dir, ID, db_dir, image_location, templatename, exepath)
+    plasmids_isolate, virulencegenes_isolate, amrgenes_isolate, plasmids_reference, virulencegenes_reference, amrgenes_reference = retrieve_cge_counts(target_dir, ID, db_dir, image_location, header_text, exepath)
     textstring = "AMR genes in this sample: {}. \n" \
                  "AMR genes in this cluster: {}. \n" \
                  "Plasmids in this sample: {}. \n" \
@@ -1681,12 +1654,12 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, templatename,
 
     pdf.output(target_dir + filename, 'F')
 
-def compare_plasmid_isolate_vs_cluster(plasmid_list, templatename, db_dir):
+def compare_plasmid_isolate_vs_cluster(plasmid_list, header_text, db_dir):
     isolatedb = db_dir + "moss.db"
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT plasmids FROM referencetable WHERE headerid = '{}'".format(templatename))
+    c.execute("SELECT plasmids FROM referencetable WHERE headerid = '{}'".format(header_text))
     refdata = c.fetchall()
     conn.close()
     element = refdata[0]
@@ -1870,7 +1843,7 @@ def queueMultiAnalyses(db_dir, inputlist):
         json.dump(_json, f_out)
     f_out.close()
 
-def processQueuedAnalyses(db_dir, outputname, inputname, entryid):
+def processQueuedAnalyses(db_dir, outputname, samplename, entryid):
     with open(db_dir + "analyticalFiles/queuedAnalyses.json") as json_file:
         referencejson = json.load(json_file)
     json_file.close()
@@ -1893,7 +1866,7 @@ def processQueuedAnalyses(db_dir, outputname, inputname, entryid):
                 self.start_time = starttime
                 self.file_name = filename
 
-        analysis = runningAnalysis(entryid, time, inputname)
+        analysis = runningAnalysis(entryid, time, samplename)
 
         jsonStr = json.dumps(analysis.__dict__)
 
@@ -1903,9 +1876,9 @@ def processQueuedAnalyses(db_dir, outputname, inputname, entryid):
             json.dump(referencejson, f_out)
         f_out.close()
     else:
-        initRunningAnalyses(db_dir, outputname, inputname, entryid)
+        initRunningAnalyses(db_dir, outputname, samplename, entryid)
 
-def checkAMRrisks(target_dir, entryid, db_dir, templatename, exepath, logfile):
+def checkAMRrisks(target_dir, entryid, db_dir, header_text, exepath, logfile):
     warning = []
     riskcategory = []
     tabfile = target_dir + "resfinderResults/ResFinder_results_tab.txt"
@@ -1947,8 +1920,8 @@ def checkAMRrisks(target_dir, entryid, db_dir, templatename, exepath, logfile):
     json_file.close()
 
 
-    templatenamelist = templatename.split()
-    speciename = (templatenamelist[1] + " " + templatenamelist[2]).upper()
+    header_textlist = header_text.split()
+    speciename = (header_textlist[1] + " " + header_textlist[2]).upper()
 
     for category in amr_list:
         for specie in amr_list[category]:

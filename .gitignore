@@ -17,6 +17,7 @@
 setuptools-33.1.1.zip
 # production
 /local_app/build
+ez_setup.py
 setuptool*
 # misc
 /local_app/.DS_Store

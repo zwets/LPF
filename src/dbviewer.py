@@ -27,7 +27,7 @@ reflist = (c.execute("SELECT refName from refs")).fetchall()
 for item in reflist:
     print (item[0])
 print ("isolates")
-isolatelist = (c.execute("SELECT refName, isolateName from isolates")).fetchall()
+isolatelist = (c.execute("SELECT refName, samplename from isolates")).fetchall()
 for item in isolatelist:
     print ("refrence: {} has isolatemapping; {}".format(item[0], item[1]))
 

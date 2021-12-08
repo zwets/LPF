@@ -20,6 +20,7 @@ import json
 import sqlite3
 import moss_functions as moss
 import mbh_helpers as mbh_helper
+import moss_sql as moss_sql
 import json
 import datetime
 import threading
@@ -66,19 +67,20 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
 
 
     if inputType == "nanopore" or inputType == "se_illumina":
-        inputname = input[0].split("/")[-1]
+        samplename = input[0].split("/")[-1]
         entryid = moss.md5(input[0])
     elif inputType == "pe_illumina":
-        inputname = input[0].split("/")[-1]
+        samplename = input[0].split("/")[-1]
         illumina_name1 = input[0].split("/")[-1]
         illumina_name2 = input[1].split("/")[-1]
         entryid = moss.md5(input[0])
 
     moss.uniqueNameCheck(db_dir, inputType, total_filenames)
 
-    moss.init_status_table(entryid, "Initializing", "Not Determined", "1", "10", "Running", db_dir)
+    moss_sql.init_status_table(entryid, "Initializing", "Not Determined", "1", "10", "Running", db_dir)
+    moss_sql.init_isolate_table(entryid, "", samplename, str(datetime.datetime.now())[0:-7], "", "","")
 
-    moss.processQueuedAnalyses(db_dir, entryid, inputname, entryid)
+    moss.processQueuedAnalyses(db_dir, entryid, samplename, entryid)
 
     target_dir = db_dir + "analysis/" + entryid + "/"
     cmd = "mkdir " + target_dir
@@ -97,7 +99,7 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
     mbh_helper.print_to_logfile("# MOSS {} was used.".format(moss_version), logfile, True)
     mbh_helper.print_to_logfile("# input: {}".format(total_filenames), logfile, True)
 
-    moss.update_status_table(entryid, "CGE_finders", "Not Determined", "2", "10", "Running", db_dir)
+    moss_sql.update_status_table(entryid, "CGE_finders", "Not Determined", "2", "10", "Running", db_dir)
 
     mbh_helper.print_to_logfile("# Running CGE tool: {}".format("Resfinder"), logfile, True)
     moss.runResFinder(exepath, total_filenames, target_dir, seqType)
@@ -107,46 +109,61 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
     moss.runVirulenceFinder(exepath, total_filenames, target_dir)
     mbh_helper.print_to_logfile("# Running KMA mapping for template identification", logfile, True)
 
-    best_template_score, template_found, templatename = moss.KMA_mapping(total_filenames, target_dir, kma_database_path, logfile, exepath + "kma/kma", laptop)
-    mlst_result = moss.run_mlst(exepath, total_filenames, target_dir, templatename, seqType)
+    best_template_score, template_found, header_text = moss.KMA_mapping(total_filenames, target_dir, kma_database_path, logfile, exepath + "kma/kma", laptop)
+    mlst_result = moss.run_mlst(exepath, total_filenames, target_dir, header_text, seqType)
 
-    moss.update_status_table(entryid, "KMA Mapping", "Not Determined", "3", "10", "Running", db_dir)
+    moss_sql.update_status_table(entryid, "KMA Mapping", "Not Determined", "3", "10", "Running", db_dir)
 
-    best_template = moss.findTemplateNumber(db_dir, templatename)
+    best_template = moss.findTemplateNumber(db_dir, header_text)
 
     mbh_helper.print_to_logfile("Best template number: {}".format(best_template), logfile, True)
+
+    plasmid_count, plasmid_list = moss.plasmid_data_for_report(target_dir + "plasmidFinderResults/data.json",
+                                                               target_dir)
+    plasmid_string = ",".join(plasmid_list)
+    virulence_count, virulence_list = moss.virulence_data_for_report(target_dir + "virulenceFinderResults/data.json",
+                                                                     target_dir, logfile)
+    virulence_string = ",".join(virulence_list)
+
+    warning, riskcategory, allresgenes, amrinfo = moss.checkAMRrisks(target_dir, entryid, db_dir, header_text, exepath,
+                                                                     logfile)
+
+    moss_sql.update_isolate_table(entryid, header_text, samplename, str(datetime.datetime.now())[0:-7],
+                                                    plasmid_string.replace("'", "''"),
+                                                    allresgenes.replace(", ", ",").replace("'", "''"),
+                                                    virulence_string.replace("'", "''"))
 
     if best_template == None:
         template_found = False
 
-    mbh_helper.print_to_logfile("Best template: {}".format(templatename), logfile, True)
+    mbh_helper.print_to_logfile("Best template: {}".format(header_text), logfile, True)
 
     mbh_helper.print_to_logfile("Best template score: " + str(best_template_score), logfile, True)
 
     if template_found == False: #NO TEMPLATE FOUND #Being assembly
-        moss.update_status_table(entryid, "Unicycler Assembly", "Assembly", "4", "5", "Running", db_dir)
+        moss_sql.update_status_table(entryid, "Unicycler Assembly", "Assembly", "4", "5", "Running", db_dir)
 
-        associated_species = "No related reference identified, manual curation required. ID: {} name: {}".format(entryid, inputname)
+        associated_species = "No related reference identified, manual curation required. ID: {} name: {}".format(entryid, samplename)
 
         if assemblyType == "illumina":
-            moss.inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, "", jobid, inputname, exepath + "kma/kma", kma_database_path, entryid, db_dir + "moss.db", db_dir, associated_species)
+            moss.inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, "", jobid, samplename, exepath + "kma/kma", kma_database_path, entryid, db_dir + "moss.db", db_dir, associated_species)
         elif assemblyType == "nanopore":
-            moss.inputAssemblyFunction(assemblyType, inputType, target_dir, input, "", "", jobid, inputname, exepath + "kma/kma", kma_database_path, entryid, db_dir + "moss.db", db_dir, associated_species)
+            moss.inputAssemblyFunction(assemblyType, inputType, target_dir, input, "", "", jobid, samplename, exepath + "kma/kma", kma_database_path, entryid, db_dir + "moss.db", db_dir, associated_species)
 
         mbh_helper.print_to_logfile("Run time: {}".format(datetime.datetime.now() - start_time), logfile, True)
-        moss.update_status_table(entryid, "Compiling Assembly PDF", "Assembly", "5", "5", "Running", db_dir)
+        moss_sql.update_status_table(entryid, "Compiling Assembly PDF", "Assembly", "5", "5", "Running", db_dir)
 
         moss.compileReportAssembly(target_dir, ID, db_dir, associated_species, exepath)
 
-        moss.endRunningAnalyses(db_dir, entryid, inputname, entryid)
+        moss.endRunningAnalyses(db_dir, entryid, samplename, entryid)
 
         logfile.close()
-        moss.update_status_table(entryid, "Assembly completed", "Assembly", "5", "5", "Finished", db_dir)
+        moss_sql.update_status_table(entryid, "Assembly completed", "Assembly", "5", "5", "Finished", db_dir)
         sys.exit("No template was found, so input was added to references.")
 
     #If reference found:
 
-    moss.update_status_table(entryid, "IPC check", "Alignment", "4", "10", "Running", db_dir)
+    moss_sql.update_status_table(entryid, "IPC check", "Alignment", "4", "10", "Running", db_dir)
 
     result, action = moss.acquire_semaphore("IndexRefDB", db_dir, 1, 7200)
     if result == 'acquired' and action == False:
@@ -159,10 +176,10 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
 
     print('mpr: true', file=logfile)
 
-    if " " in templatename:
-        templateaccesion = templatename.split(" ")[0]
+    if " " in header_text:
+        templateaccesion = header_text.split(" ")[0]
     else:
-        templateaccesion = templatename
+        templateaccesion = header_text
 
     if inputType == "pe_illumina":
         moss.illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfile, multi_threading, exepath + "kma/kma", templateaccesion, db_dir, laptop)
@@ -173,7 +190,7 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
 
-    c.execute("SELECT * FROM referencetable WHERE headerid = '{}'".format(templatename))
+    c.execute("SELECT * FROM referencetable WHERE headerid = '{}'".format(header_text))
     refdata = c.fetchall()
     conn.close()
 
@@ -181,39 +198,39 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
     refname = refdata[0][2]
 
 
-    cmd = "cp {}{}_{}_consensus.fsa {}datafiles/isolatefiles/{}/{}_{}_consensus.fsa".format(target_dir, inputname, templateaccesion, db_dir, templateaccesion, inputname, templateaccesion)
+    cmd = "cp {}{}_{}_consensus.fsa {}datafiles/isolatefiles/{}/{}_{}_consensus.fsa".format(target_dir, samplename, templateaccesion, db_dir, templateaccesion, samplename, templateaccesion)
     os.system(cmd)
 
 
     ######## KØR FREM PÅ CCPHYLO COMMANDO
     #CCind her. single fil som skal appendes til eksisterende matrix med samme, gemte conditions.
     if len(moss.loadFiles("{}datafiles/isolatefiles/{}/".format(db_dir, refname))) > 1:
-        moss.update_status_table(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir)
+        moss_sql.update_status_table(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir)
 
         print ("CCPHYLO")
-        cmd = "{} dist -i {}datafiles/isolatefiles/{}/* -r \"{}\" -mc 0.01 -nm 0 -o {}distance_matrix_{}".format(exepath + "ccphylo/ccphylo", db_dir, refname, templatename, target_dir, refname)
+        cmd = "{} dist -i {}datafiles/isolatefiles/{}/* -r \"{}\" -mc 0.01 -nm 0 -o {}distance_matrix_{}".format(exepath + "ccphylo/ccphylo", db_dir, refname, header_text, target_dir, refname)
         print (cmd, file = logfile)
         if prune_distance != 0 :
             cmd += " -pr {}".format(prune_distance)
         os.system(cmd)
 
         # Check if acceptable snp distance
-        distance = moss.ThreshholdDistanceCheck("{}distance_matrix_{}".format(target_dir, refname), refname, "{}_{}_consensus.fsa".format(inputname, templateaccesion))
+        distance = moss.ThreshholdDistanceCheck("{}distance_matrix_{}".format(target_dir, refname), refname, "{}_{}_consensus.fsa".format(samplename, templateaccesion))
         print (distance, file = logfile)
         if distance > 300: #SNP distance
-            moss.update_status_table(entryid, "Unicycler Assembly", "Assembly", "4", "5", "Running", db_dir)
+            moss_sql.update_status_table(entryid, "Unicycler Assembly", "Assembly", "4", "5", "Running", db_dir)
             print("Distance to best template was over 300 basepairs, so input will be defined as reference", file = logfile)
             print("Distance to best template was over 300 basepairs, so input will be defined as reference")
 
-            templatename = templatename.split()
-            associated_species = "{} {} assembly from ID: {}, SNP distance from best verified reference: {}".format(templatename[1], templatename[2], entryid, distance)
+            header_text = header_text.split()
+            associated_species = "{} {} assembly from ID: {}, SNP distance from best verified reference: {}".format(header_text[1], header_text[2], entryid, distance)
 
             if assemblyType == "illumina":
-                moss.inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, jobid, inputname, exepath + "kma/kma", kma_database_path, entryid, db_dir + "moss.db", associated_species)
+                moss.inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, jobid, samplename, exepath + "kma/kma", kma_database_path, entryid, db_dir + "moss.db", associated_species)
             elif assemblyType == "nanopore":
-                moss.inputAssemblyFunction(assemblyType, inputType, target_dir, input, "", "", jobid, inputname, exepath + "kma/kma", kma_database_path, entryid, db_dir + "moss.db", db_dir, associated_species)
+                moss.inputAssemblyFunction(assemblyType, inputType, target_dir, input, "", "", jobid, samplename, exepath + "kma/kma", kma_database_path, entryid, db_dir + "moss.db", db_dir, associated_species)
 
-            cmd = "rm {}datafiles/isolatefiles/{}/{}_{}_consensus.fsa".format(db_dir, templateaccesion, inputname, templateaccesion, db_dir + "moss.db", db_dir)
+            cmd = "rm {}datafiles/isolatefiles/{}/{}_{}_consensus.fsa".format(db_dir, templateaccesion, samplename, templateaccesion, db_dir + "moss.db", db_dir)
             os.system(cmd)
             #semaphore.release()
 
@@ -223,26 +240,25 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
             run_time = end_time - start_time
             print("Run time: {}".format(run_time))
 
-            moss.update_status_table(entryid, "Compiling Assembly PDF", "Assembly", "5", "5", "Running", db_dir)
+            moss_sql.update_status_table(entryid, "Compiling Assembly PDF", "Assembly", "5", "5", "Running", db_dir)
 
             moss.compileReportAssembly(target_dir, entryid, db_dir, associated_species, exepath)
 
-            moss.endRunningAnalyses(db_dir, entryid, inputname, entryid)
+            moss.endRunningAnalyses(db_dir, entryid, samplename, entryid)
             #Claim semaphore
-            moss.update_status_table(entryid, "Compiling Assembly PDF", "Assembly", "5", "5", "Finished", db_dir)
+            moss_sql.update_status_table(entryid, "Compiling Assembly PDF", "Assembly", "5", "5", "Finished", db_dir)
 
             sys.exit("Found template, but input fra over 300bp away, and input was assembled and defied as new reference")
 
 
-        warning, riskcategory, allresgenes, amrinfo = moss.checkAMRrisks(target_dir, entryid, db_dir, templatename, exepath, logfile)
-        moss.update_status_table(entryid, "Distance Matrix", "Alignment", "6", "10", "Running", db_dir)
+        moss_sql.update_status_table(entryid, "Distance Matrix", "Alignment", "6", "10", "Running", db_dir)
 
 
         cmd = "cp {}distance_matrix_{} {}/datafiles/distancematrices/{}/distance_matrix_{}".format(target_dir, refname, db_dir, refname, refname)
         os.system(cmd)
         cmd = "{} tree -i {}/datafiles/distancematrices/{}/distance_matrix_{} -o {}/datafiles/distancematrices/{}/tree.newick".format(exepath + "ccphylo/ccphylo", db_dir, refname, refname, db_dir, refname)
         os.system(cmd)
-        moss.update_status_table(entryid, "Phylo Tree imaging", "Alignment", "7", "10", "Running", db_dir)
+        moss_sql.update_status_table(entryid, "Phylo Tree imaging", "Alignment", "7", "10", "Running", db_dir)
 
         image_location = moss.generateFigtree("{}/datafiles/distancematrices/{}/tree.newick".format(db_dir, refname), jobid)
 
@@ -252,30 +268,22 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
             isolateid = refdata[0][3] + ", " + entryid
 
 
-        plasmid_count, plasmid_list = moss.plasmid_data_for_report(target_dir + "plasmidFinderResults/data.json", target_dir)
-        plasmid_string = ",".join(plasmid_list)
-        virulence_count, virulence_list = moss.virulence_data_for_report(target_dir + "virulenceFinderResults/data.json", target_dir, logfile)
-        virulence_string = ",".join(virulence_list)
 
-
-        moss.update_status_table(entryid, "Database updating", "Alignment", "8", "10", "Running", db_dir)
+        moss_sql.update_status_table(entryid, "Database updating", "Alignment", "8", "10", "Running", db_dir)
 
 
         conn = sqlite3.connect(db_dir + "moss.db")
         c = conn.cursor()
 
-        dbstring = "UPDATE referencetable SET isolateid = '{}' WHERE headerid = '{}'".format(isolateid, templatename)
+        dbstring = "UPDATE referencetable SET isolateid = '{}' WHERE headerid = '{}'".format(isolateid, header_text)
         c.execute(dbstring)
 
         #DET ER ' som giver SQL fejl. Hvor vigtig er den? evt accession number i stedet?
 
-        dbstring = "INSERT INTO amrtable(entryid, isolatename, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, inputname, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), templatename, riskcategory.replace("'", "''"), warning.replace("'", "''"))
+        dbstring = "INSERT INTO amrtable(entryid, samplename, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, samplename, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), header_text, riskcategory.replace("'", "''"), warning.replace("'", "''"))
         c.execute(dbstring)
 
-        dbstring = "INSERT INTO isolatetable(entryid, headerid, isolatename, analysistimestamp, plasmids, amrgenes, virulencegenes) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, templatename, inputname, str(datetime.datetime.now())[0:-7], plasmid_string.replace("'", "''"), allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''"))
-        print (plasmid_string)
-        print (allresgenes)
-        print (virulence_string)
+        moss_sql.updmoss_sql.update_isate_isolate_table(entryid, header_text, samplename, str(datetime.datetime.now())[0:-7], plasmid_string.replace("'", "''"), allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''"))
 
         c.execute(dbstring)
 
@@ -284,21 +292,19 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
         dbstring = "INSERT INTO metadatatable(entryid, {}) VALUES('{}', {})".format(entries, entryid.replace("'", "''"), values)
         c.execute(dbstring)
 
-        #Here, check for new unique genes, plasmids, virulence found in samlple both not in referencelcuster. if found, add
-
-        new_plasmid_string, new_virulence_string, new_amr_string = moss.scan_reference_vs_isolate_cge(plasmid_string, allresgenes.replace(", ", ","), virulence_string, templatename, db_dir)
+        new_plasmid_string, new_virulence_string, new_amr_string = moss.scan_reference_vs_isolate_cge(plasmid_string, allresgenes.replace(", ", ","), virulence_string, header_text, db_dir)
 
 
         if new_amr_string != None:
-            dbstring = "UPDATE referencetable SET amrgenes = '{}' WHERE headerid = '{}'".format(new_amr_string.replace("'", "''"), templatename)
+            dbstring = "UPDATE referencetable SET amrgenes = '{}' WHERE headerid = '{}'".format(new_amr_string.replace("'", "''"), header_text)
             c.execute(dbstring)
 
         if new_plasmid_string != None:
-            dbstring = "UPDATE referencetable SET virulencegenes = '{}' WHERE headerid = '{}'".format(new_virulence_string.replace("'", "''"), templatename)
+            dbstring = "UPDATE referencetable SET virulencegenes = '{}' WHERE headerid = '{}'".format(new_virulence_string.replace("'", "''"), header_text)
             c.execute(dbstring)
 
         if new_plasmid_string != None:
-            dbstring = "UPDATE referencetable SET plasmids = '{}' WHERE headerid = '{}'".format(new_plasmid_string.replace("'", "''"), templatename)
+            dbstring = "UPDATE referencetable SET plasmids = '{}' WHERE headerid = '{}'".format(new_plasmid_string.replace("'", "''"), header_text)
             print (dbstring)
             c.execute(dbstring)
 
@@ -311,7 +317,7 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
             with open(isolateSyncFile) as json_file:
                 IsolateJSON = json.load(json_file)
             json_file.close()
-            IsolateJSON[inputname] = {'entryid': entryid, 'headerid': templatename, 'refname': refname}
+            IsolateJSON[samplename] = {'entryid': entryid, 'headerid': header_text, 'refname': refname}
             with open(isolateSyncFile, 'w') as f_out:
                 json.dump(IsolateJSON, f_out)
 
@@ -328,7 +334,7 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
         print("Run time: {}".format(run_time))
         print("Run time: {}".format(run_time), file=logfile)
 
-        moss.update_status_table(entryid, "Outbreak Finder", "Alignment", "9", "10", "Running", db_dir)
+        moss_sql.update_status_table(entryid, "Outbreak Finder", "Alignment", "9", "10", "Running", db_dir)
 
 
 
@@ -338,14 +344,14 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
 
         if not laptop:
             moss.check_to_destroy_shm_db(exepath + "kma/kma", kma_database_path, db_dir, logfile)
-        moss.endRunningAnalyses(db_dir, entryid, inputname, entryid)
-        moss.update_status_table(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Running", db_dir)
+        moss.endRunningAnalyses(db_dir, entryid, samplename, entryid)
+        moss_sql.update_status_table(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Running", db_dir)
 
 
-        moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, templatename, exepath) #No report compiled for assemblies! Look into it! #TBD
+        moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, header_text, exepath) #No report compiled for assemblies! Look into it! #TBD
 
         logfile.close()
-        moss.update_status_table(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Finished", db_dir)
+        moss_sql.update_status_table(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Finished", db_dir)
 
 
 

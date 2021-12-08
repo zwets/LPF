@@ -155,7 +155,7 @@ linenumber = 1
 for line in infile:
     line = line.rstrip()
     if line.split(" ")[0] == args.reference or line.split(" ")[0] == args.reference[0:-2]:
-        templatename = line
+        header_text = line
         templateid = linenumber
     linenumber += 1
 infile.close()
@@ -192,7 +192,7 @@ for i in range(len(complete_path_files)):
     cmd = "{} -i {} -o  {}/analysis/{}/newoutput/nc_{} -t_db {}/{} -ref_fsa -nf -na -ca -dense -cge -vcf -bc90 -Mt1 {}".format(kma_path, complete_path_files[i], db_dir, args.output, files[i], db_dir, "REFDB.ATG", templateid)
     os.system(cmd)
 
-cmd = "{} dist -i {}/analysis/{}/newoutput/*.fsa -o {}/analysis/{}/distmatrix.phy -r \"{}\" -f 9 -mc 1 -nm 0".format(ccphylo_path, db_dir, args.output, db_dir, args.output, templatename)
+cmd = "{} dist -i {}/analysis/{}/newoutput/*.fsa -o {}/analysis/{}/distmatrix.phy -r \"{}\" -f 9 -mc 1 -nm 0".format(ccphylo_path, db_dir, args.output, db_dir, args.output, header_text)
 os.system(cmd)
 
 

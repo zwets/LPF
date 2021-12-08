@@ -162,13 +162,15 @@ if kmaindex_db_path != "":
     infile.close()
     metadata_string = metadata_string[:-1]
 
-    c.execute("""CREATE TABLE IF NOT EXISTS isolatetable(entryid TEXT PRIMARY KEY, headerid TEXT, isolatename TEXT, analysistimestamp TEXT, samplingtimestamp TEXT, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS isolatetable(entryid TEXT PRIMARY KEY, samplename TEXT, header_text TEXT, analysistimestamp TEXT, samplingtimestamp TEXT, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT)""")
     conn.commit()
+    #c.execute("""CREATE TABLE IF NOT EXISTS isolatetable(entryid TEXT PRIMARY KEY, headerid TEXT, samplename TEXT, analysistimestamp TEXT, samplingtimestamp TEXT, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT)""")
+    #conn.commit()
     c.execute("""CREATE TABLE IF NOT EXISTS referencetable(entryid TEXT PRIMARY KEY, headerid TEXT, refname TEXT, isolateid TEXT, analysistimestamp TEXT, samplingtimestamp TEXT, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT)""") #Mangler finder results. Implement eventually
     conn.commit()
     c.execute("""CREATE TABLE IF NOT EXISTS specietable(specie TEXT PRIMARY KEY, entryid TEXT)""")
     conn.commit()
-    c.execute("""CREATE TABLE IF NOT EXISTS amrtable(entryid TEXT PRIMARY KEY, isolatename TEXT, analysistimestamp TEXT, amrgenes TEXT, phenotypes TEXT, specie TEXT, risklevel TEXT, warning TEXT)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS amrtable(entryid TEXT PRIMARY KEY, samplename TEXT, analysistimestamp TEXT, amrgenes TEXT, phenotypes TEXT, specie TEXT, risklevel TEXT, warning TEXT)""")
     conn.commit()
     c.execute("""CREATE TABLE IF NOT EXISTS metadatatable(entryid TEXT PRIMARY KEY, {})""".format(metadata_string))
     conn.commit()

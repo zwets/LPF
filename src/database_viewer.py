@@ -46,7 +46,7 @@ childnames = []
 for i in range(len(parentlist)):
     isolateids = parentlist[i][3].split(", ")
     for i in range(len(isolateids)):
-        c.execute("SELECT isolatename FROM isolatetable WHERE entryid = '{}'".format(isolateids[i]))
+        c.execute("SELECT samplename FROM isolatetable WHERE entryid = '{}'".format(isolateids[i]))
         isolateids[i] = c.fetchone()[0]
     isolateids = ", ".join(isolateids)
     childnames.append(isolateids)

@@ -44,9 +44,9 @@ references = c.fetchall()
 
 
 
-c.execute("SELECT refName, isolateName from isolates")
+c.execute("SELECT refName, samplename from isolates")
 isolates = c.fetchall()
-#c.execute("SELECT id, refName, isolateName from isolates")print (c.fetchall())
+#c.execute("SELECT id, refName, samplename from isolates")print (c.fetchall())
 
 for i in range(5, len(references)):
     print("For " + references[i][0] + " the following are isolates: ")

@@ -62,7 +62,7 @@ function sql_data_query_table(data_obj, data, divid) {
         }
 
         var col = [];
-        col.push('isolatename');
+        col.push('samplename');
         col.push('analysistimestamp');
         col.push('specie');
         col.push('amrgenes');
@@ -95,7 +95,7 @@ function sql_data_query_table(data_obj, data, divid) {
             }
             var tabCell = tr.insertCell(-1);
             var img = document.createElement('img');
-            img.isolatename = data_obj[i].isolatename;
+            img.samplename = data_obj[i].samplename;
             img.analysistimestamp = data_obj[i].analysistimestamp;
             img.specie = data_obj[i].specie;
             img.amrgenes = data_obj[i].amrgenes;
@@ -122,7 +122,7 @@ function most_recent_isolates_table(data_obj, data) {
 
         var col = [];
         col.push('entryid');
-        col.push('isolatename');
+        col.push('samplename');
         col.push('analysistimestamp');
         col.push('risklevel');
 
@@ -145,14 +145,14 @@ function most_recent_isolates_table(data_obj, data) {
             tr = table.insertRow(-1);
 
             var tabCell = tr.insertCell(-1);
-            tabCell.innerHTML = data_obj[i].isolatename;
+            tabCell.innerHTML = data_obj[i].samplename;
             var tabCell = tr.insertCell(-1);
             tabCell.innerHTML = data_obj[i].analysistimestamp;
 
             var tabCell = tr.insertCell(-1);
             var img = document.createElement('img');
             img.entryid = data_obj[i].entryid;
-            img.isolatename = data_obj[i].isolatename;
+            img.samplename = data_obj[i].samplename;
             img.analysistimestamp = data_obj[i].analysistimestamp;
             img.risklevel = data_obj[i].risklevel;
             img.setAttribute('height', '17pt');
@@ -171,7 +171,7 @@ function make_table_from_obj(obj) {
     var k = '<tbody>'
     for(i = 0;i < obj.length; i++){
             k+= '<tr>';
-            k+= '<td>' + obj[i].isolatename + '</td>';
+            k+= '<td>' + obj[i].samplename + '</td>';
             k+= '<td>' + obj[i].analysistimestamp + '</td>';
             k+= '</tr>';
         }

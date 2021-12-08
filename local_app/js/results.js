@@ -93,6 +93,117 @@ function openPDF(id, data, myjson){
   //return false;
 }
 
+function most_recent_isolates_table(data_obj, data) {
+        var divShowData = document.getElementById('showData2');
+        divShowData.innerHTML = "";
+		var myObject = [];
+        var col = [];
+        col.push('entryid');
+        col.push('status');
+        col.push('type');
+        col.push('level_current');
+        col.push('level_max');
+        col.push('result');
+
+        // Create a table.
+        var table = document.createElement("table");
+        table.innerHTML = "";
+
+        // Create table header row using the extracted headers above.
+        var tr = table.insertRow(-1);                   // table row.
+
+        for (var i = 0; i < col.length; i++) {
+            var th = document.createElement("th");      // table header.
+            th.innerHTML = col[i];
+            tr.appendChild(th);
+        }
+
+        // add json data to the table as rows.
+        for (var i = 0; i < data_obj.length; i++) {
+            let db_dir = document.getElementById('current-config').innerHTML
+            const db = require('better-sqlite3')(db_dir + 'moss.db');
+            //WHERE ENTRYID IN TABLE, CHANGE SQL STRUCTURE
+
+            try {
+              sql = `SELECT samplename FROM isolatetable WHERE entryid = '${data_obj[i].entryid}'`;
+              console.log(sql);
+              var name = db.prepare(`sql`).all()[0].samplename;
+              console.log(name);
+            }
+            catch(err) {
+              var name = "No name found";
+            }
+            console.log(name);
+
+
+
+            tr = table.insertRow(-1);
+
+            var tabCell = tr.insertCell(-1);
+            tabCell.innerHTML = data_obj[i].entryid;
+            var tabCell = tr.insertCell(-1);
+            tabCell.innerHTML = data_obj[i].status;
+            var tabCell = tr.insertCell(-1);
+            tabCell.innerHTML = data_obj[i].type;
+            var tabCell = tr.insertCell(-1);
+            tabCell.innerHTML = data_obj[i].level_current;
+            var tabCell = tr.insertCell(-1);
+            tabCell.innerHTML = data_obj[i].level_max;
+            var tabCell = tr.insertCell(-1);
+            tabCell.innerHTML = data_obj[i].result;
+
+            if (tabCell.innerHTML == "Finished") {
+                var tabCell = tr.insertCell(-1);
+                var img = document.createElement('img');
+                img.id = data_obj[i].entryid;
+                img.name = data_obj[i].samplename;
+                img.src = data.exepath + "local_app/images/report-icon.png";
+                img.setAttribute('height', '17pt');
+                img.innerHTML = data_obj[i].entryid;
+                img.onclick = function() {openPDF(this.id, data)};
+                //el.addEventListener("click", function(){
+                //    openPDF(Object.keys(myjson)[i]));
+                //});
+                tabCell.appendChild(img);
+
+            }
+
+
+
+
+        }
+        table.style.border = "thin solid red";
+        table.style.cssFloat = "center";
+        table.style.padding = "1px 10px 10px 10px";
+        divShowData.appendChild(table);
+
+    }
+
+function showanalyses() {
+    let sql = `SELECT * FROM statustable`;
+    let db_dir = document.getElementById('current-config').innerHTML
+    const db = require('better-sqlite3')(db_dir + 'moss.db');
+    const data_obj = db.prepare(sql).all();
+    console.log(data_obj);
+    //make table
+    var size = 50;
+    if (data_obj.length > size) {
+        const sliceddata_obj = data_obj.slice(0, size);
+        storage.get('currentConfig', function(error, data) {
+          if (error) throw error;
+
+          most_recent_isolates_table(sliceddata_obj, data);
+        });
+    } else {
+        const sliceddata_obj = data_obj;
+        storage.get('currentConfig', function(error, data) {
+          if (error) throw error;
+
+          most_recent_isolates_table(sliceddata_obj, data);
+        });
+    };
+}
+
 
 function tableFromJson(name, data) {
         var divShowData = document.getElementById('showData');

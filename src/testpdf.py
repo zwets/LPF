@@ -38,8 +38,8 @@ for file in onlyfiles:
     output = proc.communicate()[0]
     id = output.decode().rstrip()
     refname = id.split()[2]
-    templatename = id.split()[2:]
-    templatename = " ".join(templatename)
+    header_text = id.split()[2:]
+    header_text = " ".join(header_text)
 
     entryid = file
     target_dir = db_dir + "analysis/" + entryid + "/"
@@ -58,10 +58,10 @@ for file in onlyfiles:
                                                                                                              file)
 
     if result == 'true':
-        moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, templatename, exepath)  # No report compiled for assemblies! Look into it! #TBD
+        moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, header_text, exepath)  # No report compiled for assemblies! Look into it! #TBD
     elif result == 'false':
         moss.compileReportAssembly(target_dir, entryid, db_dir, associated_species, exepath)
 
 #value = moss.check_sql_semaphore_value(db_dir, 'IndexRefDB')
-#moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, templatename, exepath)  # No report compiled for assemblies! Look into it! #TBD
+#moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, header_text, exepath)  # No report compiled for assemblies! Look into it! #TBD
 #moss.compileReportAssembly(target_dir, entryid, db_dir, image_location, associated_species, exepath)

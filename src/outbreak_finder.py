@@ -42,14 +42,14 @@ c = conn.cursor()
 c.execute("SELECT * FROM referencetable WHERE isolateid != ''")
 referencelist = c.fetchall()
 
-isolatenames = []
+samplenames = []
 for i in range(len(referencelist)):
     isolateids = referencelist[i][3].split(", ")
     for i in range(len(isolateids)):
-        c.execute("SELECT isolatename FROM isolatetable WHERE entryid = '{}'".format(isolateids[i]))
+        c.execute("SELECT samplename FROM isolatetable WHERE entryid = '{}'".format(isolateids[i]))
         isolateids[i] = c.fetchone()[0]
     isolateids = ", ".join(isolateids)
-    isolatenames.append(isolateids)
+    samplenames.append(isolateids)
 
 conn.close()
 
@@ -57,7 +57,7 @@ conn.close()
 
 referencedict = dict()
 for i in range(len(referencelist)):
-    referencedict[referencelist[i][1]] = isolatenames[i]
+    referencedict[referencelist[i][1]] = samplenames[i]
 od = collections.OrderedDict(sorted(referencedict.items()))
 
 with open(args.db_dir + 'analyticalFiles/outbreakfinder.json', 'w') as fp:
