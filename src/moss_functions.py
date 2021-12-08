@@ -26,7 +26,6 @@ import gzip
 import posix_ipc
 import pandas as pd
 from tabulate import tabulate
-import matplotlib.pyplot as plt
 from IPython.display import display, HTML
 import gzip
 from fpdf import FPDF
