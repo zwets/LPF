@@ -71,6 +71,7 @@ def main():
     os.system(cmd)
 
 
+
 def findersinstall():
     cmd = "python3 -m pip install tabulate biopython cgecore gitpython python-dateutil"
     os.system(cmd)
@@ -82,6 +83,7 @@ def findersinstall():
     os.system(cmd)
     cmd = "git clone https://bitbucket.org/genomicepidemiology/virulencefinder.git; cd virulencefinder; git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git; cd virulencefinder_db; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;"
     os.system(cmd)
+
 
 
 #Docker install missing

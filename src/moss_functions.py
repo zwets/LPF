@@ -1645,7 +1645,7 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, header_text, 
     pdf.set_font('Arial', '', 12)
 
     ''' Second Page '''
-    pdf.add_page()f
+    pdf.add_page()
     pdf.image(exepath + "/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
     create_title(pdf, ID, "Phylogeny results")
     pdf.ln(20)
