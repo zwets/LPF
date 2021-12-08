@@ -17,7 +17,7 @@
 setuptools-33.1.1.zip
 # production
 /local_app/build
-
+setuptool*
 # misc
 /local_app/.DS_Store
 /local_app/.env.local
