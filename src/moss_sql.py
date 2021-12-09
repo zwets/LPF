@@ -77,9 +77,9 @@ def update_isolate_table(entryid, header_text, samplename, plasmid_string, allre
     entryid_statement = "entryid = '{}'".format(entryid)
     header_text_statement = "header_text = '{}'".format(header_text)
     samplename_statement = "samplename = '{}'".format(samplename)
-    plasmid_string_statement = "plasmid_string = '{}'".format(plasmid_string)
-    allresgenes_statement = "allresgenes = '{}'".format(allresgenes)
-    virulence_string_statement = "virulence_string = '{}'".format(virulence_string)
+    plasmid_string_statement = "plasmids = '{}'".format(plasmid_string)
+    allresgenes_statement = "amrgenes = '{}'".format(allresgenes)
+    virulence_string_statement = "virulencegenes = '{}'".format(virulence_string)
 
     dbstring = "UPDATE isolatetable SET {}, {}, {}, {}, {} WHERE {}".format(header_text_statement, samplename_statement, plasmid_string_statement, allresgenes_statement, virulence_string_statement, entryid_statement)
     print (dbstring)
