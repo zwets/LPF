@@ -67,6 +67,7 @@ def init_isolate_table(entryid, header_text, samplename, plasmid_string, allresg
     dbstring = "INSERT INTO isolatetable(entryid, header_text, samplename, analysistimestamp, plasmids, amrgenes, virulencegenes) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
         entryid, header_text, samplename, str(datetime.datetime.now())[0:-7], plasmid_string.replace("'", "''"),
         allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''"))
+    sys.exit(dbstring)
 
     c.execute(dbstring)
     conn.commit()
