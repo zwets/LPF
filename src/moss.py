@@ -126,10 +126,10 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
     warning, riskcategory, allresgenes, amrinfo = moss.checkAMRrisks(target_dir, entryid, db_dir, header_text, exepath,
                                                                      logfile)
 
-    moss_sql.update_isolate_table(entryid, header_text, samplename, str(datetime.datetime.now())[0:-7],
+    moss_sql.update_isolate_table(entryid, header_text, samplename,
                                                     plasmid_string.replace("'", "''"),
                                                     allresgenes.replace(", ", ",").replace("'", "''"),
-                                                    virulence_string.replace("'", "''"))
+                                                    virulence_string.replace("'", "''"), db_dir)
 
     if best_template == None:
         template_found = False
