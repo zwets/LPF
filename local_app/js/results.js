@@ -99,6 +99,7 @@ function most_recent_isolates_table(data_obj, data) {
 		var myObject = [];
         var col = [];
         col.push('entryid');
+        col.push('samplename');
         col.push('status');
         col.push('type');
         col.push('level_current');
@@ -124,15 +125,9 @@ function most_recent_isolates_table(data_obj, data) {
             const db = require('better-sqlite3')(db_dir + 'moss.db');
             //WHERE ENTRYID IN TABLE, CHANGE SQL STRUCTURE
 
-            try {
-              sql = `SELECT samplename FROM isolatetable WHERE entryid = '${data_obj[i].entryid}'`;
-              console.log(sql);
-              var name = db.prepare(`sql`).all()[0].samplename;
-              console.log(name);
-            }
-            catch(err) {
-              var name = "No name found";
-            }
+            sql = `SELECT samplename FROM isolatetable WHERE entryid = '${data_obj[i].entryid}'`;
+            console.log(sql);
+            var name = db.prepare(`sql`).all()[0].samplename;
             console.log(name);
 
 
@@ -141,6 +136,8 @@ function most_recent_isolates_table(data_obj, data) {
 
             var tabCell = tr.insertCell(-1);
             tabCell.innerHTML = data_obj[i].entryid;
+            var tabCell = tr.insertCell(-1);
+            tabCell.innerHTML = name;
             var tabCell = tr.insertCell(-1);
             tabCell.innerHTML = data_obj[i].status;
             var tabCell = tr.insertCell(-1);
