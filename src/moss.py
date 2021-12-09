@@ -281,7 +281,7 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
         dbstring = "INSERT INTO amrtable(entryid, samplename, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, samplename, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), header_text, riskcategory.replace("'", "''"), warning.replace("'", "''"))
         c.execute(dbstring)
 
-        moss_sql.updmoss_sql.update_isate_isolate_table(entryid, header_text, samplename, str(datetime.datetime.now())[0:-7], plasmid_string.replace("'", "''"), allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''"))
+        moss_sql.update__isolate_table(entryid, header_text, samplename, str(datetime.datetime.now())[0:-7], plasmid_string.replace("'", "''"), allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''"))
 
         c.execute(dbstring)
 
