@@ -188,7 +188,7 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
 
-    c.execute("SELECT * FROM referencetable WHERE headerid = '{}'".format(header_text))
+    c.execute("SELECT * FROM referencetable WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
     conn.close()
 
@@ -260,6 +260,7 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
 
         image_location = moss.generateFigtree("{}/datafiles/distancematrices/{}/tree.newick".format(db_dir, refname), jobid)
 
+
         if refdata[0][3] == None:
             isolateid = entryid
         else:
@@ -269,45 +270,19 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
 
         moss_sql.update_status_table(entryid, "Database updating", "Alignment", "8", "10", "Running", db_dir)
 
+        moss_sql.update_reference_table(entryid, isolateid, None, None, None, header_text, db_dir)
 
-        conn = sqlite3.connect(db_dir + "moss.db")
-        c = conn.cursor()
-
-        dbstring = "UPDATE referencetable SET isolateid = '{}' WHERE headerid = '{}'".format(isolateid, header_text)
-        c.execute(dbstring)
-
-        #DET ER ' som giver SQL fejl. Hvor vigtig er den? evt accession number i stedet?
-
-        dbstring = "INSERT INTO amrtable(entryid, samplename, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, samplename, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), header_text, riskcategory.replace("'", "''"), warning.replace("'", "''"))
-        c.execute(dbstring)
+        moss_sql.insert_amr_table(entryid, samplename, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), header_text, riskcategory.replace("'", "''"), warning.replace("'", "''"))
 
         moss_sql.update_isolate_table(entryid, header_text, samplename, plasmid_string.replace("'", "''"), allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''"), db_dir)
 
-        c.execute(dbstring)
-
         entries, values = moss.sql_string_metadata(metadata_dict)
 
-        dbstring = "INSERT INTO metadatatable(entryid, {}) VALUES('{}', {})".format(entries, entryid.replace("'", "''"), values)
-        c.execute(dbstring)
+        moss_sql.insert_metadata_table(entryid, entries, values, db_dir)
 
         new_plasmid_string, new_virulence_string, new_amr_string = moss.scan_reference_vs_isolate_cge(plasmid_string, allresgenes.replace(", ", ","), virulence_string, header_text, db_dir)
 
-
-        if new_amr_string != None:
-            dbstring = "UPDATE referencetable SET amrgenes = '{}' WHERE headerid = '{}'".format(new_amr_string.replace("'", "''"), header_text)
-            c.execute(dbstring)
-
-        if new_plasmid_string != None:
-            dbstring = "UPDATE referencetable SET virulencegenes = '{}' WHERE headerid = '{}'".format(new_virulence_string.replace("'", "''"), header_text)
-            c.execute(dbstring)
-
-        if new_plasmid_string != None:
-            dbstring = "UPDATE referencetable SET plasmids = '{}' WHERE headerid = '{}'".format(new_plasmid_string.replace("'", "''"), header_text)
-            print (dbstring)
-            c.execute(dbstring)
-
-        conn.commit()
-        conn.close()
+        moss_sql.update_reference_table(entryid, None, new_amr_string, new_virulence_string, new_plasmid_string, header_text, db_dir)
 
 
         result, action = moss.acquire_semaphore("IsolateJSON", db_dir, 1, 7200)
@@ -315,7 +290,7 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
             with open(isolateSyncFile) as json_file:
                 IsolateJSON = json.load(json_file)
             json_file.close()
-            IsolateJSON[samplename] = {'entryid': entryid, 'headerid': header_text, 'refname': refname}
+            IsolateJSON[samplename] = {'entryid': entryid, 'header_text': header_text, 'refname': refname}
             with open(isolateSyncFile, 'w') as f_out:
                 json.dump(IsolateJSON, f_out)
 

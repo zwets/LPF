@@ -34,6 +34,57 @@ from pandas.plotting import table
 from geopy.geocoders import Nominatim
 from subprocess import check_output, STDOUT
 
+def insert_metadata_table(entryid, entries, values, db_dir):
+    conn = sqlite3.connect(db_dir + "moss.db")
+    c = conn.cursor()
+
+    dbstring = "INSERT INTO metadatatable(entryid, {}) VALUES('{}', {})".format(entries, entryid.replace("'", "''"), values)
+
+    c.execute(dbstring)
+
+    conn.commit()
+    conn.close()
+
+def update_reference_table(entryid, isolateid, amrgenes, virulencegenes, plasmids, header_text, db_dir):
+    conn = sqlite3.connect(db_dir + "moss.db")
+    c = conn.cursor()
+    isolateid_statement = "isolateid = '{}'".format(isolateid)
+    amrgenes_statement = "amrgenes = '{}'".format(amrgenes)
+    virulencegenes_statement = "virulencegenes = '{}'".format(virulencegenes)
+    plasmids_statement = "plasmids_max = '{}'".format(plasmids)
+
+    if isolateid != None:
+        dbstring = "UPDATE referencetable SET {} WHERE header_text = '{}'".format(isolateid_statement, header_text)
+        c.execute(dbstring)
+
+    if amrgenes != None:
+        dbstring = "UPDATE referencetable SET {} WHERE header_text = '{}'".format(amrgenes_statement, header_text)
+        c.execute(dbstring)
+
+    if virulencegenes != None:
+        dbstring = "UPDATE referencetable SET {} WHERE header_text = '{}'".format(virulencegenes_statement, header_text)
+        c.execute(dbstring)
+
+    if plasmids != None:
+        dbstring = "UPDATE referencetable SET {} WHERE header_text = '{}'".format(plasmids_statement, header_text)
+        c.execute(dbstring)
+
+    conn.commit()
+    conn.close()
+
+def insert_amr_table(entryid, samplename, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning db_dir):
+
+    conn = sqlite3.connect(db_dir + "moss.db")
+    c = conn.cursor()
+
+
+    dbstring = "INSERT INTO amrtable(entryid, samplename, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"\
+        .format(entryid, samplename, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning)
+    c.execute(dbstring)
+
+    conn.commit()
+    conn.close()
+
 def init_status_table(entryid, status, type, level_current, level_max, result, db_dir):
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
@@ -82,7 +133,6 @@ def update_isolate_table(entryid, header_text, samplename, plasmid_string, allre
     virulence_string_statement = "virulencegenes = '{}'".format(virulence_string)
 
     dbstring = "UPDATE isolatetable SET {}, {}, {}, {}, {} WHERE {}".format(header_text_statement, samplename_statement, plasmid_string_statement, allresgenes_statement, virulence_string_statement, entryid_statement)
-    print (dbstring)
     c.execute(dbstring)
 
     conn.commit()

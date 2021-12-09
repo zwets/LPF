@@ -139,7 +139,7 @@ if kmaindex_db_path != "":
         os.system(cmd)
         cmd = "mkdir " + db_dir + "datafiles/distancematrices/\"{}\"".format(accession)
         os.system(cmd)
-        referenceadditionjsondict[accession] = {'headerid': header, 'filename': accession}
+        referenceadditionjsondict[accession] = {'header_text': header, 'filename': accession}
         cmd = "{} seq2fasta -t_db {}REFDB.ATG -seqs {} > {}datafiles/isolatefiles/{}/{}".format(kma_path, db_dir, str(template_id), db_dir, accession, accession)
         os.system(cmd)
         headerlist.append(header)
@@ -164,7 +164,7 @@ if kmaindex_db_path != "":
 
     c.execute("""CREATE TABLE IF NOT EXISTS isolatetable(entryid TEXT PRIMARY KEY, samplename TEXT, header_text TEXT, analysistimestamp TEXT, samplingtimestamp TEXT, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT)""")
     conn.commit()
-    c.execute("""CREATE TABLE IF NOT EXISTS referencetable(entryid TEXT PRIMARY KEY, headerid TEXT, refname TEXT, isolateid TEXT, analysistimestamp TEXT, samplingtimestamp TEXT, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT)""") #Mangler finder results. Implement eventually
+    c.execute("""CREATE TABLE IF NOT EXISTS referencetable(entryid TEXT PRIMARY KEY, isolateid TEXT, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT)""") #Mangler finder results. Implement eventually
     conn.commit()
     c.execute("""CREATE TABLE IF NOT EXISTS specietable(specie TEXT PRIMARY KEY, entryid TEXT)""")
     conn.commit()
@@ -184,12 +184,12 @@ if kmaindex_db_path != "":
 
     for i in range(len(referencelist)):
         entryid = moss.md5("{}datafiles/isolatefiles/{}/{}".format(db_dir, referencelist[i], referencelist[i]))
-        headerid = headerlist[i]
-        if "'" in headerid:
-            headerid = headerid.replace("'", "''")
-            print (headerid)
+        header_text = headerlist[i]
+        if "'" in header_text:
+            header_text = header_text.replace("'", "''")
+            print (header_text)
         accession = referencelist[i]
-        dbstring = "INSERT INTO referencetable(entryid, headerid, refname) VALUES('{}', '{}', '{}')".format(entryid, headerid, accession)
+        dbstring = "INSERT INTO referencetable(entryid, header_text, refname) VALUES('{}', '{}', '{}')".format(entryid, header_text, accession)
         c.execute(dbstring)
         referenceadditionjsondict[accession].update({'entryid': entryid})
     conn.commit()

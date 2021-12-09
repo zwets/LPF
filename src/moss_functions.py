@@ -787,7 +787,7 @@ def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string,
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT plasmids FROM isolatetable WHERE headerid = '{}'".format(header_text))
+    c.execute("SELECT plasmids FROM isolatetable WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
 
     print (refdata)
@@ -800,7 +800,7 @@ def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string,
     else:
         plasmids_reference= []
 
-    c.execute("SELECT virulencegenes FROM isolatetable WHERE headerid = '{}'".format(header_text))
+    c.execute("SELECT virulencegenes FROM isolatetable WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
     if refdata != []:
         if refdata[0][0] == None:
@@ -810,7 +810,7 @@ def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string,
     else:
         virulencegenes_reference = []
 
-    c.execute("SELECT amrgenes FROM isolatetable WHERE headerid = '{}'".format(header_text))
+    c.execute("SELECT amrgenes FROM isolatetable WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
     if refdata != []:
         if refdata[0][0] == None:
@@ -940,7 +940,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
             cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir,
                                                                      samplename)  # add assembly to references
             os.system(cmd)
-            referencejson[samplename] = {'entryid': entryid, 'headerid': samplename,
+            referencejson[samplename] = {'entryid': entryid, 'header_text': samplename,
                                         'filename': "{}_assembled.fasta".format(samplename)}
             with open(referenceSyncFile, 'w') as f_out:
                 json.dump(referencejson, f_out)
@@ -971,7 +971,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
         #       semaphore.acquire(timeout=3600)
         #cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir, samplename)  # add assembly to references
         #os.system(cmd)
-        #referencejson[samplename] = {'entryid': entryid, 'headerid': samplename, 'filename': "{}_assembled.fasta".format(samplename)}
+        #referencejson[samplename] = {'entryid': entryid, 'header_text': samplename, 'filename': "{}_assembled.fasta".format(samplename)}
         #with open(referenceSyncFile, 'w') as f_out:
         #    json.dump(referencejson, f_out)
         #f_out.close()
@@ -980,7 +980,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
         conn = sqlite3.connect(isolatedb)
         c = conn.cursor()
         #Here, check and insert amrgenes, virulencegenes, plasmids.
-        dbstring = "INSERT INTO referencetable(entryid, headerid, refname) VALUES ('{}', '{}', '{}')".format(entryid, associated_species, samplename)
+        dbstring = "INSERT INTO referencetable(entryid, header_text, refname) VALUES ('{}', '{}', '{}')".format(entryid, associated_species, samplename)
         c.execute(dbstring)
         conn.commit()  # Need IPC
         conn.close()
@@ -1037,7 +1037,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
             cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir,
                                                                      samplename)  # add assembly to references
             os.system(cmd)
-            referencejson[samplename] = {'entryid': entryid, 'headerid': samplename,
+            referencejson[samplename] = {'entryid': entryid, 'header_text': samplename,
                                         'filename': "{}_assembled.fasta".format(samplename)}
             with open(referenceSyncFile, 'w') as f_out:
                 json.dump(referencejson, f_out)
@@ -1069,7 +1069,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
 
         #cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir, samplename)  # add assembly to references
         #os.system(cmd)
-        #referencejson[samplename] = {'entryid': entryid, 'headerid': samplename, 'filename': "{}_assembled.fasta".format(samplename)}
+        #referencejson[samplename] = {'entryid': entryid, 'header_text': samplename, 'filename': "{}_assembled.fasta".format(samplename)}
         #with open(referenceSyncFile, 'w') as f_out:
         #    json.dump(referencejson, f_out)
         #f_out.close()
@@ -1077,7 +1077,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
 
         conn = sqlite3.connect(isolatedb)
         c = conn.cursor()
-        dbstring = "INSERT INTO referencetable(entryid, headerid, refname) VALUES('{}', '{}', '{}')".format(entryid, associated_species, samplename)
+        dbstring = "INSERT INTO referencetable(entryid, header_text, refname) VALUES('{}', '{}', '{}')".format(entryid, associated_species, samplename)
         c.execute(dbstring)
         conn.commit()  # Need IPC
         conn.close()
@@ -1145,7 +1145,7 @@ def uniqueNameCheck(db_dir, inputType, total_filenames):
     if refdata != []:
         sys.exit("An reference sample has the same filename or header string as your input. Please change your input file's name.")
 
-    c.execute("SELECT * FROM referencetable WHERE headerid = '{}'".format(header))
+    c.execute("SELECT * FROM referencetable WHERE header_text = '{}'".format(header))
     refdata = c.fetchall()
 
     if refdata != []:
@@ -1312,7 +1312,7 @@ def matrixClusterSize(db_dir, header_text):
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT isolateid FROM referencetable WHERE headerid = '{}'".format(header_text))
+    c.execute("SELECT isolateid FROM referencetable WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
     conn.close()
     length = len(refdata[0][0].split(", "))
@@ -1323,7 +1323,7 @@ def lastClusterAddition(db_dir, header_text):
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT entryid, analysistimestamp FROM isolatetable WHERE headerid = '{}' ORDER BY analysistimestamp DESC".format(header_text)) #Dårlig løsning, ikke skalerbar til >5M isolates
+    c.execute("SELECT entryid, analysistimestamp FROM isolatetable WHERE header_text = '{}' ORDER BY analysistimestamp DESC".format(header_text)) #Dårlig løsning, ikke skalerbar til >5M isolates
     refdata = c.fetchall()
     conn.close()
     return refdata
@@ -1518,7 +1518,7 @@ def retrieve_cge_counts(target_dir, ID, db_dir, image_location, header_text, exe
     else:
         amrgenes_isolate = refdata[0][0].split(",")
 
-    c.execute("SELECT plasmids FROM referencetable WHERE headerid = '{}'".format(header_text))
+    c.execute("SELECT plasmids FROM referencetable WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
 
     if refdata[0][0] == None:
@@ -1526,7 +1526,7 @@ def retrieve_cge_counts(target_dir, ID, db_dir, image_location, header_text, exe
     else:
         plasmids_reference = refdata[0][0].split(",")
 
-    c.execute("SELECT virulencegenes FROM referencetable WHERE headerid = '{}'".format(header_text))
+    c.execute("SELECT virulencegenes FROM referencetable WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
 
     if refdata[0][0] == None:
@@ -1534,7 +1534,7 @@ def retrieve_cge_counts(target_dir, ID, db_dir, image_location, header_text, exe
     else:
         virulencegenes_reference = refdata[0][0].split(",")
 
-    c.execute("SELECT amrgenes FROM referencetable WHERE headerid = '{}'".format(header_text))
+    c.execute("SELECT amrgenes FROM referencetable WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
 
     if refdata[0][0] == None:
@@ -1658,7 +1658,7 @@ def compare_plasmid_isolate_vs_cluster(plasmid_list, header_text, db_dir):
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT plasmids FROM referencetable WHERE headerid = '{}'".format(header_text))
+    c.execute("SELECT plasmids FROM referencetable WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
     conn.close()
     element = refdata[0]
