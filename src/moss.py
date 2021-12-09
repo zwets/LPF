@@ -77,7 +77,7 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
     moss.uniqueNameCheck(db_dir, inputType, total_filenames)
 
     moss_sql.init_status_table(entryid, "Initializing", "Not Determined", "1", "10", "Running", db_dir)
-    moss_sql.init_isolate_table(entryid, "", samplename, str(datetime.datetime.now())[0:-7], "", "","")
+    moss_sql.init_isolate_table(entryid, "", samplename, "", "", "", db_dir)
 
     moss.processQueuedAnalyses(db_dir, entryid, samplename, entryid)
 
