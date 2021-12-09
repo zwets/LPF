@@ -6,7 +6,7 @@
 import sys
 import os
 
-def print_to_logfile(input, logfilem, stdout):
+def print_to_logfile(input, logfile, stdout):
     print (input, file=logfile)
     if stdout:
         print (input)
