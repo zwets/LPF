@@ -72,7 +72,7 @@ def update_reference_table(entryid, isolateid, amrgenes, virulencegenes, plasmid
     conn.commit()
     conn.close()
 
-def insert_amr_table(entryid, samplename, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning db_dir):
+def insert_amr_table(entryid, samplename, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning, db_dir):
 
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
