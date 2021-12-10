@@ -53,8 +53,6 @@ if kmaindex_db_path != "":
             print ("db_dir already exists")
             raise
 
-    # Generate localDBAddition.json
-    referenceadditionjsondict = dict()
 
     print ("cloning reference DB, if you are using a big reference DB, this might take a while")
     filename = os.listdir(kmaindex_db_path)[0].split(".")[0]
@@ -104,25 +102,6 @@ if kmaindex_db_path != "":
         json.dump(updatejson, f_out)
     f_out.close()
 
-    # Create runningAnalyses.json
-    analysesdict = dict()
-    with open("{}analyticalFiles/runningAnalyses.json".format(db_dir), 'w') as f_out:
-        json.dump(analysesdict, f_out)
-    f_out.close()
-
-    # Create finishedAnalyses.json
-    analysesdict = dict()
-    with open("{}analyticalFiles/finishedAnalyses.json".format(db_dir), 'w') as f_out:
-        json.dump(analysesdict, f_out)
-    f_out.close()
-
-    # Create queuedAnalysis.json
-    analysesdict = dict()
-    with open("{}analyticalFiles/queuedAnalyses.json".format(db_dir), 'w') as f_out:
-        json.dump(analysesdict, f_out)
-    f_out.close()
-
-
     infile = open("{}REFDB.ATG.name".format(db_dir), 'r')
     linenumber = 1
     headerlist = []
@@ -139,7 +118,6 @@ if kmaindex_db_path != "":
         os.system(cmd)
         cmd = "mkdir " + db_dir + "datafiles/distancematrices/\"{}\"".format(accession)
         os.system(cmd)
-        referenceadditionjsondict[accession] = {'header_text': header, 'filename': accession}
         cmd = "{} seq2fasta -t_db {}REFDB.ATG -seqs {} > {}datafiles/isolatefiles/{}/{}".format(kma_path, db_dir, str(template_id), db_dir, accession, accession)
         os.system(cmd)
         headerlist.append(header)
@@ -188,10 +166,8 @@ if kmaindex_db_path != "":
         if "'" in header_text:
             header_text = header_text.replace("'", "''")
             print (header_text)
-        accession = referencelist[i]
-        dbstring = "INSERT INTO referencetable(entryid, header_text, refname) VALUES('{}', '{}', '{}')".format(entryid, header_text, accession)
+        dbstring = "INSERT INTO referencetable(entryid, header_text) VALUES('{}', '{}')".format(entryid, header_text)
         c.execute(dbstring)
-        referenceadditionjsondict[accession].update({'entryid': entryid})
     conn.commit()
     conn.close()
 

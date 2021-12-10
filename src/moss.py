@@ -139,25 +139,10 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
     mbh_helper.print_to_logfile("Best template score: " + str(best_template_score), logfile, True)
 
     if template_found == False: #NO TEMPLATE FOUND #Being assembly
-        moss_sql.update_status_table(entryid, "Unicycler Assembly", "Assembly", "4", "5", "Running", db_dir)
-
-        associated_species = "No related reference identified, manual curation required. ID: {} name: {}".format(entryid, samplename)
-
-        if assemblyType == "illumina":
-            moss.inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, "", jobid, samplename, exepath + "kma/kma", kma_database_path, entryid, db_dir + "moss.db", db_dir, associated_species)
-        elif assemblyType == "nanopore":
-            moss.inputAssemblyFunction(assemblyType, inputType, target_dir, input, "", "", jobid, samplename, exepath + "kma/kma", kma_database_path, entryid, db_dir + "moss.db", db_dir, associated_species)
-
-        mbh_helper.print_to_logfile("Run time: {}".format(datetime.datetime.now() - start_time), logfile, True)
-        moss_sql.update_status_table(entryid, "Compiling Assembly PDF", "Assembly", "5", "5", "Running", db_dir)
-
-        moss.compileReportAssembly(target_dir, ID, db_dir, associated_species, exepath)
-
-        moss.endRunningAnalyses(db_dir, entryid, samplename, entryid)
-
-        logfile.close()
-        moss_sql.update_status_table(entryid, "Assembly completed", "Assembly", "5", "5", "Finished", db_dir)
-        sys.exit("No template was found, so input was added to references.")
+        associated_species = "No related reference identified, manual curation required. ID: {} name: {}".format(
+            entryid, samplename)
+        moss.run_assembly(entryid, db_dir, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
+                          illumina_name2, jobid, exepath, kma_database_path, start_time, logfile, ID, associated_species)
 
     #If reference found:
 
@@ -216,38 +201,13 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
         distance = moss.ThreshholdDistanceCheck("{}distance_matrix_{}".format(target_dir, refname), refname, "{}_{}_consensus.fsa".format(samplename, templateaccesion))
         print (distance, file = logfile)
         if distance > 300: #SNP distance
-            moss_sql.update_status_table(entryid, "Unicycler Assembly", "Assembly", "4", "5", "Running", db_dir)
-            print("Distance to best template was over 300 basepairs, so input will be defined as reference", file = logfile)
-            print("Distance to best template was over 300 basepairs, so input will be defined as reference")
-
             header_text = header_text.split()
             associated_species = "{} {} assembly from ID: {}, SNP distance from best verified reference: {}".format(header_text[1], header_text[2], entryid, distance)
-
-            if assemblyType == "illumina":
-                moss.inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, jobid, samplename, exepath + "kma/kma", kma_database_path, entryid, db_dir + "moss.db", associated_species)
-            elif assemblyType == "nanopore":
-                moss.inputAssemblyFunction(assemblyType, inputType, target_dir, input, "", "", jobid, samplename, exepath + "kma/kma", kma_database_path, entryid, db_dir + "moss.db", db_dir, associated_species)
+            moss.run_assembly(entryid, db_dir, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
+                              illumina_name2, jobid, exepath, kma_database_path, start_time, logfile, ID, associated_species)
 
             cmd = "rm {}datafiles/isolatefiles/{}/{}_{}_consensus.fsa".format(db_dir, templateaccesion, samplename, templateaccesion, db_dir + "moss.db", db_dir)
             os.system(cmd)
-            #semaphore.release()
-
-
-            # Reassemble
-            end_time = datetime.datetime.now()
-            run_time = end_time - start_time
-            print("Run time: {}".format(run_time))
-
-            moss_sql.update_status_table(entryid, "Compiling Assembly PDF", "Assembly", "5", "5", "Running", db_dir)
-
-            moss.compileReportAssembly(target_dir, entryid, db_dir, associated_species, exepath)
-
-            moss.endRunningAnalyses(db_dir, entryid, samplename, entryid)
-            #Claim semaphore
-            moss_sql.update_status_table(entryid, "Compiling Assembly PDF", "Assembly", "5", "5", "Finished", db_dir)
-
-            sys.exit("Found template, but input fra over 300bp away, and input was assembled and defied as new reference")
-
 
         moss_sql.update_status_table(entryid, "Distance Matrix", "Alignment", "6", "10", "Running", db_dir)
 
