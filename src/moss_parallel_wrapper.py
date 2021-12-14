@@ -72,8 +72,6 @@ def main(input, jobs, threads, input_type, db_dir, exepath, mac):
             cmd += " -mac"
         jobslist.append(cmd)
 
-    moss.queueMultiAnalyses(db_dir, filelist)
-
     for item in jobslist:
         print (item)
     Parallel(n_jobs=jobs)(delayed(mossAnalysis)(jobslist, i) for i in range(len(jobslist)))

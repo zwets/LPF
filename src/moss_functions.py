@@ -248,6 +248,12 @@ def check_to_destroy_shm_db(kma_path, kma_database_path, db_dir, logfile):
         running_json = json.load(json_file)
     json_file.close()
 
+    conn = sqlite3.connect(db_dir + "moss.db")
+    c = conn.cursor()
+    c.execute("SELECT * FROM ipctable WHERE header_text = '{}'".format(header_text))
+    refdata = c.fetchall()
+    conn.close()
+
     if running_json == {} and queue_json == {}: #Take Down DB from shm
         os.system("{}_shm -t_db {} -destroy".format(kma_path, kma_database_path))
         print ("{}_shm -t_db {} -destroy".format(kma_path, kma_database_path), file=logfile)
@@ -355,13 +361,13 @@ def KMA_mapping(total_filenames, target_dir, kma_database_path, logfile, kma_pat
 def illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion,db_dir, laptop):
     illumina_name = input[0].split("/")[-1]
 
-    #Claim ReafRefDB is IndexRefDB is free
+    #Claim ReafRefDB is ipc_index_refdb is free
     # Check if an assembly is currently running
-    result, action = acquire_semaphore("IndexRefDB", db_dir, 1, 7200)
+    result, action = acquire_semaphore("ipc_index_refdb", db_dir, 1, 7200)
     if result == 'acquired' and action == False:
-        release_semaphore("IndexRefDB", db_dir)
+        release_semaphore("ipc_index_refdb", db_dir)
     elif result != 'acquired' and action == True:
-        result += " : IndexRefDB, didn't map due to running assembly"
+        result += " : ipc_index_refdb, didn't map due to running assembly"
         sys.exit(result)
     else:
         sys.exit('A semaphore related issue has occured.')
@@ -386,14 +392,14 @@ def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfi
     print (input, file=logfile)
     illumina_name = input[0].split("/")[-1]
 
-    # Claim ReafRefDB is IndexRefDB is free
+    # Claim ReafRefDB is ipc_index_refdb is free
     # Check if an assembly is currently running
 
-    result, action = acquire_semaphore("IndexRefDB", db_dir, 1, 7200)
+    result, action = acquire_semaphore("ipc_index_refdb", db_dir, 1, 7200)
     if result == 'acquired' and action == False:
-        release_semaphore("IndexRefDB", db_dir)
+        release_semaphore("ipc_index_refdb", db_dir)
     elif result != 'acquired' and action == True:
-        result += " : IndexRefDB, didn't map due to running assembly"
+        result += " : ipc_index_refdb, didn't map due to running assembly"
         sys.exit(result)
     else:
         sys.exit('A semaphore related issue has occured.')
@@ -416,14 +422,14 @@ def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfi
 def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, kma_path, templateaccesion, db_dir, laptop):
     nanopore_name = input[0].split("/")[-1]
 
-    # Claim ReafRefDB is IndexRefDB is free
+    # Claim ReafRefDB is ipc_index_refdb is free
     # Check if an assembly is currently running
 
-    result, action = acquire_semaphore("IndexRefDB", db_dir, 1, 7200)
+    result, action = acquire_semaphore("ipc_index_refdb", db_dir, 1, 7200)
     if result == 'acquired' and action == False:
-        release_semaphore("IndexRefDB", db_dir)
+        release_semaphore("ipc_index_refdb", db_dir)
     elif result != 'acquired' and action == True:
-        result += " : IndexRefDB, didn't map due to running assembly"
+        result += " : ipc_index_refdb, didn't map due to running assembly"
         sys.exit(result)
     else:
         sys.exit('A semaphore related issue has occured.')
@@ -777,12 +783,6 @@ def generateFigtree(inputfile, jobid):
     return ("{}tree.png".format(inputdir))
 
 def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, jobid, samplename, kma_path, kma_database_path, entryid, isolatedb, db_dir, associated_species):
-    with open(referenceSyncFile) as json_file:
-        referencejson = json.load(json_file)
-    json_file.close()
-
-
-
     if assemblyType == "illumina":
         if inputType == "pe_illumina":
             cmd = "mkdir {}dockertmp".format(target_dir)
@@ -835,21 +835,16 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
 
         #Here, prior to indexeing recheck with kma mapping for new reference hit, else add #DEVELOP
 
-        result, action = acquire_semaphore("IndexRefDB", db_dir, 1, 7200)
+        #Before indexing check semaphore for new reference
+        result, action = acquire_semaphore("ipc_index_refdb", db_dir, 1, 7200)
         if result == 'acquired' and action == False:
             cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir,
                                                                      samplename)  # add assembly to references
             os.system(cmd)
-            referencejson[samplename] = {'entryid': entryid, 'header_text': samplename,
-                                        'filename': "{}_assembled.fasta".format(samplename)}
-            with open(referenceSyncFile, 'w') as f_out:
-                json.dump(referencejson, f_out)
-            f_out.close()
-
-            release_semaphore("IndexRefDB", db_dir)
+            release_semaphore("ipc_index_refdb", db_dir)
 
         elif result != 'acquired' and action == True:
-            result += " : IndexRefDB"
+            result += " : ipc_index_refdb"
             sys.exit(result)
         else:
             sys.exit('A semaphore related issue has occured.')
@@ -907,21 +902,16 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
 
         # Assembly complete
 
-        result, action = acquire_semaphore("IndexRefDB", db_dir, 1, 7200)
+        result, action = acquire_semaphore("ipc_index_refdb", db_dir, 1, 7200)
         if result == 'acquired' and action == False:
             cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir,
                                                                      samplename)  # add assembly to references
             os.system(cmd)
-            referencejson[samplename] = {'entryid': entryid, 'header_text': samplename,
-                                        'filename': "{}_assembled.fasta".format(samplename)}
-            with open(referenceSyncFile, 'w') as f_out:
-                json.dump(referencejson, f_out)
-            f_out.close()
 
-            release_semaphore("IndexRefDB", db_dir)
+            release_semaphore("ipc_index_refdb", db_dir)
 
         elif result != 'acquired' and action == True:
-            result += " : IndexRefDB"
+            result += " : ipc_index_refdb"
             sys.exit(result)
         else:
             sys.exit('A semaphore related issue has occured.')
@@ -1011,7 +1001,7 @@ def semaphoreInitCheck():
     #Mangler, check for value, if 0, ergo assembly quit
 
 
-    semaphore = posix_ipc.Semaphore("/IndexRefDB", posix_ipc.O_CREAT, initial_value=1) 
+    semaphore = posix_ipc.Semaphore("/ipc_index_refdb", posix_ipc.O_CREAT, initial_value=1)
     assembly_semaphore_value = semaphore.value
     if assembly_semaphore_value == 0:
         print ("Another subprocess is currently writing to the reference database")
@@ -1020,7 +1010,7 @@ def semaphoreInitCheck():
             semaphore.release()  # No database writing, clear to go
         except posix_ipc.BusyError as error:
             semaphore.unlink()
-            sys.exit("IndexRefDB semaphore is jammed. A process waited > 5H to write to the reference database. Run CleanSemaphore.py to wipe all phores")
+            sys.exit("ipc_index_refdb semaphore is jammed. A process waited > 5H to write to the reference database. Run CleanSemaphore.py to wipe all phores")
 
     # Check if an assembly is currently running
     semaphore = posix_ipc.Semaphore("/ReadRefDB", posix_ipc.O_CREAT, initial_value=100) #Maximum of 100 readers
@@ -1044,66 +1034,6 @@ def findTemplateNumber(db_dir, name):
             t = t + 1
     infile.close()
 
-
-
-
-def initRunningAnalyses(db_dir, outputname, samplename, entryid):
-
-    with open(db_dir + "analyticalFiles/runningAnalyses.json") as json_file:
-        referencejson = json.load(json_file)
-    json_file.close()
-
-    time = str(datetime.datetime.now())[0:-7]
-
-    class runningAnalysis:
-        def __init__(self, entryid, starttime, filename):
-            self.entryid = entryid
-            self.start_time = starttime
-            self.file_name = filename
-
-    analysis = runningAnalysis(entryid,time,samplename)
-
-    jsonStr = json.dumps(analysis.__dict__)
-
-    referencejson[entryid] = jsonStr
-
-    with open("{}analyticalFiles/runningAnalyses.json".format(db_dir), 'w') as f_out:
-        json.dump(referencejson, f_out)
-    f_out.close()
-
-def endRunningAnalyses(db_dir, outputname, samplename, entryid):
-    with open(db_dir + "analyticalFiles/runningAnalyses.json") as json_file:
-        referencejson = json.load(json_file)
-    json_file.close()
-
-    referencejson.pop(entryid, None)
-
-    with open("{}analyticalFiles/runningAnalyses.json".format(db_dir), 'w') as f_out:
-        json.dump(referencejson, f_out)
-    f_out.close()
-
-
-    with open(db_dir + "analyticalFiles/finishedAnalyses.json") as json_file:
-        referencejson = json.load(json_file)
-    json_file.close()
-
-    time = str(datetime.datetime.now())[0:-7]
-
-    class finishedAnalysis:
-        def __init__(self, entryid, finishtime, filename):
-            self.entryid = entryid
-            self.finish_time = finishtime
-            self.file_name = filename
-
-    analysis = finishedAnalysis(entryid, time, samplename)
-
-    jsonStr = json.dumps(analysis.__dict__)
-
-    referencejson[entryid] = jsonStr
-
-    with open("{}analyticalFiles/finishedAnalyses.json".format(db_dir), 'w') as f_out:
-        json.dump(referencejson, f_out)
-    f_out.close()
 
 def makeDBinfo(isolatedb):
     conn = sqlite3.connect(isolatedb)
@@ -1665,68 +1595,6 @@ def create_title(pdf, id, string):
   pdf.write(5, f"{string}")
   pdf.ln(10)
   pdf.set_text_color(0, 0, 0)
-
-def queueMultiAnalyses(db_dir, inputlist):
-    with open(db_dir + "analyticalFiles/queuedAnalyses.json") as json_file:
-        _json = json.load(json_file)
-    json_file.close()
-    class Analysis:
-        def __init__(self, entryid, filename):
-            self.entryid = entryid
-            self.file_name = filename
-    for i in range(len(inputlist)):
-        if len(inputlist[i]) > 1:
-            inputlist[i] = inputlist[i].split()
-            entryid = md5(inputlist[i][0])
-            _analysis = Analysis(entryid, inputlist[i][0].split("/")[-1])
-            jsonStr = json.dumps(_analysis.__dict__)
-            entryid = md5(inputlist[i][0])
-            _json[entryid] = jsonStr
-        else:
-            entryid = md5(inputlist[i])
-            _analysis = Analysis(entryid, inputlist[i].split("/")[-1])
-            jsonStr = json.dumps(_analysis.__dict__)
-            entryid = md5(inputlist[i])
-            _json[entryid] = jsonStr
-
-    with open("{}analyticalFiles/queuedAnalyses.json".format(db_dir), 'w') as f_out:
-        json.dump(_json, f_out)
-    f_out.close()
-
-def processQueuedAnalyses(db_dir, outputname, samplename, entryid):
-    with open(db_dir + "analyticalFiles/queuedAnalyses.json") as json_file:
-        referencejson = json.load(json_file)
-    json_file.close()
-
-    if entryid in referencejson:
-        referencejson.pop(entryid, None)
-        with open("{}analyticalFiles/queuedAnalyses.json".format(db_dir), 'w') as f_out:
-            json.dump(referencejson, f_out)
-        f_out.close()
-
-        with open(db_dir + "analyticalFiles/runningAnalyses.json") as json_file:
-            referencejson = json.load(json_file)
-        json_file.close()
-
-        time = str(datetime.datetime.now())[0:-7]
-
-        class runningAnalysis:
-            def __init__(self, entryid, starttime, filename):
-                self.entryid = entryid
-                self.start_time = starttime
-                self.file_name = filename
-
-        analysis = runningAnalysis(entryid, time, samplename)
-
-        jsonStr = json.dumps(analysis.__dict__)
-
-        referencejson[entryid] = jsonStr
-
-        with open("{}analyticalFiles/runningAnalyses.json".format(db_dir), 'w') as f_out:
-            json.dump(referencejson, f_out)
-        f_out.close()
-    else:
-        initRunningAnalyses(db_dir, outputname, samplename, entryid)
 
 def checkAMRrisks(target_dir, entryid, db_dir, header_text, exepath, logfile):
     warning = []

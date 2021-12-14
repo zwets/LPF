@@ -92,8 +92,6 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
     cmd = "mkdir " + target_dir + "datafiles"
     os.system(cmd)
 
-
-    # Print messages
     startTime = time.time()
     mbh_helper.print_to_logfile("# input: {}".format(total_filenames), logfile, True)
 
@@ -144,18 +142,16 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
         moss.run_assembly(entryid, db_dir, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
                           illumina_name2, jobid, exepath, kma_database_path, start_time, logfile, ID, associated_species)
 
-    #If reference found:
-
     moss_sql.update_status_table(entryid, "IPC check", "Alignment", "4", "10", "Running", db_dir)
 
-    result, action = moss.acquire_semaphore("IndexRefDB", db_dir, 1, 7200)
+    result, action = moss.acquire_semaphore("ipc_index_refdb", db_dir, 1, 7200)
     if result == 'acquired' and action == False:
-        moss.release_semaphore("IndexRefDB", db_dir)
+        moss.release_semaphore("ipc_index_refdb", db_dir)
     elif result != 'acquired' and action == True:
-        result += " : IndexRefDB"
+        result += " : ipc_index_refdb"
         sys.exit(result)
     else:
-        sys.exit('A semaphore related issue has occured. IndexRefDB update')
+        sys.exit('A semaphore related issue has occured. ipc_index_refdb update')
 
     print('mpr: true', file=logfile)
 
@@ -184,9 +180,6 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
     cmd = "cp {}{}_{}_consensus.fsa {}datafiles/isolatefiles/{}/{}_{}_consensus.fsa".format(target_dir, samplename, templateaccesion, db_dir, templateaccesion, samplename, templateaccesion)
     os.system(cmd)
 
-
-    ######## KØR FREM PÅ CCPHYLO COMMANDO
-    #CCind her. single fil som skal appendes til eksisterende matrix med samme, gemte conditions.
     if len(moss.loadFiles("{}datafiles/isolatefiles/{}/".format(db_dir, refname))) > 1:
         moss_sql.update_status_table(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir)
 
@@ -243,24 +236,6 @@ def moss_pipeline(seqType, masking_scheme, prune_distance, bc,
         new_plasmid_string, new_virulence_string, new_amr_string = moss.scan_reference_vs_isolate_cge(plasmid_string, allresgenes.replace(", ", ","), virulence_string, header_text, db_dir)
 
         moss_sql.update_reference_table(entryid, None, new_amr_string, new_virulence_string, new_plasmid_string, header_text, db_dir)
-
-
-        result, action = moss.acquire_semaphore("IsolateJSON", db_dir, 1, 7200)
-        if result == 'acquired' and action == False:
-            with open(isolateSyncFile) as json_file:
-                IsolateJSON = json.load(json_file)
-            json_file.close()
-            IsolateJSON[samplename] = {'entryid': entryid, 'header_text': header_text, 'refname': refname}
-            with open(isolateSyncFile, 'w') as f_out:
-                json.dump(IsolateJSON, f_out)
-
-            moss.release_semaphore("IsolateJSON", db_dir)
-
-        elif result != 'acquired' and action == True:
-            sys.exit(result)
-        else:
-            sys.exit('A semaphore related issue has occured. ISOLATEJSON UPDATE')
-
 
         end_time = datetime.datetime.now()
         run_time = end_time - start_time

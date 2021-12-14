@@ -62,6 +62,6 @@ for file in onlyfiles:
     elif result == 'false':
         moss.compileReportAssembly(target_dir, entryid, db_dir, associated_species, exepath)
 
-#value = moss.check_sql_semaphore_value(db_dir, 'IndexRefDB')
+#value = moss.check_sql_semaphore_value(db_dir, 'ipc_index_refdb')
 #moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, header_text, exepath)  # No report compiled for assemblies! Look into it! #TBD
 #moss.compileReportAssembly(target_dir, entryid, db_dir, image_location, associated_species, exepath)
