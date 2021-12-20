@@ -156,7 +156,7 @@ if kmaindex_db_path != "":
     conn.commit()
     c.execute( """CREATE TABLE IF NOT EXISTS local_sync_table(entryid TEXT PRIMARY KEY, time_of_analysis TEXT)""")
     conn.commit()
-    dbstring = "INSERT INTO ipctable(ipc, ipc_index_refdb, ReadRefDB, running_analyses, queued_analyses, finished_analyses) VALUES('{}' ,'{}', '{}', '{}', '{}', '{}', '{}', '{}')".format('IPC',1,1,1, 100, "", "", "")
+    dbstring = "INSERT INTO ipctable(ipc, ipc_index_refdb, ReadRefDB, running_analyses, queued_analyses, finished_analyses) VALUES('{}' ,'{}', '{}', '{}', '{}', '{}', '{}', '{}')".format('IPC',1, 100, "", "", "")
     c.execute(dbstring)
 
 
