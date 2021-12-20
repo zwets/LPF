@@ -78,8 +78,6 @@ def moss_pipeline(seqType, prune_distance, bc,
     moss_sql.init_status_table(entryid, "Initializing", "Not Determined", "1", "10", "Running", db_dir)
     moss_sql.init_isolate_table(entryid, "", samplename, "", "", "", db_dir)
 
-    moss.processQueuedAnalyses(db_dir, entryid, samplename, entryid)
-
     target_dir = db_dir + "analysis/" + entryid + "/"
     cmd = "mkdir " + target_dir
     os.system(cmd)
