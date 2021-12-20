@@ -135,7 +135,7 @@ function start_base_calling(){
     var path_list = single_path.split("/");
     var path_slice= path_list.slice(1, -1);
     var input_path = "/" + path_slice.join("/") + "/";
-
+ // add algorithm to determine which to use.
     cmd = `guppy_basecaller -i ${input_path} -s ${output_dir}/ --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq --trim_barcodes`;
     if (barcodes != "No multiplexing") {
         cmd = cmd.concat(` --barcode_kits \"${barcodes}\"`)
@@ -161,6 +161,19 @@ function start_base_calling(){
               console.error(`exec error: ${error}`);
               return;
             } else {
+                 var exepath = document.getElementById('current-exepath').innerHTML;
+                 sortreads = `${exepath}src/trim_concat_reads.py -d ${output_dir}`;
+                 exec(sortreads, (error, stdout, stderr) => {
+
+                    if (error) {
+                      console.error(`exec error: ${error}`);
+                      return;
+                    console.log(`stdout: ${stdout}`);
+                    console.error(`stderr: ${stderr}`);
+
+
+
+                     });
                 alert("Base calling has completed.");
                 document.getElementById('loadermessage').innerHTML = `Basecalling has been completed: ${stdout}`;
                 loader.style.display = 'none';

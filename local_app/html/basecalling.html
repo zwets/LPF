@@ -52,6 +52,12 @@
                             <input type="file" id="fast5-input-field" name="fast5-input-field" webkitdirectory directory multiple value="" onchange="select_output();"><br> <br>
                             Enter the complete path to the output directory, where you wish for the FASTQ's to be placed (I.e. '(/home/usr/data/fastq/')
                             <input type="text" id="output-field" name="output-field" value=""><br><br>
+                            Basecalling algorithm type:
+                            <select name="algorithm" id="algorithm">
+                              <option value="SUP">Super High Accuracy</option>
+                              <option value="HAC">High Accuracy</option>
+                              <option value="fast">Fast</option>
+                            <br><br>
                             Flow-cell type:
                             <select name="flow-cell" id="flow-cell">
                               </select>

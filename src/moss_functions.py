@@ -38,6 +38,10 @@ import moss_sql as moss_sql
 
 #Utility functions
 
+def check_assembly_result(path):
+
+    return True
+
 def run_assembly(entryid, db_dir, samplename, assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, \
                  jobid, exepath, kma_database_path, start_time, logfile, ID, associated_species):
     update_status_table(entryid, "Unicycler Assembly", "Assembly", "4", "5", "Running", db_dir)
@@ -813,58 +817,61 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
         cmd = "docker container rm {}".format(id)
         os.system(cmd)
 
-        # Insert new reference in KMA reference db
-        print("no template TRUE")
-        # Unicycler illumina
-
-        # concatenate all reads into one file
-
-        infile = open("{}assembly_results/assembly.fasta".format(target_dir), 'r')
-        writefile = open("{}{}_assembled.fasta".format(target_dir, samplename), 'w')  # Adds all contigs to one sequence
-        sequence = ""
-        for line in infile:
-            if line[0] != ">":
-                line = line.rstrip()
-                sequence += line
-        print(">" + samplename, file=writefile)
-        print(sequence, file=writefile)
-        infile.close()
-        writefile.close()
-
-        #Assembly complete
-
-        #Here, prior to indexeing recheck with kma mapping for new reference hit, else add #DEVELOP
-
-        #Before indexing check semaphore for new reference
-        result, action = acquire_semaphore("ipc_index_refdb", db_dir, 1, 7200)
-        if result == 'acquired' and action == False:
-            cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir,
-                                                                     samplename)  # add assembly to references
-            os.system(cmd)
-            release_semaphore("ipc_index_refdb", db_dir)
-
-        elif result != 'acquired' and action == True:
-            result += " : ipc_index_refdb"
-            sys.exit(result)
+        path = "{}/assembly_results".format(target_dir)
+        if os.path.exists(path):
+            assembly_result = check_assembly_result(path)
         else:
-            sys.exit('A semaphore related issue has occured.')
+            assembly_result = False
 
-        conn = sqlite3.connect(isolatedb)
-        c = conn.cursor()
-        #Here, check and insert amrgenes, virulencegenes, plasmids.
-        dbstring = "INSERT INTO referencetable(entryid, header_text, refname) VALUES ('{}', '{}', '{}')".format(entryid, associated_species, samplename)
-        c.execute(dbstring)
-        conn.commit()  # Need IPC
-        conn.close()
+        if assembly_result:
+            # concatenate all reads into one file
 
-        cmd = "mkdir {}datafiles/isolatefiles/{}".format(db_dir, samplename)
-        os.system(cmd)
+            infile = open("{}assembly_results/assembly.fasta".format(target_dir), 'r')
+            writefile = open("{}{}_assembled.fasta".format(target_dir, samplename), 'w')  # Adds all contigs to one sequence
+            sequence = ""
+            for line in infile:
+                if line[0] != ">":
+                    line = line.rstrip()
+                    sequence += line
+            print(">" + samplename, file=writefile)
+            print(sequence, file=writefile)
+            infile.close()
+            writefile.close()
 
-        cmd = "mkdir {}datafiles/distancematrices/{}".format(db_dir, samplename)
-        os.system(cmd)
+            #Assembly complete
 
-        # Works
-        print("illumina")
+            #Here, prior to indexeing recheck with kma mapping for new reference hit, else add #DEVELOP
+
+            #Before indexing check semaphore for new reference
+            result, action = acquire_semaphore("ipc_index_refdb", db_dir, 1, 7200)
+            if result == 'acquired' and action == False:
+                cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir,
+                                                                         samplename)  # add assembly to references
+                os.system(cmd)
+                release_semaphore("ipc_index_refdb", db_dir)
+
+            elif result != 'acquired' and action == True:
+                result += " : ipc_index_refdb"
+                sys.exit(result)
+            else:
+                sys.exit('A semaphore related issue has occured.')
+
+            conn = sqlite3.connect(isolatedb)
+            c = conn.cursor()
+            #Here, check and insert amrgenes, virulencegenes, plasmids.
+            dbstring = "INSERT INTO referencetable(entryid, header_text, refname) VALUES ('{}', '{}', '{}')".format(entryid, associated_species, samplename)
+            c.execute(dbstring)
+            conn.commit()  # Need IPC
+            conn.close()
+
+            cmd = "mkdir {}datafiles/isolatefiles/{}".format(db_dir, samplename)
+            os.system(cmd)
+
+            cmd = "mkdir {}datafiles/distancematrices/{}".format(db_dir, samplename)
+            os.system(cmd)
+        else:
+            #Fix sql status table and update to falied assembly run.
+            sys.exit("Assembly failed")
 
 
 
