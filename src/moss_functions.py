@@ -859,7 +859,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
             conn = sqlite3.connect(isolatedb)
             c = conn.cursor()
             #Here, check and insert amrgenes, virulencegenes, plasmids.
-            dbstring = "INSERT INTO referencetable(entryid, header_text, refname) VALUES ('{}', '{}', '{}')".format(entryid, associated_species, samplename)
+            dbstring = "INSERT INTO referencetable(entryid, header_text) VALUES ('{}', '{}')".format(entryid, associated_species)
             c.execute(dbstring)
             conn.commit()  # Need IPC
             conn.close()
@@ -925,7 +925,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
 
         conn = sqlite3.connect(isolatedb)
         c = conn.cursor()
-        dbstring = "INSERT INTO referencetable(entryid, header_text, refname) VALUES('{}', '{}', '{}')".format(entryid, associated_species, samplename)
+        dbstring = "INSERT INTO referencetable(entryid, header_text) VALUES('{}', '{}')".format(entryid, associated_species)
         c.execute(dbstring)
         conn.commit()  # Need IPC
         conn.close()
@@ -986,12 +986,6 @@ def uniqueNameCheck(db_dir, inputType, total_filenames):
 
     if refdata != []:
         sys.exit("An isolate sample has the same filename as your input. Please change your input file's name.")
-
-    c.execute("SELECT * FROM referencetable WHERE refname = '{}'".format(accession))
-    refdata = c.fetchall()
-
-    if refdata != []:
-        sys.exit("An reference sample has the same filename or header string as your input. Please change your input file's name.")
 
     c.execute("SELECT * FROM referencetable WHERE header_text = '{}'".format(header))
     refdata = c.fetchall()
