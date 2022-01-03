@@ -123,9 +123,7 @@ function find_model_from_input(flowcell, kit, db_dir){
     readTextFile(db_dir + "analyticalFiles/workflow.json", function(text){
         var data = JSON.parse(text);
         for (var i = 0; i < data.length; i++) {
-            if (data[i]['floowcell'] == flowcell) {
-                console.log(data[i]);
-            }:
+            console.log(data[i]);
           }
         /*
         document.getElementById('workflowjson').innerHTML = data;
