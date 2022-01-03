@@ -70,6 +70,9 @@ if kmaindex_db_path != "":
     cmd = "mkdir " + db_dir + "datafiles"
     os.system(cmd)
 
+    cmd = "mkdir " + db_dir + "basecall_output"
+    os.system(cmd)
+
     cmd = "mkdir " + db_dir + "multiSampleAnalysisReports"
     os.system(cmd)
 

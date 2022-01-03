@@ -45,7 +45,7 @@ def main():
     os.system(cmd)
     cmd = "sudo apt install nodejs"
     os.system(cmd)
-    cmd = "sudo apt install npm"
+    cmd = "sudo apt install npm; npm install mkdirp"
     os.system(cmd)
     print("Installing KMA")
     cmd = "git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; git checkout nano; make; cd ..;"

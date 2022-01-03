@@ -1,7 +1,7 @@
 const { exec } = require('child_process');
 const fs = require('fs')
 const storage = require('electron-json-storage');
-
+var mkdirp = require('mkdirp');
 
 
 
@@ -135,59 +135,71 @@ function start_base_calling(){
     var path_list = single_path.split("/");
     var path_slice= path_list.slice(1, -1);
     var input_path = "/" + path_slice.join("/") + "/";
- // add algorithm to determine which to use.
-    cmd = `guppy_basecaller -i ${input_path} -s ${output_dir}/ --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq --trim_barcodes`;
-    if (barcodes != "No multiplexing") {
-        cmd = cmd.concat(` --barcode_kits \"${barcodes}\"`)
-        }
-    console.log(cmd);
 
+    var base_call_output = `${db_dir}/basecall_output/${output_dir}/`;
 
-    if (fs.existsSync(output_dir)) {
-        var loader = document.getElementById('loader');
-        loader.style.display = 'block';
-        document.getElementById('loadermessage').innerHTML = "Basecalling is running";
+    console.log(base_call_output);
+    if (fs.existsSync(base_call_output)) {
+        alert("Another Fastq with this name already exists!");
+        } else {
+        mkdirp(base_call_output, function(err) {
 
-        console.log("Base calling has begun.");
-
-        alert("Base calling has begun.");
-
-        exec(cmd, (error, stdout, stderr) => {
-
-            if (error) {
-                alert(`exec error: ${error}`);
-                document.getElementById('loadermessage').innerHTML = `Basecalling has failed: ${error}`;
-                loader.style.display = 'none';
-              console.error(`exec error: ${error}`);
-              return;
-            } else {
-                 var exepath = document.getElementById('current-exepath').innerHTML;
-                 sortreads = `${exepath}src/trim_concat_reads.py -d ${output_dir}`;
-                 exec(sortreads, (error, stdout, stderr) => {
-
-                    if (error) {
-                      console.error(`exec error: ${error}`);
-                      return;
-                    console.log(`stdout: ${stdout}`);
-                    console.error(`stderr: ${stderr}`);
-
-
-
-                     });
-                alert("Base calling has completed.");
-                document.getElementById('loadermessage').innerHTML = `Basecalling has been completed: ${stdout}`;
-                loader.style.display = 'none';
+        });
+        cmd = `guppy_basecaller -i ${input_path} -s ${base_call_output} --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq --trim_barcodes`;
+        if (barcodes != "No multiplexing") {
+            cmd = cmd.concat(` --barcode_kits \"${barcodes}\"`)
             }
-
-            console.log(`stdout: ${stdout}`);
-            console.error(`stderr: ${stderr}`);
+        console.log(cmd);
 
 
+        if (fs.existsSync(output_dir)) {
+            var loader = document.getElementById('loader');
+            loader.style.display = 'block';
+            document.getElementById('loadermessage').innerHTML = "Basecalling is running";
 
-      });
-    } else {
-        alert("The given output directory does not exist");
-    }
+            console.log("Base calling has begun.");
+
+            alert("Base calling has begun.");
+
+            exec(cmd, (error, stdout, stderr) => {
+
+                if (error) {
+                    alert(`exec error: ${error}`);
+                    document.getElementById('loadermessage').innerHTML = `Basecalling has failed: ${error}`;
+                    loader.style.display = 'none';
+                  console.error(`exec error: ${error}`);
+                  return;
+                } else {
+                     var exepath = document.getElementById('current-exepath').innerHTML;
+                     sortreads = `${exepath}src/trim_concat_reads.py -d ${output_dir}`;
+                     exec(sortreads, (error, stdout, stderr) => {
+
+                        if (error) {
+                          console.error(`exec error: ${error}`);
+                          return;
+                        console.log(`stdout: ${stdout}`);
+                        console.error(`stderr: ${stderr}`);
+
+
+
+                         });
+                    alert("Base calling has completed.");
+                    document.getElementById('loadermessage').innerHTML = `Basecalling has been completed: ${stdout}`;
+                    loader.style.display = 'none';
+                }
+
+                console.log(`stdout: ${stdout}`);
+                console.error(`stderr: ${stderr}`);
+
+
+
+          });
+        } else {
+            alert("The given output directory does not exist");
+        }
+        }
+
+
 }
 
 function execute_command_as_subprocess(cmd, print_msg) {

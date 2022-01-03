@@ -38,6 +38,8 @@ def main():
     os.system(cmd)
     cmd = "pip install geopy"
     os.system(cmd)
+    cmd = "npm install mkdirp"
+    os.system(cmd)
     cmd = "pip install Nominatim"
     os.system(cmd)
     print("Installing docker")
