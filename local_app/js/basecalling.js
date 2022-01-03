@@ -126,8 +126,8 @@ function find_model_from_input(flowcell, kit, db_dir){
             if (data[i].flowcell == flowcell) {
                 if (data[i].kit == kit) {
                 console.log("HERE");
-            }
-            }:
+                };
+            };
           }
         /*
         document.getElementById('workflowjson').innerHTML = data;
