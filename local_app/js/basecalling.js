@@ -127,8 +127,6 @@ function find_model_from_input(flowcell, kit, db_dir, algorithm){
             if (data[i].flowcell == flowcell) {
                 if (data[i].kit == kit) {
                     model = data[i].barcoding_config_name;
-                    running_model = `Model to be used: ${model}`;
-
                     document.getElementById('running_model').innerHTML = running_model;
                 };
             };
@@ -180,8 +178,6 @@ function start_base_calling(){
 
 
         var to_be_run_model = document.getElementById('running_model').innerHTML;
-        console.log(to_be_run_model);
-        console.log(document.getElementById('running_model').value);
         console.log(`${to_be_run_model}${algorithm}`);
         /*
         if (fs.existsSync(output_dir)) {
