@@ -158,6 +158,7 @@ function start_base_calling(){
 
     console.log(base_call_output);
 
+
     var check_basecall_name = false;
     if (fs.existsSync(base_call_output)) {
         alert("A fastq file with this name already exists. Please choose another one.");
@@ -165,6 +166,8 @@ function start_base_calling(){
         check_basecall_name = true;
         mkdirp(base_call_output, function(err) {
             });
+        find_model_from_input(flowcell, kit, db_dir, algorithm);
+
     }
 
     if (check_basecall_name) {
@@ -176,10 +179,9 @@ function start_base_calling(){
         console.log(cmd);
 
 
-        find_model_from_input(flowcell, kit, db_dir, algorithm);
-
         var to_be_run_model = document.getElementById('running_model').innerHTML;
         console.log(to_be_run_model);
+        console.log(document.getElementById('running_model').value);
         console.log(`${to_be_run_model}${algorithm}`);
         /*
         if (fs.existsSync(output_dir)) {
