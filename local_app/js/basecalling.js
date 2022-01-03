@@ -150,7 +150,8 @@ function start_base_calling(){
     }
 
     if (check_basecall_name) {
-        cmd = `guppy_basecaller -i ${inputalert("Base calling has begun.");_path} -s ${base_call_output} --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq --trim_barcodes`;
+        //cmd = `guppy_basecaller -i ${inputalert("Base calling has begun.");_path} -s ${base_call_output} --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq --trim_barcodes`;
+        cmd = `hello`;
         if (barcodes != "No multiplexing") {
             cmd = cmd.concat(` --barcode_kits \"${barcodes}\"`)
             }
