@@ -128,8 +128,7 @@ function find_model_from_input(flowcell, kit, db_dir, algorithm){
                 if (data[i].kit == kit) {
                     model = data[i].barcoding_config_name;
                     console.log(model);
-
-                    return model
+                    return model;
                 };
             };
         }
