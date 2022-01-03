@@ -21,13 +21,6 @@ import json
 import sqlite3
 
 
-#Give path to database directory
-#Give initial files for references
-#Give directories with isolates corresponing to references
-#In database directory make two directories, one for KMA DB and one for MIONT-DB
-#PRUNE CURRENTLY NOT INPLEMENTED!!!
-
-
 parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
 parser.add_argument('-kmaindex_db_path', action="store", type=str, dest='kmaindex_db_path', default="", help='Path a .ATG kma-index database that is desired to be used a references. It is expected that both the .ATG.name file and .ATG.seq.b file is present in this directory, and that NO OTHER files are present. http://www.cbs.dtu.dk/public/CGE/databases/KmerFinder/version/20190108_stable/ link to bacteria.tar.gz, which is a good option for a starting database')
 parser.add_argument('-db_dir', action="store", type=str, dest='db_dir', default="", help='Path to your DB-directory')
@@ -53,7 +46,6 @@ if kmaindex_db_path != "":
             print ("db_dir already exists")
             raise
 
-
     print ("cloning reference DB, if you are using a big reference DB, this might take a while")
     filename = os.listdir(kmaindex_db_path)[0].split(".")[0]
     cmd = "cp {}*.ATG.comp.b {}REFDB.ATG.comp.b".format(kmaindex_db_path, db_dir)
@@ -78,12 +70,6 @@ if kmaindex_db_path != "":
     cmd = "mkdir " + db_dir + "datafiles"
     os.system(cmd)
 
-    cmd = "mkdir " + db_dir + "datafiles/isolatefiles"
-    os.system(cmd)
-
-    cmd = "mkdir " + db_dir + "datafiles/distancematrices"
-    os.system(cmd)
-
     cmd = "mkdir " + db_dir + "multiSampleAnalysisReports"
     os.system(cmd)
 
@@ -92,38 +78,6 @@ if kmaindex_db_path != "":
 
     cmd = "mkdir " + db_dir + "preliminaryEstimations"
     os.system(cmd)
-
-    # Create update log file:
-    # Initialize isolate sync
-    updatejson = dict()
-    updatejson['updateTime'] = "None"
-    updatejson['updateID'] = "None"
-    with open("{}syncFiles/update.log".format(args.db_dir), 'w') as f_out:
-        json.dump(updatejson, f_out)
-    f_out.close()
-
-    infile = open("{}REFDB.ATG.name".format(db_dir), 'r')
-    linenumber = 1
-    headerlist = []
-    referencelist = []
-    for line in infile:
-        line = line.rstrip()
-        template_id = linenumber
-        header = line
-        if " " in header:  # Assumes a standard header begining with a accession ID
-            accession = header.split(" ")[0]
-        else:
-            accession = header
-        cmd = "mkdir " + db_dir + "datafiles/isolatefiles/\"{}\"".format(accession)
-        os.system(cmd)
-        cmd = "mkdir " + db_dir + "datafiles/distancematrices/\"{}\"".format(accession)
-        os.system(cmd)
-        cmd = "{} seq2fasta -t_db {}REFDB.ATG -seqs {} > {}datafiles/isolatefiles/{}/{}".format(kma_path, db_dir, str(template_id), db_dir, accession, accession)
-        os.system(cmd)
-        headerlist.append(header)
-        referencelist.append(accession)
-        linenumber += 1
-    infile.close()
 
     conn = sqlite3.connect(db_dir + 'moss.db')
     c = conn.cursor()
@@ -158,20 +112,13 @@ if kmaindex_db_path != "":
     conn.commit()
     dbstring = "INSERT INTO ipctable(ipc, ipc_index_refdb, ReadRefDB, running_analyses, queued_analyses, finished_analyses) VALUES('{}' ,'{}', '{}', '{}', '{}', '{}')".format('IPC',1, 100, "", "", "")
     c.execute(dbstring)
-
-
-    for i in range(len(referencelist)):
-        entryid = moss.md5("{}datafiles/isolatefiles/{}/{}".format(db_dir, referencelist[i], referencelist[i]))
-        header_text = headerlist[i]
-        if "'" in header_text:
-            header_text = header_text.replace("'", "''")
-            print (header_text)
-        dbstring = "INSERT INTO referencetable(entryid, header_text) VALUES('{}', '{}')".format(entryid, header_text)
-        c.execute(dbstring)
     conn.commit()
     conn.close()
 
 
+    moss.init_insert_reference_table(exepath, db_dir)
+
+    sys.exit("check sql")
     # Generate config.json file
     jsondict = dict()
     jsondict["db_dir"] = db_dir

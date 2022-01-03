@@ -163,12 +163,18 @@ def moss_pipeline(seqType, prune_distance, bc,
         moss.illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, exepath + "kma/kma", templateaccesion, db_dir, laptop)
     if inputType == "nanopore":
         moss.nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, exepath + "kma/kma", templateaccesion, db_dir, laptop)
+
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
 
+    print (header_text)
+
     c.execute("SELECT * FROM referencetable WHERE header_text = '{}'".format(header_text))
+    print ("SELECT * FROM referencetable WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
     conn.close()
+
+    print (refdata)
 
 
     refname = refdata[0][2]

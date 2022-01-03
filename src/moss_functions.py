@@ -38,6 +38,32 @@ import moss_sql as moss_sql
 
 #Utility functions
 
+def init_insert_reference_table(exepath, db_dir):
+    infile = open(db_dir + "REFDB.ATG.name", 'r')
+    t = 1
+    conn = sqlite3.connect(db_dir + 'moss.db')
+    c = conn.cursor()
+
+    for line in infile:
+        line = line.rstrip()
+        cmd = "{}kma/kma seq2fasta -t_db {}/REFDB.ATG -seqs {}".format(exepath, db_dir, t)
+        proc = subprocess.Popen(cmd, shell=True,
+                                stdout=subprocess.PIPE, )
+        output = proc.communicate()[0].decode()
+        header_text = output.split("\n")[0][1:]
+        sequence = output.split("\n")[1]
+        entryid = md5(sequence)
+        if entryid == "0cc1493d2e9e42f3890cae0bc33b2c2b":
+            print (entryid)
+            print (header_text)
+        dbstring = "INSERT INTO referencetable(entryid, header_text) VALUES('{}' ,'{}')".format(entryid, header_text.replace("'", "''"))
+        #print (dbstring)
+        c.execute(dbstring)
+
+        t += 1
+    conn.commit()
+    conn.close()
+
 def check_assembly_result(path):
 
     return True
@@ -570,11 +596,8 @@ def mossCheckInputFiles(input, seqType):
         sys.exit("Incorrent input or seqType")
     return inputType, total_filenames, assemblyType
 
-def md5(fname):
-    hash_md5 = hashlib.md5()
-    with open(fname, "rb") as f:
-        for chunk in iter(lambda: f.read(4096), b""):
-            hash_md5.update(chunk)
+def md5(sequence):
+    hash_md5 = hashlib.md5(sequence.encode())
     return hash_md5.hexdigest()
 
 def claim_semaphore(semaphore, db_dir, value):
