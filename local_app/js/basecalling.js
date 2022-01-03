@@ -118,7 +118,7 @@ function select_output(){
 
     });
 }
-
+/*
 function start_base_calling(){
 
     var flowcell = document.getElementById('flow-cell').value;
@@ -193,6 +193,8 @@ function start_base_calling(){
     }
 
 }
+
+*/
 
 function execute_command_as_subprocess(cmd, print_msg) {
     console.log(cmd);
