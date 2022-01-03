@@ -65,3 +65,5 @@ outfile = open("{}/analyticalFiles/barcodes.json".format(args.db_dir), 'w')
 print (json.dumps(jsonlist, indent=2), file=outfile)
 outfile.close()
 
+
+
