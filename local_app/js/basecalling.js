@@ -149,10 +149,12 @@ function start_base_calling(){
 
     if (check_basecall_name) {
         console.log("SUECCES");
+        mkdirp(base_call_output, function(err) {
+            });
     } else {
         console.log("no");
     }
-    
+
     /*
     cmd = `guppy_basecaller -i ${inputalert("Base calling has begun.");_path} -s ${base_call_output} --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq --trim_barcodes`;
     if (barcodes != "No multiplexing") {
