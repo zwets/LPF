@@ -177,7 +177,9 @@ function start_base_calling(){
 
 
         find_model_from_input(flowcell, kit, db_dir, algorithm);
-        to_be_run_model = document.getElementById('running_model').innerHTML;
+
+        var to_be_run_model = document.getElementById('running_model').innerHTML;
+        console.log(to_be_run_model);
         console.log(`${to_be_run_model}${algorithm}`);
         /*
         if (fs.existsSync(output_dir)) {
