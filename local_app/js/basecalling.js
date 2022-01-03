@@ -121,7 +121,7 @@ function select_output(){
 
 function find_model_from_input(flowcell, kit, db_dir, algorithm){
     var model = "";
-    readTextFile(db_dir + "analyticalFiles/workflow.json", function(text){
+    model = readTextFile(db_dir + "analyticalFiles/workflow.json", function(text){
         var data = JSON.parse(text);
         for (var i = 0; i < data.length; i++) {
             if (data[i].flowcell == flowcell) {
@@ -132,6 +132,8 @@ function find_model_from_input(flowcell, kit, db_dir, algorithm){
             };
         }
     });
+    return model
+
 }
 
 function start_base_calling(){
