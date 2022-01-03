@@ -121,6 +121,9 @@ function select_output(){
 
 function find_model_from_input(flowcell, kit, db_dir, algorithm){
     var model = "";
+    const jsonData= require(db_dir + "analyticalFiles/workflow.json");
+    console.log(jsonData);
+    /*
     readTextFile(db_dir + "analyticalFiles/workflow.json", function(text){
         var data = JSON.parse(text);
         for (var i = 0; i < data.length; i++) {
@@ -131,7 +134,7 @@ function find_model_from_input(flowcell, kit, db_dir, algorithm){
                 };
             };
         }
-    });
+    });*/
 }
 
 function start_base_calling(){
