@@ -145,18 +145,12 @@ function start_base_calling(){
         alert("A fastq file with this name already exists. Please choose another one.");
     } else {
         check_basecall_name = true;
+        mkdirp(base_call_output, function(err) {
+            });
     }
 
     if (check_basecall_name) {
-        console.log("SUECCES");
-        mkdirp(base_call_output, function(err) {
-            });
-    } else {
-        console.log("no");
-    }
-
-    /*
-    cmd = `guppy_basecaller -i ${inputalert("Base calling has begun.");_path} -s ${base_call_output} --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq --trim_barcodes`;
+        cmd = `guppy_basecaller -i ${inputalert("Base calling has begun.");_path} -s ${base_call_output} --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq --trim_barcodes`;
     if (barcodes != "No multiplexing") {
         cmd = cmd.concat(` --barcode_kits \"${barcodes}\"`)
         }
@@ -208,7 +202,7 @@ function start_base_calling(){
     } else {
         alert("The given output directory does not exist");
     }
-    */
+    }
 }
 
 function execute_command_as_subprocess(cmd, print_msg) {
