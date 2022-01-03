@@ -121,7 +121,6 @@ if kmaindex_db_path != "":
 
     moss.init_insert_reference_table(exepath, db_dir)
 
-    sys.exit("check sql")
     # Generate config.json file
     jsondict = dict()
     jsondict["db_dir"] = db_dir
