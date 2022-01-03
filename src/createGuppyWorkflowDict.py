@@ -19,6 +19,8 @@ for line in infile:
         line = line.split()
         if line[2] == "included":
             line.pop(2)
+        line[2] = line[2].replace('_hac_prom', '')
+        line[2] = line[2].replace('_hac', '')
         jsonlist.append({
             "flowcell": line[0],
             "kit": line[1],
