@@ -151,57 +151,58 @@ function start_base_calling(){
 
     if (check_basecall_name) {
         cmd = `guppy_basecaller -i ${inputalert("Base calling has begun.");_path} -s ${base_call_output} --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq --trim_barcodes`;
-    if (barcodes != "No multiplexing") {
-        cmd = cmd.concat(` --barcode_kits \"${barcodes}\"`)
-        }
-    console.log(cmd);
-
-
-    if (fs.existsSync(output_dir)) {
-        var loader = document.getElementById('loader');
-        loader.style.display = 'block';
-        document.getElementById('loadermessage').innerHTML = "Basecalling is running";
-
-        console.log("Base calling has begun.");
-
-
-
-        exec(cmd, (error, stdout, stderr) => {
-
-            if (error) {
-                alert(`exec error: ${error}`);
-                document.getElementById('loadermessage').innerHTML = `Basecalling has failed: ${error}`;
-                loader.style.display = 'none';
-              console.error(`exec error: ${error}`);
-              return;
-            } else {
-                 var exepath = document.getElementById('current-exepath').innerHTML;
-                 sortreads = `${exepath}src/trim_concat_reads.py -d ${output_dir}`;
-                 exec(sortreads, (error, stdout, stderr) => {
-
-                    if (error) {
-                      console.error(`exec error: ${error}`);
-                      return;
-                    console.log(`stdout: ${stdout}`);
-                    console.error(`stderr: ${stderr}`);
-
-
-
-                     });
-                alert("Base calling has completed.");
-                document.getElementById('loadermessage').innerHTML = `Basecalling has been completed: ${stdout}`;
-                loader.style.display = 'none';
+        if (barcodes != "No multiplexing") {
+            cmd = cmd.concat(` --barcode_kits \"${barcodes}\"`)
             }
+        console.log(cmd);
 
-            console.log(`stdout: ${stdout}`);
-            console.error(`stderr: ${stderr}`);
+        /*
+        if (fs.existsSync(output_dir)) {
+            var loader = document.getElementById('loader');
+            loader.style.display = 'block';
+            document.getElementById('loadermessage').innerHTML = "Basecalling is running";
+
+            console.log("Base calling has begun.");
 
 
 
-      });
-    } else {
-        alert("The given output directory does not exist");
-    }
+            exec(cmd, (error, stdout, stderr) => {
+
+                if (error) {
+                    alert(`exec error: ${error}`);
+                    document.getElementById('loadermessage').innerHTML = `Basecalling has failed: ${error}`;
+                    loader.style.display = 'none';
+                  console.error(`exec error: ${error}`);
+                  return;
+                } else {
+                     var exepath = document.getElementById('current-exepath').innerHTML;
+                     sortreads = `${exepath}src/trim_concat_reads.py -d ${output_dir}`;
+                     exec(sortreads, (error, stdout, stderr) => {
+
+                        if (error) {
+                          console.error(`exec error: ${error}`);
+                          return;
+                        console.log(`stdout: ${stdout}`);
+                        console.error(`stderr: ${stderr}`);
+
+
+
+                         });
+                    alert("Base calling has completed.");
+                    document.getElementById('loadermessage').innerHTML = `Basecalling has been completed: ${stdout}`;
+                    loader.style.display = 'none';
+                }
+
+                console.log(`stdout: ${stdout}`);
+                console.error(`stderr: ${stderr}`);
+
+
+
+          });
+        } else {
+            alert("The given output directory does not exist");
+        }
+        */
     }
 }
 
