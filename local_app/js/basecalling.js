@@ -122,9 +122,9 @@ function select_output(){
 function find_model_from_input(flowcell, kit, db_dir){
     readTextFile(db_dir + "analyticalFiles/workflow.json", function(text){
         var data = JSON.parse(text);
-        for item in data {
-            console.log(item);
-        }
+        for (var i = 0; i < data.length; i++) {
+            console.log(data[i]);
+          }
         /*
         document.getElementById('workflowjson').innerHTML = data;
 
