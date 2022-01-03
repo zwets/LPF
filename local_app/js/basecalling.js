@@ -121,20 +121,16 @@ function select_output(){
 
 function find_model_from_input(flowcell, kit, db_dir, algorithm){
     var model = "";
-    const jsonData= require(db_dir + "analyticalFiles/workflow.json");
-    console.log(jsonData);
-    /*
-    readTextFile(db_dir + "analyticalFiles/workflow.json", function(text){
-        var data = JSON.parse(text);
-        for (var i = 0; i < data.length; i++) {
-            if (data[i].flowcell == flowcell) {
-                if (data[i].kit == kit) {
-                    model = data[i].barcoding_config_name;
-                    document.getElementById('running_model').innerHTML = model;
+    const data = require(db_dir + "analyticalFiles/workflow.json");
+    for (var i = 0; i < data.length; i++) {
+                if (data[i].flowcell == flowcell) {
+                    if (data[i].kit == kit) {
+                        model = data[i].barcoding_config_name;
+                        return model;
+                        //document.getElementById('running_model').innerHTML = model;
+                    };
                 };
-            };
-        }
-    });*/
+            }
 }
 
 function start_base_calling(){
@@ -167,7 +163,6 @@ function start_base_calling(){
         check_basecall_name = true;
         mkdirp(base_call_output, function(err) {
             });
-        find_model_from_input(flowcell, kit, db_dir, algorithm);
 
     }
 
@@ -180,8 +175,8 @@ function start_base_calling(){
         console.log(cmd);
 
 
-        var to_be_run_model = document.getElementById('running_model').innerHTML;
-        console.log(`${to_be_run_model}${algorithm}`);
+        var model = find_model_from_input(flowcell, kit, db_dir, algorithm);
+        console.log(model);
         /*
         if (fs.existsSync(output_dir)) {
             var loader = document.getElementById('loader');
