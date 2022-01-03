@@ -55,6 +55,7 @@ function select_output(){
             var el = document.createElement("option");
             el.textContent = opt;
             el.value = opt;
+            console.log(el);
             select.appendChild(el);
           }
 
