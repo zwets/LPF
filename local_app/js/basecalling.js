@@ -143,6 +143,7 @@ function start_base_calling(){
     var barcoding_config_name = document.getElementById('barcoding_config_name').value;
     var barcodes = document.getElementById('demux').value;
     var model_version = document.getElementById('model_version').value;
+    var algorithm = document.getElementById('algorithm').value;
     var db_dir = document.getElementById('current-config').innerHTML;
 
     var input = document.getElementById('fast5-input-field');
@@ -175,9 +176,9 @@ function start_base_calling(){
         console.log(cmd);
 
 
-        algorithm = "tests";
-        cmd = find_model_from_input(flowcell, kit, db_dir, algorithm);
-        console.log(cmd);
+        find_model_from_input(flowcell, kit, db_dir, algorithm);
+        to_be_run_model = document.getElementById('running_model').innerHTML;
+        console.log(`${to_be_run_model}${algorithm}`);
         /*
         if (fs.existsSync(output_dir)) {
             var loader = document.getElementById('loader');
