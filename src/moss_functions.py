@@ -38,6 +38,17 @@ import moss_sql as moss_sql
 
 #Utility functions
 
+
+def moss_shortcut_init(exepath):
+    outfile = open(exepath + 'src/moss', 'w')
+    print ("#!/usr/bin/env bash", file = outfile)
+    print ("echo \'HELLO THERE\'", file = outfile)
+    outfile.close()
+    cmd = "mv {}src/moss ~/bin/.".format(exepath)
+    os.system(cmd)
+    cmd = "chmod a+x ~/bin/moss"
+    os.system(cmd)
+
 def init_insert_reference_table(exepath, db_dir):
     infile = open(db_dir + "REFDB.ATG.name", 'r')
     t = 1
