@@ -49,6 +49,7 @@ function select_output(){
 
         var select = document.getElementById("flow-cell");
         //var unames = ["Alpha", "Bravo", "Charlie", "Delta", "Echo"];
+        console.log(unique_flowcell);
         for (var i = 0; i < unique_flowcell.length; i++) {
             var opt = unique_flowcell[i];
             var el = document.createElement("option");
