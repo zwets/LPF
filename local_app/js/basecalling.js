@@ -118,7 +118,7 @@ function select_output(){
 
     });
 }
-/*
+
 function start_base_calling(){
 
     var flowcell = document.getElementById('flow-cell').value;
@@ -139,6 +139,7 @@ function start_base_calling(){
     var base_call_output = `${db_dir}/basecall_output/${output_dir}/`;
 
     console.log(base_call_output);
+    /*
     cmd = `guppy_basecaller -i ${input_path} -s ${base_call_output} --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq --trim_barcodes`;
     if (barcodes != "No multiplexing") {
         cmd = cmd.concat(` --barcode_kits \"${barcodes}\"`)
@@ -191,10 +192,8 @@ function start_base_calling(){
     } else {
         alert("The given output directory does not exist");
     }
-
+    */
 }
-
-*/
 
 function execute_command_as_subprocess(cmd, print_msg) {
     console.log(cmd);
