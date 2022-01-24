@@ -25,7 +25,7 @@ import moss_functions as moss
 import json
 import datetime
 import threading
-import posix_ipc
+
 
 #Use Argparse to correctly open the inputfiles
 

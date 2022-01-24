@@ -17,7 +17,7 @@ import moss_functions as moss
 import json
 import datetime
 import threading
-import posix_ipc
+
 
 parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
 parser.add_argument('-db_dir', action="store", type=str, dest='db_dir', default="", help='db_dir')

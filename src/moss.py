@@ -24,7 +24,6 @@ import moss_sql as moss_sql
 import json
 import datetime
 import threading
-import posix_ipc
 import geocoder
 
 #Note: these parser arguments are NOT meant to be user friendly as terminal commands. They are built to be automatically called from the ELectron Client.
@@ -214,8 +213,7 @@ def moss_pipeline(seqType, prune_distance, bc,
         os.system(cmd)
         moss_sql.update_status_table(entryid, "Phylo Tree imaging", "Alignment", "7", "10", "Running", db_dir)
 
-        image_location = moss.generateFigtree("{}/datafiles/distancematrices/{}/tree.newick".format(db_dir, refname), jobid)
-
+        image_location = moss.create_phylo_tree(db_dir, refname, target_dir)
 
         if refdata[0][3] == None:
             isolateid = entryid

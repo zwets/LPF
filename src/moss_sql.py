@@ -23,7 +23,7 @@ import json
 import datetime
 import hashlib
 import gzip
-import posix_ipc
+
 import pandas as pd
 from tabulate import tabulate
 import matplotlib.pyplot as plt

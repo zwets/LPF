@@ -23,7 +23,7 @@ import json
 import datetime
 import hashlib
 import gzip
-import posix_ipc
+
 import pandas as pd
 from tabulate import tabulate
 from IPython.display import display, HTML
@@ -34,9 +34,20 @@ from geopy.geocoders import Nominatim
 from subprocess import check_output, STDOUT
 import mbh_helpers as mbh_helper
 import moss_sql as moss_sql
+from Bio import Phylo
+import matplotlib.pyplot as plt
+import pylab
 
 
 #Utility functions
+
+def create_phylo_tree(db_dir, refname, target_dir):
+    tree = Phylo.read("{}datafiles/distancematrices/{}/tree.newick".format(db_dir, refname), 'newick')
+    Phylo.draw(tree, do_show=False)
+    pylab.savefig('/Users/malhal/dev/tmp/imagetest.pdf')
+    image_location = "{}tree.png".format(target_dir)
+    return image_location
+
 
 
 def moss_shortcut_init(exepath):
