@@ -8,25 +8,26 @@ parser.add_argument('-db_dir', action="store", type=str, dest='db_dir', default=
 
 args = parser.parse_args()
 
-cmd = "guppy_basecaller --print_workflows > {}/analyticalFiles/tmpworkflowdict.txt".format(args.db_dir)
+cmd = "docker run genomicpariscentre/guppy-gpu --print_workflows > {}/analyticalFiles/tmpworkflowdict.txt".format(args.db_dir)
 os.system(cmd)
 
 infile = open("{}/analyticalFiles/tmpworkflowdict.txt".format(args.db_dir), 'r')
 jsonlist = []
 for line in infile:
-    line = line.rstrip()
     if line[0:3] == "FLO":
-        line = line.split()
-        if line[2] == "included":
-            line.pop(2)
-        line[2] = line[2].replace('_hac_prom', '')
-        line[2] = line[2].replace('_hac', '')
-        jsonlist.append({
-            "flowcell": line[0],
-            "kit": line[1],
-            "barcoding_config_name": line[2],
-            "model_version": line[3]
-        })
+        line = line.rstrip()
+        if line[0:3] == "FLO":
+            line = line.split()
+            if line[2] == "included":
+                line.pop(2)
+            line[2] = line[2].replace('_hac_prom', '')
+            line[2] = line[2].replace('_hac', '')
+            jsonlist.append({
+                "flowcell": line[0],
+                "kit": line[1],
+                "barcoding_config_name": line[2],
+                "model_version": line[3]
+            })
 
 
 infile.close()
@@ -40,6 +41,7 @@ cmd = "rm {}/analyticalFiles/tmpworkflowdict.txt".format(args.db_dir)
 os.system(cmd)
 
 #Get barcodes
+sys.exit()
 
 cmd = "grep \"kits\" /opt/ont/guppy/data/barcoding/*".format(args.db_dir)
 proc = subprocess.Popen(cmd, shell=True,
