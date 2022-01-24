@@ -45,7 +45,7 @@ infile = open("{}/analyticalFiles/printkitstmp.txt".format(args.db_dir), 'r')
 jsonlist = []
 for line in infile:
 
-    if line != "":
+    if len(line) > 3: #Non empties
         if line[4] == "-":
             line = line.rstrip()
             jsonlist.append({
