@@ -36,7 +36,7 @@ outfile = open("{}/analyticalFiles/workflow.json".format(args.db_dir), 'w')
 
 print (json.dumps(jsonlist, indent=2), file=outfile)
 outfile.close()
-
+"""
 sys.exit()
 cmd = "grep \"kits\" /opt/ont/guppy/data/barcoding/*".format(args.db_dir)
 proc = subprocess.Popen(cmd, shell=True,
@@ -61,7 +61,7 @@ outfile = open("{}/analyticalFiles/barcodes.json".format(args.db_dir), 'w')
 print (json.dumps(jsonlist, indent=2), file=outfile)
 outfile.close()
 
-
+"""
 
 
 cmd = "rm {}/analyticalFiles/tmpworkflowdict.txt".format(args.db_dir)

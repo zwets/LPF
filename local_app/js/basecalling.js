@@ -87,6 +87,8 @@ function select_output(){
 
     });
 
+    /*
+
 
     readTextFile(db_dir + "analyticalFiles/barcodes.json", function(text){
         var data = JSON.parse(text);
@@ -116,7 +118,7 @@ function select_output(){
             select.appendChild(el);
           }
 
-    });
+    });*/
 }
 
 function find_model_from_input(flowcell, kit, db_dir, algorithm){
