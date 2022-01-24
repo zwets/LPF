@@ -87,6 +87,9 @@ function select_output(){
 
     });
 
+
+
+
     /*
 
 
@@ -174,7 +177,7 @@ function start_base_calling(){
         if (barcodes != "No multiplexing") {
             cmd = cmd.concat(` --barcode_kits \"${barcodes}\"`)
             }
-        cmd = cmd.concat(` --barcode_kits \"${barcodes}\"`)
+        //cmd = cmd.concat(` --barcode_kits \"${barcodes}\"`)
         console.log(cmd);
 
 
