@@ -44,11 +44,13 @@ os.system(cmd)
 infile = open("{}/analyticalFiles/printkitstmp.txt".format(args.db_dir), 'r')
 jsonlist = []
 for line in infile:
-    if line[4] == "-":
-        line = line.rstrip()
-        jsonlist.append({
-            "barcode": line
-        })
+
+    if line != "":
+        if line[4] == "-":
+            line = line.rstrip()
+            jsonlist.append({
+                "barcode": line
+            })
 
 
 infile.close()
