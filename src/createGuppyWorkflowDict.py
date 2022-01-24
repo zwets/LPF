@@ -9,7 +9,7 @@ parser.add_argument('-db_dir', action="store", type=str, dest='db_dir', default=
 
 args = parser.parse_args()
 
-cmd = "docker run genomicpariscentre/guppy-gpu --print_workflows > {}/analyticalFiles/tmpworkflowdict.txt".format(args.db_dir)
+cmd = "docker run genomicpariscentre/guppy-gpu guppy_basecaller --print_workflows > {}/analyticalFiles/tmpworkflowdict.txt".format(args.db_dir)
 os.system(cmd)
 
 infile = open("{}/analyticalFiles/tmpworkflowdict.txt".format(args.db_dir), 'r')
