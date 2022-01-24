@@ -2,6 +2,7 @@ import os
 import argparse
 import json
 import subprocess
+import sys
 
 parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
 parser.add_argument('-db_dir', action="store", type=str, dest='db_dir', default="", help='db_dir')
@@ -36,13 +37,7 @@ outfile = open("{}/analyticalFiles/workflow.json".format(args.db_dir), 'w')
 print (json.dumps(jsonlist, indent=2), file=outfile)
 outfile.close()
 
-
-cmd = "rm {}/analyticalFiles/tmpworkflowdict.txt".format(args.db_dir)
-os.system(cmd)
-
-#Get barcodes
 sys.exit()
-
 cmd = "grep \"kits\" /opt/ont/guppy/data/barcoding/*".format(args.db_dir)
 proc = subprocess.Popen(cmd, shell=True,
                             stdout=subprocess.PIPE, )
@@ -52,16 +47,13 @@ lines = output.split("\n")
 
 barcodes = set()
 
-for item in lines:
-    selects = item.split(" = ")[-1]
-    selects = selects.split(",")
-    for barcode in selects:
-        barcodes.add(barcode)
+for item in jsonlist:
+    barcodes.add(barcode)
 
-jsonlist = []
+jsonlist = list()
 for barcode in barcodes:
     if barcode != "":
-        jsonlist.append({
+        jsonlist.add({
             "barcode": barcode
         })
 outfile = open("{}/analyticalFiles/barcodes.json".format(args.db_dir), 'w')
@@ -71,3 +63,6 @@ outfile.close()
 
 
 
+
+cmd = "rm {}/analyticalFiles/tmpworkflowdict.txt".format(args.db_dir)
+os.system(cmd)
