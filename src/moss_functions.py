@@ -82,8 +82,8 @@ def init_insert_reference_table(exepath, db_dir):
         if entryid not in ids:
             dbstring = "INSERT INTO referencetable(entryid, header_text) VALUES('{}' ,'{}')".format(entryid, header_text.replace("'", "''"))
             ids.append(entryid)
-        #print (dbstring)
-        c.execute(dbstring)
+            #print (dbstring)
+            c.execute(dbstring)
 
         t += 1
     conn.commit()
