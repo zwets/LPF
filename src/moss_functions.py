@@ -41,6 +41,8 @@ import pylab
 
 #Utility functions
 
+
+
 def create_phylo_tree(db_dir, refname, target_dir):
     tree = Phylo.read("{}datafiles/distancematrices/{}/tree.newick".format(db_dir, refname), 'newick')
     Phylo.draw(tree, do_show=False)
@@ -65,6 +67,7 @@ def init_insert_reference_table(exepath, db_dir):
     t = 1
     conn = sqlite3.connect(db_dir + 'moss.db')
     c = conn.cursor()
+    ids = list()
 
     for line in infile:
         line = line.rstrip()
@@ -75,10 +78,10 @@ def init_insert_reference_table(exepath, db_dir):
         header_text = output.split("\n")[0][1:]
         sequence = output.split("\n")[1]
         entryid = md5(sequence)
-        if entryid == "0cc1493d2e9e42f3890cae0bc33b2c2b":
-            print (entryid)
-            print (header_text)
-        dbstring = "INSERT INTO referencetable(entryid, header_text) VALUES('{}' ,'{}')".format(entryid, header_text.replace("'", "''"))
+        #TMP SOLUTION TO AVOID ENTRYCLASHES:
+        if entryid not in ids:
+            dbstring = "INSERT INTO referencetable(entryid, header_text) VALUES('{}' ,'{}')".format(entryid, header_text.replace("'", "''"))
+            ids.append(entryid)
         #print (dbstring)
         c.execute(dbstring)
 
