@@ -210,11 +210,6 @@ function start_base_calling(){
                  console.log(sortreads);
 
                  exec(sortreads, (error, stdout, stderr) => {
-                    console.log(`stdout: ${stdout}`);
-                    console.error(`stderr: ${stderr}`);
-
-
-
          });
             }
 
