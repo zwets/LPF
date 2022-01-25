@@ -206,6 +206,7 @@ function start_base_calling(){
                   return;
                 } else {
                      var exepath = document.getElementById('current-exepath').innerHTML;
+                     /*
                      sortreads = `${exepath}src/trim_concat_reads.py -d ${output_dir}`;
                      exec(sortreads, (error, stdout, stderr) => {
 
@@ -217,7 +218,7 @@ function start_base_calling(){
 
 
 
-                         });
+                         });*/
                     alert("Base calling has completed.");
                     document.getElementById('loadermessage').innerHTML = `Basecalling has been completed: ${stdout}`;
                     loader.style.display = 'none';
