@@ -48,6 +48,5 @@ if args.bk != "":
     cmd += " --c barcode_kits \"{}\"".format(args.bk)
 
 os.system(cmd)
-
-#cmd = "cat {}/fail/* > {}{}.fastq.gz".format(args.directory, args.directory, args.name)
-#os.system(cmd)
+cmd = "cat {}/pass/* > {}{}.fastq.gz".format(args.directory, args.directory, args.name)
+os.system(cmd)
