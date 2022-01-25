@@ -202,17 +202,6 @@ function start_base_calling(){
               console.error(`exec error: ${error}`);
               return;
             } else {
-                 var exepath = document.getElementById('current-exepath').innerHTML;
-                 sortreads = `python3 ${exepath}src/trim_concat_reads.py -d ${base_call_output} -n ${output_dir}`;
-                 console.log(sortreads);
-
-                 exec(sortreads, (error, stdout, stderr) => {
-                    console.log(`stdout: ${stdout}`);
-                    console.error(`stderr: ${stderr}`);
-
-
-
-                     });
                 alert("Base calling has completed.");
                 document.getElementById('loadermessage').innerHTML = `Basecalling has been completed: ${stdout}`;
                 loader.style.display = 'none';
@@ -224,6 +213,17 @@ function start_base_calling(){
 
 
         });
+        var exepath = document.getElementById('current-exepath').innerHTML;
+         sortreads = `python3 ${exepath}src/trim_concat_reads.py -d ${base_call_output} -n ${output_dir}`;
+         console.log(sortreads);
+
+         exec(sortreads, (error, stdout, stderr) => {
+            console.log(`stdout: ${stdout}`);
+            console.error(`stderr: ${stderr}`);
+
+
+
+         });
         //} else {
         //    alert("The given output directory does not exist");
         //}

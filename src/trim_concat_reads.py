@@ -36,5 +36,5 @@ args = parser.parse_args()
 
 directory = args.directory
 
-cmd = "cat {}* > {}{}.fastq.gz".format(args.directory, args.directory, args.name)
+cmd = "cat {}/pass/* > {}{}.fastq.gz".format(args.directory, args.directory, args.name)
 os.system(cmd)
