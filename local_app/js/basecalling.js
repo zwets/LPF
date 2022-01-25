@@ -191,9 +191,9 @@ function start_base_calling(){
 
         console.log("Base calling has begun.");
 
-
-
-        exec(cmd, (error, stdout, stderr) => {
+        n_cmd = `python3 ${exepath}src/basecall_and_concat.py -i \"${cmd}\" -d ${base_call_output} -n ${output_dir}`
+        console.log(n_cmd)
+        exec(n_cmd, (error, stdout, stderr) => {
 
             if (error) {
                 alert(`exec error: ${error}`);

@@ -30,6 +30,7 @@ from joblib import Parallel, delayed
 
 
 parser = argparse.ArgumentParser(description='.')
+parser.add_argument('-i', action="store", type=str, dest='input', default="", help='input')
 parser.add_argument('-n', action="store", type=str, dest='name', default="", help='name')
 parser.add_argument('-d', action="store", type=str, dest='directory', default="", help='directory')
 args = parser.parse_args()
