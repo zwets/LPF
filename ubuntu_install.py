@@ -14,9 +14,9 @@ def main():
     For ubuntu 20.04:
     wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
     sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
-    wget https://developer.download.nvidia.com/compute/cuda/11.4.2/local_installers/cuda-repo-ubuntu2004-11-4-local_11.4.2-470.57.02-1_amd64.deb
-    sudo dpkg -i cuda-repo-ubuntu2004-11-4-local_11.4.2-470.57.02-1_amd64.deb
-    sudo apt-key add /var/cuda-repo-ubuntu2004-11-4-local/7fa2af80.pub
+    wget https://developer.download.nvidia.com/compute/cuda/11.6.0/local_installers/cuda-repo-ubuntu2004-11-6-local_11.6.0-510.39.01-1_amd64.deb
+    sudo dpkg -i cuda-repo-ubuntu2004-11-6-local_11.6.0-510.39.01-1_amd64.deb
+    sudo apt-key add /var/cuda-repo-ubuntu2004-11-6-local/7fa2af80.pub
     sudo apt-get update
     sudo apt-get -y install cuda
 
@@ -26,6 +26,17 @@ def main():
     export PLATFORM=$(lsb_release -cs)
     wget -O- https://mirror.oxfordnanoportal.com/apt/ont-repo.pub | sudo apt-key add -
     echo "deb http://mirror.oxfordnanoportal.com/apt ${PLATFORM}-stable non-free" | sudo tee /etc/apt/sources.list.d/nanoporetech.sources.list
+    sudo apt-get update
+    sudo apt update
+    sudo apt install ont-guppy
+
+https://mirror.oxfordnanoportal.com/software/analysis/ont-guppy_6.0.1_linux64.tar.gz
+unpack with tar for local installation
+
+    sudo apt-get update
+    sudo apt-get install wget lsb-release
+    wget -O- https://mirror.oxfordnanoportal.com/apt/ont-repo.pub | sudo apt-key add -
+    echo "deb http://mirror.oxfordnanoportal.com/apt bionic-stable non-free" | sudo tee /etc/apt/sources.list.d/nanoporetech.sources.list
     sudo apt-get update
     sudo apt update
     sudo apt install ont-guppy

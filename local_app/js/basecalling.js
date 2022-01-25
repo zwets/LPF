@@ -21,7 +21,6 @@ function select_output(){
 
     readTextFile(db_dir + "analyticalFiles/workflow.json", function(text){
         var data = JSON.parse(text);
-        console.log(data);
         document.getElementById('workflowjson').innerHTML = data;
 
         var items = data;
@@ -90,9 +89,6 @@ function select_output(){
 
 
 
-    /*
-
-
     readTextFile(db_dir + "analyticalFiles/barcodes.json", function(text){
         var data = JSON.parse(text);
         var items = data;
@@ -121,7 +117,7 @@ function select_output(){
             select.appendChild(el);
           }
 
-    });*/
+    });
 }
 
 function find_model_from_input(flowcell, kit, db_dir, algorithm){
@@ -159,7 +155,6 @@ function start_base_calling(){
 
     var base_call_output = `${db_dir}basecall_output/${output_dir}/`;
 
-    console.log(base_call_output);
 
 
     var check_basecall_name = false;
@@ -173,16 +168,23 @@ function start_base_calling(){
     }
 
     if (check_basecall_name) {
-        cmd = `guppy_basecaller -i ${input_path} -s ${base_call_output} --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq --trim_barcodes`;
+
+        cmd = `docker run genomicpariscentre/guppy-gpu guppy_basecaller -i ${input_path} -s ${base_call_output} --device "cuda:0" --compress_fastq --trim_barcodes`;
+
+        if (algorithm == "_sup.cfg") {
+            cmd = cmd.concat(` --chunks_per_runner 75`)
+        }
+
+        //cmd = `docker run genomicpariscentre/guppy-gpu guppy_basecaller -i ${input_path} -s ${base_call_output} --flowcell ${flowcell} --kit ${kit} --device "cuda:0" --compress_fastq --trim_barcodes`;
         if (barcodes != "No multiplexing") {
             cmd = cmd.concat(` --barcode_kits \"${barcodes}\"`)
             }
         //cmd = cmd.concat(` --barcode_kits \"${barcodes}\"`)
-        console.log(cmd);
 
 
         var model = find_model_from_input(flowcell, kit, db_dir, algorithm);
-        console.log(model);
+        cmd = cmd.concat(` -c ${model}`)
+        console.log(cmd);
         /*
         if (fs.existsSync(output_dir)) {
             var loader = document.getElementById('loader');

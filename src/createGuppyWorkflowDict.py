@@ -44,9 +44,8 @@ os.system(cmd)
 infile = open("{}/analyticalFiles/printkitstmp.txt".format(args.db_dir), 'r')
 jsonlist = []
 for line in infile:
-
-    if len(line) > 3: #Non empties
-        if line[4] == "-":
+    if len(line) > 3: #Non emptie/home/meta2s
+        if line[3] == "-":
             line = line.rstrip()
             jsonlist.append({
                 "barcode": line
