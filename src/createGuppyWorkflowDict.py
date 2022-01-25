@@ -9,8 +9,8 @@ parser.add_argument('-db_dir', action="store", type=str, dest='db_dir', default=
 parser.add_argument("-exepath", action="store", dest="exepath", default = "", help="Complete path to the moss repo that you cloned, in which your kma and ccphylo folder at located.")
 
 args = parser.parse_args()
-
-cmd = ".{}ont-guppy/guppy_basecaller --print_workflows > {}/analyticalFiles/tmpworkflowdict.txt".format(exepath, args.db_dir)
+#
+cmd = ".{}ont-guppy/guppy_basecaller --print_workflows > {}/analyticalFiles/tmpworkflowdict.txt".format(args.exepath, args.db_dir)
 os.system(cmd)
 
 infile = open("{}/analyticalFiles/tmpworkflowdict.txt".format(args.db_dir), 'r')
@@ -39,7 +39,7 @@ print (json.dumps(jsonlist, indent=2), file=outfile)
 outfile.close()
 
 
-cmd = ".{}ont-guppy/guppy_barcoder --print_kits > {}/analyticalFiles/printkitstmp.txt".format(exepath, args.db_dir)
+cmd = ".{}ont-guppy/guppy_barcoder --print_kits > {}/analyticalFiles/printkitstmp.txt".format(args.exepath, args.db_dir)
 os.system(cmd)
 
 infile = open("{}/analyticalFiles/printkitstmp.txt".format(args.db_dir), 'r')
