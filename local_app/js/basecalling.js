@@ -186,7 +186,7 @@ function start_base_calling(){
         var model = find_model_from_input(flowcell, kit, db_dir, algorithm);
         cmd = cmd.concat(` -c ${model}`)
         console.log(cmd);
-        /*
+
         if (fs.existsSync(output_dir)) {
             var loader = document.getElementById('loader');
             loader.style.display = 'block';
@@ -232,7 +232,7 @@ function start_base_calling(){
         } else {
             alert("The given output directory does not exist");
         }
-        */
+
     }
 }
 
