@@ -30,13 +30,11 @@ from joblib import Parallel, delayed
 
 
 parser = argparse.ArgumentParser(description='.')
+parser.add_argument('-n', action="store", type=str, dest='name', default="", help='name')
 parser.add_argument('-d', action="store", type=str, dest='directory', default="", help='directory')
 args = parser.parse_args()
 
 directory = args.directory
 
-name = "test" #autoload id
-
-#concat fastQs
-#Trim with KMA
-#Output to output folder
+cmd = "cat {}* > {}{}.fastq.gz".format(args.directory, args.directory, args.name)
+os.system(cmd)

@@ -203,7 +203,7 @@ function start_base_calling(){
               return;
             } else {
                  var exepath = document.getElementById('current-exepath').innerHTML;
-                 sortreads = `python3 ${exepath}src/trim_concat_reads.py -d ${output_dir}`;
+                 sortreads = `python3 ${exepath}src/trim_concat_reads.py -d ${base_call_output} -n ${output_dir}`;
                  console.log(sortreads);
 
                  exec(sortreads, (error, stdout, stderr) => {
