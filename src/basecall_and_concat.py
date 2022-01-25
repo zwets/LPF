@@ -42,7 +42,7 @@ args = parser.parse_args()
 directory = args.directory
 
 cmd = "{}ont-guppy/bin/./guppy_basecaller -i {}  -s {} --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(args.exepath, args.input_path, args.directory, args.model)
-if args.chucks != "":
+if args.chunks != "":
     cmd += " --chunks_per_runner 75"
 if args.bk != "":
     cmd += " --c barcode_kits \"{}\"".format(args.bk)
