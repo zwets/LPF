@@ -184,11 +184,11 @@ function start_base_calling(){
 
 
         if (algorithm == "_sup.cfg") {
-            cmd = n_cmd.concat(` -chunks 75`)
+            cmd = cmd.concat(` -chunks 75`)
         }
 
         if (barcodes != "No multiplexing") {
-            cmd = n_cmd.concat(` -bk \"${barcodes}\"`)
+            cmd = cmd.concat(` -bk \"${barcodes}\"`)
             }
 
         console.log(cmd)
