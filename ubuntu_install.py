@@ -50,6 +50,8 @@ unpack with tar for local installation
     os.system(cmd)
     cmd = "sudo apt  install curl"
     os.system(cmd)
+    cmd = "wget https://mirror.oxfordnanoportal.com/software/analysis/ont-guppy_6.0.1_linux64.tar.gz; tar -xvf ont-guppy_6.0.1_linux64.tar.gz"
+    os.system(cmd)
     cmd = "sudo apt-get install r-base"
     os.system(cmd)
     cmd = "curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -"
