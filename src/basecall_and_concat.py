@@ -36,6 +36,7 @@ parser.add_argument('-d', action="store", type=str, dest='directory', default=""
 parser.add_argument('-bk', action="store", type=str, dest='bk', default="", help='bk')
 parser.add_argument('-chunks', action="store", type=str, dest='chunks', default="", help='chunks')
 parser.add_argument('-c', action="store", type=str, dest='model', default="", help='model')
+parser.add_argument("-exepath", action="store", dest="exepath", default = "", help="Complete path to the moss repo that you cloned, in which your kma and ccphylo folder at located.")
 args = parser.parse_args()
 
 directory = args.directory
