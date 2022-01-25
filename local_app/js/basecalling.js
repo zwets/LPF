@@ -169,16 +169,7 @@ function start_base_calling(){
     }
 
     if (check_basecall_name) {
-
-        cmd = `${exepath}ont-guppy/bin/./guppy_basecaller -i ${input_path} -s ${base_call_output} --device "cuda:0" --compress_fastq --trim_barcodes`;
-
-        if (algorithm == "_sup.cfg") {
-            cmd = cmd.concat(` --chunks_per_runner 75`)
-        }
-
-        if (barcodes != "No multiplexing") {
-            cmd = cmd.concat(` --barcode_kits \"${barcodes}\"`)
-            }
+        cmd = `python3 ${exepath}src/basecall_and_concat.py -i ${input_path}  -d ${base_call_output} -n ${output_dir}`
 
         var model = find_model_from_input(flowcell, kit, db_dir, algorithm);
         cmd = cmd.concat(` -c ${model}`)
@@ -191,9 +182,17 @@ function start_base_calling(){
 
         console.log("Base calling has begun.");
 
-        n_cmd = `python3 ${exepath}src/basecall_and_concat.py -i \"${cmd}\" -d ${base_call_output} -n ${output_dir}`
-        console.log(n_cmd)
-        exec(n_cmd, (error, stdout, stderr) => {
+
+        if (algorithm == "_sup.cfg") {
+            cmd = n_cmd.concat(` -chunks 75`)
+        }
+
+        if (barcodes != "No multiplexing") {
+            cmd = n_cmd.concat(` -bk \"${barcodes}\"`)
+            }
+
+        console.log(cmd)
+        exec(cmd, (error, stdout, stderr) => {
 
             if (error) {
                 alert(`exec error: ${error}`);
