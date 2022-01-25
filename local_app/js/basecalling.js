@@ -203,20 +203,16 @@ function start_base_calling(){
               return;
             } else {
                  var exepath = document.getElementById('current-exepath').innerHTML;
-                 sortreads = `${exepath}src/trim_concat_reads.py -d ${output_dir}`;
+                 sortreads = `python3 ${exepath}src/trim_concat_reads.py -d ${output_dir}`;
                  console.log(sortreads);
-                 /*
-                 exec(sortreads, (error, stdout, stderr) => {
 
-                    if (error) {
-                      console.error(`exec error: ${error}`);
-                      return;
+                 exec(sortreads, (error, stdout, stderr) => {
                     console.log(`stdout: ${stdout}`);
                     console.error(`stderr: ${stderr}`);
 
 
 
-                     });*/
+                     });
                 alert("Base calling has completed.");
                 document.getElementById('loadermessage').innerHTML = `Basecalling has been completed: ${stdout}`;
                 loader.style.display = 'none';
