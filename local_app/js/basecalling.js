@@ -144,6 +144,7 @@ function start_base_calling(){
     var model_version = document.getElementById('model_version').value;
     var algorithm = document.getElementById('algorithm').value;
     var db_dir = document.getElementById('current-config').innerHTML;
+    var exepath = document.getElementById('current-exepath').innerHTML;
 
     var input = document.getElementById('fast5-input-field');
     var output_dir = document.getElementById('output-field').value;
@@ -169,7 +170,7 @@ function start_base_calling(){
 
     if (check_basecall_name) {
 
-        cmd = `docker run genomicpariscentre/guppy-gpu guppy_basecaller -i ${input_path} -s ${base_call_output} --device "cuda:0" --compress_fastq --trim_barcodes`;
+        cmd = `${exepath}ont-guppy/bin/./guppy_basecaller -i ${input_path} -s ${base_call_output} --device "cuda:0" --compress_fastq --trim_barcodes`;
 
         if (algorithm == "_sup.cfg") {
             cmd = cmd.concat(` --chunks_per_runner 75`)
