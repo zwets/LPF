@@ -10,7 +10,7 @@ parser.add_argument("-exepath", action="store", dest="exepath", default = "", he
 
 args = parser.parse_args()
 #
-cmd = ".{}ont-guppy/guppy_basecaller --print_workflows > {}/analyticalFiles/tmpworkflowdict.txt".format(args.exepath, args.db_dir)
+cmd = ".{}ont-guppy/bin/guppy_basecaller --print_workflows > {}/analyticalFiles/tmpworkflowdict.txt".format(args.exepath, args.db_dir)
 os.system(cmd)
 
 infile = open("{}/analyticalFiles/tmpworkflowdict.txt".format(args.db_dir), 'r')
@@ -39,7 +39,7 @@ print (json.dumps(jsonlist, indent=2), file=outfile)
 outfile.close()
 
 
-cmd = ".{}ont-guppy/guppy_barcoder --print_kits > {}/analyticalFiles/printkitstmp.txt".format(args.exepath, args.db_dir)
+cmd = ".{}ont-guppy/bin/guppy_barcoder --print_kits > {}/analyticalFiles/printkitstmp.txt".format(args.exepath, args.db_dir)
 os.system(cmd)
 
 infile = open("{}/analyticalFiles/printkitstmp.txt".format(args.db_dir), 'r')
