@@ -184,7 +184,6 @@ def moss_pipeline(seqType, prune_distance, bc,
     related_isolates = moss.fetch_isolates(db_dir, header_text)
     print (related_isolates)
 
-
     moss_sql.update_status_table(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir)
 
     #Here make function for tmp dir with isolates and consensus sequence and ref
