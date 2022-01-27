@@ -40,6 +40,33 @@ import pylab
 
 
 #Utility functions
+
+def get_kma_template_number(header_text, db_dir):
+    infile = open(db_dir + "REFDB.ATG", 'r')
+    t = 1
+    number = 0
+    for line in infile:
+        if header_text in line:
+            infile.close()
+            return t
+        t += 1
+    infile.close()
+    return t
+
+def make_tmp_fsa_folder(db_dir, target_dir, isolate_list, exepath, header_text):
+    cmd = "mkdir {}/tmp_fsa".format(target_dir)
+    os.system(cmd)
+
+    for item in isolate_list:
+        path = "{}datafiles/isolatefiles/{}".format(dbdir, item)
+        cmd = "cp {} {}/tmp_fsa/.".format(path, target_dir)
+        os.system(cmd)
+    number = get_kma_template_number(header_text, db_dir)
+    header_name = header_text.split()[-1]
+    cmd = "{}/kma/kma seq2fasta -t_db {}REFDB.ATG -seqs {} > {}/tmp_fsa/{}.fsa".format(exepath, db_dir, number, target_dir, header_name)
+    os.system(cmd)
+
+
 def fetch_isolates(db_dir, header_text):
     conn = sqlite3.connect(db_dir + 'moss.db')
     c = conn.cursor()

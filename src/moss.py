@@ -87,6 +87,8 @@ def moss_pipeline(seqType, prune_distance, bc,
 
     cmd = "mkdir " + target_dir + "datafiles"
     os.system(cmd)
+    cmd = "mkdir " + target_dir + "datafiles/isolatefiles"
+    os.system(cmd)
 
     startTime = time.time()
     mbh_helper.print_to_logfile("# input: {}".format(total_filenames), logfile, True)
@@ -178,14 +180,6 @@ def moss_pipeline(seqType, prune_distance, bc,
 
     header_text = refdata[0][5]
 
-    print (header_text)
-    print (header_text)
-
-    print (header_text)
-
-
-
-
 
     #cmd = "cp {}{}_{}_consensus.fsa {}datafiles/isolatefiles/{}/{}_{}_consensus.fsa".format(target_dir, samplename, templateaccesion, db_dir, templateaccesion, samplename, templateaccesion)
     #os.system(cmd)
@@ -194,95 +188,89 @@ def moss_pipeline(seqType, prune_distance, bc,
     print (related_isolates)
 
 
-    if len(related_isolates) > 1:
-        moss_sql.update_status_table(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir)
+    moss_sql.update_status_table(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir)
 
-        #Here make function for tmp dir with isolates and consensus sequence and ref
-        #TBD
-        cmd = "{} dist -i {}datafiles/isolatefiles/{}/* -r \"{}\" -mc 0.01 -nm 0 -o {}distance_matrix_{}".format(exepath + "ccphylo/ccphylo", db_dir, header_text, header_text, target_dir, header_text)
-        print (cmd, file = logfile)
-        if prune_distance != 0 :
-            cmd += " -pr {}".format(prune_distance)
+    #Here make function for tmp dir with isolates and consensus sequence and ref
+    moss.make_tmp_fsa_folder(db_dir, target_dir, isolate_list, exepath, header_text)
+    #TBD
+    cmd = "{} dist -i {}/tmp_fsa/* -r \"{}\" -mc 0.01 -nm 0 -o {}/tmp_fsa/distance_matrix".format(exepath + "ccphylo/ccphylo", target_dir, header_text, target_dir)
+    print (cmd, file = logfile)
+    #Save latest newick to reference in SQL
+    if prune_distance != 0 :
+        cmd += " -pr {}".format(prune_distance)
+    os.system(cmd)
+
+    sys.exit("CC test")
+
+    # Check if acceptable snp distance
+    distance = moss.ThreshholdDistanceCheck("{}distance_matrix_{}".format(target_dir, header_text), header_text, "{}_{}_consensus.fsa".format(samplename, templateaccesion))
+    print (distance, file = logfile)
+    if distance > 300: #SNP distance
+        header_text = header_text.split()
+        associated_species = "{} {} assembly from ID: {}, SNP distance from best verified reference: {}".format(header_text[1], header_text[2], entryid, distance)
+        moss.run_assembly(entryid, db_dir, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
+                          illumina_name2, jobid, exepath, kma_database_path, start_time, logfile, ID, associated_species)
+
+        cmd = "rm {}datafiles/isolatefiles/{}/{}_{}_consensus.fsa".format(db_dir, templateaccesion, samplename, templateaccesion, db_dir + "moss.db", db_dir)
         os.system(cmd)
 
-        # Check if acceptable snp distance
-        distance = moss.ThreshholdDistanceCheck("{}distance_matrix_{}".format(target_dir, header_text), header_text, "{}_{}_consensus.fsa".format(samplename, templateaccesion))
-        print (distance, file = logfile)
-        if distance > 300: #SNP distance
-            header_text = header_text.split()
-            associated_species = "{} {} assembly from ID: {}, SNP distance from best verified reference: {}".format(header_text[1], header_text[2], entryid, distance)
-            moss.run_assembly(entryid, db_dir, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
-                              illumina_name2, jobid, exepath, kma_database_path, start_time, logfile, ID, associated_species)
-
-            cmd = "rm {}datafiles/isolatefiles/{}/{}_{}_consensus.fsa".format(db_dir, templateaccesion, samplename, templateaccesion, db_dir + "moss.db", db_dir)
-            os.system(cmd)
-
-        moss_sql.update_status_table(entryid, "Distance Matrix", "Alignment", "6", "10", "Running", db_dir)
+    moss_sql.update_status_table(entryid, "Distance Matrix", "Alignment", "6", "10", "Running", db_dir)
 
 
-        cmd = "cp {}distance_matrix_{} {}/datafiles/distancematrices/{}/distance_matrix_{}".format(target_dir, header_text, db_dir, header_text, header_text)
-        os.system(cmd)
-        cmd = "{} tree -i {}/datafiles/distancematrices/{}/distance_matrix_{} -o {}/datafiles/distancematrices/{}/tree.newick".format(exepath + "ccphylo/ccphylo", db_dir, header_text, header_text, db_dir, header_text)
-        os.system(cmd)
-        moss_sql.update_status_table(entryid, "Phylo Tree imaging", "Alignment", "7", "10", "Running", db_dir)
+    cmd = "cp {}distance_matrix_{} {}/datafiles/distancematrices/{}/distance_matrix_{}".format(target_dir, header_text, db_dir, header_text, header_text)
+    os.system(cmd)
+    cmd = "{} tree -i {}/datafiles/distancematrices/{}/distance_matrix_{} -o {}/datafiles/distancematrices/{}/tree.newick".format(exepath + "ccphylo/ccphylo", db_dir, header_text, header_text, db_dir, header_text)
+    os.system(cmd)
+    moss_sql.update_status_table(entryid, "Phylo Tree imaging", "Alignment", "7", "10", "Running", db_dir)
 
-        image_location = moss.create_phylo_tree(db_dir, header_text, target_dir)
+    image_location = moss.create_phylo_tree(db_dir, header_text, target_dir)
 
-        if refdata[0][3] == None:
-            isolateid = entryid
-        else:
-            isolateid = refdata[0][3] + ", " + entryid
-
-
-
-        moss_sql.update_status_table(entryid, "Database updating", "Alignment", "8", "10", "Running", db_dir)
-
-        moss_sql.update_reference_table(entryid, isolateid, None, None, None, header_text, db_dir)
-
-        moss_sql.insert_amr_table(entryid, samplename, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), header_text, riskcategory.replace("'", "''"), warning.replace("'", "''"))
-
-        moss_sql.update_isolate_table(entryid, header_text, samplename, plasmid_string.replace("'", "''"), allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''"), db_dir)
-
-        entries, values = moss.sql_string_metadata(metadata_dict)
-
-        moss_sql.insert_metadata_table(entryid, entries, values, db_dir)
-
-        new_plasmid_string, new_virulence_string, new_amr_string = moss.scan_reference_vs_isolate_cge(plasmid_string, allresgenes.replace(", ", ","), virulence_string, header_text, db_dir)
-
-        moss_sql.update_reference_table(entryid, None, new_amr_string, new_virulence_string, new_plasmid_string, header_text, db_dir)
-
-        end_time = datetime.datetime.now()
-        run_time = end_time - start_time
-        print("Run time: {}".format(run_time))
-        print("Run time: {}".format(run_time), file=logfile)
-
-        moss_sql.update_status_table(entryid, "Outbreak Finder", "Alignment", "9", "10", "Running", db_dir)
-
-
-
-        cmd = "python3 {}src/outbreak_finder.py -db_dir {}".format(exepath, db_dir)
-        os.system(cmd)
-
-
-        if not laptop:
-            moss.check_to_destroy_shm_db(exepath + "kma/kma", kma_database_path, db_dir, logfile)
-        moss.endRunningAnalyses(db_dir, entryid, samplename, entryid)
-        moss_sql.update_status_table(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Running", db_dir)
-
-
-        moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, header_text, exepath) #No report compiled for assemblies! Look into it! #TBD
-
-        logfile.close()
-        moss_sql.update_status_table(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Finished", db_dir)
-
-
-
-
-
+    if refdata[0][3] == None:
+        isolateid = entryid
     else:
-        print ("No isolate files were found the isolate folder, so no distance matrix was estimated. Check your logfile for system failure, something went wrong")
+        isolateid = refdata[0][3] + ", " + entryid
 
 
+
+    moss_sql.update_status_table(entryid, "Database updating", "Alignment", "8", "10", "Running", db_dir)
+
+    moss_sql.update_reference_table(entryid, isolateid, None, None, None, header_text, db_dir)
+
+    moss_sql.insert_amr_table(entryid, samplename, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), header_text, riskcategory.replace("'", "''"), warning.replace("'", "''"))
+
+    moss_sql.update_isolate_table(entryid, header_text, samplename, plasmid_string.replace("'", "''"), allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''"), db_dir)
+
+    entries, values = moss.sql_string_metadata(metadata_dict)
+
+    moss_sql.insert_metadata_table(entryid, entries, values, db_dir)
+
+    new_plasmid_string, new_virulence_string, new_amr_string = moss.scan_reference_vs_isolate_cge(plasmid_string, allresgenes.replace(", ", ","), virulence_string, header_text, db_dir)
+
+    moss_sql.update_reference_table(entryid, None, new_amr_string, new_virulence_string, new_plasmid_string, header_text, db_dir)
+
+    end_time = datetime.datetime.now()
+    run_time = end_time - start_time
+    print("Run time: {}".format(run_time))
+    print("Run time: {}".format(run_time), file=logfile)
+
+    moss_sql.update_status_table(entryid, "Outbreak Finder", "Alignment", "9", "10", "Running", db_dir)
+
+
+
+    cmd = "python3 {}src/outbreak_finder.py -db_dir {}".format(exepath, db_dir)
+    os.system(cmd)
+
+
+    if not laptop:
+        moss.check_to_destroy_shm_db(exepath + "kma/kma", kma_database_path, db_dir, logfile)
+    moss.endRunningAnalyses(db_dir, entryid, samplename, entryid)
+    moss_sql.update_status_table(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Running", db_dir)
+
+
+    moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, header_text, exepath) #No report compiled for assemblies! Look into it! #TBD
+
+    logfile.close()
+    moss_sql.update_status_table(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Finished", db_dir)
 
 
 
