@@ -130,5 +130,5 @@ if kmaindex_db_path != "":
       json.dump(jsondict, f_out)
     f_out.close()
 
-cmd = "python3 {}/src/createGuppyWorkflowDict.py -db_dir {}".format(exepath, db_dir)
+cmd = "python3 {}/src/createGuppyWorkflowDict.py -db_dir {} -exepath {}".format(exepath, db_dir, exepath)
 os.system(cmd)
