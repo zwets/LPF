@@ -193,13 +193,12 @@ def moss_pipeline(seqType, prune_distance, bc,
     related_isolates = moss.fetch_isolates(db_dir, header_text)
     print (related_isolates)
 
-    sys.exit("Pre ccphylo")
-
 
     if len(related_isolates) > 1:
         moss_sql.update_status_table(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir)
 
         #Here make function for tmp dir with isolates and consensus sequence and ref
+        #TBD
         cmd = "{} dist -i {}datafiles/isolatefiles/{}/* -r \"{}\" -mc 0.01 -nm 0 -o {}distance_matrix_{}".format(exepath + "ccphylo/ccphylo", db_dir, header_text, header_text, target_dir, header_text)
         print (cmd, file = logfile)
         if prune_distance != 0 :
