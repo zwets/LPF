@@ -176,21 +176,28 @@ def moss_pipeline(seqType, prune_distance, bc,
     print (refdata)
 
 
-    refname = refdata[0][2]
+    refname = refdata[0][5]
+
+    print (refname)
+    print (refname)
+
+    print (refname)
+
 
 
     sys.exit("Pre ccphylo")
 
 
-    cmd = "cp {}{}_{}_consensus.fsa {}datafiles/isolatefiles/{}/{}_{}_consensus.fsa".format(target_dir, samplename, templateaccesion, db_dir, templateaccesion, samplename, templateaccesion)
-    os.system(cmd)
-    sys.exit("Pre ccphylo")
+    #cmd = "cp {}{}_{}_consensus.fsa {}datafiles/isolatefiles/{}/{}_{}_consensus.fsa".format(target_dir, samplename, templateaccesion, db_dir, templateaccesion, samplename, templateaccesion)
+    #os.system(cmd)
+
+    related_isolates = fetch_isolates(db_dir, refname)
 
 
-    if len(moss.loadFiles("{}datafiles/isolatefiles/{}/".format(db_dir, refname))) > 1:
+    if len(related_isolates) > 1:
         moss_sql.update_status_table(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir)
 
-        print ("CCPHYLO")
+        #Here make function for tmp dir with isolates and consensus sequence and ref
         cmd = "{} dist -i {}datafiles/isolatefiles/{}/* -r \"{}\" -mc 0.01 -nm 0 -o {}distance_matrix_{}".format(exepath + "ccphylo/ccphylo", db_dir, refname, header_text, target_dir, refname)
         print (cmd, file = logfile)
         if prune_distance != 0 :
