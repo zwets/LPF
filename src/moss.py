@@ -179,11 +179,14 @@ def moss_pipeline(seqType, prune_distance, bc,
     refname = refdata[0][2]
 
 
+    sys.exit("Pre ccphylo")
+
+
     cmd = "cp {}{}_{}_consensus.fsa {}datafiles/isolatefiles/{}/{}_{}_consensus.fsa".format(target_dir, samplename, templateaccesion, db_dir, templateaccesion, samplename, templateaccesion)
     os.system(cmd)
     sys.exit("Pre ccphylo")
 
-    
+
     if len(moss.loadFiles("{}datafiles/isolatefiles/{}/".format(db_dir, refname))) > 1:
         moss_sql.update_status_table(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir)
 
