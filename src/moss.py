@@ -175,31 +175,26 @@ def moss_pipeline(seqType, prune_distance, bc,
     refdata = c.fetchall()
     conn.close()
 
-    print (refdata)
-
-
     header_text = refdata[0][5]
 
 
     related_isolates = moss.fetch_isolates(db_dir, header_text)
-    print (related_isolates)
 
     moss_sql.update_status_table(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir)
 
     #Here make function for tmp dir with isolates and consensus sequence and ref
-    moss.make_tmp_fsa_folder(db_dir, target_dir, related_isolates, exepath, header_text)
+    moss.make_phytree_output_folder(db_dir, target_dir, related_isolates, exepath, header_text)
     #TBD
-    cmd = "{} dist -i {}/tmp_fsa/* -r \"{}\" -mc 0.01 -nm 0 -o {}/tmp_fsa/distance_matrix".format(exepath + "ccphylo/ccphylo", target_dir, header_text, target_dir)
+    cmd = "{} dist -i {}/phytree_output/* -r \"{}\" -mc 0.01 -nm 0 -o {}/phytree_output/distance_matrix".format(exepath + "ccphylo/ccphylo", target_dir, header_text, target_dir)
     print (cmd, file = logfile)
     #Save latest newick to reference in SQL
     if prune_distance != 0 :
         cmd += " -pr {}".format(prune_distance)
     os.system(cmd)
 
-    sys.exit("CC test")
 
     # Check if acceptable snp distance
-    distance = moss.ThreshholdDistanceCheck("{}distance_matrix_{}".format(target_dir, header_text), header_text, "{}_{}_consensus.fsa".format(samplename, templateaccesion))
+    distance = moss.ThreshholdDistanceCheck("{}/phytree_output/distance_matrix".format(target_dir))
     print (distance, file = logfile)
     if distance > 300: #SNP distance
         header_text = header_text.split()
@@ -207,20 +202,14 @@ def moss_pipeline(seqType, prune_distance, bc,
         moss.run_assembly(entryid, db_dir, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
                           illumina_name2, jobid, exepath, kma_database_path, start_time, logfile, ID, associated_species)
 
-        cmd = "rm {}datafiles/isolatefiles/{}/{}_{}_consensus.fsa".format(db_dir, templateaccesion, samplename, templateaccesion, db_dir + "moss.db", db_dir)
-        os.system(cmd)
-
     moss_sql.update_status_table(entryid, "Distance Matrix", "Alignment", "6", "10", "Running", db_dir)
 
-
-    cmd = "cp {}distance_matrix_{} {}/datafiles/distancematrices/{}/distance_matrix_{}".format(target_dir, header_text, db_dir, header_text, header_text)
-    os.system(cmd)
-    cmd = "{} tree -i {}/datafiles/distancematrices/{}/distance_matrix_{} -o {}/datafiles/distancematrices/{}/tree.newick".format(exepath + "ccphylo/ccphylo", db_dir, header_text, header_text, db_dir, header_text)
+    cmd = "{}ccphylo/ccphylo tree -i {}/phytree_output/distance_matrix -o {}/phytree_output/tree.newick".format(exepath, target_dir, target_dir)
     os.system(cmd)
     moss_sql.update_status_table(entryid, "Phylo Tree imaging", "Alignment", "7", "10", "Running", db_dir)
 
     image_location = moss.create_phylo_tree(db_dir, header_text, target_dir)
-
+    sys.exit("Test image")
     if refdata[0][3] == None:
         isolateid = entryid
     else:

@@ -53,20 +53,20 @@ def get_kma_template_number(header_text, db_dir):
     infile.close()
     return t
 
-def make_tmp_fsa_folder(db_dir, target_dir, isolate_list, exepath, header_text):
-    cmd = "mkdir {}/tmp_fsa".format(target_dir)
+def make_phytree_output_folder(db_dir, target_dir, isolate_list, exepath, header_text):
+    cmd = "mkdir {}/phytree_output".format(target_dir)
     os.system(cmd)
 
     for item in isolate_list:
         path = "{}datafiles/isolatefiles/{}".format(dbdir, item)
-        cmd = "cp {} {}/tmp_fsa/.".format(path, target_dir)
+        cmd = "cp {} {}/phytree_output/.".format(path, target_dir)
         os.system(cmd)
     number = get_kma_template_number(header_text, db_dir)
     header_name = header_text.split()[0][1:]
-    cmd = "{}/kma/kma seq2fasta -t_db {}REFDB.ATG -seqs {} > {}/tmp_fsa/{}.fsa".format(exepath, db_dir, number, target_dir, header_name)
+    cmd = "{}/kma/kma seq2fasta -t_db {}REFDB.ATG -seqs {} > {}/phytree_output/{}.fsa".format(exepath, db_dir, number, target_dir, header_name)
     os.system(cmd)
 
-    cmd = "cp {}*_consensus.fsa {}tmp_fsa/.".format(target_dir, target_dir)
+    cmd = "cp {}*_consensus.fsa {}phytree_output/.".format(target_dir, target_dir)
     os.system(cmd)
 
 
@@ -82,10 +82,10 @@ def fetch_isolates(db_dir, header_text):
     return isolatelist
 
 def create_phylo_tree(db_dir, header_text, target_dir):
-    tree = Phylo.read("{}datafiles/distancematrices/{}/tree.newick".format(db_dir, header_text), 'newick')
+    tree = Phylo.read("{}phytree_output/tree.newick".format(target_dir, 'newick')
     Phylo.draw(tree, do_show=False)
     pylab.savefig('/Users/malhal/dev/tmp/imagetest.pdf')
-    image_location = "{}tree.png".format(target_dir)
+    image_location = "{}/phytree_output/tree.png".format(target_dir)
     return image_location
 
 
