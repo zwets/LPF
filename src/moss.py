@@ -191,7 +191,7 @@ def moss_pipeline(seqType, prune_distance, bc,
     moss_sql.update_status_table(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir)
 
     #Here make function for tmp dir with isolates and consensus sequence and ref
-    moss.make_tmp_fsa_folder(db_dir, target_dir, isolate_list, exepath, header_text)
+    moss.make_tmp_fsa_folder(db_dir, target_dir, related_isolates, exepath, header_text)
     #TBD
     cmd = "{} dist -i {}/tmp_fsa/* -r \"{}\" -mc 0.01 -nm 0 -o {}/tmp_fsa/distance_matrix".format(exepath + "ccphylo/ccphylo", target_dir, header_text, target_dir)
     print (cmd, file = logfile)
