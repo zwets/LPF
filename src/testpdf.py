@@ -37,14 +37,14 @@ for file in onlyfiles:
                             stdout=subprocess.PIPE, )
     output = proc.communicate()[0]
     id = output.decode().rstrip()
-    refname = id.split()[2]
+    header_text = id.split()[2]
     header_text = id.split()[2:]
     header_text = " ".join(header_text)
 
     entryid = file
     target_dir = db_dir + "analysis/" + entryid + "/"
     logfile = db_dir + "/analysis/" + file + "/logf*"
-    inputdir = "{}/datafiles/distancematrices/{}/".format(db_dir, refname)
+    inputdir = "{}/datafiles/distancematrices/{}/".format(db_dir, header_text)
     image_location = "{}tree.png".format(inputdir)
     cmd = "grep \"mpr:\" {}".format(logfile)
     proc = subprocess.Popen(cmd, shell=True,

@@ -40,7 +40,7 @@ import pylab
 
 
 #Utility functions
-def fetch_isolates(db_dir, refname):
+def fetch_isolates(db_dir, header_text):
     conn = sqlite3.connect(db_dir + 'moss.db')
     c = conn.cursor()
     c.execute("SELECT * FROM referencetable WHERE header_text = '{}'".format(header_text))
@@ -50,8 +50,8 @@ def fetch_isolates(db_dir, refname):
 
     return isolatelist
 
-def create_phylo_tree(db_dir, refname, target_dir):
-    tree = Phylo.read("{}datafiles/distancematrices/{}/tree.newick".format(db_dir, refname), 'newick')
+def create_phylo_tree(db_dir, header_text, target_dir):
+    tree = Phylo.read("{}datafiles/distancematrices/{}/tree.newick".format(db_dir, header_text), 'newick')
     Phylo.draw(tree, do_show=False)
     pylab.savefig('/Users/malhal/dev/tmp/imagetest.pdf')
     image_location = "{}tree.png".format(target_dir)

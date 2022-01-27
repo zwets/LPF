@@ -37,16 +37,16 @@ conn = sqlite3.connect('MinION-Typer.db')
 c = conn.cursor()
 
 
-c.execute("SELECT refName from refs")
+c.execute("SELECT header_text from refs")
 references = c.fetchall()
 
 
 
 
 
-c.execute("SELECT refName, samplename from isolates")
+c.execute("SELECT header_text, samplename from isolates")
 isolates = c.fetchall()
-#c.execute("SELECT id, refName, samplename from isolates")print (c.fetchall())
+#c.execute("SELECT id, header_text, samplename from isolates")print (c.fetchall())
 
 for i in range(5, len(references)):
     print("For " + references[i][0] + " the following are isolates: ")
