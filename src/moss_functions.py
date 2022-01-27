@@ -42,7 +42,7 @@ import pylab
 #Utility functions
 
 def get_kma_template_number(header_text, db_dir):
-    infile = open(db_dir + "REFDB.ATG", 'r')
+    infile = open(db_dir + "REFDB.ATG.name", 'r')
     t = 1
     number = 0
     for line in infile:
@@ -65,6 +65,9 @@ def make_tmp_fsa_folder(db_dir, target_dir, isolate_list, exepath, header_text):
     header_name = header_text.split()[-1]
     cmd = "{}/kma/kma seq2fasta -t_db {}REFDB.ATG -seqs {} > {}/tmp_fsa/{}.fsa".format(exepath, db_dir, number, target_dir, header_name)
     os.system(cmd)
+
+    # cmd = "cp {}{}_{}_consensus.fsa {}datafiles/isolatefiles/{}/{}_{}_consensus.fsa".format(target_dir, samplename, templateaccesion, db_dir, templateaccesion, samplename, templateaccesion)
+    # os.system(cmd)
 
 
 def fetch_isolates(db_dir, header_text):

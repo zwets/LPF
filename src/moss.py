@@ -181,9 +181,6 @@ def moss_pipeline(seqType, prune_distance, bc,
     header_text = refdata[0][5]
 
 
-    #cmd = "cp {}{}_{}_consensus.fsa {}datafiles/isolatefiles/{}/{}_{}_consensus.fsa".format(target_dir, samplename, templateaccesion, db_dir, templateaccesion, samplename, templateaccesion)
-    #os.system(cmd)
-
     related_isolates = moss.fetch_isolates(db_dir, header_text)
     print (related_isolates)
 
