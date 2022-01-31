@@ -247,8 +247,8 @@ def moss_pipeline(seqType, prune_distance, bc,
     os.system(cmd)
 
 
-    if not laptop:
-        moss.check_to_destroy_shm_db(exepath + "kma/kma", kma_database_path, db_dir, logfile)
+    #if not laptop:
+    #    moss.check_to_destroy_shm_db(exepath + "kma/kma", kma_database_path, db_dir, logfile)
     moss.endRunningAnalyses(db_dir, entryid, samplename, entryid)
     moss_sql.update_status_table(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Running", db_dir)
 

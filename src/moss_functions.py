@@ -332,16 +332,16 @@ def prod_metadata_dict(metadata, metadata_headers):
         metadict[metadata_headers[i]] = metadata[i]
     return metadict
 
-def check_to_destroy_shm_db(kma_path, kma_database_path, db_dir, logfile):
-    conn = sqlite3.connect(db_dir + "moss.db")
-    c = conn.cursor()
-    c.execute("SELECT * FROM ipctable WHERE header_text = '{}'".format(header_text))
-    refdata = c.fetchall()
-    conn.close()
-
-    if running_json == {} and queue_json == {}: #Take Down DB from shm
-        os.system("{}_shm -t_db {} -destroy".format(kma_path, kma_database_path))
-        print ("{}_shm -t_db {} -destroy".format(kma_path, kma_database_path), file=logfile)
+#def check_to_destroy_shm_db(kma_path, kma_database_path, db_dir, logfile):
+#    conn = sqlite3.connect(db_dir + "moss.db")
+#    c = conn.cursor()
+##    c.execute("SELECT * FROM ipctable WHERE header_text = '{}'".format(header_text))
+#    refdata = c.fetchall()
+#    conn.close()
+#
+#    if running_json == {} and queue_json == {}: #Take Down DB from shm
+#        os.system("{}_shm -t_db {} -destroy".format(kma_path, kma_database_path))
+#        print ("{}_shm -t_db {} -destroy".format(kma_path, kma_database_path), file=logfile)
 
 
 def check_shm_kma(kma_path, kma_database_path, cmd, logfile):
