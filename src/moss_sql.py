@@ -52,19 +52,19 @@ def update_reference_table(entryid, isolateid, amrgenes, virulencegenes, plasmid
     amrgenes_statement = "amrgenes = '{}'".format(amrgenes)
     virulencegenes_statement = "virulencegenes = '{}'".format(virulencegenes)
     plasmids_statement = "plasmids_max = '{}'".format(plasmids)
-
+    print ("state 1")
     if isolateid != None:
         dbstring = "UPDATE referencetable SET {} WHERE header_text = '{}'".format(isolateid_statement, header_text)
         c.execute(dbstring)
-
+    print("state 2")
     if amrgenes != None:
         dbstring = "UPDATE referencetable SET {} WHERE header_text = '{}'".format(amrgenes_statement, header_text)
         c.execute(dbstring)
-
+    print("state 3")
     if virulencegenes != None:
         dbstring = "UPDATE referencetable SET {} WHERE header_text = '{}'".format(virulencegenes_statement, header_text)
         c.execute(dbstring)
-
+    print("state 4")
     if plasmids != None:
         dbstring = "UPDATE referencetable SET {} WHERE header_text = '{}'".format(plasmids_statement, header_text)
         c.execute(dbstring)
