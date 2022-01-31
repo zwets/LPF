@@ -148,8 +148,6 @@ def run_assembly(entryid, db_dir, samplename, assemblyType, inputType, target_di
 
     compileReportAssembly(target_dir, ID, db_dir, associated_species, exepath)
 
-    endRunningAnalyses(db_dir, entryid, samplename, entryid)
-
     logfile.close()
     moss_sql.update_status_table(entryid, "Assembly completed", "Assembly", "5", "5", "Finished", db_dir)
     sys.exit("No template was found, so input was added to references.")
