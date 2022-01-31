@@ -761,10 +761,7 @@ def databaseOverClustering(db_dir, dbname, kma_path, filename):
     return clustercount
 
 def ThreshholdDistanceCheck(distancematrixfile, reference, isolate):
-    print ("HERE")
-    print (reference)
-    print (isolate)
-    print ("HERE")
+    isolate = isolate.split("/")[-1]
     #HERE DONE
     infile = open(distancematrixfile, 'r')
     linecount = 0
