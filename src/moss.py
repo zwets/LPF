@@ -196,6 +196,8 @@ def moss_pipeline(seqType, prune_distance, bc,
     # Check if acceptable snp distance
     distance = moss.ThreshholdDistanceCheck("{}/phytree_output/distance_matrix".format(target_dir), header_text.split()[0], "{}{}_{}_consensus".format(target_dir, samplename, templateaccesion))
     print (distance, file = logfile)
+    print (distance)
+
     if distance > 300: #SNP distance
         header_text = header_text.split()
         associated_species = "{} {} assembly from ID: {}, SNP distance from best verified reference: {}".format(header_text[1], header_text[2], entryid, distance)
@@ -209,6 +211,7 @@ def moss_pipeline(seqType, prune_distance, bc,
     moss_sql.update_status_table(entryid, "Phylo Tree imaging", "Alignment", "7", "10", "Running", db_dir)
 
     image_location = moss.create_phylo_tree(db_dir, header_text, target_dir)
+
     sys.exit("Test image")
     if refdata[0][3] == None:
         isolateid = entryid
