@@ -836,6 +836,12 @@ def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string,
     else:
         new_amr_string = None
 
+    new_plasmid_string = new_plasmid_string.replace("'", "''")
+    new_virulence_string = new_virulence_string.replace("'", "''")
+
+    new_amr_string = new_amr_string.replace("'", "''")
+
+
 
     return new_plasmid_string, new_virulence_string, new_amr_string
 
