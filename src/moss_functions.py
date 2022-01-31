@@ -333,14 +333,6 @@ def prod_metadata_dict(metadata, metadata_headers):
     return metadict
 
 def check_to_destroy_shm_db(kma_path, kma_database_path, db_dir, logfile):
-    with open(db_dir + "analyticalFiles/queuedAnalyses.json") as json_file:
-        queue_json = json.load(json_file)
-    json_file.close()
-
-    with open(db_dir + "analyticalFiles/runningAnalyses.json") as json_file:
-        running_json = json.load(json_file)
-    json_file.close()
-
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
     c.execute("SELECT * FROM ipctable WHERE header_text = '{}'".format(header_text))
