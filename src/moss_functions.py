@@ -82,7 +82,7 @@ def fetch_isolates(db_dir, header_text):
     return isolatelist
 
 def create_phylo_tree(db_dir, header_text, target_dir):
-    tree = Phylo.read("{}phytree_output/tree.newick".format(target_dir, 'newick'))
+    tree = Phylo.read("{}phytree_output/tree.newick".format(target_dir), 'newick')
     Phylo.draw(tree, do_show=False)
     pylab.savefig('/Users/malhal/dev/tmp/imagetest.pdf')
     image_location = "{}/phytree_output/tree.png".format(target_dir)
