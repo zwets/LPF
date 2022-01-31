@@ -222,7 +222,7 @@ def moss_pipeline(seqType, prune_distance, bc,
 
     moss_sql.update_reference_table(entryid, isolateid, None, None, None, header_text, db_dir)
 
-    moss_sql.insert_amr_table(entryid, samplename, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), header_text, riskcategory.replace("'", "''"), warning.replace("'", "''"))
+    moss_sql.insert_amr_table(entryid, samplename, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), header_text, riskcategory.replace("'", "''"), warning.replace("'", "''"), db_dir)
 
     moss_sql.update_isolate_table(entryid, header_text, samplename, plasmid_string.replace("'", "''"), allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''"), db_dir)
 
