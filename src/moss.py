@@ -216,6 +216,15 @@ def moss_pipeline(seqType, prune_distance, bc,
     else:
         isolateid = refdata[0][3] + ", " + entryid
 
+    print (refdata)
+    print (refdata)
+
+    print (refdata)
+
+    print (isolateid)
+    print (isolateid)
+    print (isolateid)
+
 
 
     moss_sql.update_status_table(entryid, "Database updating", "Alignment", "8", "10", "Running", db_dir)
