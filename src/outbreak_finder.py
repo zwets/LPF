@@ -40,12 +40,15 @@ conn = sqlite3.connect(isolatedb)
 c = conn.cursor()
 
 c.execute("SELECT * FROM referencetable WHERE isolateid != ''")
+print ("print here")
 referencelist = c.fetchall()
 print (referencelist)
+print ("print here")
 samplenames = []
 for i in range(len(referencelist)):
     isolateids = referencelist[i][3].split(", ")
     print (isolateids)
+    print("print here")
     for i in range(len(isolateids)):
         c.execute("SELECT samplename FROM isolatetable WHERE entryid = '{}'".format(isolateids[i]))
         isolateids[i] = c.fetchone()[0]
