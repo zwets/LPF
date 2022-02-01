@@ -211,21 +211,10 @@ def moss_pipeline(seqType, prune_distance, bc,
 
     image_location = moss.create_phylo_tree(db_dir, header_text, target_dir)
 
-    if refdata[0][3] == '':
+    if refdata[0][1] == '':
         isolateid = entryid
     else:
-        isolateid = refdata[0][3] + ", " + entryid
-
-    print (refdata)
-    print (refdata)
-
-    print (refdata)
-
-    print (isolateid)
-    print (isolateid)
-    print (isolateid)
-
-
+        isolateid = refdata[0][1] + ", " + entryid
 
     moss_sql.update_status_table(entryid, "Database updating", "Alignment", "8", "10", "Running", db_dir)
 
