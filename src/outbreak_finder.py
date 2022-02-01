@@ -41,10 +41,11 @@ c = conn.cursor()
 
 c.execute("SELECT * FROM referencetable WHERE isolateid != ''")
 referencelist = c.fetchall()
-
+print (referencelist)
 samplenames = []
 for i in range(len(referencelist)):
     isolateids = referencelist[i][3].split(", ")
+    print (isolateids)
     for i in range(len(isolateids)):
         c.execute("SELECT samplename FROM isolatetable WHERE entryid = '{}'".format(isolateids[i]))
         isolateids[i] = c.fetchone()[0]
