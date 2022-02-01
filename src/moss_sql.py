@@ -55,6 +55,7 @@ def update_reference_table(entryid, isolateid, amrgenes, virulencegenes, plasmid
     print ("state 1")
     if isolateid != None:
         dbstring = "UPDATE referencetable SET {} WHERE header_text = '{}'".format(isolateid_statement, header_text)
+        print (dbstring)
         c.execute(dbstring)
     print("state 2")
     if amrgenes != None:
