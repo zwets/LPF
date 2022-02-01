@@ -57,7 +57,7 @@ def make_phytree_output_folder(db_dir, target_dir, isolate_list, exepath, header
     cmd = "mkdir {}/phytree_output".format(target_dir)
     os.system(cmd)
     print ("HERRRRE")
-    print (isolate_list)
+    print (isolate_list) #Why empty?
 
     for item in isolate_list:
         print ("TEST")
@@ -80,6 +80,10 @@ def fetch_isolates(db_dir, header_text):
     c = conn.cursor()
     c.execute("SELECT * FROM referencetable WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
+    print (refdata)
+    print (refdata)
+    print (refdata)
+
     conn.close()
     isolatelist = refdata[0][1]
 
