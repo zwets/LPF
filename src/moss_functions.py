@@ -58,9 +58,12 @@ def make_phytree_output_folder(db_dir, target_dir, isolate_list, exepath, header
     os.system(cmd)
 
     for item in isolate_list:
+        print ("TEST")
         path = "{}datafiles/isolatefiles/{}".format(db_dir, item)
         cmd = "cp {} {}/phytree_output/.".format(path, target_dir)
         os.system(cmd)
+        print ("TEST")
+
     number = get_kma_template_number(header_text, db_dir)
     header_name = header_text.split()[0]
     cmd = "{}/kma/kma seq2fasta -t_db {}REFDB.ATG -seqs {} > {}/phytree_output/{}.fsa".format(exepath, db_dir, number, target_dir, header_name)
