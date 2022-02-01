@@ -835,11 +835,12 @@ def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string,
         new_amr_string = allresgenes + "," + ",".join(unique_amr_genes)
     else:
         new_amr_string = None
-
-    new_plasmid_string = new_plasmid_string.replace("'", "''")
-    new_virulence_string = new_virulence_string.replace("'", "''")
-
-    new_amr_string = new_amr_string.replace("'", "''")
+    if new_plasmid_string not none:
+        new_plasmid_string = new_plasmid_string.replace("'", "''")
+    if new_virulence_string not none:
+        new_virulence_string = new_virulence_string.replace("'", "''")
+    if new_amr_string not none:
+        new_amr_string = new_amr_string.replace("'", "''")
 
 
 
