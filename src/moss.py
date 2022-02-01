@@ -211,7 +211,7 @@ def moss_pipeline(seqType, prune_distance, bc,
 
     image_location = moss.create_phylo_tree(db_dir, header_text, target_dir)
 
-    if refdata[0][3] == None:
+    if refdata[0][3] == '':
         isolateid = entryid
     else:
         isolateid = refdata[0][3] + ", " + entryid
