@@ -244,9 +244,6 @@ def moss_pipeline(seqType, prune_distance, bc,
     cmd = "python3 {}src/outbreak_finder.py -db_dir {}".format(exepath, db_dir)
     os.system(cmd)
 
-
-    #if not laptop:
-    #    moss.check_to_destroy_shm_db(exepath + "kma/kma", kma_database_path, db_dir, logfile)
     moss_sql.update_status_table(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Running", db_dir)
 
 

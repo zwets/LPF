@@ -56,6 +56,8 @@ def get_kma_template_number(header_text, db_dir):
 def make_phytree_output_folder(db_dir, target_dir, isolate_list, exepath, header_text):
     cmd = "mkdir {}/phytree_output".format(target_dir)
     os.system(cmd)
+    print ("HERRRRE")
+    print (isolate_list)
 
     for item in isolate_list:
         print ("TEST")
@@ -123,7 +125,6 @@ def init_insert_reference_table(exepath, db_dir):
         if entryid not in ids:
             dbstring = "INSERT INTO referencetable(entryid, header_text, isolateid, amrgenes, virulencegenes, plasmids) VALUES('{}' ,'{}', '{}' ,'{}', '{}' ,'{}')".format(entryid, header_text.replace("'", "''"), "", "", "", "", "")
             ids.append(entryid)
-            #print (dbstring)
             c.execute(dbstring)
 
         t += 1
