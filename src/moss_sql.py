@@ -39,7 +39,7 @@ def insert_consensus_name(entryid, db_dir, consensus_name):
     c = conn.cursor()
     entryid_statement = "entryid = '{}'".format(entryid)
 
-    dbstring = "UPDATE isolatetable SET consensus_name = '{}' WHERE {}".format(consensus_name, entryid, entryid_statement)
+    dbstring = "UPDATE isolatetable SET consensus_name = '{}' WHERE {}".format(consensus_name, entryid_statement)
     print (dbstring)
     c.execute(dbstring)
 
