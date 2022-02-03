@@ -463,13 +463,13 @@ def illuminaMappingForward(input, best_template, target_dir, kma_database_path, 
     if input[0] != "":
         if laptop:
             cmd = "{} -i {} -o {} -t_db {} -ref_fsa -ca -dense -nf -cge -vcf -bc90 -Mt1 {} -t {}".format(
-                kma_path, input[0][0], consensus_name, kma_database_path,
+                kma_path, input[0][0], target_dir + consensus_name, kma_database_path,
                 str(best_template), str(multi_threading))
             os.system(cmd)
         else:
 
             cmd = "{} -i {} -o {} -t_db {} -ref_fsa -ca -dense -cge -nf -vcf -bc90 -Mt1 {} -t {} -shm".format(
-                kma_path, input[0][0], consensus_name, kma_database_path,
+                kma_path, input[0][0], target_dir + consensus_name, kma_database_path,
                 str(best_template), str(multi_threading))
             print(cmd, file=logfile)
             check_shm_kma(kma_path, kma_database_path, cmd, logfile)
@@ -495,12 +495,12 @@ def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfi
     if input[0] != "":
         if laptop:
             cmd = "{} -ipe {} {} -o {} -t_db {} -ref_fsa -ca -dense -nf -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
-                kma_path, input[0], input[1], consensus_name,
+                kma_path, input[0], input[1], target_dir + consensus_name,
                 kma_database_path, str(best_template), str(multi_threading))
             os.system(cmd)
         else:
             cmd = "{} -ipe {} {} -o {} -t_db {} -ref_fsa -ca -dense -nf -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
-                kma_path, input[0], input[1], consensus_name,
+                kma_path, input[0], input[1], target_dir + consensus_name,
                 kma_database_path, str(best_template), str(multi_threading))
             print(cmd, file=logfile)
             check_shm_kma(kma_path, kma_database_path, cmd, logfile)
@@ -525,12 +525,12 @@ def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile
     if input[0] != "":
         if laptop:
             cmd = "{} -i {} -o {} -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {}".format(
-                kma_path, input[0], consensus_name, kma_database_path,
+                kma_path, input[0], target_dir + consensus_name, kma_database_path,
                 str(best_template), str(multi_threading), str(bc))
             os.system(cmd)
         else:
             cmd = "{} -i {} -o {} -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {} -shm".format(
-                kma_path, input[0], consensus_name, kma_database_path,
+                kma_path, input[0], target_dir + consensus_name, kma_database_path,
                 str(best_template), str(multi_threading), str(bc))
             print(cmd, file=logfile)
             check_shm_kma(kma_path, kma_database_path, cmd, logfile)

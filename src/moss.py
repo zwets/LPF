@@ -163,7 +163,7 @@ def moss_pipeline(seqType, prune_distance, bc,
     else:
         c_name = input[0].split("/")[-1][:-9]
 
-    consensus_name = "{}{}_{}_consensus.fsa".format(target_dir, c_name, templateaccesion)
+    consensus_name = "{}_{}_consensus.fsa".format(c_name, templateaccesion)
 
     if inputType == "pe_illumina":
         moss.illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfile, multi_threading, exepath + "kma/kma", templateaccesion, db_dir, laptop, consensus_name)
