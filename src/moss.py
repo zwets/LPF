@@ -158,12 +158,19 @@ def moss_pipeline(seqType, prune_distance, bc,
     else:
         templateaccesion = header_text
 
+    if input[0].split("/")[-1][-2:] == "gz":
+        c_name = input[0].split("/")[-1][:-2]
+    else:
+        c_name = input[0].split("/")[-1][:-9]
+
+    consensus_name = "{}{}_{}_consensus.fsa".format(target_dir, c_name, templateaccesion)
+
     if inputType == "pe_illumina":
-        moss.illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfile, multi_threading, exepath + "kma/kma", templateaccesion, db_dir, laptop)
+        moss.illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfile, multi_threading, exepath + "kma/kma", templateaccesion, db_dir, laptop, consensus_name)
     elif inputType == "se_illumina":
-        moss.illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, exepath + "kma/kma", templateaccesion, db_dir, laptop)
+        moss.illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, exepath + "kma/kma", templateaccesion, db_dir, laptop, consensus_name)
     if inputType == "nanopore":
-        moss.nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, exepath + "kma/kma", templateaccesion, db_dir, laptop)
+        moss.nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, exepath + "kma/kma", templateaccesion, db_dir, laptop, consensus_name)
 
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
@@ -176,6 +183,11 @@ def moss_pipeline(seqType, prune_distance, bc,
     conn.close()
 
     header_text = refdata[0][5]
+
+    #Consider isolatename
+
+
+    cmd = "cp {} {}/datafiles/isolatefiles/{}.fsa".format(consensus_name, db_dir, )
 
 
     related_isolates = moss.fetch_isolates(db_dir, header_text)
