@@ -161,7 +161,7 @@ def moss_pipeline(seqType, prune_distance, bc,
     if input[0].split("/")[-1][-2:] == "gz":
         c_name = input[0].split("/")[-1][:-2]
     else:
-        c_name = input[0].split("/")[-1][:-9]
+        c_name = input[0].split("/")[-1][:10]
 
     consensus_name = "{}_{}_consensus".format(c_name, templateaccesion)
 
@@ -188,9 +188,7 @@ def moss_pipeline(seqType, prune_distance, bc,
 
 
     cmd = "cp {}{}.fsa {}/consensus_sequences/{}.fsa".format(target_dir, consensus_name, db_dir, consensus_name)
-    print (cmd)
     os.system(cmd)
-    sys.exit()
 
     related_isolates = moss.fetch_isolates(db_dir, header_text)
 
