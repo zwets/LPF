@@ -80,6 +80,11 @@ def fetch_isolates(db_dir, header_text):
     c = conn.cursor()
     c.execute("SELECT * FROM referencetable WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
+    print (refdata)
+    print (refdata)
+
+    print (refdata)
+
 
     conn.close()
     isolatelist = refdata[0][1].split(",")
