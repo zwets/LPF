@@ -66,6 +66,8 @@ def moss_pipeline(seqType, prune_distance, bc,
     if inputType == "nanopore" or inputType == "se_illumina":
         samplename = input[0].split("/")[-1]
         entryid = moss.md5(input[0])
+        illumina_name1 = ""
+        illumina_name2 = ""
     elif inputType == "pe_illumina":
         samplename = input[0].split("/")[-1]
         illumina_name1 = input[0].split("/")[-1]
