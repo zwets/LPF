@@ -1164,19 +1164,6 @@ def run_quast(target_dir, jobid):
     cmd = "docker container rm {}".format(id)
     os.system(cmd)
 
-
-
-def matrixClusterSize(db_dir, header_text):
-    isolatedb = db_dir + "moss.db"
-    conn = sqlite3.connect(isolatedb)
-    c = conn.cursor()
-
-    c.execute("SELECT isolateid FROM referencetable WHERE header_text = '{}'".format(header_text))
-    refdata = c.fetchall()
-    conn.close()
-    length = len(refdata[0][0].split(", "))
-    return length
-
 def lastClusterAddition(db_dir, header_text):
     isolatedb = db_dir + "moss.db"
     conn = sqlite3.connect(isolatedb)
@@ -1343,8 +1330,6 @@ def compileReportAssembly(target_dir, ID, db_dir, associated_species, exepath):
     pdf.cell(85, 5, "Contig visualization:", 0, 1, 'L')
     pdf.image("{}contigs.jpg".format(target_dir), x=15, y=70, w=pdf.w / 2.2, h=pdf.h / 2.7)
 
-
-
     pdf.output(target_dir + filename, 'F')
 
 
@@ -1420,11 +1405,11 @@ def mlst_sequence_type(target_dir):
 
 
 
-def compileReportAlignment(target_dir, ID, db_dir, image_location, header_text, exepath):
+def compileReportAlignment(target_dir, ID, db_dir, image_location, header_text, exepath, related_isolates):
     pdf = FPDF()  # A4 (210 by 297 mm)
 
     filename = "{}_report.pdf".format(ID) #ADD idd
-    clusterSize = int(matrixClusterSize(db_dir, header_text)) + 2
+    clusterSize = len(related_isolates)
     latestAddition = lastClusterAddition(db_dir, header_text)
     phenotypes, panel_found, panel_list = generate_amr_resistance_profile_table(db_dir, ID, pdf, target_dir, exepath, header_text)
 

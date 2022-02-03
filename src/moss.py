@@ -246,7 +246,7 @@ def moss_pipeline(seqType, prune_distance, bc,
     moss_sql.update_status_table(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Running", db_dir)
 
 
-    moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, header_text, exepath) #No report compiled for assemblies! Look into it! #TBD
+    moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, header_text, exepath, related_isolates) #No report compiled for assemblies! Look into it! #TBD
 
     logfile.close()
     moss_sql.update_status_table(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Finished", db_dir)
