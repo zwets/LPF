@@ -43,7 +43,11 @@ c.execute("SELECT * FROM isolatetable")
 referencelist = c.fetchall()
 phylo_dict = dict()
 for item in referencelist:
-    print (item)
+    if item[2] in phylo_dict:
+        phylo_dict[iten[2]].append(item[1])
+    else:
+        phylo_dict[iten[2]] = [item[1]]
+print (phylo_dict)
 sys.exit()
 
 
