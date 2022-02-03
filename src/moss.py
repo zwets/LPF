@@ -75,7 +75,7 @@ def moss_pipeline(seqType, prune_distance, bc,
     moss.uniqueNameCheck(db_dir, inputType, total_filenames)
 
     moss_sql.init_status_table(entryid, "Initializing", "Not Determined", "1", "10", "Running", db_dir)
-    moss_sql.init_isolate_table(entryid, "", samplename, "", "", "", db_dir)
+    moss_sql.init_isolate_table(entryid, "", samplename, "", "", "", db_dir, '')
 
     target_dir = db_dir + "analysis/" + entryid + "/"
     cmd = "mkdir " + target_dir
@@ -172,20 +172,13 @@ def moss_pipeline(seqType, prune_distance, bc,
     if inputType == "nanopore":
         moss.nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, exepath + "kma/kma", templateaccesion, db_dir, laptop, consensus_name)
 
-    conn = sqlite3.connect(db_dir + "moss.db")
-    c = conn.cursor()
+    referenceid = moss_sql.sql_get_data(db_dir, "SELECT entryid FROM referencetable WHERE header_text = '{}'".format(header_text))
+    print (referenceid)
+    print (referenceid)
 
-    print (header_text)
-
-    c.execute("SELECT * FROM referencetable WHERE header_text = '{}'".format(header_text))
-    print ("SELECT * FROM referencetable WHERE header_text = '{}'".format(header_text))
-    refdata = c.fetchall()
-    conn.close()
-
-    header_text = refdata[0][5]
-
-    #Consider isolatename
-
+    print (referenceid)
+    sys.exit()
+    moss_sql.sql_update_data(db_dir, "UPDATE isolatetable SET referenceid = '{}' WHERE entryid = '{}'".format(referenceid, entryid))
 
     cmd = "cp {}{}.fsa {}/consensus_sequences/{}.fsa".format(target_dir, consensus_name, db_dir, consensus_name)
     os.system(cmd)
@@ -193,6 +186,13 @@ def moss_pipeline(seqType, prune_distance, bc,
     moss_sql.insert_consensus_name(entryid, db_dir, consensus_name+".fsa")
 
     related_isolates = moss.fetch_isolates(db_dir, header_text)
+
+
+    sql_string = "SELECT isolateid FROM referencetable WHERE header_text = '{}'".format(header_text)
+    isolateid_string = moss_sql.sql_get_data(db_dir, sql_string)
+    print (isolateid_string)
+    sys.exit()
+    moss_sql.update_reference_table(entryid, None, None, None, header_text, db_dir)
 
     moss_sql.update_status_table(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir)
 
@@ -232,7 +232,7 @@ def moss_pipeline(seqType, prune_distance, bc,
 
     moss_sql.update_status_table(entryid, "Database updating", "Alignment", "8", "10", "Running", db_dir)
 
-    moss_sql.update_reference_table(entryid, isolateid, None, None, None, header_text, db_dir)
+    moss_sql.update_reference_table(entryid, None, None, None, header_text, db_dir)
 
     moss_sql.insert_amr_table(entryid, samplename, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), header_text, riskcategory.replace("'", "''"), warning.replace("'", "''"), db_dir)
 
@@ -244,7 +244,7 @@ def moss_pipeline(seqType, prune_distance, bc,
 
     new_plasmid_string, new_virulence_string, new_amr_string = moss.scan_reference_vs_isolate_cge(plasmid_string, allresgenes.replace(", ", ","), virulence_string, header_text, db_dir)
 
-    moss_sql.update_reference_table(entryid, None, new_amr_string, new_virulence_string, new_plasmid_string, header_text, db_dir)
+    moss_sql.update_reference_table(entryid, new_amr_string, new_virulence_string, new_plasmid_string, header_text, db_dir)
 
     end_time = datetime.datetime.now()
     run_time = end_time - start_time

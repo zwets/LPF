@@ -80,18 +80,11 @@ def fetch_isolates(db_dir, header_text):
     c = conn.cursor()
     c.execute("SELECT isolateid FROM referencetable WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
-    print (refdata)
-    print (refdata)
-    print (refdata)
     conn.close()
-    isolatelist = refdata[0][0].split(",")
-    print (isolatelist)
-    print (isolatelist)
-
-    print (isolatelist)
-
-
-
+    if refdata[0][0] = "":
+        return ""
+    else:
+        isolatelist = refdata[0][0].split(",")
     return isolatelist
 
 def create_phylo_tree(db_dir, header_text, target_dir):

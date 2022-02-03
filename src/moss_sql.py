@@ -34,6 +34,23 @@ from pandas.plotting import table
 from geopy.geocoders import Nominatim
 from subprocess import check_output, STDOUT
 
+def sql_update_data(db_dir, string):
+    conn = sqlite3.connect(db_dir + "moss.db")
+    c = conn.cursor()
+    c.execute(string)
+
+    conn.commit()
+    conn.close()
+
+def sql_get_data(db_dir, string):
+    conn = sqlite3.connect(db_dir + "moss.db")
+    c = conn.cursor()
+    c.execute(dbstring)
+    data = c.fetchall()
+    conn.close()
+    return data
+
+
 def insert_consensus_name(entryid, db_dir, consensus_name):
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
@@ -57,16 +74,12 @@ def insert_metadata_table(entryid, entries, values, db_dir):
     conn.commit()
     conn.close()
 
-def update_reference_table(entryid, isolateid, amrgenes, virulencegenes, plasmids, header_text, db_dir):
+def update_reference_table(entryid, amrgenes, virulencegenes, plasmids, header_text, db_dir):
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
-    isolateid_statement = "isolateid = '{}'".format(isolateid)
     amrgenes_statement = "amrgenes = '{}'".format(amrgenes)
     virulencegenes_statement = "virulencegenes = '{}'".format(virulencegenes)
     plasmids_statement = "plasmids = '{}'".format(plasmids)
-    if isolateid != None:
-        dbstring = "UPDATE referencetable SET {} WHERE header_text = '{}'".format(isolateid_statement, header_text)
-        c.execute(dbstring)
     if amrgenes != None:
         dbstring = "UPDATE referencetable SET {} WHERE header_text = '{}'".format(amrgenes_statement, header_text)
         c.execute(dbstring)
@@ -119,12 +132,12 @@ def update_status_table(entryid, status, type, level_current, level_max, result,
     conn.commit()
     conn.close()
 
-def init_isolate_table(entryid, header_text, samplename, plasmid_string, allresgenes, virulence_string, db_dir):
+def init_isolate_table(entryid, header_text, samplename, plasmid_string, allresgenes, virulence_string, db_dir, referenceid):
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
-    dbstring = "INSERT INTO isolatetable(entryid, header_text, samplename, analysistimestamp, plasmids, amrgenes, virulencegenes) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
+    dbstring = "INSERT INTO isolatetable(entryid, header_text, samplename, analysistimestamp, plasmids, amrgenes, virulencegenes, referenceid) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
         entryid, header_text, samplename, str(datetime.datetime.now())[0:-7], plasmid_string.replace("'", "''"),
-        allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''"))
+        allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''"), referenceid)
 
     c.execute(dbstring)
     conn.commit()
