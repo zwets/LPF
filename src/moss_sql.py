@@ -37,8 +37,9 @@ from subprocess import check_output, STDOUT
 def insert_consensus_name(entryid, db_dir, consensus_name):
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
+    entryid_statement = "entryid = '{}'".format(entryid)
 
-    dbstring = "INSERT INTO isolatetable(consensus_name) VALUES('{}') WHERE entryid = '{}'".format(consensus_name, entryid)
+    dbstring = "UPDATE isolatetable SET consensus_name = '{}' WHERE {}".format(consensus_name, entryid, entryid_statement)
     print (dbstring)
     c.execute(dbstring)
 
