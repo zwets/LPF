@@ -61,7 +61,7 @@ def make_phytree_output_folder(db_dir, target_dir, isolate_list, exepath, header
 
     for item in isolate_list:
         print ("TEST")
-        path = "{}datafiles/isolatefiles/{}".format(db_dir, item)
+        path = "{}consensus_sequences/{}".format(db_dir, item)
         cmd = "cp {} {}/phytree_output/.".format(path, target_dir)
         os.system(cmd)
         print ("TEST")
