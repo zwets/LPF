@@ -45,7 +45,7 @@ def sql_update_data(db_dir, string):
 def sql_get_data(db_dir, string):
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
-    c.execute(dbstring)
+    c.execute(string)
     data = c.fetchall()
     conn.close()
     return data
