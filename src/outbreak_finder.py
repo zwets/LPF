@@ -39,8 +39,14 @@ isolatedb = args.db_dir + "moss.db"
 conn = sqlite3.connect(isolatedb)
 c = conn.cursor()
 
-c.execute("SELECT * FROM referencetable WHERE isolateid != ''")
+c.execute("SELECT * FROM isolatetable")
 referencelist = c.fetchall()
+phylo_dict = dict()
+for item in referencelist:
+    print (item)
+sys.exit()
+
+
 samplenames = []
 for i in range(len(referencelist)):
     isolateids = referencelist[i][1].split(", ")
