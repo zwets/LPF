@@ -172,7 +172,7 @@ def moss_pipeline(seqType, prune_distance, bc,
     if inputType == "nanopore":
         moss.nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, exepath + "kma/kma", templateaccesion, db_dir, laptop, consensus_name)
 
-    referenceid = moss_sql.sql_get_data(db_dir, "SELECT entryid FROM referencetable WHERE header_text = '{}'".format(header_text))referenceid[0][0]
+    referenceid = moss_sql.sql_get_data(db_dir, "SELECT entryid FROM referencetable WHERE header_text = '{}'".format(header_text))[0][0]
     print (referenceid)
     print (referenceid)
 
