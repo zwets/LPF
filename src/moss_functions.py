@@ -124,7 +124,7 @@ def check_assembly_result(path):
     return True
 
 def run_assembly(entryid, db_dir, samplename, assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, \
-                 jobid, exepath, kma_database_path, start_time, logfile, ID, associated_species):
+                 jobid, exepath, kma_database_path, start_time, logfile, associated_species):
     update_status_table(entryid, "Unicycler Assembly", "Assembly", "4", "5", "Running", db_dir)
     if assemblyType == "illumina":
         inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, "",
@@ -138,7 +138,7 @@ def run_assembly(entryid, db_dir, samplename, assemblyType, inputType, target_di
     mbh_helper.print_to_logfile("Run time: {}".format(datetime.datetime.now() - start_time), start_time, True)
     moss_sql.update_status_table(entryid, "Compiling Assembly PDF", "Assembly", "5", "5", "Running", db_dir)
 
-    compileReportAssembly(target_dir, ID, db_dir, associated_species, exepath)
+    compileReportAssembly(target_dir, entryid, db_dir, associated_species, exepath)
 
     logfile.close()
     moss_sql.update_status_table(entryid, "Assembly completed", "Assembly", "5", "5", "Finished", db_dir)

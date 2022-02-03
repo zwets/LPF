@@ -140,7 +140,7 @@ def moss_pipeline(seqType, prune_distance, bc,
         associated_species = "No related reference identified, manual curation required. ID: {} name: {}".format(
             entryid, samplename)
         moss.run_assembly(entryid, db_dir, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
-                          illumina_name2, jobid, exepath, kma_database_path, start_time, logfile, ID, associated_species)
+                          illumina_name2, jobid, exepath, kma_database_path, start_time, logfile, associated_species)
 
     moss_sql.update_status_table(entryid, "IPC check", "Alignment", "4", "10", "Running", db_dir)
 
@@ -207,7 +207,7 @@ def moss_pipeline(seqType, prune_distance, bc,
         header_text = header_text.split()
         associated_species = "{} {} assembly from ID: {}, SNP distance from best verified reference: {}".format(header_text[1], header_text[2], entryid, distance)
         moss.run_assembly(entryid, db_dir, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
-                          illumina_name2, jobid, exepath, kma_database_path, start_time, logfile, ID, associated_species)
+                          illumina_name2, jobid, exepath, kma_database_path, start_time, logfile, associated_species)
 
     moss_sql.update_status_table(entryid, "Distance Matrix", "Alignment", "6", "10", "Running", db_dir)
 
