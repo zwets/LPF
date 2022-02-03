@@ -111,7 +111,7 @@ def init_insert_reference_table(exepath, db_dir):
         entryid = md5(sequence)
         #TMP SOLUTION TO AVOID ENTRYCLASHES:
         if entryid not in ids:
-            dbstring = "INSERT INTO referencetable(entryid, header_text, isolateid, amrgenes, virulencegenes, plasmids) VALUES('{}' ,'{}', '{}' ,'{}', '{}' ,'{}')".format(entryid, header_text.replace("'", "''"), "", "", "", "", "")
+            dbstring = "INSERT INTO referencetable(entryid, header_text, amrgenes, virulencegenes, plasmids) VALUES('{}', '{}' ,'{}', '{}' ,'{}')".format(entryid, header_text.replace("'", "''"), "", "", "", "")
             ids.append(entryid)
             c.execute(dbstring)
 
