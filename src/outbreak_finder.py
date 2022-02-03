@@ -47,31 +47,10 @@ for item in referencelist:
         phylo_dict[item[2]].append(item[1])
     else:
         phylo_dict[item[2]] = [item[1]]
-        #
-print (phylo_dict)
-sys.exit()
 
-
-samplenames = []
-for i in range(len(referencelist)):
-    isolateids = referencelist[i][1].split(", ")
-    for i in range(len(isolateids)):
-        c.execute("SELECT samplename FROM isolatetable WHERE entryid = '{}'".format(isolateids[i]))
-        isolateids[i] = c.fetchone()[0]
-    isolateids = ", ".join(isolateids)
-    samplenames.append(isolateids)
-
-conn.close()
-
-
-
-referencedict = dict()
-for i in range(len(referencelist)):
-    referencedict[referencelist[i][1]] = samplenames[i]
-od = collections.OrderedDict(sorted(referencedict.items()))
 
 with open(args.db_dir + 'analyticalFiles/outbreakfinder.json', 'w') as fp:
-    json.dump(od, fp)
+    json.dump(phylo_dict, fp)
 
 
 
