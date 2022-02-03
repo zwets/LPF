@@ -181,20 +181,8 @@ def moss_pipeline(seqType, prune_distance, bc,
 
     moss_sql.sql_edit(db_dir, "UPDATE isolatetable SET consensus_name = '{}.fsa' WHERE entryid = '{}'".format(consensus_name, entryid))
 
-    related_isolates = moss_sql.sql_fetch(db_dir, "SELECT entryid FROM isolatetable WHERE referenceid = '{}'".format(referenceid))
+    related_isolates = moss_sql.sql_fetch(db_dir, "SELECT entryid FROM isolatetable WHERE referenceid = '{}'".format(referenceid))[0][0].split(",")
 
-    print (related_isolates)
-    print (related_isolates)
-
-    print (related_isolates)
-    sys.exit()
-
-
-
-    sql_string = "SELECT isolateid FROM referencetable WHERE header_text = '{}'".format(header_text)
-    isolateid_string = moss_sql.sql_fetch(db_dir, sql_string)
-    print (isolateid_string)
-    sys.exit()
     moss_sql.update_reference_table(entryid, None, None, None, header_text, db_dir)
 
     moss_sql.update_status_table(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir)
