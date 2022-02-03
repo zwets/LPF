@@ -201,12 +201,6 @@ def moss_pipeline(seqType, prune_distance, bc,
     distance = moss.ThreshholdDistanceCheck("{}/phytree_output/distance_matrix".format(target_dir), header_text.split()[0]+".fsa", consensus_name+".fsa")
     print (distance, file = logfile)
 
-    print (distance)
-    print (distance)
-    print (distance)
-
-    sys.exit()
-
     if distance > 300: #SNP distance
         header_text = header_text.split()
         associated_species = "{} {} assembly from ID: {}, SNP distance from best verified reference: {}".format(header_text[1], header_text[2], entryid, distance)
