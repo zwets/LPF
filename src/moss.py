@@ -172,24 +172,27 @@ def moss_pipeline(seqType, prune_distance, bc,
     if inputType == "nanopore":
         moss.nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, exepath + "kma/kma", templateaccesion, db_dir, laptop, consensus_name)
 
-    referenceid = moss_sql.sql_get_data(db_dir, "SELECT entryid FROM referencetable WHERE header_text = '{}'".format(header_text))[0][0]
-    print (referenceid)
-    print (referenceid)
+    referenceid = moss_sql.sql_fetch(db_dir, "SELECT entryid FROM referencetable WHERE header_text = '{}'".format(header_text))[0][0]
 
-    print (referenceid)
-    sys.exit()
-    moss_sql.sql_update_data(db_dir, "UPDATE isolatetable SET referenceid = '{}' WHERE entryid = '{}'".format(referenceid, entryid))
+    moss_sql.sql_edit(db_dir, "UPDATE isolatetable SET referenceid = '{}' WHERE entryid = '{}'".format(referenceid, entryid))
 
     cmd = "cp {}{}.fsa {}/consensus_sequences/{}.fsa".format(target_dir, consensus_name, db_dir, consensus_name)
     os.system(cmd)
 
-    moss_sql.insert_consensus_name(entryid, db_dir, consensus_name+".fsa")
+    moss_sql.sql_edit(db_dir, "UPDATE isolatetable SET consensus_name = '{}.fsa' WHERE entryid = '{}'".format(consensus_name, entryid_statement))
 
-    #related_isolates = moss.fetch_isolates(db_dir, header_text)
+    related_isolates = moss_sql.sql_fetch(db_dir, "SELECT entryid FROM isolatetable WHERE referenceid = '{}'".format(referenceid))
+
+    print (related_isolates)
+    print (related_isolates)
+
+    print (related_isolates)
+    sys.exit()
+
 
 
     sql_string = "SELECT isolateid FROM referencetable WHERE header_text = '{}'".format(header_text)
-    isolateid_string = moss_sql.sql_get_data(db_dir, sql_string)
+    isolateid_string = moss_sql.sql_fetch(db_dir, sql_string)
     print (isolateid_string)
     sys.exit()
     moss_sql.update_reference_table(entryid, None, None, None, header_text, db_dir)

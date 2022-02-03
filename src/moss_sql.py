@@ -34,15 +34,14 @@ from pandas.plotting import table
 from geopy.geocoders import Nominatim
 from subprocess import check_output, STDOUT
 
-def sql_update_data(db_dir, string):
+def sql_edit(db_dir, string):
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
     c.execute(string)
-
     conn.commit()
     conn.close()
 
-def sql_get_data(db_dir, string):
+def sql_fetch(db_dir, string):
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
     c.execute(string)
