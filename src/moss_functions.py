@@ -78,16 +78,12 @@ def make_phytree_output_folder(db_dir, target_dir, isolate_list, exepath, header
 def fetch_isolates(db_dir, header_text):
     conn = sqlite3.connect(db_dir + 'moss.db')
     c = conn.cursor()
-    c.execute("SELECT * FROM referencetable WHERE header_text = '{}'".format(header_text))
+    c.execute("SELECT isolateid FROM referencetable WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
     print (refdata)
-    print (refdata)
-
-    print (refdata)
-
 
     conn.close()
-    isolatelist = refdata[0][1].split(",")
+    isolatelist = refdata[0][0].split(",")
 
 
     return isolatelist

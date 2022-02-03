@@ -34,6 +34,17 @@ from pandas.plotting import table
 from geopy.geocoders import Nominatim
 from subprocess import check_output, STDOUT
 
+def insert_consensus_name(entryid, db_dir, consensus_name):
+    conn = sqlite3.connect(db_dir + "moss.db")
+    c = conn.cursor()
+
+    dbstring = "INSERT INTO isolatetable(consensus_name) VALUES({}) WHERE entryid = '{}'".format(consensus_name, entryid)
+
+    c.execute(dbstring)
+
+    conn.commit()
+    conn.close()
+
 def insert_metadata_table(entryid, entries, values, db_dir):
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()

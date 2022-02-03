@@ -190,6 +190,8 @@ def moss_pipeline(seqType, prune_distance, bc,
     cmd = "cp {}{}.fsa {}/consensus_sequences/{}.fsa".format(target_dir, consensus_name, db_dir, consensus_name)
     os.system(cmd)
 
+    moss_sql.insert_consensus_name(entryid, db_dir, consensus_name+".fsa")
+
     related_isolates = moss.fetch_isolates(db_dir, header_text)
 
     moss_sql.update_status_table(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir)
