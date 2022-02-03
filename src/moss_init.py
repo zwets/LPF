@@ -121,6 +121,8 @@ if kmaindex_db_path != "":
     conn.commit()
     conn.close()
 
+    #Can we add tables for genes with pointers? Better solution!
+
 
     moss.init_insert_reference_table(exepath, db_dir)
 

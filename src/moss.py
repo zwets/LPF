@@ -198,7 +198,7 @@ def moss_pipeline(seqType, prune_distance, bc,
 
 
     # Check if acceptable snp distance
-    distance = moss.ThreshholdDistanceCheck("{}/phytree_output/distance_matrix".format(target_dir), header_text.split()[0]+".fsa", consensus_name)
+    distance = moss.ThreshholdDistanceCheck("{}/phytree_output/distance_matrix".format(target_dir), header_text.split()[0]+".fsa", consensus_name+".fsa")
     print (distance, file = logfile)
 
     print (distance)
