@@ -38,7 +38,7 @@ def insert_consensus_name(entryid, db_dir, consensus_name):
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
 
-    dbstring = "INSERT INTO isolatetable({}}) VALUES({}) WHERE entryid = '{}'".format(consensus_name, entryid)
+    dbstring = "INSERT INTO isolatetable({}) VALUES({}) WHERE entryid = '{}'".format(consensus_name, entryid)
     print (dbstring)
     c.execute(dbstring)
 
