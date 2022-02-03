@@ -187,20 +187,25 @@ def moss_pipeline(seqType, prune_distance, bc,
 
     moss_sql.update_status_table(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir)
 
-    #Here make function for tmp dir with isolates and consensus sequence and ref
     moss.make_phytree_output_folder(db_dir, target_dir, related_isolates, exepath, header_text)
-    #TBD
+
     cmd = "{} dist -i {}/phytree_output/* -r \"{}\" -mc 0.01 -nm 0 -o {}/phytree_output/distance_matrix".format(exepath + "ccphylo/ccphylo", target_dir, header_text, target_dir)
     print (cmd, file = logfile)
-    #Save latest newick to reference in SQL
+
     if prune_distance != 0 :
         cmd += " -pr {}".format(prune_distance)
     os.system(cmd)
 
 
     # Check if acceptable snp distance
-    distance = moss.ThreshholdDistanceCheck("{}/phytree_output/distance_matrix".format(target_dir), header_text.split()[0]+".fsa", "{}{}_{}_consensus.fsa".format(target_dir, samplename, templateaccesion))
+    distance = moss.ThreshholdDistanceCheck("{}/phytree_output/distance_matrix".format(target_dir), header_text.split()[0]+".fsa", consensus_name)
     print (distance, file = logfile)
+
+    print (distance)
+    print (distance)
+    print (distance)
+
+    sys.exit()
 
     if distance > 300: #SNP distance
         header_text = header_text.split()
