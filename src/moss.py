@@ -185,7 +185,7 @@ def moss_pipeline(seqType, prune_distance, bc,
 
     moss_sql.insert_consensus_name(entryid, db_dir, consensus_name+".fsa")
 
-    related_isolates = moss.fetch_isolates(db_dir, header_text)
+    #related_isolates = moss.fetch_isolates(db_dir, header_text)
 
 
     sql_string = "SELECT isolateid FROM referencetable WHERE header_text = '{}'".format(header_text)

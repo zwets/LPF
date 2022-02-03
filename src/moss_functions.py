@@ -74,19 +74,6 @@ def make_phytree_output_folder(db_dir, target_dir, isolate_list, exepath, header
     cmd = "cp {}*_consensus.fsa {}phytree_output/.".format(target_dir, target_dir)
     os.system(cmd)
 
-
-def fetch_isolates(db_dir, header_text):
-    conn = sqlite3.connect(db_dir + 'moss.db')
-    c = conn.cursor()
-    c.execute("SELECT isolateid FROM referencetable WHERE header_text = '{}'".format(header_text))
-    refdata = c.fetchall()
-    conn.close()
-    if refdata[0][0] = "":
-        return ""
-    else:
-        isolatelist = refdata[0][0].split(",")
-    return isolatelist
-
 def create_phylo_tree(db_dir, header_text, target_dir):
     tree = Phylo.read("{}phytree_output/tree.newick".format(target_dir), 'newick')
     Phylo.draw(tree, do_show=False)
