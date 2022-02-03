@@ -81,7 +81,7 @@ def fetch_isolates(db_dir, header_text):
     c.execute("SELECT isolateid FROM referencetable WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
     print (refdata)
-
+    #herestop
     conn.close()
     isolatelist = refdata[0][0].split(",")
 
