@@ -67,10 +67,10 @@ function showFinishedAnalyses() {
     let sql = `SELECT * FROM statustable`;
     let db_dir = document.getElementById('current-config').innerHTML
     const db = require('better-sqlite3')(db_dir + 'moss.db');
-    const data_obj = db.prepare(sql).all();
-    console.log(data_obj);
+    const sql_data_obj = db.prepare(sql).all();
+    console.log(sql_data_obj);
 
-    tableFromObj(data_obj);
+    tableFromObj(sql_data_obj);
 }
 
 function showRunningAnalyses() {
@@ -89,7 +89,7 @@ function showQueuedAnalyses() {
     });
 }
 
-function openPDF(id, data, myjson){
+function openPDF(id, data){
   console.log(data.db_dir + "analysis/" + document.getElementById(id).name + "/" + id + "_report.pdf");
   window.open(data.db_dir + "analysis/" + document.getElementById(id).name + "/" + id + "_report.pdf");
   //return false;
@@ -153,9 +153,9 @@ function most_recent_isolates_table(data_obj, data) {
 
             if (tabCell.innerHTML == "Finished") {
                 var tabCell = tr.insertCell(-1);
-                var img = document.createElement('img');
-                img.id = data_obj[i].entryid;
-                img.name = data_obj[i].samplename;
+                var img = data[i].entryid;
+                img.id = data[i].entryid;
+                img.name = data[i].samplename;
                 img.src = data.exepath + "local_app/images/report-icon.png";
                 img.setAttribute('height', '17pt');
                 img.innerHTML = data_obj[i].entryid;
@@ -204,7 +204,7 @@ function showanalyses() {
 }
 
 
-function tableFromObj(data) {
+function tableFromObj(sql_data_obj) {
         var divShowData = document.getElementById('showData');
         divShowData.innerHTML = "";
 		db_dir = document.getElementById('current-config').innerHTML;
@@ -212,8 +212,8 @@ function tableFromObj(data) {
 
         // ('Book ID', 'Book Name', 'Category' and 'Price')
         var col = [];
-        for (var i = 0; i < data.length; i++) {
-            for (var key in data[i]) {
+        for (var i = 0; i < sql_data_obj.length; i++) {
+            for (var key in sql_data_obj[i]) {
                 if (col.indexOf(key) === -1) {
                     col.push(key);
                 }
@@ -236,23 +236,23 @@ function tableFromObj(data) {
         }
 
         // add json data to the table as rows.
-        for (var i = 0; i < myObject.length; i++) {
+        for (var i = 0; i < sql_data_obj.length; i++) {
 
             tr = table.insertRow(-1);
 
             for (var j = 0; j < col.length; j++) {
                 var tabCell = tr.insertCell(-1);
-                tabCell.innerHTML = myObject[i][col[j]];
+                tabCell.innerHTML = sql_data_obj[i][col[j]];
             }
             if (data != "none") {
                 var tabCell = tr.insertCell(-1);
                 var img = document.createElement('img');
-                img.id = Object.keys(myjson)[i];
-                img.name = myObject[i].entryid;
-                img.src = data.exepath + "local_app/images/report-icon.png";
+                img.id = sql_data_obj[i].entryid;
+                img.name = sql_data_obj[i].entryid;
+                img.src = sql_data_obj.exepath + "local_app/images/report-icon.png";
                 img.setAttribute('height', '17pt');
-                img.innerHTML = myObject[i].entryid;
-                img.onclick = function() {openPDF(this.id, data, myjson)};
+                img.innerHTML = sql_data_obj[i].entryid;
+                img.onclick = function() {openPDF(this.id, sql_data_obj)};
                 //el.addEventListener("click", function(){
                 //    openPDF(Object.keys(myjson)[i]));
                 //});
