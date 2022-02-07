@@ -64,18 +64,19 @@ function readSingleFile(e) {
 }
 
 function showFinishedAnalyses() {
-    storage.get('currentConfig', function(error, data) {
-      if (error) throw error;
-
-      tableFromJson('finishedAnalyses.json', data);
-    });
+    let sql = `SELECT * FROM statustable`;
+    let db_dir = document.getElementById('current-config').innerHTML
+    const db = require('better-sqlite3')(db_dir + 'moss.db');
+    const data_obj = db.prepare(sql).all();
+    console.log(data_obj);
+    tableFromObj(data);
 }
 
 function showRunningAnalyses() {
     storage.get('currentConfig', function(error, data) {
           if (error) throw error;
 
-          tableFromJson('runningAnalyses.json', 'none');
+          tableFromObj('runningAnalyses.json', 'none');
     });
 }
 
@@ -83,7 +84,7 @@ function showQueuedAnalyses() {
     storage.get('currentConfig', function(error, data) {
       if (error) throw error;
 
-      tableFromJson('queuedAnalyses.json', 'none');
+      tableFromObj('queuedAnalyses.json', 'none');
     });
 }
 
@@ -202,13 +203,11 @@ function showanalyses() {
 }
 
 
-function tableFromJson(name, data) {
+function tableFromObj(data) {
         var divShowData = document.getElementById('showData');
         divShowData.innerHTML = "";
-		// the json data. (you can change the values for output.)
 		db_dir = document.getElementById('current-config').innerHTML;
-		const myjson = require(db_dir + "/analyticalFiles/" + name);
-		var myObjectlist = Object.values(myjson)
+		var myObjectlist = Object.values(data)
 
 		var myObject = [];
 
@@ -220,12 +219,6 @@ function tableFromJson(name, data) {
                     //Do something
                 }
 
-
-		//var myObject = JSON.parse(myObject);
-
-        //console.log(myObject);
-
-        // Extract value from table header.
         // ('Book ID', 'Book Name', 'Category' and 'Price')
         var col = [];
         for (var i = 0; i < myObject.length; i++) {
