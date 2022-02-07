@@ -112,7 +112,7 @@ if kmaindex_db_path != "":
     conn.commit()
     c.execute("""CREATE TABLE IF NOT EXISTS ipctable(ipc TEXT PRIMARY KEY, ipc_index_refdb TEXT, IsolateJSON TEXT, ReferenceJSON TEXT, ReadRefDB TEXT, running_analyses TEXT, queued_analyses TEXT, finished_analyses TEXT)""")
     conn.commit()
-    c.execute("""CREATE TABLE IF NOT EXISTS statustable(entryid TEXT PRIMARY KEY, status TEXT, type TEXT, level_current TEXT, level_max TEXT, result TEXT)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS statustable(entryid TEXT PRIMARY KEY, status TEXT, type TEXT, level_current TEXT, level_max TEXT, result TEXT, time_stamp TEXT)""")
     conn.commit()
     c.execute( """CREATE TABLE IF NOT EXISTS local_sync_table(entryid TEXT PRIMARY KEY, time_of_analysis TEXT)""")
     conn.commit()

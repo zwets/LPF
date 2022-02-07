@@ -124,8 +124,9 @@ def update_status_table(entryid, status, type, level_current, level_max, result,
     level_current_statement = "level_current = '{}'".format(level_current)
     level_max_statement = "level_max = '{}'".format(level_max)
     result_statement = "result = '{}'".format(result)
+    time_statement = "time_stamp = '{}'".format(str(datetime.datetime.now())[0:-7])
 
-    dbstring = "UPDATE statustable SET {}, {}, {}, {}, {} WHERE {}".format(status_statement, type_statement, level_current_statement, level_max_statement, result_statement, entryid_statement)
+    dbstring = "UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(status_statement, type_statement, level_current_statement, level_max_statement, result_statement, entryid_statement, time_statement)
     c.execute(dbstring)
 
     conn.commit()
