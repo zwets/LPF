@@ -747,12 +747,10 @@ def ThreshholdDistanceCheck(distancematrixfile, reference, consensus_name):
         line = line.split("\t")
         if secondentry == True:
             if line[0] == reference or line[0] == consensus_name:
-                print ("second hit")
                 distance = line[linecount-1]
                 return float(distance)
         if secondentry == False:
             if line[0] == reference or line[0] == consensus_name:
-                print ("first hit")
                 index = linecount
                 secondentry = True
         linecount += 1
