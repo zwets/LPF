@@ -69,6 +69,10 @@ function showFinishedAnalyses() {
     const db = require('better-sqlite3')(db_dir + 'moss.db');
     const data_obj = db.prepare(sql).all();
     console.log(data_obj);
+    console.log(data_obj[0]);
+    console.log(data_obj[0].entryid);
+
+
     tableFromObj(data_obj[0]);
 }
 
