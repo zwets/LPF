@@ -183,7 +183,7 @@ def moss_pipeline(seqType, prune_distance, bc,
 
     moss_sql.sql_edit(db_dir, "UPDATE isolatetable SET consensus_name = '{}.fsa' WHERE entryid = '{}'".format(consensus_name, entryid))
 
-    related_isolates = moss_sql.sql_fetch(db_dir, "SELECT entryid FROM isolatetable WHERE referenceid = '{}'".format(referenceid))[0][0].split(",")
+    related_isolates = moss_sql.sql_fetch(db_dir, "SELECT consensus_name FROM isolatetable WHERE referenceid = '{}'".format(referenceid))[0][0].split(",")
 
     moss_sql.update_reference_table(entryid, None, None, None, header_text, db_dir)
 
