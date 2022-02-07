@@ -984,7 +984,13 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
         if result == 'acquired' and action == False:
             cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir,
                                                                      samplename)  # add assembly to references
+            print (cmd)
+            print (cmd)
+
+            print (cmd)
+
             os.system(cmd)
+
 
             release_semaphore("ipc_index_refdb", db_dir)
 
@@ -1000,16 +1006,6 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
         c.execute(dbstring)
         conn.commit()  # Need IPC
         conn.close()
-
-        cmd = "mkdir {}datafiles/isolatefiles/{}".format(db_dir, samplename)
-        os.system(cmd)
-
-        cmd = "mkdir {}datafiles/distancematrices/{}".format(db_dir, samplename)
-        os.system(cmd)
-
-        cmd = "cp {}{}_assembled.fasta {}datafiles/distancematrices/{}/{}_assembled.fasta".format(target_dir, samplename, db_dir, samplename, samplename)
-        os.system(cmd)
-        # Works
 
 
 def uniqueNameCheck(db_dir, inputType, total_filenames):
