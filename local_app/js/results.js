@@ -232,6 +232,8 @@ function tableFromObj(data) {
             }
         }
 
+        console.log(col);
+
         // Create a table.
         var table = document.createElement("table");
         table.innerHTML = "";
