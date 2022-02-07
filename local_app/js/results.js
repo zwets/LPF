@@ -254,14 +254,10 @@ function tableFromObj(sql_data_obj, data) {
                 var img = document.createElement('img');
                 img.id = sql_data_obj[i].entryid;
                 img.name = sql_data_obj[i].entryid;
-
                 img.src = data.exepath + "local_app/images/report-icon.png";
                 img.setAttribute('height', '17pt');
                 img.innerHTML = sql_data_obj[i].entryid;
-                img.onclick = function() {openPDF(this.id, sql_data_obj)};
-                //el.addEventListener("click", function(){
-                //    openPDF(Object.keys(myjson)[i]));
-                //});
+                img.onclick = function() {openPDF(this.id, data)};
                 tabCell.appendChild(img);
             };
 
@@ -272,18 +268,4 @@ function tableFromObj(sql_data_obj, data) {
 
         // Now, add the newly created table with json data, to a container.
         divShowData.appendChild(table);
-
-        /*
-        if (data != "none") {
-            for (var i = 0; i < myObject.length; i++) {
-                //console.log(myObject[i].name);
-                //console.log(myjson[Object.keys(myjson)[i]]);
-
-                el = document.getElementById(Object.keys(myjson)[i]);
-                el.addEventListener("click", function(){
-                    openPDF(Object.keys(myjson)[i]));
-                });
-
-            }
-        };*/
     }
