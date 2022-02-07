@@ -56,15 +56,11 @@ def get_kma_template_number(header_text, db_dir):
 def make_phytree_output_folder(db_dir, target_dir, isolate_list, exepath, header_text):
     cmd = "mkdir {}/phytree_output".format(target_dir)
     os.system(cmd)
-    print ("HERRRRE")
-    print (isolate_list) #Why empty?
 
     for item in isolate_list:
-        print ("TEST")
         path = "{}consensus_sequences/{}".format(db_dir, item)
         cmd = "cp {} {}/phytree_output/.".format(path, target_dir)
         os.system(cmd)
-        print ("TEST")
 
     number = get_kma_template_number(header_text, db_dir)
     header_name = header_text.split()[0]
