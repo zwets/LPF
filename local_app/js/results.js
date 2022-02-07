@@ -69,11 +69,8 @@ function showFinishedAnalyses() {
     const db = require('better-sqlite3')(db_dir + 'moss.db');
     const data_obj = db.prepare(sql).all();
     console.log(data_obj);
-    console.log(data_obj[0]);
-    console.log(data_obj[0].entryid);
 
-
-    tableFromObj(data_obj[0]);
+    tableFromObj(data_obj);
 }
 
 function showRunningAnalyses() {
@@ -211,14 +208,16 @@ function tableFromObj(data) {
         var divShowData = document.getElementById('showData');
         divShowData.innerHTML = "";
 		db_dir = document.getElementById('current-config').innerHTML;
-		var myObjectlist = Object.values(data)
+		//var myObjectlist = Object.values(data)
+
+		//console.log()
 
 		var myObject = [];
 
-		var arrayLength = myObjectlist.length;
+		var arrayLength = data.length;
 
 		for (var i = 0; i < arrayLength; i++) {
-                    const obj = JSON.parse(myObjectlist[i]);
+                    const obj = JSON.parse(data[i]);
                     myObject.push(obj);
                     //Do something
                 }
