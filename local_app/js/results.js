@@ -64,13 +64,18 @@ function readSingleFile(e) {
 }
 
 function showFinishedAnalyses() {
-    let sql = `SELECT * FROM statustable`;
-    let db_dir = document.getElementById('current-config').innerHTML
-    const db = require('better-sqlite3')(db_dir + 'moss.db');
-    const sql_data_obj = db.prepare(sql).all();
-    console.log(sql_data_obj);
+    storage.get('currentConfig', function(error, data) {
+              if (error) throw error;
 
-    tableFromObj(sql_data_obj);
+              let sql = `SELECT * FROM statustable`;
+                let db_dir = document.getElementById('current-config').innerHTML
+                const db = require('better-sqlite3')(db_dir + 'moss.db');
+                const sql_data_obj = db.prepare(sql).all();
+                console.log(sql_data_obj);
+
+                tableFromObj(sql_data_obj, data);
+        });
+
 }
 
 function showRunningAnalyses() {
@@ -204,7 +209,7 @@ function showanalyses() {
 }
 
 
-function tableFromObj(sql_data_obj) {
+function tableFromObj(sql_data_obj, data) {
         var divShowData = document.getElementById('showData');
         divShowData.innerHTML = "";
 		db_dir = document.getElementById('current-config').innerHTML;
@@ -249,6 +254,7 @@ function tableFromObj(sql_data_obj) {
                 var img = document.createElement('img');
                 img.id = sql_data_obj[i].entryid;
                 img.name = sql_data_obj[i].entryid;
+
                 img.src = data.exepath + "local_app/images/report-icon.png";
                 img.setAttribute('height', '17pt');
                 img.innerHTML = sql_data_obj[i].entryid;
