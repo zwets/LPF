@@ -244,7 +244,7 @@ function tableFromObj(sql_data_obj) {
                 var tabCell = tr.insertCell(-1);
                 tabCell.innerHTML = sql_data_obj[i][col[j]];
             }
-            if (data != "none") {
+            if (sql_data_obj != "none") {
                 var tabCell = tr.insertCell(-1);
                 var img = document.createElement('img');
                 img.id = sql_data_obj[i].entryid;
