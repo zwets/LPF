@@ -208,24 +208,12 @@ function tableFromObj(data) {
         var divShowData = document.getElementById('showData');
         divShowData.innerHTML = "";
 		db_dir = document.getElementById('current-config').innerHTML;
-		//var myObjectlist = Object.values(data)
 
-		//console.log()
-
-		var myObject = [];
-
-		var arrayLength = data.length;
-
-		for (var i = 0; i < arrayLength; i++) {
-                    const obj = JSON.parse(data[i]);
-                    myObject.push(obj);
-                    //Do something
-                }
 
         // ('Book ID', 'Book Name', 'Category' and 'Price')
         var col = [];
-        for (var i = 0; i < myObject.length; i++) {
-            for (var key in myObject[i]) {
+        for (var i = 0; i < data.length; i++) {
+            for (var key in data[i]) {
                 if (col.indexOf(key) === -1) {
                     col.push(key);
                 }
