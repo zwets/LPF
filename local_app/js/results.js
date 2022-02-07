@@ -249,7 +249,7 @@ function tableFromObj(sql_data_obj) {
                 var img = document.createElement('img');
                 img.id = sql_data_obj[i].entryid;
                 img.name = sql_data_obj[i].entryid;
-                img.src = sql_data_obj.exepath + "local_app/images/report-icon.png";
+                img.src = data.exepath + "local_app/images/report-icon.png";
                 img.setAttribute('height', '17pt');
                 img.innerHTML = sql_data_obj[i].entryid;
                 img.onclick = function() {openPDF(this.id, sql_data_obj)};
