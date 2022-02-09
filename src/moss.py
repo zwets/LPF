@@ -75,7 +75,7 @@ def moss_pipeline(seqType, prune_distance, bc,
         entryid = moss.md5(input[0])
 
     moss.uniqueNameCheck(db_dir, inputType, total_filenames)
-
+    #Perhaps remove init_status_table
     moss_sql.init_status_table(entryid, "Initializing", "Not Determined", "1", "10", "Running", db_dir)
     moss_sql.init_isolate_table(entryid, "", samplename, "", "", "", db_dir, '')
 

@@ -105,28 +105,28 @@ def insert_amr_table(entryid, samplename, analysistimestamp, amrgenes, phenotype
     conn.commit()
     conn.close()
 
-def init_status_table(entryid, status, type, level_current, level_max, result, db_dir):
+def init_status_table(entryid, status, type, current_stage, final_stage, result, db_dir):
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
 
-    dbstring = "INSERT INTO statustable(entryid, status, type, level_current, level_max, result) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
-        entryid, status, type, level_current, level_max, result)
+    dbstring = "INSERT INTO statustable(entryid, status, type, current_stage, final_stage, result) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
+        entryid, status, type, current_stage, final_stage, result)
     c.execute(dbstring)
     conn.commit()
     conn.close()
 
-def update_status_table(entryid, status, type, level_current, level_max, result, db_dir):
+def update_status_table(entryid, status, type, current_stage, final_stage, result, db_dir):
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
     entryid_statement = "entryid = '{}'".format(entryid)
     status_statement = "status = '{}'".format(status)
     type_statement = "type = '{}'".format(type)
-    level_current_statement = "level_current = '{}'".format(level_current)
-    level_max_statement = "level_max = '{}'".format(level_max)
+    current_stage_statement = "current_stage = '{}'".format(current_stage)
+    final_stage_statement = "final_stage = '{}'".format(final_stage)
     result_statement = "result = '{}'".format(result)
     time_statement = "time_stamp = '{}'".format(str(datetime.datetime.now())[0:-7])
 
-    dbstring = "UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(status_statement, type_statement, level_current_statement, level_max_statement, result_statement, time_statement, entryid_statement)
+    dbstring = "UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(status_statement, type_statement, current_stage_statement, final_stage_statement, result_statement, time_statement, entryid_statement)
     print (dbstring)
     c.execute(dbstring)
 

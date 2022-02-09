@@ -41,6 +41,8 @@ parser.add_argument('-exepath', action="store", type=str, dest='exepath', defaul
 args = parser.parse_args()
 
 def mossAnalysis(jobslist, i):
+    #moss_sql.init_status_table(entryid, "Initializing", "Not Determined", "1", "10", "Running", db_dir)
+    print (jobslist[i])
     os.system(jobslist[i]) #Jobs not queued yet- fix
 
 def main(input, jobs, threads, input_type, db_dir, exepath, mac):

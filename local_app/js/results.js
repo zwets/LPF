@@ -109,8 +109,8 @@ function most_recent_isolates_table(data_obj, data) {
         col.push('samplename');
         col.push('status');
         col.push('type');
-        col.push('level_current');
-        col.push('level_max');
+        col.push('current_stage');
+        col.push('final_stage');
         col.push('result');
 
         // Create a table.
@@ -150,9 +150,9 @@ function most_recent_isolates_table(data_obj, data) {
             var tabCell = tr.insertCell(-1);
             tabCell.innerHTML = data_obj[i].type;
             var tabCell = tr.insertCell(-1);
-            tabCell.innerHTML = data_obj[i].level_current;
+            tabCell.innerHTML = data_obj[i].current_stage;
             var tabCell = tr.insertCell(-1);
-            tabCell.innerHTML = data_obj[i].level_max;
+            tabCell.innerHTML = data_obj[i].final_stage;
             var tabCell = tr.insertCell(-1);
             tabCell.innerHTML = data_obj[i].result;
 
