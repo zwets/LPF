@@ -40,11 +40,7 @@ parser.add_argument('-db_dir', action="store", type=str, dest='db_dir', default=
 parser.add_argument('-exepath', action="store", type=str, dest='exepath', default="", help='exepath')
 args = parser.parse_args()
 
-def mossAnalysis(jobslist, i, infile_matrix, db_dir):
-    metadata_dict = moss.prod_metadata_dict(",".join(infile_matrix[i + 1]), ",".join(infile_matrix[0]))
-    input = metadata_dict['input'].split()[0]
-    entryid = moss.md5(input)
-    moss_sql.init_status_table(entryid, "Queued", "Not Determined", "0", "10", "Queued", db_dir)
+def mossAnalysis(jobslist, i):
     os.system(jobslist[i]) #Jobs not queued yet- fix
 
 def main(input, jobs, threads, input_type, db_dir, exepath):
@@ -73,6 +69,10 @@ def main(input, jobs, threads, input_type, db_dir, exepath):
         filelist.append(infile_matrix[i+1][0])
         cmd = "python3 {}/src/moss.py -seqType {} -db_dir {} -thread {} -exepath {} -metadata \"{}\" -metadata_headers \"{}\"".format(exepath, input_type, db_dir, threads, exepath, ",".join(infile_matrix[i+1]), ",".join(infile_matrix[0]))
         jobslist.append(cmd)
+        metadata_dict = moss.prod_metadata_dict(",".join(infile_matrix[i + 1]), ",".join(infile_matrix[0]))
+        input = metadata_dict['input'].split()[0]
+        entryid = moss.md5(input)
+        moss_sql.init_status_table(entryid, "Queued", "Not Determined", "0", "10", "Queued", db_dir)
 
     Parallel(n_jobs=jobs)(delayed(mossAnalysis)(jobslist, i, infile_matrix, db_dir) for i in range(len(jobslist)))
     print ("Analysis complete")
