@@ -127,7 +127,6 @@ def update_status_table(entryid, status, type, current_stage, final_stage, resul
     time_statement = "time_stamp = '{}'".format(str(datetime.datetime.now())[0:-7])
 
     dbstring = "UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(status_statement, type_statement, current_stage_statement, final_stage_statement, result_statement, time_statement, entryid_statement)
-    print (dbstring)
     c.execute(dbstring)
 
     conn.commit()

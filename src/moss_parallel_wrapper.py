@@ -36,16 +36,23 @@ parser.add_argument("-jobs", type=int, action="store", dest="jobs", default = 1,
 parser.add_argument("-threads", type=int, action="store", dest="threads", default = 1, help="threads")
 parser.add_argument("-input_type", type=str, action="store", dest="input_type", default = "", help="input_type")
 parser.add_argument('-db_dir', action="store", type=str, dest='db_dir', default="", help='db_dir')
-parser.add_argument("-mac", action="store_true", default = False, dest="mac", help="when using a mac - DB not loaded to shm")
 parser.add_argument('-exepath', action="store", type=str, dest='exepath', default="", help='exepath')
 args = parser.parse_args()
 
-def mossAnalysis(jobslist, i):
+def mossAnalysis(jobslist, i, infile_matrix, db_dir):
     #moss_sql.init_status_table(entryid, "Initializing", "Not Determined", "1", "10", "Running", db_dir)
-    print (jobslist[i])
+    print ("Mstart")
+    print (",".join(infile_matrix[i + 1]))
+    print(",".join(infile_matrix[0]))
+    metadata_dict = moss.prod_metadata_dict(metadata, metadata_headers)
+    input = metadata_dict['input'].split()
+    print (input)
+    print (infile_matrix)
+    print ("MEND")
+
     os.system(jobslist[i]) #Jobs not queued yet- fix
 
-def main(input, jobs, threads, input_type, db_dir, exepath, mac):
+def main(input, jobs, threads, input_type, db_dir, exepath):
 
     infile = open(input, 'r')
     infile_matrix = []
@@ -70,15 +77,11 @@ def main(input, jobs, threads, input_type, db_dir, exepath, mac):
     for i in range(len(infile_matrix)-1):
         filelist.append(infile_matrix[i+1][0])
         cmd = "python3 {}/src/moss.py -seqType {} -db_dir {} -thread {} -exepath {} -metadata \"{}\" -metadata_headers \"{}\"".format(exepath, input_type, db_dir, threads, exepath, ",".join(infile_matrix[i+1]), ",".join(infile_matrix[0]))
-        if mac:
-            cmd += " -mac"
         jobslist.append(cmd)
 
-    for item in jobslist:
-        print (item)
-    Parallel(n_jobs=jobs)(delayed(mossAnalysis)(jobslist, i) for i in range(len(jobslist)))
+    Parallel(n_jobs=jobs)(delayed(mossAnalysis)(jobslist, i, infile_matrix, db_dir) for i in range(len(jobslist)))
     print ("Analysis complete")
 
 if __name__== "__main__":
-  main(args.input, args.jobs, args.threads, args.input_type, args.db_dir, args.exepath, args.mac)
+  main(args.input, args.jobs, args.threads, args.input_type, args.db_dir, args.exepath)
 
