@@ -1438,7 +1438,7 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, header_text, 
     pdf.ln(5)
     pdf.set_text_color(51, 153, 255)
     pdf.set_font('Arial', '', 12)
-    pdf.cell(85, 5, "CGE results: ", 0, 0, 'L')
+    pdf.cell(85, 5, "CGE results: ", 0, 1, 'L')
 
     sequence_type = mlst_sequence_type(target_dir)
 
@@ -1461,30 +1461,20 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, header_text, 
     #Rsub-script is not called when page is left
     #Make a python table and print here
 
+    ''' Second Page '''
+    pdf.add_page()
+    pdf.image(exepath + "/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 6.5, h=pdf.h / 6.5)
+    create_title(pdf, ID, "AMR Results")
+    pdf.ln(20)
+
     df = pd.read_csv(target_dir + "amr.csv")
     print(df)
 
     df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
     dfi.export(df_styled, target_dir + "mytable.png")
-    pdf.image("{}mytable.png".format(target_dir), x=10, y=130, w=pdf.w / 2, h=pdf.h / 2)
+    pdf.image("{}mytable.png".format(target_dir), x=10, y=40, w=pdf.w / 1.5, h=pdf.h / 1.5)
 
-    """
-    if panel_found:
-        cmd = "Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir)
-        os.system(cmd)
-        time.sleep(35)
-        #here the r script does not produce an image #Sub process stops
-        pdf.image("{}amr_table.png".format(target_dir), x=90, y=60, w=pdf.w / 1.95, h=pdf.h / 1.75)
 
-    else:
-        pdf.cell(85, 5, "Organism was not in annotated panel. The following AMR genes were found:", 0, 1, 'L')
-        cmd = "Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir)
-        os.system(cmd)
-        #subprocess.run(cmd)
-        time.sleep(5)
-
-        pdf.image("{}amr_table.png".format(target_dir), x=90, y=60, w=pdf.w / 1.95, h=pdf.h / 1.75)
-    """
     pdf.ln(10)
 
     pdf.set_font('Arial', '', 12)
