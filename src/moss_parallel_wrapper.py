@@ -74,7 +74,7 @@ def main(input, jobs, threads, input_type, db_dir, exepath):
         entryid = moss.md5(input)
         moss_sql.init_status_table(entryid, "Queued", "Not Determined", "0", "10", "Queued", db_dir)
 
-    Parallel(n_jobs=jobs)(delayed(mossAnalysis)(jobslist, i, infile_matrix, db_dir) for i in range(len(jobslist)))
+    Parallel(n_jobs=jobs)(delayed(mossAnalysis)(jobslist, i) for i in range(len(jobslist)))
     print ("Analysis complete")
 
 if __name__== "__main__":
