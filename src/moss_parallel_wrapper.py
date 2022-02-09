@@ -22,6 +22,7 @@ import re
 import json
 import sqlite3
 import moss_functions as moss
+import moss_sql as moss_sql
 import json
 from joblib import Parallel, delayed
 #Use Argparse to correctly open the inputfiles
