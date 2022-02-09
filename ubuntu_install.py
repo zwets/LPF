@@ -71,7 +71,7 @@ unpack with tar for local installation
     cmd = "sudo apt install python3-pip"
     os.system(cmd)
     findersinstall()
-    cmd = "python3 -m pip install fpdf"
+    cmd = "python3 -m pip install fpdf; pip install dataframe_image"
     os.system(cmd)
     cmd = "pip install geocoder; pip install pandas"
     os.system(cmd)

@@ -37,6 +37,7 @@ import moss_sql as moss_sql
 from Bio import Phylo
 import matplotlib.pyplot as plt
 import pylab
+import dataframe_image as dfi
 
 
 #Utility functions
@@ -1233,6 +1234,7 @@ def generate_amr_resistance_profile_table(db_dir, entryid, pdf, target_dir, exep
 
     outfile = open(target_dir + "amr.csv", 'w')
     print ("Opened amr.csv")
+
     header = "Antimicrobial,Class,Resistance,Match,Genes"
     reflist = refdata[0][0].split(";")
 
@@ -1457,6 +1459,16 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, header_text, 
     pdf.set_xy(x=105, y=65)
 
     #Rsub-script is not called when page is left
+    #Make a python table and print here
+
+    df = pd.read_csv(target_dir + "amr.csv")
+    print(df)
+
+    df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
+    dfi.export(df_styled, target_dir + "mytable.png")
+    pdf.image("{}mytable.png".format(target_dir), x=90, y=60, w=pdf.w / 1.95, h=pdf.h / 1.75)
+
+    """
     if panel_found:
         cmd = "Rscript {}src/moss_csv_to_frontside_table.R {}".format(exepath, target_dir)
         os.system(cmd)
@@ -1472,7 +1484,7 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, header_text, 
         time.sleep(5)
 
         pdf.image("{}amr_table.png".format(target_dir), x=90, y=60, w=pdf.w / 1.95, h=pdf.h / 1.75)
-
+    """
     pdf.ln(10)
 
     pdf.set_font('Arial', '', 12)
