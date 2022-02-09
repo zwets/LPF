@@ -41,7 +41,6 @@ parser.add_argument('-exepath', action="store", type=str, dest='exepath', defaul
 args = parser.parse_args()
 
 def mossAnalysis(jobslist, i, infile_matrix, db_dir):
-    moss_sql.init_status_table(entryid, "Initializing", "Not Determined", "1", "10", "Running", db_dir)
     metadata_dict = moss.prod_metadata_dict(",".join(infile_matrix[i + 1]), ",".join(infile_matrix[0]))
     input = metadata_dict['input'].split()[0]
     entryid = moss.md5(input)
