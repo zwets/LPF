@@ -1465,14 +1465,14 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, header_text, 
     pdf.add_page()
     pdf.image(exepath + "/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 6.5, h=pdf.h / 6.5)
     create_title(pdf, ID, "AMR Results")
-    pdf.ln(20)
+    pdf.ln(40)
 
     df = pd.read_csv(target_dir + "amr.csv")
     print(df)
 
     df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
     dfi.export(df_styled, target_dir + "mytable.png")
-    pdf.image("{}mytable.png".format(target_dir), x=10, y=40, w=pdf.w / 1.5, h=pdf.h / 1.5)
+    pdf.image("{}mytable.png".format(target_dir), x=10, y=40, w=pdf.w / 1.5, h=pdf.h / 1.75)
 
 
     pdf.ln(10)
