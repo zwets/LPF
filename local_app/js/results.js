@@ -86,32 +86,6 @@ function openPDF(id, data){
 }
 
 
-function showanalyses() {
-    let sql = `SELECT * FROM statustable`;
-    let db_dir = document.getElementById('current-config').innerHTML
-    const db = require('better-sqlite3')(db_dir + 'moss.db');
-    const data_obj = db.prepare(sql).all();
-    console.log(data_obj);
-    //make table
-    var size = 50;
-    if (data_obj.length > size) {
-        const sliceddata_obj = data_obj.slice(0, size);
-        storage.get('currentConfig', function(error, data) {
-          if (error) throw error;
-
-          most_recent_isolates_table(sliceddata_obj, data);
-        });
-    } else {
-        const sliceddata_obj = data_obj;
-        storage.get('currentConfig', function(error, data) {
-          if (error) throw error;
-
-          most_recent_isolates_table(sliceddata_obj, data);
-        });
-    };
-}
-
-
 function tableFromObj(sql_data_obj, data) {
         var divShowData = document.getElementById('showData');
         divShowData.innerHTML = "";

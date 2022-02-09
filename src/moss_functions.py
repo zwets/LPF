@@ -131,7 +131,7 @@ def run_assembly(entryid, db_dir, samplename, assemblyType, inputType, target_di
                                    exepath + "kma/kma", kma_database_path, entryid, db_dir + "moss.db", db_dir,
                                    associated_species)
     time = datetime.datetime.now()-start_time
-    mbh_helper.print_to_logfile("Run time: {}".format(time, logfile, True))
+    mbh_helper.print_to_logfile("Run time: {}".format(time), logfile, True)
     moss_sql.update_status_table(entryid, "Compiling Assembly PDF", "Assembly", "5", "5", "Running", db_dir)
 
     compileReportAssembly(target_dir, entryid, db_dir, associated_species, exepath)
