@@ -1438,7 +1438,7 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, header_text, 
     pdf.ln(5)
     pdf.set_text_color(51, 153, 255)
     pdf.set_font('Arial', '', 12)
-    pdf.cell(85, 5, "CGE results: ", 0, 1, 'L')
+    pdf.cell(85, 5, "CGE results: ", 0, 0, 'L')
 
     sequence_type = mlst_sequence_type(target_dir)
 
@@ -1466,7 +1466,7 @@ def compileReportAlignment(target_dir, ID, db_dir, image_location, header_text, 
 
     df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
     dfi.export(df_styled, target_dir + "mytable.png")
-    pdf.image("{}mytable.png".format(target_dir), x=90, y=60, w=pdf.w / 1.95, h=pdf.h / 1.75)
+    pdf.image("{}mytable.png".format(target_dir), x=10, y=130, w=pdf.w / 2, h=pdf.h / 2)
 
     """
     if panel_found:
