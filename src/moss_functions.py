@@ -1311,11 +1311,14 @@ def compileReportAssembly(target_dir, ID, db_dir, associated_species, exepath):
                  "".format(ID, associated_species) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     run_quast(target_dir, ID)
-
-    cmd = "Rscript {}src/quast_tsv_table.R {}".format(exepath, target_dir)
-    os.system(cmd)
     run_bandage(target_dir, ID)
-    pdf.image("{}quast_table.png".format(target_dir), x=118, y=60, w=pdf.w / 2.7, h=pdf.h / 2.1)
+
+    df = pd.read_csv(target_dir + "report.tsv", sep='\t')
+    print(df)
+
+    df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
+    dfi.export(df_styled, target_dir + "quast_table.png")
+    pdf.image("{}quast_table.png".format(target_dir), x=10, y=40, w=pdf.w / 1.5, h=pdf.h / 1.75)
     pdf.set_xy(x=10, y=58)
     pdf.set_font('Arial', '', 14)
     pdf.set_text_color(51, 153, 255)
