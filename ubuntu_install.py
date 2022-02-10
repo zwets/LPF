@@ -43,6 +43,15 @@ unpack with tar for local installation
 
 
     """
+    cwd = os.getcwd()
+    os.system("cd ~/bin")
+    outfile = open("~/bin/moss", 'w')
+    print ("cd {}/local_app".format(cwd), file=outfile)
+    print ("npm start", file=outfile)
+    outfile.close()
+    os.system("chmod a+x moss")
+    os.system("cd {}".format(cwd))
+
     print("Sudo is required for apt update")
     cmd = "sudo apt update"
     os.system(cmd)
@@ -84,6 +93,10 @@ unpack with tar for local installation
     os.system(cmd)
     cmd = "Rscript r_packages_install.R"
     os.system(cmd)
+
+    os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb")
+    os.system("sudo apt install ./google-chrome-stable_current_amd64.deb")
+
 
 
 
