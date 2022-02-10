@@ -45,7 +45,7 @@ unpack with tar for local installation
     """
     cwd = os.getcwd()
     os.system("cd ~/bin")
-    outfile = open("~/bin/moss", 'w')
+    outfile = open("moss", 'w')
     print ("cd {}/local_app".format(cwd), file=outfile)
     print ("npm start", file=outfile)
     outfile.close()
