@@ -65,7 +65,7 @@ unpack with tar for local installation
     os.system(cmd)
     cmd = "sudo apt-get install r-base"
     os.system(cmd)
-    cmd = "curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -"
+    cmd = "curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -" #Consider dropping for full apt install
     os.system(cmd)
     cmd = "sudo apt install nodejs"
     os.system(cmd)
@@ -95,9 +95,7 @@ unpack with tar for local installation
     os.system(cmd)
 
     os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb")
-    os.system("sudo apt install ./google-chrome-stable_current_amd64.deb")
-
-
+    os.system("sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
 
 
 def findersinstall():
