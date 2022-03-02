@@ -45,7 +45,10 @@ jobid = random.randint(1,100000000)
 
 def moss_pipeline(seqType, prune_distance, bc,
                          db_dir, multi_threading, exepath, laptop, metadata, metadata_headers):
+    #Init_func to check practicalities, create directories etc. Use linux built-in func
+    #Automatic Check on nanopore or Illumina data. Manage all other one set of identical variable names.
 
+    #Could we replace all KMA local install and only fetch the library?
 
     db_dir = moss.correctPathCheck(db_dir)
     exepath = moss.correctPathCheck(exepath)
@@ -62,7 +65,7 @@ def moss_pipeline(seqType, prune_distance, bc,
 
     inputType, total_filenames, assemblyType = moss.mossCheckInputFiles(input, seqType)
 
-
+    #TBD should entryID be a product of sequence rather than name?
     if inputType == "nanopore" or inputType == "se_illumina":
         samplename = input[0].split("/")[-1]
         entryid = moss.md5(input[0])
@@ -74,13 +77,11 @@ def moss_pipeline(seqType, prune_distance, bc,
         illumina_name2 = input[1].split("/")[-1]
         entryid = moss.md5(input[0])
 
-    moss.uniqueNameCheck(db_dir, inputType, total_filenames)
+    moss.uniqueNameCheck(db_dir, inputType, total_filenames) #Prevent SQL clashes #Included this in the init_func
+    #Remove the sql function belove for one, query based function
+    moss_sql.init_isolate_table(entryid, "Initializing", samplename, "1", "10", "Running", db_dir, '') #More generic sql function perhaps?
 
-    #Perhaps remove init_status_table
-    #moss_sql.init_status_table(entryid, "Initializing", "Not Determined", "1", "10", "Running", db_dir)
-
-    moss_sql.init_isolate_table(entryid, "Initializing", samplename, "1", "10", "Running", db_dir, '')
-
+    #Managed below in the init function
     target_dir = db_dir + "analysis/" + entryid + "/"
     cmd = "mkdir " + target_dir
     os.system(cmd)
@@ -94,12 +95,19 @@ def moss_pipeline(seqType, prune_distance, bc,
     cmd = "mkdir " + target_dir + "datafiles/isolatefiles"
     os.system(cmd)
 
+    #Return start_time in initfunction
     startTime = time.time()
+
+    #TBD do we really need a log-file? Yes, maybe good idea. Open in front-end client perhaps
+
+    #Make mbh_helper pip lib for practice and future work. Dont use print, but use linux concat to not have to open file the entirety.
     mbh_helper.print_to_logfile("# input: {}".format(total_filenames), logfile, True)
 
     moss_sql.update_status_table(entryid, "CGE_finders", "Not Determined", "2", "10", "Running", db_dir)
 
     mbh_helper.print_to_logfile("# Running CGE tool: {}".format("Resfinder"), logfile, True)
+
+    #Rewrite finders with alfred's CGElib
     moss.runResFinder(exepath, total_filenames, target_dir, seqType)
     mbh_helper.print_to_logfile("# Running CGE tool: {}".format("PlasmidFinder"), logfile, True)
     moss.runPlasmidFinder(exepath, total_filenames, target_dir)
@@ -107,15 +115,22 @@ def moss_pipeline(seqType, prune_distance, bc,
     moss.runVirulenceFinder(exepath, total_filenames, target_dir)
     mbh_helper.print_to_logfile("# Running KMA mapping for template identification", logfile, True)
 
+    #Rewrite this horrible kma_mapping function. Should be way simpler.
     best_template_score, template_found, header_text = moss.KMA_mapping(total_filenames, target_dir, kma_database_path, logfile, exepath + "kma/kma", laptop)
+
+    #Rewrite MLST finder perhaps
     mlst_result = moss.run_mlst(exepath, total_filenames, target_dir, header_text, seqType)
 
+    #Genertic SQL query
     moss_sql.update_status_table(entryid, "KMA Mapping", "Not Determined", "3", "10", "Running", db_dir)
 
+    #This should be done during kma mapping!
     best_template = moss.findTemplateNumber(db_dir, header_text)
 
     mbh_helper.print_to_logfile("Best template number: {}".format(best_template), logfile, True)
 
+    #Like what the actual F is this. Instead, during new CGE finders, make sure output in sql compatiable.
+    #Also, we dont need random data now. Should be fetched seperately and used independently.
     plasmid_count, plasmid_list = moss.plasmid_data_for_report(target_dir + "plasmidFinderResults/data.json",
                                                                target_dir)
     plasmid_string = ",".join(plasmid_list)
@@ -123,14 +138,17 @@ def moss_pipeline(seqType, prune_distance, bc,
                                                                      target_dir, logfile)
     virulence_string = ",".join(virulence_list)
 
+    #Scrap warning? TBD program should be leaner with fewer, completed functions SCRAP
     warning, riskcategory, allresgenes, amrinfo = moss.checkAMRrisks(target_dir, entryid, db_dir, header_text, exepath,
                                                                      logfile)
 
+    #Generic Query instead!
     moss_sql.update_isolate_table(entryid, header_text, samplename,
                                                     plasmid_string.replace("'", "''"),
                                                     allresgenes.replace(", ", ",").replace("'", "''"),
                                                     virulence_string.replace("'", "''"), db_dir)
 
+    #New section
     if best_template == None:
         template_found = False
 
@@ -139,6 +157,7 @@ def moss_pipeline(seqType, prune_distance, bc,
     mbh_helper.print_to_logfile("Best template score: " + str(best_template_score), logfile, True)
 
     if template_found == False: #NO TEMPLATE FOUND #Being assembly
+        #SCRAP associated species, wtf it is even used for
         associated_species = "No related reference identified, manual curation required. ID: {} name: {}".format(
             entryid, samplename)
         moss.run_assembly(entryid, db_dir, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
@@ -146,6 +165,7 @@ def moss_pipeline(seqType, prune_distance, bc,
 
     moss_sql.update_status_table(entryid, "IPC check", "Alignment", "4", "10", "Running", db_dir)
 
+    #Semaphores should be managed better tbh. Function within function?
     result, action = moss.acquire_semaphore("ipc_index_refdb", db_dir, 1, 7200)
     if result == 'acquired' and action == False:
         moss.release_semaphore("ipc_index_refdb", db_dir)
@@ -155,20 +175,22 @@ def moss_pipeline(seqType, prune_distance, bc,
     else:
         sys.exit('A semaphore related issue has occured. ipc_index_refdb update')
 
-    print('mpr: true', file=logfile)
-
+    #Dont manage SQL compatibility in mainscript. def variables earlier or in functions and return.
     if " " in header_text:
         templateaccesion = header_text.split(" ")[0]
     else:
         templateaccesion = header_text
 
+    #WTF here, managed  variablenames earlier, in functions or not at all!
     if input[0].split("/")[-1][-2:] == "gz":
         c_name = input[0].split("/")[-1][:-2]
     else:
         c_name = input[0].split("/")[-1][:10]
 
+    #Again, see above
     consensus_name = "{}_{}_consensus".format(c_name, templateaccesion)
 
+    #actually ok, but no difference between seqType variable names.
     if inputType == "pe_illumina":
         moss.illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfile, multi_threading, exepath + "kma/kma", templateaccesion, db_dir, laptop, consensus_name)
     elif inputType == "se_illumina":
@@ -176,23 +198,25 @@ def moss_pipeline(seqType, prune_distance, bc,
     if inputType == "nanopore":
         moss.nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, exepath + "kma/kma", templateaccesion, db_dir, laptop, consensus_name)
 
+    #Generic SQL query
     referenceid = moss_sql.sql_fetch(db_dir, "SELECT entryid FROM referencetable WHERE header_text = '{}'".format(header_text))[0][0]
 
     moss_sql.sql_edit(db_dir, "UPDATE isolatetable SET referenceid = '{}' WHERE entryid = '{}'".format(referenceid, entryid))
 
+    #Managed in function when consensus in created ffs.
     cmd = "cp {}{}.fsa {}/consensus_sequences/{}.fsa".format(target_dir, consensus_name, db_dir, consensus_name)
     os.system(cmd)
 
+    #Generic SQL query
     moss_sql.sql_edit(db_dir, "UPDATE isolatetable SET consensus_name = '{}.fsa' WHERE entryid = '{}'".format(consensus_name, entryid))
-
     related_isolates = moss_sql.sql_fetch(db_dir, "SELECT consensus_name FROM isolatetable WHERE referenceid = '{}'".format(referenceid))[0][0].split(",")
-
     moss_sql.update_reference_table(entryid, None, None, None, header_text, db_dir)
-
     moss_sql.update_status_table(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir)
 
+    #Fine, but can we include add ccphylo related in one function?
     moss.make_phytree_output_folder(db_dir, target_dir, related_isolates, exepath, header_text)
 
+    #Why is cc phylo not in a function?
     cmd = "{} dist -i {}/phytree_output/* -r \"{}\" -mc 0.01 -nm 0 -o {}/phytree_output/distance_matrix".format(exepath + "ccphylo/ccphylo", target_dir, header_text, target_dir)
     print (cmd, file = logfile)
 
@@ -203,20 +227,24 @@ def moss_pipeline(seqType, prune_distance, bc,
 
     # Check if acceptable snp distance
     distance = moss.ThreshholdDistanceCheck("{}/phytree_output/distance_matrix".format(target_dir), header_text.split()[0]+".fsa", consensus_name+".fsa")
+    #Print in function ffs
     print ("Distance : " + str(distance), file = logfile)
     print ("Distance : " + str(distance))
 
-
     if distance > 300: #SNP distance
+        #No associated species
         header_text = header_text.split()
         associated_species = "{} {} assembly from ID: {}, SNP distance from best verified reference: {}".format(header_text[1], header_text[2], entryid, distance)
         moss.run_assembly(entryid, db_dir, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
                           illumina_name2, jobid, exepath, kma_database_path, start_time, logfile, associated_species)
-
+    #generic sql query
     moss_sql.update_status_table(entryid, "Distance Matrix", "Alignment", "6", "10", "Running", db_dir)
 
+    #ccphylo in function
     cmd = "{}ccphylo/ccphylo tree -i {}/phytree_output/distance_matrix -o {}/phytree_output/tree.newick".format(exepath, target_dir, target_dir)
     os.system(cmd)
+
+    #Include all of the below in alignment_related_function
     moss_sql.update_status_table(entryid, "Phylo Tree imaging", "Alignment", "7", "10", "Running", db_dir)
 
     image_location = moss.create_phylo_tree(db_dir, header_text, target_dir)
@@ -245,13 +273,14 @@ def moss_pipeline(seqType, prune_distance, bc,
     moss_sql.update_status_table(entryid, "Outbreak Finder", "Alignment", "9", "10", "Running", db_dir)
 
 
-
-    cmd = "python3 {}src/outbreak_finder.py -db_dir {}".format(exepath, db_dir)
+    #Outbreak_finder wtf? really?
+    cmd = "python3 {}src/outbreak_finder.py -db_dir {}".format(exepath, db_dir) #WTF TBD
     os.system(cmd)
 
     moss_sql.update_status_table(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Running", db_dir)
 
     #Still fails here for multiple non-sync analyses
+    #Both alignment report and assembly is fuckly. Fix it.
     moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, header_text, exepath, related_isolates) #No report compiled for assemblies! Look into it! #TBD
 
     logfile.close()

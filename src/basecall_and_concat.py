@@ -45,7 +45,7 @@ cmd = "{}ont-guppy/bin/./guppy_basecaller -i {}  -s {} --device \"cuda:0\" --com
 if args.chunks != "":
     cmd += " --chunks_per_runner 75"
 if args.bk != "":
-    cmd += " --c barcode_kits \"{}\"".format(args.bk)
+    cmd += " --barcode_kits \"{}\"".format(args.bk)
 
 os.system(cmd)
 cmd = "cat {}/pass/* > {}{}.fastq.gz".format(args.directory, args.directory, args.name)

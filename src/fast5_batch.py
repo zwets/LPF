@@ -3,6 +3,9 @@ import sys
 import os
 import argparse
 
+#Rewrite, complete or scrap? Not good idea to implement in system IMO. When would we ever need it?
+
+
 
 parser = argparse.ArgumentParser(description='.')
 parser.add_argument('-info', type=int, help='Batch')

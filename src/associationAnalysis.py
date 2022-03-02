@@ -203,3 +203,46 @@ moss.generateFigtree("{}/analysis/{}/tree.newick".format(db_dir, args.output), a
 end_time = datetime.datetime.now()
 run_time = end_time - start_time
 print("Run time: {}".format(run_time))
+
+
+
+import os
+import sys
+import gzip
+
+def calc_allele_freq(vcf_line_list):
+    freqs = []
+    dp = int(vcf_line[7].split(";")[0].split("=")[-1])
+    observations = vcf_line[7].split(";")[-1][4:].split(",")
+    for item in observations:
+        freqs.append(int(item)/dp)
+    return freqs
+
+def check_variant(vcf_line_list):
+    ad6_list = ["A", "C", "G", "T", "N", "-"]
+    freqs = calc_allele_freq(vcf_line_list)
+    for i in range(len(freqs)):
+        if freqs[i] > 0.6:
+            msg = "{} has a {} at position {} which is a {} with a frequency of {}.".format(vcf_line_list[0], "major variant", vcf_line_list[1], ad6_list[i], freqs[i])
+            print (msg)
+        if freqs[i] > 0.2 and freqs[i] < 0.6:
+            msg = "{} has a {} at position {} which is a {} with a frequency of {}.".format(vcf_line_list[0],
+                                                                                            "minor variant",
+                                                                                            vcf_line_list[1], ad6_list[i],
+                                                                                            freqs[i])
+            print(msg)
+
+input_file = "../test273.vcf.gz"
+
+variant_list = []
+
+infile = gzip.open(input_file, 'rb')
+for line in infile:
+    line = line.decode()
+    if line[0] != "#":
+        vcf_line = line.rstrip().split("\t") #Load line, strip new line, decode to string, split to list
+        #vcf_line is a list of [#chrom, pos, ID, REF, ALT, Qual, Filter, Info, Format]. We want to extract the info, so position 7 to check the depth
+        depth = int(vcf_line[7].split(";")[0].split("=")[-1])
+        if depth > 300:
+            check_variant(vcf_line)
+infile.close()

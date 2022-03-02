@@ -37,6 +37,14 @@ db_dir = moss.correctPathCheck(args.db_dir)
 exepath = moss.correctPathCheck(args.exepath)
 syncpath = moss.correctPathCheck(args.syncpath)
 
+##Notes
+#Use linux func to built directory
+#Should we use another config placement?
+#Should we move everything to /opt~
+    #This included keep mossdirectories here too? Would make it easy to earmark the working systems folder with config change
+
+
+
 
 if kmaindex_db_path != "":
     try:

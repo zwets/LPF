@@ -1,15 +1,10 @@
 import  os
-#./node_modules/.bin/electron-rebuild
-#cmd = "sudo apt-get install build-essential"
-#os.system(cmd)
-#Kma
 
-#sudo apt-get install r-base
-#GET R
+#IMPORTANT NOT
+#THE MOSS SYSTEM DOES NOT WORK ON A MAC.
+#THIS SCRIPT WILL ONLY INSTALL MINIMUM REQUIREMENTS TO ALLOW FOR FRONT-END GUI DEVELOPMENT ON A MAC.
 
 def main():
-    #Ret til python3 -m
-    #Assumes anaconda is installed
     print("Sudo is required for apt update")
     cmd = "/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
     os.system(cmd)
@@ -30,8 +25,6 @@ def main():
     cmd = "brew install r"
     os.system(cmd)
     findersinstall()
-    #cmd = "python3 -m pip install posix-ipc"
-    #os.system(cmd)
     cmd = "python3 -m pip install fpdf"
     os.system(cmd)
     cmd = "pip install geocoder"
