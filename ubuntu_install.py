@@ -52,6 +52,8 @@ unpack with tar for local installation
     os.system("chmod a+x moss")
     os.system("cd {}".format(cwd))
 
+    cmd = "git clone https://bitbucket.org/genomicepidemiology/cgelib.git; cd cgelib; python -m pip install .; cd .."
+    os.system(cmd)
     print("Sudo is required for apt update")
     cmd = "sudo apt update"
     os.system(cmd)
@@ -80,27 +82,18 @@ unpack with tar for local installation
     cmd = "sudo apt install python3-pip"
     os.system(cmd)
     findersinstall()
-    cmd = "python3 -m pip install fpdf; pip install dataframe_image"
-    os.system(cmd)
-    cmd = "pip install geocoder; pip install pandas"
-    os.system(cmd)
-    cmd = "pip install geopy"
-    os.system(cmd)
-    cmd = "pip install Nominatim"
-    os.system(cmd)
     print("Installing docker")
     cmd = "sudo apt install docker.io; sudo systemctl enable --now docker; sudo usermod -a -G docker $USER;"
     os.system(cmd)
     cmd = "Rscript r_packages_install.R"
     os.system(cmd)
+    os.system("pip install -r requirements.txt")
 
     os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb")
     os.system("sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
 
 
 def findersinstall():
-    cmd = "python3 -m pip install tabulate biopython cgecore gitpython python-dateutil"
-    os.system(cmd)
     cmd = "git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;"
     os.system(cmd)
     cmd = "git clone https://git@bitbucket.org/genomicepidemiology/resfinder.git; cd resfinder; git checkout nanopore_flag; git clone https://git@bitbucket.org/genomicepidemiology/resfinder_db.git db_resfinder; cd db_resfinder; git checkout minimizer_implementation; python3 INSTALL.py ../../kma/kma_index non_interactive; cd ..; git clone https://git@bitbucket.org/genomicepidemiology/pointfinder_db.git db_pointfinder; cd db_pointfinder; python3 INSTALL.py ../../kma/kma_index non_interactive; cd ..; cd ..;"

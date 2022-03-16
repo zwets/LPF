@@ -42,6 +42,86 @@ import dataframe_image as dfi
 
 #Utility functions
 
+def update_reference_table(entryid, amrgenes, virulencegenes, plasmids, header_text, db_dir):
+    #TMP function. replace later.
+    conn = sqlite3.connect(db_dir + "moss.db")
+    c = conn.cursor()
+    amrgenes_statement = "amrgenes = '{}'".format(amrgenes)
+    virulencegenes_statement = "virulencegenes = '{}'".format(virulencegenes)
+    plasmids_statement = "plasmids = '{}'".format(plasmids)
+    if amrgenes != None:
+        dbstring = "UPDATE referencetable SET {} WHERE header_text = '{}'".format(amrgenes_statement, header_text)
+        c.execute(dbstring)
+    if virulencegenes != None:
+        dbstring = "UPDATE referencetable SET {} WHERE header_text = '{}'".format(virulencegenes_statement, header_text)
+        c.execute(dbstring)
+    if plasmids != None:
+        dbstring = "UPDATE referencetable SET {} WHERE header_text = '{}'".format(plasmids_statement, header_text)
+        c.execute(dbstring)
+
+    conn.commit()
+    conn.close()
+
+def sql_fetch(string, db_dir):
+    conn = sqlite3.connect(db_dir + "moss.db")
+    c = conn.cursor()
+    c.execute(string)
+    data = c.fetchall()
+    conn.close()
+    return data
+
+def sql_execute_command(command, db_dir):
+    conn = sqlite3.connect(db_dir + "moss.db")
+    c = conn.cursor()
+    c.execute(command)
+    conn.commit()
+    conn.close()
+
+def moss_mkfs(db_dir, entryid):
+    target_dir = db_dir + "analysis/" + entryid + "/"
+    cmd = "mkdir " + target_dir
+    os.system(cmd)
+    kma_database_path = db_dir + "REFDB.ATG"
+
+    logfilename = target_dir + "logfile_" + entryid
+    logfile = open(logfilename, 'w')
+
+    cmd = "mkdir " + target_dir + "datafiles"
+    os.system(cmd)
+    cmd = "mkdir " + target_dir + "datafiles/isolatefiles"
+    os.system(cmd)
+
+    return kma_database_path, logfile
+
+def moss_init(seqType, prune_distance, bc, db_dir, multi_threading, exepath, laptop, metadata, metadata_headers):
+    db_dir = moss.correctPathCheck(db_dir)
+    exepath = moss.correctPathCheck(exepath)
+
+    metadata_dict = moss.prod_metadata_dict(metadata, metadata_headers)
+    input = metadata_dict['input'].split()
+
+    if metadata_dict['latitude'] == '' or metadata_dict['longitude'] == '':
+        latitude, longitude = moss.calc_coordinates_from_location(metadata_dict['city'], metadata_dict['country'])
+        metadata_dict['latitude'] = latitude
+        metadata_dict['longitude'] = longitude
+
+    inputType, total_filenames, assemblyType = moss.mossCheckInputFiles(input, seqType)
+
+    # TBD should entryID be a product of sequence rather than name?
+    if inputType == "nanopore" or inputType == "se_illumina":
+        samplename = input[0].split("/")[-1]
+        entryid = moss.md5(input[0])
+    elif inputType == "pe_illumina":
+        samplename = input[0].split("/")[-1]
+        illumina_name1 = input[0].split("/")[-1]
+        illumina_name2 = input[1].split("/")[-1]
+        entryid = moss.md5(input[0])
+
+    moss.uniqueNameCheck(db_dir, inputType, total_filenames)
+
+    return db_dir, exepath, metadata_dict, input, inputType, total_filenames, assemblyType, samplename, entryid, illumina_name1, illumina_name2
+
+
 def get_kma_template_number(header_text, db_dir):
     infile = open(db_dir + "REFDB.ATG.name", 'r')
     t = 1

@@ -3,6 +3,7 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/ccphylo" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cgelib" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/kma" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/local_app/ccphylo" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/local_app/kma" vcs="Git" />

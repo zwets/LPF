@@ -45,65 +45,32 @@ jobid = random.randint(1,100000000)
 
 def moss_pipeline(seqType, prune_distance, bc,
                          db_dir, multi_threading, exepath, laptop, metadata, metadata_headers):
-    #Init_func to check practicalities, create directories etc. Use linux built-in func
-    #Automatic Check on nanopore or Illumina data. Manage all other one set of identical variable names.
-
-    #Could we replace all KMA local install and only fetch the library?
-
-    db_dir = moss.correctPathCheck(db_dir)
-    exepath = moss.correctPathCheck(exepath)
-    
-    metadata_dict = moss.prod_metadata_dict(metadata, metadata_headers)
-    input = metadata_dict['input'].split()
-
     start_time = datetime.datetime.now()
 
-    if metadata_dict['latitude'] == '' or metadata_dict['longitude'] == '':
-        latitude, longitude = moss.calc_coordinates_from_location(metadata_dict['city'], metadata_dict['country'])
-        metadata_dict['latitude'] = latitude
-        metadata_dict['longitude'] = longitude
+    db_dir, exepath, metadata_dict, input, inputType, total_filenames, assemblyType, samplename, entryid, illumina_name1, illumina_name2 = moss.moss_init(seqType, prune_distance, bc,
+                         db_dir, multi_threading, exepath, laptop, metadata, metadata_headers)
 
-    inputType, total_filenames, assemblyType = moss.mossCheckInputFiles(input, seqType)
+    #Init_func to check practicalities, create directories etc. Use linux built-in func
 
-    #TBD should entryID be a product of sequence rather than name?
-    if inputType == "nanopore" or inputType == "se_illumina":
-        samplename = input[0].split("/")[-1]
-        entryid = moss.md5(input[0])
-        illumina_name1 = ""
-        illumina_name2 = ""
-    elif inputType == "pe_illumina":
-        samplename = input[0].split("/")[-1]
-        illumina_name1 = input[0].split("/")[-1]
-        illumina_name2 = input[1].split("/")[-1]
-        entryid = moss.md5(input[0])
+    #MAKE function for mkfs TBD
 
-    moss.uniqueNameCheck(db_dir, inputType, total_filenames) #Prevent SQL clashes #Included this in the init_func
     #Remove the sql function belove for one, query based function
-    moss_sql.init_isolate_table(entryid, "Initializing", samplename, "1", "10", "Running", db_dir, '') #More generic sql function perhaps?
+
+    moss.sql_execute_command("INSERT INTO isolatetable(entryid, header_text, samplename, analysistimestamp, plasmids, amrgenes, virulencegenes, referenceid) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
+        entryid, "Initializing", samplename, str(datetime.datetime.now())[0:-7], plasmid_string.replace("'", "''"),
+        allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''"), referenceid), db_dir)
+
+    moss.sql_execute_command("INSERT INTO statustable(entryid, status, type, current_stage, final_stage, result) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
+        entryid, "Initializing", samplename, "1", "10", "Running", db_dir, ''), db_dir)
 
     #Managed below in the init function
-    target_dir = db_dir + "analysis/" + entryid + "/"
-    cmd = "mkdir " + target_dir
-    os.system(cmd)
-    kma_database_path = db_dir + "REFDB.ATG"
+    kma_database_path, logfile = moss.moss_mkfs(db_dir, entryid) #TBD
 
-    logfilename = target_dir + "logfile_" + entryid
-    logfile = open(logfilename, 'w')
-
-    cmd = "mkdir " + target_dir + "datafiles"
-    os.system(cmd)
-    cmd = "mkdir " + target_dir + "datafiles/isolatefiles"
-    os.system(cmd)
-
-    #Return start_time in initfunction
-    startTime = time.time()
-
-    #TBD do we really need a log-file? Yes, maybe good idea. Open in front-end client perhaps
 
     #Make mbh_helper pip lib for practice and future work. Dont use print, but use linux concat to not have to open file the entirety.
     mbh_helper.print_to_logfile("# input: {}".format(total_filenames), logfile, True)
 
-    moss_sql.update_status_table(entryid, "CGE_finders", "Not Determined", "2", "10", "Running", db_dir)
+    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "CGE_finders", "Not Determined", "2", "10", "Running", db_dir), db_dir)
 
     mbh_helper.print_to_logfile("# Running CGE tool: {}".format("Resfinder"), logfile, True)
 
@@ -122,7 +89,7 @@ def moss_pipeline(seqType, prune_distance, bc,
     mlst_result = moss.run_mlst(exepath, total_filenames, target_dir, header_text, seqType)
 
     #Genertic SQL query
-    moss_sql.update_status_table(entryid, "KMA Mapping", "Not Determined", "3", "10", "Running", db_dir)
+    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "KMA Mapping", "Not Determined", "3", "10", "Running", db_dir), db_dir)
 
     #This should be done during kma mapping!
     best_template = moss.findTemplateNumber(db_dir, header_text)
@@ -142,11 +109,10 @@ def moss_pipeline(seqType, prune_distance, bc,
     warning, riskcategory, allresgenes, amrinfo = moss.checkAMRrisks(target_dir, entryid, db_dir, header_text, exepath,
                                                                      logfile)
 
-    #Generic Query instead!
-    moss_sql.update_isolate_table(entryid, header_text, samplename,
+    moss.sql_execute_command("UPDATE isolatetable SET {}, {}, {}, {}, {} WHERE {}".format(entryid, header_text, samplename,
                                                     plasmid_string.replace("'", "''"),
                                                     allresgenes.replace(", ", ",").replace("'", "''"),
-                                                    virulence_string.replace("'", "''"), db_dir)
+                                                    virulence_string.replace("'", "''"), db_dir))
 
     #New section
     if best_template == None:
@@ -163,7 +129,7 @@ def moss_pipeline(seqType, prune_distance, bc,
         moss.run_assembly(entryid, db_dir, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
                           illumina_name2, jobid, exepath, kma_database_path, start_time, logfile, associated_species)
 
-    moss_sql.update_status_table(entryid, "IPC check", "Alignment", "4", "10", "Running", db_dir)
+    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "IPC check", "Alignment", "4", "10", "Running", db_dir), db_dir)
 
     #Semaphores should be managed better tbh. Function within function?
     result, action = moss.acquire_semaphore("ipc_index_refdb", db_dir, 1, 7200)
@@ -198,20 +164,20 @@ def moss_pipeline(seqType, prune_distance, bc,
     if inputType == "nanopore":
         moss.nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, exepath + "kma/kma", templateaccesion, db_dir, laptop, consensus_name)
 
-    #Generic SQL query
-    referenceid = moss_sql.sql_fetch(db_dir, "SELECT entryid FROM referencetable WHERE header_text = '{}'".format(header_text))[0][0]
+    referenceid = moss.sql_fetch("SELECT entryid FROM referencetable WHERE header_text = '{}'".format(header_text), db_dir)[0][0]
 
-    moss_sql.sql_edit(db_dir, "UPDATE isolatetable SET referenceid = '{}' WHERE entryid = '{}'".format(referenceid, entryid))
+    moss.sql_execute_command("UPDATE isolatetable SET referenceid = '{}' WHERE entryid = '{}'".format(referenceid, entryid), db_dir)
 
     #Managed in function when consensus in created ffs.
     cmd = "cp {}{}.fsa {}/consensus_sequences/{}.fsa".format(target_dir, consensus_name, db_dir, consensus_name)
     os.system(cmd)
 
     #Generic SQL query
-    moss_sql.sql_edit(db_dir, "UPDATE isolatetable SET consensus_name = '{}.fsa' WHERE entryid = '{}'".format(consensus_name, entryid))
-    related_isolates = moss_sql.sql_fetch(db_dir, "SELECT consensus_name FROM isolatetable WHERE referenceid = '{}'".format(referenceid))[0][0].split(",")
-    moss_sql.update_reference_table(entryid, None, None, None, header_text, db_dir)
-    moss_sql.update_status_table(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir)
+    moss.sql_execute_command("UPDATE isolatetable SET consensus_name = '{}.fsa' WHERE entryid = '{}'".format(consensus_name, entryid), db_dir)
+    related_isolates = moss.sql_fetch("SELECT consensus_name FROM isolatetable WHERE referenceid = '{}'".format(referenceid), db_dir)[0][0].split(",")
+
+    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "CCphylo", "Alignment", "5", "10", "Running", db_dir), db_dir)
+
 
     #Fine, but can we include add ccphylo related in one function?
     moss.make_phytree_output_folder(db_dir, target_dir, related_isolates, exepath, header_text)
@@ -238,54 +204,55 @@ def moss_pipeline(seqType, prune_distance, bc,
         moss.run_assembly(entryid, db_dir, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
                           illumina_name2, jobid, exepath, kma_database_path, start_time, logfile, associated_species)
     #generic sql query
-    moss_sql.update_status_table(entryid, "Distance Matrix", "Alignment", "6", "10", "Running", db_dir)
+    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Distance Matrix", "Alignment", "6", "10", "Running", db_dir), db_dir)
 
     #ccphylo in function
     cmd = "{}ccphylo/ccphylo tree -i {}/phytree_output/distance_matrix -o {}/phytree_output/tree.newick".format(exepath, target_dir, target_dir)
     os.system(cmd)
 
     #Include all of the below in alignment_related_function
-    moss_sql.update_status_table(entryid, "Phylo Tree imaging", "Alignment", "7", "10", "Running", db_dir)
+    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Phylo Tree imaging", "Alignment", "7", "10", "Running", db_dir), db_dir)
+
 
     image_location = moss.create_phylo_tree(db_dir, header_text, target_dir)
 
-    moss_sql.update_status_table(entryid, "Database updating", "Alignment", "8", "10", "Running", db_dir)
+    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Database updating", "Alignment", "8", "10", "Running", db_dir), db_dir)
 
-    moss_sql.update_reference_table(entryid, None, None, None, header_text, db_dir)
+    #moss_sql.update_reference_table(entryid, None, None, None, header_text, db_dir)
 
-    moss_sql.insert_amr_table(entryid, samplename, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), header_text, riskcategory.replace("'", "''"), warning.replace("'", "''"), db_dir)
+    moss.sql_execute_command("INSERT INTO amrtable(entryid, samplename, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, samplename, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), header_text, riskcategory.replace("'", "''"), warning.replace("'", "''")), db_dir)
 
-    moss_sql.update_isolate_table(entryid, header_text, samplename, plasmid_string.replace("'", "''"), allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''"), db_dir)
+    moss.sql_execute_command("UPDATE isolatetable SET {}, {}, {}, {}, {} WHERE {}".format(entryid, header_text, samplename, plasmid_string.replace("'", "''"), allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''")), db_dir)
 
     entries, values = moss.sql_string_metadata(metadata_dict)
 
-    moss_sql.insert_metadata_table(entryid, entries, values, db_dir)
+    moss.sql_execute_command("INSERT INTO metadatatable(entryid, {}) VALUES('{}', {})".format(entries, entryid.replace("'", "''"), values), db_dir)
 
     new_plasmid_string, new_virulence_string, new_amr_string = moss.scan_reference_vs_isolate_cge(plasmid_string, allresgenes.replace(", ", ","), virulence_string, header_text, db_dir)
 
-    moss_sql.update_reference_table(entryid, new_amr_string, new_virulence_string, new_plasmid_string, header_text, db_dir)
+    #Get ride of these strings. Make relational tables for genes too.
+
+    moss.update_reference_table(entryid, new_amr_string, new_virulence_string, new_plasmid_string, header_text, db_dir)
 
     end_time = datetime.datetime.now()
     run_time = end_time - start_time
     print("Run time: {}".format(run_time))
     print("Run time: {}".format(run_time), file=logfile)
 
-    moss_sql.update_status_table(entryid, "Outbreak Finder", "Alignment", "9", "10", "Running", db_dir)
-
+    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Outbreak Finder", "Alignment", "9", "10", "Running", db_dir), db_dir)
 
     #Outbreak_finder wtf? really?
     cmd = "python3 {}src/outbreak_finder.py -db_dir {}".format(exepath, db_dir) #WTF TBD
     os.system(cmd)
 
-    moss_sql.update_status_table(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Running", db_dir)
+    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Running", db_dir), db_dir)
 
     #Still fails here for multiple non-sync analyses
     #Both alignment report and assembly is fuckly. Fix it.
     moss.compileReportAlignment(target_dir, entryid, db_dir, image_location, header_text, exepath, related_isolates) #No report compiled for assemblies! Look into it! #TBD
 
     logfile.close()
-    moss_sql.update_status_table(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Finished", db_dir)
-
+    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Finished", db_dir), db_dir)
 
 
 def main():

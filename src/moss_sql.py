@@ -41,7 +41,7 @@ def sql_edit(db_dir, string):
     conn.commit()
     conn.close()
 
-def sql_fetch(db_dir, string):
+def sql_fetch(string, db_dir):
     conn = sqlite3.connect(db_dir + "moss.db")
     c = conn.cursor()
     c.execute(string)
