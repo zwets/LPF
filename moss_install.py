@@ -5,6 +5,7 @@ import subprocess
 def main():
     check_anaconda()
     docker_check()
+    check_nvidia()
     #Check OS dependencies
         #Nvidia-smi
     #Check and install non pip dependencies
@@ -14,6 +15,15 @@ def main():
     #Install KMA and other stuff? CCphylo?
     #create executable in bin
     return True
+
+def check_nvidia():
+    cmd = "nvidia-smi"
+    proc = subprocess.Popen(cmd, shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0].decode().rstrip()
+    print (output)
+
+
 
 def docker_check():
     cmd = "docker --version"
@@ -29,6 +39,8 @@ def docker_check():
     proc = subprocess.Popen(cmd, shell=True,
                             stdout=subprocess.PIPE, )
     output = proc.communicate()[0].decode().rstrip()
+    if output == "":
+        sys.exit("Docker is not installed.")
     docker_check = "REPOSITORY"
     if output.split("\n")[0].startswith(docker_check):
         docker_check = True
