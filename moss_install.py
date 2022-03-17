@@ -20,6 +20,7 @@ def docker_check():
     proc = subprocess.Popen(cmd, shell=True,
                             stdout=subprocess.PIPE, )
     output = proc.communicate()[0].decode().rstrip()
+    print (output)
     if output == "anaconda: command not found":
         sys.exit("Anaconda is not installed.")
     name_check = "Docker version"
