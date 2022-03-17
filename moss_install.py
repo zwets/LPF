@@ -6,8 +6,9 @@ def main():
     check_anaconda()
     docker_check()
     check_nvidia()
-    #Check OS dependencies
-        #Nvidia-smi
+    if not os.path.exists("/opt/ont/minknow/"):
+        sys.exit("MinKNOW is not installed in /opt/ont/minknow/")
+
     #Check and install non pip dependencies
     #Check and install pip dependencies
     #Move everything to generic location such as /usr/etc/etc ?
