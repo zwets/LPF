@@ -25,7 +25,7 @@ def check_nvidia():
     var_2 = "Driver Version:"
     var_3 = "CUDA Version:"
     var_4 = "Processes:"
-    if {var_1, var_2, var_3, var_4} in output:
+    if (var_1, var_2, var_3, var_4) in output:
         return True
     else:
         print (output)
