@@ -21,11 +21,8 @@ def check_nvidia():
     proc = subprocess.Popen(cmd, shell=True,
                             stdout=subprocess.PIPE, )
     output = proc.communicate()[0].decode().rstrip()
-    var_1 = "NVIDIA-SMI"
-    var_2 = "Driver Version:"
-    var_3 = "CUDA Version:"
-    var_4 = "Processes:"
-    if (var_1, var_2, var_3, var_4) in output:
+    var_list = ["NVIDIA-SMI", "Driver Version:", "CUDA Version:", "Processes:"]
+    if all(x in output for x in var_list):
         return True
     else:
         print (output)
