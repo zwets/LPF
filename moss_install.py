@@ -7,8 +7,8 @@ def main():
     docker_check()
     check_nvidia()
     if not os.path.exists("/opt/ont/minknow/"):
-        sys.exit("MinKNOW is not installed in /opt/ont/minknow/")
-
+        sys.exit("MinKNOW is not installed in /opt/ont/minknow/ . Please locate the installation here.")
+    #Minknow Test not pushed to github yet and tested.
     #Check and install non pip dependencies
     #Check and install pip dependencies
     #Move everything to generic location such as /usr/etc/etc ?
