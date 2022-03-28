@@ -7,14 +7,36 @@ def main():
     docker_check()
     check_nvidia()
     if not os.path.exists("/opt/ont/minknow/"):
-        sys.exit("MinKNOW is not installed in /opt/ont/minknow/ . Please locate the installation here.")
-    #Minknow Test not pushed to github yet and tested.
-    #Check and install non pip dependencies
-    #Check and install pip dependencies
+        sys.exit("MinKNOW is not installed in /opt/ont/minknow/ . Please locate the installation here, as it should be by default.")
+    os.system("pip install -r requirements.txt")
+    install_apt_dependencies()
+    #Check APT dependencies
+    
     #Move everything to generic location such as /usr/etc/etc ?
     #Create generic stored place for each initialized system. Make
     #Install KMA and other stuff? CCphylo?
     #create executable in bin
+    return True
+
+def guppy_installer():
+    os.system("wget https://mirror.oxfordnanoportal.com/software/analysis/ont-guppy_6.0.1_linux64.tar.gz; tar –xvzf ont-guppy_6.0.1_linux64.tar.gz")
+
+    return True
+
+def install_apt_dependencies():
+    apt_list = ["sudo apt update",
+                "sudo apt-get install libz-dev",
+                "sudo apt  install curl",
+                "sudo apt install nodejs",
+                "sudo apt install npm",
+                "npm install mkdirp",
+                "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*"]
+    print("Sudo is required for apt update")
+    for item in apt_list:
+        os.system(item)
+    return True
+
+def check_pip_dependencies():
     return True
 
 def check_nvidia():
