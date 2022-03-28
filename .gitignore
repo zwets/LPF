@@ -17,6 +17,8 @@
 setuptools-33.1.1.zip
 # production
 /local_app/build
+/local_app/dist
+
 ez_setup.py
 setuptool*
 # misc

@@ -3,6 +3,7 @@ import sys
 import subprocess
 
 def main():
+    cwd = os.getcwd()
     check_anaconda()
     docker_check()
     check_nvidia()
@@ -15,7 +16,7 @@ def main():
     os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
 
     # Moving repo to /usr/etc
-    move_moss_repo()
+    move_moss_repo(cwd)
 
     #Make solution for finders
 
@@ -26,13 +27,13 @@ def main():
     #create executable in bin
     return True
 
-def move_moss_repo():
+def move_moss_repo(cwd):
     # Make moss start shortcut in bin
     if os.path.exists("/opt/moss"):
         os.system("sudo rm -rf /opt/moss")
-        os.system("cd ..; sudo mv moss /opt/moss")
+        os.system("sudo mv {}moss /opt/moss".format(cwd))
     else:
-        os.system("cd ..; sudo mv moss /opt/moss")
+        os.system("sudo mv {}moss /opt/moss".format(cwd))
     return True
 
 def move_shortcut_script():

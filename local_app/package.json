@@ -1,28 +1,38 @@
 {
-  "name": "electron-quick-start",
+  "name": "moss",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "Microbial outbreak Surveillance System",
+  "authur": "Malte Hallgren",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "dev": "npm run development",
+    "start": "electron .",
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
-  "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
-  ],
+  "build":  {
+    "linux": {
+      "desktop": {
+        "Terminal": "true",
+        "Name": "moss",
+        "Icon": "/opt/moss/local_app/images/report-icon.png"
+      }
+      },
+    "appId": "com.moss.app"
+  },
+  "repository": "https://github.com/MBHallgren/moss",
+  "keywords": [],
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "10.1.1",
+    "electron": "^10.1.1",
+    "electron-builder": "^22.14.13",
     "electron-rebuild": "^2.3.5"
   },
   "dependencies": {
     "@dogstudio/highway": "^2.2.1",
     "better-sqlite3": "^7.4.3",
+    "electron-forge": "^5.2.4",
     "electron-json-storage": "^4.5.0",
     "electron-store": "^7.0.3",
     "gsap": "^3.7.0",
