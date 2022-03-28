@@ -23,28 +23,22 @@ import sqlite3
 
 parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
 parser.add_argument('-kmaindex_db_path', action="store", type=str, dest='kmaindex_db_path', default="", help='Path a .ATG kma-index database that is desired to be used a references. It is expected that both the .ATG.name file and .ATG.seq.b file is present in this directory, and that NO OTHER files are present. http://www.cbs.dtu.dk/public/CGE/databases/KmerFinder/version/20190108_stable/ link to bacteria.tar.gz, which is a good option for a starting database')
-parser.add_argument('-db_dir', action="store", type=str, dest='db_dir', default="", help='Path to your DB-directory')
-parser.add_argument("-exepath", action="store", dest="exepath", default = "", help="Complete path to the moss repo that you cloned, in which your kma and ccphylo folder at located.")
-parser.add_argument("-syncpath", action="store", dest="syncpath", default = "", help="Complete path to MOSS directory at remote server.")
 parser.add_argument("-configname", action="store", dest="configname", help="Enter a name for your configuration file.")
 
 args = parser.parse_args()
 
 kma_path = args.exepath + "kma/kma"
+configname = args.configname
 
 kmaindex_db_path = moss.correctPathCheck(args.kmaindex_db_path)
-db_dir = moss.correctPathCheck(args.db_dir)
-exepath = moss.correctPathCheck(args.exepath)
-syncpath = moss.correctPathCheck(args.syncpath)
 
-##Notes
-#Use linux func to built directory
-#Should we use another config placement?
-#Should we move everything to /opt~
-    #This included keep mossdirectories here too? Would make it easy to earmark the working systems folder with config change
+if not os.path.exists("/opt/moss_db"):
+    sys.exit("MOSS has not been correctly initialized. no /opt/moss_db exists")
 
+if not os.path.exists("/opt/moss_db/{}".format(configname)):
+    os.system("mkdir /opt/moss_db/{}".format(configname))
 
-
+sys.exit()
 
 if kmaindex_db_path != "":
     try:

@@ -19,11 +19,10 @@ def main():
     move_moss_repo(cwd)
     install_app()
 
-    
+    if not os.path.exists("/opt/moss_db"):
+        os.system("sudo mkdir -m 777 /opt/moss_db")
 
     #Make solution for finders
-
-    #Move everything to generic location such as /usr/etc/etc ?
 
     #Create generic stored place for each initialized system. Make
     #Install KMA and other stuff? CCphylo?
