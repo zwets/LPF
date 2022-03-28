@@ -11,8 +11,18 @@ def main():
     os.system("pip install -r requirements.txt")
     install_apt_dependencies()
     #Check APT dependencies
-    
+    os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; git checkout nano; make; cd ..")
+    os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
+
+    #Make moss start shortcut in bin
+    os.system("chmod a+x moss; mv moss ~/bin/.")
+
+    #Make solution for finders
+
+    #Moving repo to /usr/etc
+    os.system("cd ..; mv moss /opt/ont/moss")
     #Move everything to generic location such as /usr/etc/etc ?
+
     #Create generic stored place for each initialized system. Make
     #Install KMA and other stuff? CCphylo?
     #create executable in bin
