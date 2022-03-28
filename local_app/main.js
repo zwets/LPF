@@ -61,6 +61,7 @@ function createWindow () {
     width: 1600,
     height: 1200,
     title: "My App",
+    icon: "/opt/moss/local_app/images/report-icon.png",
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
