@@ -15,7 +15,7 @@ def main():
     os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
 
     # Moving repo to /usr/etc
-    os.system("cd ..; sudo mv moss /opt/moss")
+    move_moss_repo()
 
     #Make solution for finders
 
@@ -24,6 +24,15 @@ def main():
     #Create generic stored place for each initialized system. Make
     #Install KMA and other stuff? CCphylo?
     #create executable in bin
+    return True
+
+def move_moss_repo():
+    # Make moss start shortcut in bin
+    if os.path.exists("/opt/moss"):
+        os.system("sudo rm -rf /opt/moss")
+        os.system("cd ..; sudo mv moss /opt/moss")
+    else:
+        os.system("cd ..; sudo mv moss /opt/moss")
     return True
 
 def move_shortcut_script():
