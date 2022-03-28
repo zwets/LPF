@@ -17,6 +17,9 @@ def main():
 
     # Moving repo to /usr/etc
     move_moss_repo(cwd)
+    install_app()
+
+    
 
     #Make solution for finders
 
@@ -25,6 +28,10 @@ def main():
     #Create generic stored place for each initialized system. Make
     #Install KMA and other stuff? CCphylo?
     #create executable in bin
+    return True
+
+def install_app():
+    os.system("cd /opt/moss/local_app; npm i; ./node_modules/.bin/electron-rebuild; npm run dist;sudo cp moss.desktop /usr/share/applications/.")
     return True
 
 def move_moss_repo(cwd):
