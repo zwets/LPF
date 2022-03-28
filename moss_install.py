@@ -14,12 +14,13 @@ def main():
     os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; git checkout nano; make; cd ..")
     os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
 
+    # Moving repo to /usr/etc
+    os.system("cd ..; sudo mv moss /opt/moss")
+
     move_shortcut_script()
 
     #Make solution for finders
 
-    #Moving repo to /usr/etc
-    os.system("cd ..; mv moss /opt/moss")
     #Move everything to generic location such as /usr/etc/etc ?
 
     #Create generic stored place for each initialized system. Make
@@ -30,10 +31,10 @@ def main():
 def move_shortcut_script():
     # Make moss start shortcut in bin
     if os.path.exists("~/bin/"):
-        os.system("chmod a+x moss; sudo mv moss ~/bin/.")
+        os.system("chmod a+x /opt/moss/moss; sudo mv /opt/moss/moss ~/bin/moss")
     else:
-        os.system("mkdir ~/bin/")
-        os.system("chmod a+x moss; sudo mv moss ~/bin/.")
+        os.system("sudo mkdir ~/bin/")
+        os.system("chmod a+x /opt/moss/moss; sudo mv /opt/moss/moss ~/bin/moss")
     return True
 
 def guppy_installer():
