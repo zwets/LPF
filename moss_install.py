@@ -17,8 +17,6 @@ def main():
     # Moving repo to /usr/etc
     os.system("cd ..; sudo mv moss /opt/moss")
 
-    move_shortcut_script()
-
     #Make solution for finders
 
     #Move everything to generic location such as /usr/etc/etc ?
