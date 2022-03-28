@@ -31,9 +31,9 @@ def move_moss_repo(cwd):
     # Make moss start shortcut in bin
     if os.path.exists("/opt/moss"):
         os.system("sudo rm -rf /opt/moss")
-        os.system("sudo mv {}/moss /opt/moss".format(cwd))
+        os.system("sudo mv {} /opt/moss".format(cwd))
     else:
-        os.system("sudo mv {}/moss /opt/moss".format(cwd))
+        os.system("sudo mv {} /opt/moss".format(cwd))
     return True
 
 def move_shortcut_script():
