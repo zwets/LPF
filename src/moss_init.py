@@ -59,7 +59,7 @@ directory_structure = {
     "datafiles": {}
 
 }
-create_directory_from_dict(directory_structure, db_dir)
+moss.create_directory_from_dict(directory_structure, db_dir)
 
 sys.exit()
 
