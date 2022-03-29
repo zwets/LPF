@@ -10,6 +10,7 @@ def main():
     if not os.path.exists("/opt/ont/minknow/"):
         sys.exit("MinKNOW is not installed in /opt/ont/minknow/ . Please locate the installation here, as it should be by default.")
     os.system("pip install -r requirements.txt")
+    guppy_installer()
     install_apt_dependencies()
     #Check APT dependencies
     os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; git checkout nano; make; cd ..")
