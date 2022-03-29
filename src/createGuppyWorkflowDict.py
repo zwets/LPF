@@ -10,10 +10,10 @@ parser.add_argument("-exepath", action="store", dest="exepath", default = "", he
 
 args = parser.parse_args()
 #
-cmd = "{}ont-guppy/bin/./guppy_basecaller --print_workflows > {}/analyticalFiles/tmpworkflowdict.txt".format(args.exepath, args.db_dir)
+cmd = "{}ont-guppy/bin/./guppy_basecaller --print_workflows > {}/static_files/tmpworkflowdict.txt".format(args.exepath, args.db_dir)
 os.system(cmd)
 
-infile = open("{}/analyticalFiles/tmpworkflowdict.txt".format(args.db_dir), 'r')
+infile = open("{}/static_files/tmpworkflowdict.txt".format(args.db_dir), 'r')
 jsonlist = []
 for line in infile:
     if line[0:3] == "FLO":
@@ -33,16 +33,16 @@ for line in infile:
 
 
 infile.close()
-outfile = open("{}/analyticalFiles/workflow.json".format(args.db_dir), 'w')
+outfile = open("{}/static_files/workflow.json".format(args.db_dir), 'w')
 
 print (json.dumps(jsonlist, indent=2), file=outfile)
 outfile.close()
 
 
-cmd = "{}ont-guppy/bin/./guppy_barcoder --print_kits > {}/analyticalFiles/printkitstmp.txt".format(args.exepath, args.db_dir)
+cmd = "{}ont-guppy/bin/./guppy_barcoder --print_kits > {}/static_files/printkitstmp.txt".format(args.exepath, args.db_dir)
 os.system(cmd)
 
-infile = open("{}/analyticalFiles/printkitstmp.txt".format(args.db_dir), 'r')
+infile = open("{}/static_files/printkitstmp.txt".format(args.db_dir), 'r')
 jsonlist = []
 for line in infile:
     if len(line) > 3: #Non emptie/home/meta2s
@@ -54,7 +54,7 @@ for line in infile:
 
 
 infile.close()
-outfile = open("{}/analyticalFiles/barcodes.json".format(args.db_dir), 'w')
+outfile = open("{}/static_files/barcodes.json".format(args.db_dir), 'w')
 
 print (json.dumps(jsonlist, indent=2), file=outfile)
 outfile.close()
@@ -62,9 +62,9 @@ outfile.close()
 
 
 
-cmd = "rm {}/analyticalFiles/tmpworkflowdict.txt".format(args.db_dir)
+cmd = "rm {}/static_files/tmpworkflowdict.txt".format(args.db_dir)
 os.system(cmd)
 
-cmd = "rm {}/analyticalFiles/printkitstmp.txt".format(args.db_dir)
+cmd = "rm {}/static_files/printkitstmp.txt".format(args.db_dir)
 os.system(cmd)
 

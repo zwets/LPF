@@ -509,7 +509,7 @@ function outbreakClustersCollapsible() {
     let db_dir = document.getElementById('current-config').innerHTML
     //var configobj = JSON.parse(configfilecontent);
 
-    readTextFile(db_dir + "analyticalFiles/outbreakfinder.json", function(text){
+    readTextFile(db_dir + "static_files/outbreakfinder.json", function(text){
         var data = JSON.parse(text);
         var datalist = [[],[]];
 

@@ -35,11 +35,11 @@ args = parser.parse_args()
 
 db_dir = args.db_dir
 
-with open("{}analyticalFiles/runningAnalyses.json".format(db_dir), 'w') as f_out:
+with open("{}static_files/runningAnalyses.json".format(db_dir), 'w') as f_out:
     json.dump(dict(), f_out)
 f_out.close()
 
-with open("{}analyticalFiles/queuedAnalyses.json".format(db_dir), 'w') as f_out:
+with open("{}static_files/queuedAnalyses.json".format(db_dir), 'w') as f_out:
     json.dump(dict(), f_out)
 f_out.close()
 

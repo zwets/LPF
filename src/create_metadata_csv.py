@@ -40,18 +40,18 @@ if args.input_type == "pe":
 else:
     name_list = input
 
-if os.path.isfile('{}analyticalFiles/metadata_csv/{}'.format(args.db_dir, name)):
+if os.path.isfile('{}static_files/metadata_csv/{}'.format(args.db_dir, name)):
     sys.exit('A metadata file with this name already exists'.upper())
 else:
-    cmd = "cp {}datafiles/ENA_list.csv {}analyticalFiles/metadata_csv/{}".format(args.exepath, args.db_dir, name)
+    cmd = "cp {}datafiles/ENA_list.csv {}static_files/metadata_csv/{}".format(args.exepath, args.db_dir, name)
     os.system(cmd)
 
-with open('{}analyticalFiles/metadata_csv/{}'.format(args.db_dir, name)) as f:
+with open('{}static_files/metadata_csv/{}'.format(args.db_dir, name)) as f:
     header = f.readline()
 empty_line = len(header.split(","))*","
 
 
-outfile = open("{}analyticalFiles/metadata_csv/{}".format(args.db_dir, name), 'w')
+outfile = open("{}static_files/metadata_csv/{}".format(args.db_dir, name), 'w')
 print (header, file = outfile)
 for item in name_list:
     print_line = item + empty_line

@@ -42,6 +42,13 @@ import dataframe_image as dfi
 
 #Utility functions
 
+def create_directory_from_dict(dict, path):
+    for directory in dict:
+        os.system("mkdir {}{}".format(path, directory))
+        for subdirectory in dict[directory]:
+            os.system("mkdir {}{}/{}".format(path, directory, subdirectory))
+    return True
+
 def update_reference_table(entryid, amrgenes, virulencegenes, plasmids, header_text, db_dir):
     #TMP function. replace later.
     conn = sqlite3.connect(db_dir + "moss.db")

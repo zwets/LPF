@@ -37,55 +37,38 @@ if not os.path.exists("/opt/moss_db"):
 
 if not os.path.exists("/opt/moss_db/{}".format(configname)):
     os.system("mkdir /opt/moss_db/{}".format(configname))
+else:
+    sys.exit("A moss database of that name already exists on this computer!")
+
+db_dir = "/opt/moss_db/{}/".format(configname)
+
+print ("cloning reference DB, if you are using a big reference DB, this might take a while")
+os.system("cp {}*.ATG.comp.b {}REFDB.ATG.comp.b".format(kmaindex_db_path, db_dir))
+os.system("cp {}*.ATG.length.b {}REFDB.ATG.length.b".format(kmaindex_db_path, db_dir))
+os.system("cp {}*.ATG.seq.b {}REFDB.ATG.seq.b".format(kmaindex_db_path, db_dir))
+os.system("cp {}*.ATG.name {}REFDB.ATG.name".format(kmaindex_db_path, db_dir))
+print ("cloning reference DB complete")
+
+directory_structure = {
+    "analysis": {},
+    "metadata_csv": {},
+    "consensus_sequences": {},
+    "basecall_output": {},
+    "sync_files": {},
+    "static_files": {},
+    "datafiles": {}
+
+}
+create_directory_from_dict(directory_structure, db_dir)
+
+sys.exit()
+
+conn = sqlite3.connect(db_dir + 'moss.db')
+c = conn.cursor()
 
 sys.exit()
 
 if kmaindex_db_path != "":
-    try:
-        os.makedirs(db_dir)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            print ("db_dir already exists")
-            raise
-
-    print ("cloning reference DB, if you are using a big reference DB, this might take a while")
-    filename = os.listdir(kmaindex_db_path)[0].split(".")[0]
-    cmd = "cp {}*.ATG.comp.b {}REFDB.ATG.comp.b".format(kmaindex_db_path, db_dir)
-    os.system(cmd)
-    cmd = "cp {}*.ATG.length.b {}REFDB.ATG.length.b".format(kmaindex_db_path, db_dir)
-    os.system(cmd)
-    cmd = "cp {}*.ATG.seq.b {}REFDB.ATG.seq.b".format(kmaindex_db_path, db_dir)
-    os.system(cmd)
-    cmd = "cp {}*.ATG.name {}REFDB.ATG.name".format(kmaindex_db_path, db_dir)
-    os.system(cmd)
-    print ("cloning reference DB complete")
-
-    cmd = "mkdir " + db_dir + "analyticalFiles"
-    os.system(cmd)
-
-    cmd = "mkdir " + db_dir + "analyticalFiles/metadata_csv"
-    os.system(cmd)
-
-    cmd = "mkdir " + db_dir + "analysis"
-    os.system(cmd)
-
-    cmd = "mkdir " + db_dir + "datafiles"
-    os.system(cmd)
-
-    cmd = "mkdir " + db_dir + "consensus_sequences"
-    os.system(cmd)
-
-    cmd = "mkdir " + db_dir + "basecall_output"
-    os.system(cmd)
-
-    cmd = "mkdir " + db_dir + "multiSampleAnalysisReports"
-    os.system(cmd)
-
-    cmd = "mkdir " + db_dir + "syncFiles"
-    os.system(cmd)
-
-    cmd = "mkdir " + db_dir + "preliminaryEstimations"
-    os.system(cmd)
 
     conn = sqlite3.connect(db_dir + 'moss.db')
     c = conn.cursor()

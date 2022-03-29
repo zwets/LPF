@@ -19,7 +19,7 @@ storage.get('currentConfig', function(error, data) {
 function select_output(){
     var db_dir = document.getElementById('current-config').innerHTML;
 
-    readTextFile(db_dir + "analyticalFiles/workflow.json", function(text){
+    readTextFile(db_dir + "static_files/workflow.json", function(text){
         var data = JSON.parse(text);
         document.getElementById('workflowjson').innerHTML = data;
 
@@ -89,7 +89,7 @@ function select_output(){
 
 
 
-    readTextFile(db_dir + "analyticalFiles/barcodes.json", function(text){
+    readTextFile(db_dir + "static_files/barcodes.json", function(text){
         var data = JSON.parse(text);
         var items = data;
 
@@ -122,7 +122,7 @@ function select_output(){
 
 function find_model_from_input(flowcell, kit, db_dir, algorithm){
     var model = "";
-    const data = require(db_dir + "analyticalFiles/workflow.json");
+    const data = require(db_dir + "static_files/workflow.json");
     for (var i = 0; i < data.length; i++) {
                 if (data[i].flowcell == flowcell) {
                     if (data[i].kit == kit) {

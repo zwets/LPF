@@ -49,7 +49,7 @@ for item in referencelist:
         phylo_dict[item[2]] = [item[1]]
 
 
-with open(args.db_dir + 'analyticalFiles/outbreakfinder.json', 'w') as fp:
+with open(args.db_dir + 'static_files/outbreakfinder.json', 'w') as fp:
     json.dump(phylo_dict, fp)
 
 
