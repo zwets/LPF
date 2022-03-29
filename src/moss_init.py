@@ -105,7 +105,6 @@ moss.init_insert_reference_table(db_dir)
 # Generate config.json file
 jsondict = dict()
 jsondict["current_working_db"] = args.configname
-jsondict["current_working_db"]["lastest_sync"] = ""
 with open("/opt/moss_db/config.json", 'w') as f_out:
   json.dump(jsondict, f_out)
 f_out.close()
