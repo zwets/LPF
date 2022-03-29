@@ -27,7 +27,7 @@ parser.add_argument("-configname", action="store", dest="configname", help="Ente
 
 args = parser.parse_args()
 
-kma_path = args.exepath + "kma/kma"
+kma_path = "/opt/moss/kma/kma"
 configname = args.configname
 
 kmaindex_db_path = moss.correctPathCheck(args.kmaindex_db_path)
