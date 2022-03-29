@@ -61,64 +61,54 @@ directory_structure = {
 }
 moss.create_directory_from_dict(directory_structure, db_dir)
 
-sys.exit()
 
 conn = sqlite3.connect(db_dir + 'moss.db')
 c = conn.cursor()
 
-sys.exit()
+metadata_string = ""
+infile = open("/opt/moss/datafiles/ENA_list.csv", 'r')
+for line in infile:
+    if '\ufeff' in line:
+        line = line.replace(u'\ufeff', '').split(",")
+    else:
+        line = line.split(",")
+    for item in line:
+        metadata_string += "{} TEXT,".format(item)
+infile.close()
+metadata_string = metadata_string[:-1]
 
-if kmaindex_db_path != "":
-
-    conn = sqlite3.connect(db_dir + 'moss.db')
-    c = conn.cursor()
-
-    metadata_string = ""
-    infile = open(exepath + "datafiles/ENA_list.csv", 'r')
-    for line in infile:
-        if '\ufeff' in line:
-            line = line.replace(u'\ufeff', '').split(",")
-        else:
-            line = line.split(",")
-        for item in line:
-            metadata_string += "{} TEXT,".format(item)
-    infile.close()
-    metadata_string = metadata_string[:-1]
-
-    c.execute("""CREATE TABLE IF NOT EXISTS isolatetable(entryid TEXT PRIMARY KEY, samplename TEXT, header_text TEXT, analysistimestamp TEXT, samplingtimestamp TEXT, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT, consensus_name TEXT, referenceid TEXT)""")
-    conn.commit()
-    c.execute("""CREATE TABLE IF NOT EXISTS referencetable(entryid TEXT PRIMARY KEY, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT, header_text TEXT)""") #Mangler finder results. Implement eventually
-    conn.commit()
-    c.execute("""CREATE TABLE IF NOT EXISTS specietable(specie TEXT PRIMARY KEY, entryid TEXT)""")
-    conn.commit()
-    c.execute("""CREATE TABLE IF NOT EXISTS amrtable(entryid TEXT PRIMARY KEY, samplename TEXT, analysistimestamp TEXT, amrgenes TEXT, phenotypes TEXT, specie TEXT, risklevel TEXT, warning TEXT)""")
-    conn.commit()
-    c.execute("""CREATE TABLE IF NOT EXISTS metadatatable(entryid TEXT PRIMARY KEY, {})""".format(metadata_string))
-    conn.commit()
-    c.execute("""CREATE TABLE IF NOT EXISTS ipctable(ipc TEXT PRIMARY KEY, ipc_index_refdb TEXT, IsolateJSON TEXT, ReferenceJSON TEXT, ReadRefDB TEXT, running_analyses TEXT, queued_analyses TEXT, finished_analyses TEXT)""")
-    conn.commit()
-    c.execute("""CREATE TABLE IF NOT EXISTS statustable(entryid TEXT PRIMARY KEY, status TEXT, type TEXT, current_stage TEXT, final_stage TEXT, result TEXT, time_stamp TEXT)""")
-    conn.commit()
-    c.execute( """CREATE TABLE IF NOT EXISTS local_sync_table(entryid TEXT PRIMARY KEY, time_of_analysis TEXT)""")
-    conn.commit()
-    dbstring = "INSERT INTO ipctable(ipc, ipc_index_refdb, ReadRefDB, running_analyses, queued_analyses, finished_analyses) VALUES('{}' ,'{}', '{}', '{}', '{}', '{}')".format('IPC',1, 100, "", "", "")
-    c.execute(dbstring)
-    conn.commit()
-    conn.close()
-
-    #Can we add tables for genes with pointers? Better solution!
+c.execute("""CREATE TABLE IF NOT EXISTS isolatetable(entryid TEXT PRIMARY KEY, samplename TEXT, header_text TEXT, analysistimestamp TEXT, samplingtimestamp TEXT, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT, consensus_name TEXT, referenceid TEXT)""")
+conn.commit()
+c.execute("""CREATE TABLE IF NOT EXISTS referencetable(entryid TEXT PRIMARY KEY, amrgenes TEXT, virulencegenes TEXT, plasmids TEXT, header_text TEXT)""") #Mangler finder results. Implement eventually
+conn.commit()
+c.execute("""CREATE TABLE IF NOT EXISTS specietable(specie TEXT PRIMARY KEY, entryid TEXT)""")
+conn.commit()
+c.execute("""CREATE TABLE IF NOT EXISTS amrtable(entryid TEXT PRIMARY KEY, samplename TEXT, analysistimestamp TEXT, amrgenes TEXT, phenotypes TEXT, specie TEXT, risklevel TEXT, warning TEXT)""")
+conn.commit()
+c.execute("""CREATE TABLE IF NOT EXISTS metadatatable(entryid TEXT PRIMARY KEY, {})""".format(metadata_string))
+conn.commit()
+c.execute("""CREATE TABLE IF NOT EXISTS ipctable(ipc TEXT PRIMARY KEY, ipc_index_refdb TEXT, IsolateJSON TEXT, ReferenceJSON TEXT, ReadRefDB TEXT, running_analyses TEXT, queued_analyses TEXT, finished_analyses TEXT)""")
+conn.commit()
+c.execute("""CREATE TABLE IF NOT EXISTS statustable(entryid TEXT PRIMARY KEY, status TEXT, type TEXT, current_stage TEXT, final_stage TEXT, result TEXT, time_stamp TEXT)""")
+conn.commit()
+c.execute( """CREATE TABLE IF NOT EXISTS local_sync_table(entryid TEXT PRIMARY KEY, time_of_analysis TEXT)""")
+conn.commit()
+dbstring = "INSERT INTO ipctable(ipc, ipc_index_refdb, ReadRefDB, running_analyses, queued_analyses, finished_analyses) VALUES('{}' ,'{}', '{}', '{}', '{}', '{}')".format('IPC',1, 100, "", "", "")
+c.execute(dbstring)
+conn.commit()
+conn.close()
+#Can we add tables for genes with pointers? Better solution!
 
 
-    moss.init_insert_reference_table(exepath, db_dir)
+moss.init_insert_reference_table(db_dir)
 
-    # Generate config.json file
-    jsondict = dict()
-    jsondict["db_dir"] = db_dir
-    jsondict["exepath"] = exepath
-    jsondict["syncpath"] = syncpath
-    with open("{}{}_moss_config.json".format(db_dir, args.configname), 'w') as f_out:
-      json.dump(jsondict, f_out)
-    f_out.close()
+# Generate config.json file
+jsondict = dict()
+jsondict["current_working_db"] = args.configname
+jsondict["current_working_db"]["lastest_sync"] = ""
+with open("/opt/moss_db/config.json", 'w') as f_out:
+  json.dump(jsondict, f_out)
+f_out.close()
 
-cmd = "python3 {}/src/createGuppyWorkflowDict.py -db_dir {} -exepath {}".format(exepath, db_dir, exepath)
+cmd = "python3 /opt/moss/src/createGuppyWorkflowDict.py -current_working_db {}".format(args.configname)
 os.system(cmd)

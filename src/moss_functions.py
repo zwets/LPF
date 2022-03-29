@@ -177,7 +177,7 @@ def moss_shortcut_init(exepath):
     cmd = "chmod a+x ~/bin/moss"
     os.system(cmd)
 
-def init_insert_reference_table(exepath, db_dir):
+def init_insert_reference_table(db_dir):
     infile = open(db_dir + "REFDB.ATG.name", 'r')
     t = 1
     conn = sqlite3.connect(db_dir + 'moss.db')
@@ -186,7 +186,7 @@ def init_insert_reference_table(exepath, db_dir):
 
     for line in infile:
         line = line.rstrip()
-        cmd = "{}kma/kma seq2fasta -t_db {}/REFDB.ATG -seqs {}".format(exepath, db_dir, t)
+        cmd = "/opt/moss/kma/kma seq2fasta -t_db {}/REFDB.ATG -seqs {}".format(db_dir, t)
         proc = subprocess.Popen(cmd, shell=True,
                                 stdout=subprocess.PIPE, )
         output = proc.communicate()[0].decode()

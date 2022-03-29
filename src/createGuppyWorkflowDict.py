@@ -5,15 +5,13 @@ import subprocess
 import sys
 
 parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
-parser.add_argument('-db_dir', action="store", type=str, dest='db_dir', default="", help='db_dir')
-parser.add_argument("-exepath", action="store", dest="exepath", default = "", help="Complete path to the moss repo that you cloned, in which your kma and ccphylo folder at located.")
-
+parser.add_argument("-current_working_db", action="store", dest="current_working_db", help="Enter a name for your configuration file.")
 args = parser.parse_args()
-#
-cmd = "{}ont-guppy/bin/./guppy_basecaller --print_workflows > {}/static_files/tmpworkflowdict.txt".format(args.exepath, args.db_dir)
+
+cmd = "/opt/moss/ont-guppy/bin/./guppy_basecaller --print_workflows > /opt/moss_db/{}/static_files/tmpworkflowdict.txt".format(args.current_working_db)
 os.system(cmd)
 
-infile = open("{}/static_files/tmpworkflowdict.txt".format(args.db_dir), 'r')
+infile = open("/opt/moss_db/{}/static_files/tmpworkflowdict.txt".format(args.current_working_db), 'r')
 jsonlist = []
 for line in infile:
     if line[0:3] == "FLO":
@@ -33,16 +31,16 @@ for line in infile:
 
 
 infile.close()
-outfile = open("{}/static_files/workflow.json".format(args.db_dir), 'w')
+outfile = open("/opt/moss_db/{}/static_files/workflow.json".format(args.current_working_db), 'w')
 
 print (json.dumps(jsonlist, indent=2), file=outfile)
 outfile.close()
 
 
-cmd = "{}ont-guppy/bin/./guppy_barcoder --print_kits > {}/static_files/printkitstmp.txt".format(args.exepath, args.db_dir)
+cmd = "/opt/moss/ont-guppy/bin/./guppy_barcoder --print_kits > /opt/moss/{}/static_files/printkitstmp.txt".format(args.current_working_db)
 os.system(cmd)
 
-infile = open("{}/static_files/printkitstmp.txt".format(args.db_dir), 'r')
+infile = open("/opt/moss_db/{}/static_files/printkitstmp.txt".format(args.current_working_db), 'r')
 jsonlist = []
 for line in infile:
     if len(line) > 3: #Non emptie/home/meta2s
@@ -54,7 +52,7 @@ for line in infile:
 
 
 infile.close()
-outfile = open("{}/static_files/barcodes.json".format(args.db_dir), 'w')
+outfile = open("/opt/moss_db/{}/static_files/barcodes.json".format(args.current_working_db), 'w')
 
 print (json.dumps(jsonlist, indent=2), file=outfile)
 outfile.close()
@@ -62,9 +60,9 @@ outfile.close()
 
 
 
-cmd = "rm {}/static_files/tmpworkflowdict.txt".format(args.db_dir)
+cmd = "rm /opt/moss_db/{}/static_files/tmpworkflowdict.txt".format(args.current_working_db)
 os.system(cmd)
 
-cmd = "rm {}/static_files/printkitstmp.txt".format(args.db_dir)
+cmd = "rm /opt/moss_db/{}/static_files/printkitstmp.txt".format(args.current_working_db)
 os.system(cmd)
 
