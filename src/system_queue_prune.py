@@ -30,16 +30,16 @@ from joblib import Parallel, delayed
 
 
 parser = argparse.ArgumentParser(description='.')
-parser.add_argument('-db_dir', action="store", type=str, dest='db_dir', default="", help='Path to your DB-directory')
+parser.add_argument('-configname', action="store", type=str, dest='configname', default="", help='Path to your DB-directory')
 args = parser.parse_args()
 
-db_dir = args.db_dir
+configname = args.configname
 
-with open("{}static_files/runningAnalyses.json".format(db_dir), 'w') as f_out:
+with open("{}static_files/runningAnalyses.json".format(configname), 'w') as f_out:
     json.dump(dict(), f_out)
 f_out.close()
 
-with open("{}static_files/queuedAnalyses.json".format(db_dir), 'w') as f_out:
+with open("{}static_files/queuedAnalyses.json".format(configname), 'w') as f_out:
     json.dump(dict(), f_out)
 f_out.close()
 

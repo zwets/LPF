@@ -25,7 +25,7 @@ import collections
 
 
 parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
-parser.add_argument('-db_dir', action="store", type=str, dest='db_dir', default="", help='Path the directory with your database')
+parser.add_argument('-configname', action="store", type=str, dest='configname', default="", help='Path the directory with your database')
 parser.add_argument('-databasename', action="store", type=str, dest='dbname', default="", help='Path the directory with your database')
 parser.add_argument('-exepath', action="store", type=str, dest='exepath', default="", help='Path to your DB-directory')
 
@@ -33,18 +33,18 @@ parser.add_argument('-exepath', action="store", type=str, dest='exepath', defaul
 args = parser.parse_args()
 
 #Load previous file, needs to be done
-db_dir = moss.correctPathCheck(args.db_dir)
+configname = moss.correctPathCheck(args.configname)
 exepath = moss.correctPathCheck(args.exepath)
 
 kma_path = exepath + "kma/kma"
 
 
-clusternumber = moss.databaseOverClustering(db_dir, args.dbname, kma_path, db_dir + "clusterreport")
+clusternumber = moss.databaseOverClustering(configname, args.dbname, kma_path, configname + "clusterreport")
 
 if clusternumber > 0:
     killList = []
     uniquelist = []
-    infile = open(db_dir + "clusterreport", 'r')
+    infile = open(configname + "clusterreport", 'r')
     for line in infile:
         line = line.rstrip().split("\t")
         if line[2] not in killList: #Append all non init names
@@ -52,11 +52,11 @@ if clusternumber > 0:
     infile.close()
 
     print ("starting homology reduction")
-    cmd = "{} seq2fasta -t_db {}{} > {}homoredREFDB.fasta".format(kma_path, db_dir, args.dbname, db_dir)
+    cmd = "{} seq2fasta -t_db {}{} > {}homoredREFDB.fasta".format(kma_path, configname, args.dbname, configname)
     os.system(cmd)
 
-    infile = open(db_dir + "homoredREFDB.fasta", 'r')
-    outfile = open(db_dir + "reduceddb.fasta", 'w')
+    infile = open(configname + "homoredREFDB.fasta", 'r')
+    outfile = open(configname + "reduceddb.fasta", 'w')
     printflag = False
     for line in infile:
         line = line.rstrip()
@@ -70,17 +70,17 @@ if clusternumber > 0:
     infile.close()
     outfile.close()
 
-    cmd = "{} index -i {}reduceddb.fasta -Sparse ATG -o {}homologyReducedDB.ATG".format(kma_path, db_dir, db_dir)
+    cmd = "{} index -i {}reduceddb.fasta -Sparse ATG -o {}homologyReducedDB.ATG".format(kma_path, configname, configname)
     os.system(cmd)
 
     #Cleaning
-    cmd = "rm {}homoredREFDB.fasta".format(db_dir)
+    cmd = "rm {}homoredREFDB.fasta".format(configname)
     os.system(cmd)
-    cmd = "rm {}reduceddb.fasta".format(db_dir)
+    cmd = "rm {}reduceddb.fasta".format(configname)
     os.system(cmd)
-    cmd = "rm {}clusterreport".format(db_dir)
+    cmd = "rm {}clusterreport".format(configname)
     os.system(cmd)
-    cmd = "rm {}referenceCluster".format(db_dir)
+    cmd = "rm {}referenceCluster".format(configname)
     os.system(cmd)
 
 

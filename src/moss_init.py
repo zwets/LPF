@@ -40,13 +40,13 @@ if not os.path.exists("/opt/moss_db/{}".format(configname)):
 else:
     sys.exit("A moss database of that name already exists on this computer!")
 
-db_dir = "/opt/moss_db/{}/".format(configname)
+configname = "/opt/moss_db/{}/".format(configname)
 
 print ("cloning reference DB, if you are using a big reference DB, this might take a while")
-os.system("cp {}*.ATG.comp.b {}REFDB.ATG.comp.b".format(kmaindex_db_path, db_dir))
-os.system("cp {}*.ATG.length.b {}REFDB.ATG.length.b".format(kmaindex_db_path, db_dir))
-os.system("cp {}*.ATG.seq.b {}REFDB.ATG.seq.b".format(kmaindex_db_path, db_dir))
-os.system("cp {}*.ATG.name {}REFDB.ATG.name".format(kmaindex_db_path, db_dir))
+os.system("cp {}*.ATG.comp.b {}REFDB.ATG.comp.b".format(kmaindex_db_path, configname))
+os.system("cp {}*.ATG.length.b {}REFDB.ATG.length.b".format(kmaindex_db_path, configname))
+os.system("cp {}*.ATG.seq.b {}REFDB.ATG.seq.b".format(kmaindex_db_path, configname))
+os.system("cp {}*.ATG.name {}REFDB.ATG.name".format(kmaindex_db_path, configname))
 print ("cloning reference DB complete")
 
 directory_structure = {
@@ -59,10 +59,10 @@ directory_structure = {
     "datafiles": {}
 
 }
-moss.create_directory_from_dict(directory_structure, db_dir)
+moss.create_directory_from_dict(directory_structure, configname)
 
 
-conn = sqlite3.connect(db_dir + 'moss.db')
+conn = sqlite3.connect(configname + 'moss.db')
 c = conn.cursor()
 
 metadata_string = ""
@@ -100,7 +100,7 @@ conn.close()
 #Can we add tables for genes with pointers? Better solution!
 
 
-moss.init_insert_reference_table(db_dir)
+moss.init_insert_reference_table(configname)
 
 # Generate config.json file
 jsondict = dict()

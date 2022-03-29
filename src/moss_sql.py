@@ -34,15 +34,15 @@ from pandas.plotting import table
 from geopy.geocoders import Nominatim
 from subprocess import check_output, STDOUT
 
-def sql_edit(db_dir, string):
-    conn = sqlite3.connect(db_dir + "moss.db")
+def sql_edit(configname, string):
+    conn = sqlite3.connect(configname + "moss.db")
     c = conn.cursor()
     c.execute(string)
     conn.commit()
     conn.close()
 
-def sql_fetch(string, db_dir):
-    conn = sqlite3.connect(db_dir + "moss.db")
+def sql_fetch(string, configname):
+    conn = sqlite3.connect(configname + "moss.db")
     c = conn.cursor()
     c.execute(string)
     data = c.fetchall()
@@ -50,8 +50,8 @@ def sql_fetch(string, db_dir):
     return data
 
 
-def insert_consensus_name(entryid, db_dir, consensus_name):
-    conn = sqlite3.connect(db_dir + "moss.db")
+def insert_consensus_name(entryid, configname, consensus_name):
+    conn = sqlite3.connect(configname + "moss.db")
     c = conn.cursor()
     entryid_statement = "entryid = '{}'".format(entryid)
 
@@ -62,8 +62,8 @@ def insert_consensus_name(entryid, db_dir, consensus_name):
     conn.commit()
     conn.close()
 
-def insert_metadata_table(entryid, entries, values, db_dir):
-    conn = sqlite3.connect(db_dir + "moss.db")
+def insert_metadata_table(entryid, entries, values, configname):
+    conn = sqlite3.connect(configname + "moss.db")
     c = conn.cursor()
 
     dbstring = "INSERT INTO metadatatable(entryid, {}) VALUES('{}', {})".format(entries, entryid.replace("'", "''"), values)
@@ -73,8 +73,8 @@ def insert_metadata_table(entryid, entries, values, db_dir):
     conn.commit()
     conn.close()
 
-def update_reference_table(entryid, amrgenes, virulencegenes, plasmids, header_text, db_dir):
-    conn = sqlite3.connect(db_dir + "moss.db")
+def update_reference_table(entryid, amrgenes, virulencegenes, plasmids, header_text, configname):
+    conn = sqlite3.connect(configname + "moss.db")
     c = conn.cursor()
     amrgenes_statement = "amrgenes = '{}'".format(amrgenes)
     virulencegenes_statement = "virulencegenes = '{}'".format(virulencegenes)
@@ -92,9 +92,9 @@ def update_reference_table(entryid, amrgenes, virulencegenes, plasmids, header_t
     conn.commit()
     conn.close()
 
-def insert_amr_table(entryid, samplename, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning, db_dir):
+def insert_amr_table(entryid, samplename, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning, configname):
 
-    conn = sqlite3.connect(db_dir + "moss.db")
+    conn = sqlite3.connect(configname + "moss.db")
     c = conn.cursor()
 
 
@@ -105,8 +105,8 @@ def insert_amr_table(entryid, samplename, analysistimestamp, amrgenes, phenotype
     conn.commit()
     conn.close()
 
-def init_status_table(entryid, status, type, current_stage, final_stage, result, db_dir):
-    conn = sqlite3.connect(db_dir + "moss.db")
+def init_status_table(entryid, status, type, current_stage, final_stage, result, configname):
+    conn = sqlite3.connect(configname + "moss.db")
     c = conn.cursor()
 
     dbstring = "INSERT INTO statustable(entryid, status, type, current_stage, final_stage, result) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
@@ -115,8 +115,8 @@ def init_status_table(entryid, status, type, current_stage, final_stage, result,
     conn.commit()
     conn.close()
 
-def update_status_table(entryid, status, type, current_stage, final_stage, result, db_dir):
-    conn = sqlite3.connect(db_dir + "moss.db")
+def update_status_table(entryid, status, type, current_stage, final_stage, result, configname):
+    conn = sqlite3.connect(configname + "moss.db")
     c = conn.cursor()
     entryid_statement = "entryid = '{}'".format(entryid)
     status_statement = "status = '{}'".format(status)
@@ -132,8 +132,8 @@ def update_status_table(entryid, status, type, current_stage, final_stage, resul
     conn.commit()
     conn.close()
 
-def init_isolate_table(entryid, header_text, samplename, plasmid_string, allresgenes, virulence_string, db_dir, referenceid):
-    conn = sqlite3.connect(db_dir + "moss.db")
+def init_isolate_table(entryid, header_text, samplename, plasmid_string, allresgenes, virulence_string, configname, referenceid):
+    conn = sqlite3.connect(configname + "moss.db")
     c = conn.cursor()
     dbstring = "INSERT INTO isolatetable(entryid, header_text, samplename, analysistimestamp, plasmids, amrgenes, virulencegenes, referenceid) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
         entryid, header_text, samplename, str(datetime.datetime.now())[0:-7], plasmid_string.replace("'", "''"),
@@ -143,8 +143,8 @@ def init_isolate_table(entryid, header_text, samplename, plasmid_string, allresg
     conn.commit()
     conn.close()
 
-def update_isolate_table(entryid, header_text, samplename, plasmid_string, allresgenes, virulence_string, db_dir):
-    conn = sqlite3.connect(db_dir + "moss.db")
+def update_isolate_table(entryid, header_text, samplename, plasmid_string, allresgenes, virulence_string, configname):
+    conn = sqlite3.connect(configname + "moss.db")
     c = conn.cursor()
     entryid_statement = "entryid = '{}'".format(entryid)
     header_text_statement = "header_text = '{}'".format(header_text)

@@ -30,11 +30,11 @@ import collections
 
 
 parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
-parser.add_argument('-db_dir', action="store", type=str, dest='db_dir', default="", help='Path to your DB-directory')
+parser.add_argument('-configname', action="store", type=str, dest='configname', default="", help='Path to your DB-directory')
 
 args = parser.parse_args()
 
-isolatedb = args.db_dir + "moss.db"
+isolatedb = args.configname + "moss.db"
 
 conn = sqlite3.connect(isolatedb)
 c = conn.cursor()
@@ -49,7 +49,7 @@ for item in referencelist:
         phylo_dict[item[2]] = [item[1]]
 
 
-with open(args.db_dir + 'static_files/outbreakfinder.json', 'w') as fp:
+with open(args.configname + 'static_files/outbreakfinder.json', 'w') as fp:
     json.dump(phylo_dict, fp)
 
 
