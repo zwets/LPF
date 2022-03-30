@@ -28,6 +28,9 @@ def main():
     #Create generic stored place for each initialized system. Make
     #Install KMA and other stuff? CCphylo?
     #create executable in bin
+
+    #Update the guppy-worklist on updates? or reinstalls
+
     return True
 
 def install_app():
