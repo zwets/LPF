@@ -77,14 +77,8 @@ function generate_table(input_array) {
         td.style.textAlign = "center";
         td.id = `outer${i}${j}`;
 
-
-        //td.style.align-items = center;
-        //td.style.border = "1px solid #000";
-        //td.style.borderLeft = "1px solid #000"
-        //td.style.borderRight = "1px solid #000"
-
-        if (j >= 2) {
-            if (j == 2) {
+        if (j >= 1) {
+            if (j == 1) {
                 td.classList.add("input");
                 var input = document.createElement('input');
                 input.type = "checkbox";
