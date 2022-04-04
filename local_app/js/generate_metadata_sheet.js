@@ -19,7 +19,7 @@ function create_metadata_table(){
     var input_array = parallel_input.split(",");
 
 
-    append_table = generate_table(sequence_type, input_array)
+    append_table = generate_table(input_array)
 
     document.getElementById('metadata-table-div').appendChild(append_table);
 
@@ -42,20 +42,9 @@ function create_metadata_table(){
 }
 
 
-function generate_table(sequence_type, input_array) {
+function generate_table(input_array) {
 
-    if (sequence_type == 'pe_illumina') {
-        var sorted_input_array = input_array.sort();
-        var new_input_array = [];
-        for (var i=0; i < sorted_input_array.length; i++) {
-            if (i % 2 == 0) {
-                new_input_array.push(`${sorted_input_array[i]} ${sorted_input_array[i+1]}`)
-
-            }
-        }
-    } else {
-        var new_input_array = input_array.sort();
-    }
+    var new_input_array = input_array.sort();
 
     var array_len = new_input_array.length;
 
@@ -112,13 +101,8 @@ function generate_table(sequence_type, input_array) {
               }
 
         }
-        if (j == 1) {
-            td.appendChild(document.createTextNode(sequence_type));
-            tr.appendChild(td);
-        } else {
-            td.appendChild(document.createTextNode(new_input_array[i]));
-            tr.appendChild(td);
-            }
+        td.appendChild(document.createTextNode(new_input_array[i]));
+        tr.appendChild(td);
       }
 
 
