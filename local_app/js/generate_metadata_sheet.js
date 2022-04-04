@@ -8,7 +8,7 @@ function create_metadata_table(){
     document.getElementById('metadata-table-div').innerHTML = "";
     //document.getElementById('analyse-multiple-index-file-section').innerHTML = "";
 
-    var input = document.getElementById('multiple-input-type').value;
+    var input = parseInt(document.getElementById('multiple-input-type').value;);
     console.log(input);
     var sequence_type = document.getElementById("multiple-input-type").value;
 
