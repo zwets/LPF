@@ -78,6 +78,8 @@ function generate_table(input_array) {
         td.style.textAlign = "center";
         td.id = `outer${i}${j}`;
 
+        console.log(`outer${i}${j}`);
+
         if (j >= 1) {
             if (j == 1) {
                 td.classList.add("input");
@@ -88,7 +90,6 @@ function generate_table(input_array) {
                 tr.appendChild(td);
                 continue;
               } else {
-                console.log(`input${i}${j}`);
                 td.defaultValue = "";
                 td.classList.add("input");
                 var input = document.createElement('input');
