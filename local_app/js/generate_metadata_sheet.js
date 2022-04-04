@@ -8,8 +8,9 @@ function create_metadata_table(){
     document.getElementById('metadata-table-div').innerHTML = "";
     //document.getElementById('analyse-multiple-index-file-section').innerHTML = "";
 
-    var input = parseInt(document.getElementById('multiple-input-type').value;);
-    console.log(input);
+    var input = document.getElementById('multiple-input-type').value;
+    var input_number = parseInt(input);
+    console.log(input_number);
     var sequence_type = document.getElementById("multiple-input-type").value;
 
     var children = "";
