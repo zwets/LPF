@@ -56,7 +56,9 @@ function generate_table(input_array) {
     var columnNames = ["Barcode number"];
 
     const jsonData= require('/opt/moss/datafiles/ena_list.json');
-    console.log(jsonData);
+    const ena_keys = Object.keys(jsonData);
+    columnNames.push.apply(columnNames, ena_keys)
+    console.log(columnNames);
 
     for (var i = 0; i < 5; i++) {
       var th = document.createElement('th');
