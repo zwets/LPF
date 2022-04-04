@@ -60,7 +60,7 @@ function generate_table(input_array) {
     columnNames.push.apply(columnNames, ena_keys)
     console.log(columnNames);
 
-    for (var i = 0; i < columnNames.length(); i++) {
+    for (var i = 0; i < columnNames.length; i++) {
       var th = document.createElement('th');
       th.appendChild(document.createTextNode(columnNames[i]));
       headRow.appendChild(th);
