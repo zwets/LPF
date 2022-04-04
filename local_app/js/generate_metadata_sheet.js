@@ -4,6 +4,135 @@ const storage = require('electron-json-storage');
 var mkdirp = require('mkdirp');
 
 
+function create_metadata_table(){
+    document.getElementById('metadata-table-div').innerHTML = "";
+    //document.getElementById('analyse-multiple-index-file-section').innerHTML = "";
+
+    var input = document.getElementById('multiple-input-field');
+    var sequence_type = document.getElementById("multiple-input-type").value;
+
+    var children = "";
+    for (var i = 0; i < input.files.length; ++i) {
+        children +=  input.files.item(i).path + ',';
+     }
+    var parallel_input = children.slice(0, -1);
+    var input_array = parallel_input.split(",");
+
+
+    append_table = generate_table(sequence_type, input_array)
+
+    document.getElementById('metadata-table-div').appendChild(append_table);
+
+    var create_button = document.createElement('button');
+
+    create_button.type = "button";
+    create_button.id = "generate-multiple-index-button";
+    create_button.style.width = '225px'; // setting the width to 200px
+    create_button.style.height = '20px'; // setting the height to 200px
+    create_button.innerHTML = "Create multiple analysis index file"
+    create_button.style.margin='0px 2px';
+
+
+
+    document.getElementById('parameter-section').style.display = "block";
+    document.getElementById('parallel-section').style.display = "block";
+
+
+
+}
+
+
+function generate_table(sequence_type, input_array) {
+
+    if (sequence_type == 'pe_illumina') {
+        var sorted_input_array = input_array.sort();
+        var new_input_array = [];
+        for (var i=0; i < sorted_input_array.length; i++) {
+            if (i % 2 == 0) {
+                new_input_array.push(`${sorted_input_array[i]} ${sorted_input_array[i+1]}`)
+
+            }
+        }
+    } else {
+        var new_input_array = input_array.sort();
+    }
+
+    var array_len = new_input_array.length;
+
+    var table = document.createElement('table');
+    table.classList.add('table');
+
+    var thead = document.createElement('thead');
+    var headRow = document.createElement('tr');
+    var columnNames = ["Sample", "SeqType", "Use current IP location", "City", "Country"];
+
+    for (var i = 0; i < 5; i++) {
+      var th = document.createElement('th');
+      //th.style.borderLeft = "1px solid #000"
+      //th.style.borderRight = "1px solid #000"
+      th.appendChild(document.createTextNode(columnNames[i]));
+      headRow.appendChild(th);
+    }
+
+    thead.appendChild(headRow);
+
+    var tbody = document.createElement('tbody');
+
+    for (var i = 0; i < array_len; i++) {
+      var tr = document.createElement('tr');
+
+      for (var j = 0; j < 5; j++) {
+        var td = document.createElement('td');
+        td.style.textAlign = "center";
+        td.id = `outer${i}${j}`;
+
+
+        //td.style.align-items = center;
+        //td.style.border = "1px solid #000";
+        //td.style.borderLeft = "1px solid #000"
+        //td.style.borderRight = "1px solid #000"
+
+        if (j >= 2) {
+            if (j == 2) {
+                td.classList.add("input");
+                var input = document.createElement('input');
+                input.type = "checkbox";
+                input.id = `input${i}${j}`;
+                td.appendChild(input);
+                tr.appendChild(td);
+                continue;
+              } else {
+                td.defaultValue = "";
+                td.classList.add("input");
+                var input = document.createElement('input');
+                input.id = `input${i}${j}`;
+                td.appendChild(input);
+                tr.appendChild(td);
+                continue;
+              }
+
+        }
+        if (j == 1) {
+            td.appendChild(document.createTextNode(sequence_type));
+            tr.appendChild(td);
+        } else {
+            td.appendChild(document.createTextNode(new_input_array[i]));
+            tr.appendChild(td);
+            }
+      }
+
+
+      tbody.appendChild(tr);
+    }
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    return table
+}
+
+
+
+
 function find_model_from_input(flowcell, kit, db_dir, algorithm){
     var model = "";
     const data = require("/opt/moss_db/" + "test1" +"/static_files/workflow.json");
@@ -122,117 +251,6 @@ function fetch_guppy_data(){
           }
 
     });
-}
-
-
-function start_base_calling(){
-
-    var flowcell = document.getElementById('flow-cell').value;
-    var kit = document.getElementById('kit').value;
-    var barcoding_config_name = document.getElementById('barcoding_config_name').value;
-    var barcodes = document.getElementById('demux').value;
-    var model_version = document.getElementById('model_version').value;
-    var algorithm = document.getElementById('algorithm').value;
-    var db_dir = document.getElementById('current-config').innerHTML;
-    var exepath = document.getElementById('current-exepath').innerHTML;
-
-    var input = document.getElementById('fast5-input-field');
-    var output_dir = document.getElementById('output-field').value;
-
-    var single_path = input.files.item(0).path;
-    var path_list = single_path.split("/");
-    var path_slice= path_list.slice(1, -1);
-    var input_path = "/" + path_slice.join("/") + "/";
-
-    var base_call_output = `${db_dir}basecall_output/${output_dir}/`;
-
-
-
-    var check_basecall_name = false;
-    if (fs.existsSync(base_call_output)) {
-        alert("A fastq file with this name already exists. Please choose another one.");
-    } else {
-        check_basecall_name = true;
-        mkdirp(base_call_output, function(err) {
-            });
-
-    }
-
-    if (check_basecall_name) {
-        cmd = `python3 ${exepath}src/basecall_and_concat.py -i ${input_path}  -d ${base_call_output} -n ${output_dir} -exepath ${exepath}`
-
-        var model = find_model_from_input(flowcell, kit, db_dir, algorithm);
-        cmd = cmd.concat(` -c ${model}`)
-        console.log(cmd);
-
-        //if (fs.existsSync(output_dir)) {
-        var loader = document.getElementById('loader');
-        loader.style.display = 'block';
-        document.getElementById('loadermessage').innerHTML = "Basecalling is running";
-
-        console.log("Base calling has begun.");
-
-
-        if (algorithm == "_sup.cfg") {
-            cmd = cmd.concat(` -chunks 75`)
-        }
-
-        if (barcodes != "No multiplexing") {
-            cmd = cmd.concat(` -bk \"${barcodes}\"`)
-            }
-
-        console.log(cmd)
-        exec(cmd, (error, stdout, stderr) => {
-
-            if (error) {
-                alert(`exec error: ${error}`);
-                document.getElementById('loadermessage').innerHTML = `Basecalling has failed: ${error}`;
-                loader.style.display = 'none';
-              console.error(`exec error: ${error}`);
-              return;
-            } else {
-                alert("Base calling has completed.");
-                document.getElementById('loadermessage').innerHTML = `Basecalling has been completed: ${stdout}`;
-                loader.style.display = 'none';
-            }
-
-
-        });
-
-        //} else {
-        //    alert("The given output directory does not exist");
-        //}
-
-    }
-}
-
-function execute_command_as_subprocess(cmd, print_msg) {
-    console.log(cmd);
-
-    console.log("Metadata Sheet Creation has begun.");
-
-    alert("Metadata Sheet Creation has begun.");
-
-
-
-    exec(cmd, (error, stdout, stderr) => {
-
-        if (error) {
-            alert(`exec error: ${error}`);
-          console.error(`exec error: ${error}`);
-          return;
-        } else {
-            alert("Metadata Sheet Creation has been completed.");
-            document.getElementById('metadata-sheet-msg').innerHTML = print_msg;
-        }
-
-        console.log(`stdout: ${stdout}`);
-        console.error(`stderr: ${stderr}`);
-
-
-
-      });
-
 }
 
 function readTextFile(file, callback) {
