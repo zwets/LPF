@@ -134,6 +134,9 @@ function find_model_from_input(flowcell, kit, db_dir, algorithm){
             }
 }
 
+function fetch_guppy_data() {
+    console.log("test");
+}
 function start_base_calling(){
 
     var flowcell = document.getElementById('flow-cell').value;
