@@ -90,7 +90,7 @@ function generate_table(input_array) {
             } else if (typeof identifier === "object") {
                 td.defaultValue = "";
                 td.classList.add("select");
-                var input = document.createElement('input');
+                var input = document.createElement('select');
                 input.id = `input${i}${j}`;
                 td.appendChild(input);
                 tr.appendChild(td);
