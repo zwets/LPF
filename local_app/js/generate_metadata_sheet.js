@@ -80,15 +80,7 @@ function generate_table(input_array) {
         td.style.textAlign = "center";
         td.id = `outer${i}${j}`;
         if (j >= 1) {
-            if (j == 1) {
-                td.classList.add("input");
-                var input = document.createElement('input');
-                input.type = "checkbox";
-                input.id = `input${i}${j}`;
-                td.appendChild(input);
-                tr.appendChild(td);
-                continue;
-              } else {
+            if (identifier=="free_text") {
                 td.defaultValue = "";
                 td.classList.add("input");
                 var input = document.createElement('input');
@@ -96,7 +88,9 @@ function generate_table(input_array) {
                 td.appendChild(input);
                 tr.appendChild(td);
                 continue;
-              }
+            } else {
+                console.log(typeof identifier);
+            }
 
         }
         td.appendChild(document.createTextNode(new_input_array[i]));
