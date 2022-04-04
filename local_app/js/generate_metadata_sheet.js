@@ -88,6 +88,7 @@ function generate_table(input_array) {
                 tr.appendChild(td);
                 continue;
               } else {
+                console.log(input${i}${j};)
                 td.defaultValue = "";
                 td.classList.add("input");
                 var input = document.createElement('input');
