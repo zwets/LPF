@@ -14,9 +14,9 @@ function create_metadata_table(){
     var children = "";
     for (var i = 0; i < input_number; ++i) {
         if (i >= 10) {
-            children +=  i.toString() + ',';
+            children +=  (i+1).toString() + ',';
         } else {
-            children +=  "0" + i.toString() + ',';
+            children +=  "0" + (i+1).toString() + ',';
         }
      }
     var parallel_input = children.slice(0, -1);
