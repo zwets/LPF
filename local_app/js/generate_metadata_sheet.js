@@ -74,7 +74,8 @@ function generate_table(input_array) {
       var tr = document.createElement('tr');
 
       for (var j = 0; j < columnNames.length; j++) {
-        console.log(columnNames[j]);
+        var identifier = jsonData[columnNames[j]];
+        console.log(identifier);
         var td = document.createElement('td');
         td.style.textAlign = "center";
         td.id = `outer${i}${j}`;
