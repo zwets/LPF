@@ -35,13 +35,8 @@ function create_metadata_table(){
     create_button.style.height = '20px'; // setting the height to 200px
     create_button.innerHTML = "Create multiple analysis index file"
     create_button.style.margin='0px 2px';
-
-
-
-    document.getElementById('parameter-section').style.display = "block";
-    document.getElementById('parallel-section').style.display = "block";
-
-
+    document.getElementById('metadata-table-div').appendChild("<br>");
+    document.getElementById('metadata-table-div').appendChild(create_button);
 
 }
 
