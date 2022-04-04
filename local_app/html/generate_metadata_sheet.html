@@ -11,16 +11,12 @@
   <body>
   <!-- Side navigation -->
 <div class="sidenav" id="mySidebar">
-      <a href="./index.html" id>Guide</a>
-      <a href="./services.html">Services</a>
-      <!--<a href="./analytics.html">Analytics</a>
-      <a href="./database.html">Database</a>
-      <a href="./dashboard.html">Dashboard</a>-->
-      <a href="./results.html">Results</a>
+    <a href="./index.html" id>Home</a>
+    <a href="./results.html">Results</a>
     <a href="./basecalling.html">Base Calling</a>
     <a href="./update.html">Update</a>
     <a href="./config.html">Config</a>
-  </div>
+</div>
 <!-- Page content -->
   <!-- Page content https://www.who.int/news/item/27-02-2017-who-publishes-list-of-bacteria-for-which-new-antibiotics-are-urgently-needed https://www.cdc.gov/drugresistance/biggest-threats.html  -->
 
@@ -44,23 +40,42 @@
             </div>
 
             <div class="MOSS-arguments" id="MOSS-arguments">
-                <b>Select input files to generate metadata sheet</b>
-              <br>
+                <b>Please provide the following information about your sequences:</b>
+              <br><br>
                 <div class="generate-metadata-sheet" id="generate-metadata-sheet">
                     <div class="generate-multiple-index-file-section" id="generate-multiple-index-file-section">
-                        <label for="multiple-input-type">Read Type:</label>
-                        <select id="multiple-input-type" name="multiple-input-type">
-                            <option value="se">Long Reads</option>
-                            <option value="se">Single end</option>
-                            <option value="pe">Paired end</option>
+                        <label for="multiple-input-type">Number of samples:</label>
+                        <select id="multiple-input-type" name="multiple-input-type" onchange="fetch_guppy_data();">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
                         </select>
-                        <form action="/action_page.php">
-                            <input type="file" id="multiple-input-field" name="multiple-input-field" multiple="multiple" value=""><br>
-                            Name your metadata sheet: <input type="text" id="metadata_sheet_name" name="metadata_sheet_name">
-                            <br>
-                            <button type="button" id="create-metadata-table" onclick="create_metadata_sheet()">Create metadata sheet</button>
-                        </form>
-                        <pre id="metadata-sheet-msg"></pre>
+                        <br><br>
+                        Flow-cell type:
+                        <select name="flow-cell" id="flow-cell">
+                          </select>
+                        <br><br>
+                        Nanopore kit:
+                        <select name="kit" id="kit">
+                          </select> <br><br>
+                        Demultiplex (barcodes):
+                        <select name="demux" id="demux">
+                          </select> <br><br>
+
+
+                    </div>
+                    <div hidden>
+                        <pre id="workflowjson"></pre>
+
                     </div>
                 </div>
         </div>

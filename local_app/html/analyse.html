@@ -8,19 +8,14 @@
 </head>
 
 
-  <body>
-  <!-- Side navigation -->
+<body>
 <div class="sidenav" id="mySidebar">
-      <a href="./index.html" id>Guide</a>
-      <a href="./services.html">Services</a>
-      <!--<a href="./analytics.html">Analytics</a>
-      <a href="./database.html">Database</a>
-      <a href="./dashboard.html">Dashboard</a>-->
-      <a href="./results.html">Results</a>
+    <a href="./index.html" id>Home</a>
+    <a href="./results.html">Results</a>
     <a href="./basecalling.html">Base Calling</a>
     <a href="./update.html">Update</a>
     <a href="./config.html">Config</a>
-  </div>
+</div>
 <!-- Page content -->
 
 
@@ -44,38 +39,13 @@
 
             </div>
 
-            <div class="MOSS-arguments" id="MOSS-arguments">
-                <div class="choose-metadata-csv-section" id="choose-metadata-csv-section">
-                  <label for="single-input-type">Select type of input:</label>
-                  <select id="single-input-type" name="single-input-type">
-                      <option value="nanopore">Nanopore reads</option>
-                      <option value="pe_illumina">Paired end illumina reads</option>
-                      <option value="se_illumina">Single end illumina reads</option>
-                  </select>
-                  <br><br>
+            <div class="MOSS-arguments" id="MOSS-arguments"><br>
                     Select a metadata.csv file to analyze:<form action="/action_page.php">
+                    <br>
                       <input type="file" id="single-input-field" name="single-input-field" multiple="multiple" value=""><br><br>
                   </form>
                   <div>
                   </div>
-                    <div class="threads">
-                            <label for="threads">Number of threads (default = 1):</label>
-                            <select name="threads" id="threads">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="4">4</option>
-                                <option value="8">8</option>
-                            </select>
-                            <br>
-
-                            <div class="parallel-section-submit" id="parallel-section-submit">
-                                <form>
-                                    <label for="parallel-jobs"> Number of jobs to be run in parallel (default:1   max:8):</label>
-                                    <input type="text" id="parallel-jobs" name="parallel-jobs" value=1>
-                                    <br>
-                                </form>
-                            </div>
-                        </div>
 
                       <button onclick="submitSingleAnalysis()">Submit Analysis</button>
                     <pre id="analysis-msg"></pre>

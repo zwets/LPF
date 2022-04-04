@@ -1,5 +1,32 @@
 /* Dropdown Button */
 
+div.home-choose{text-align: center;}
+
+.analysis-or-metadatasheet {
+    align: center;
+}
+.analyse-btn {
+  background-color: DodgerBlue;
+  border: none;
+  color: white;
+  height:300px;
+  width:300px;
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 32px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.analyse-btn:hover {
+  background-color: RoyalBlue;
+}
+
+
 .dropbtn {
   background-color: #3498DB;
   color: white;

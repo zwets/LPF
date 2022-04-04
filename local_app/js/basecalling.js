@@ -16,10 +16,10 @@ storage.get('currentConfig', function(error, data) {
 
 });
 
-function select_output(){
+function fetch_guppy_data(){
     var db_dir = document.getElementById('current-config').innerHTML;
 
-    readTextFile(db_dir + "static_files/workflow.json", function(text){
+    readTextFile("/opt/moss_db/" + "test1" +"/static_files/workflow.json", function(text){
         var data = JSON.parse(text);
         document.getElementById('workflowjson').innerHTML = data;
 

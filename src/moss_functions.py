@@ -458,36 +458,26 @@ def check_alignment_kma_cov(file):
 
     return coverage
 
-def KMA_mapping(total_filenames, target_dir, kma_database_path, logfile, kma_path, laptop):
-    template_found = False
-    best_template = ""
-    best_template_score = 0.0
-    header_text = ""
-    
-    if laptop:
-        cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -nf -mem_mode -sasm -ef".format(kma_path,
-                                                                                                  total_filenames,
-                                                                                                  target_dir,
-                                                                                                  kma_database_path)
-        os.system(cmd)
-    else:
-        #tmp disabled shm
-        cmd = "{} -i {} -o {}template_kma_results -t_db {} -ID 0 -nf -mem_mode -sasm -ef".format(kma_path, total_filenames, target_dir, kma_database_path)
-        os.system(cmd)
-        #check_shm_kma(kma_path, kma_database_path, cmd, logfile)
+def KMA_mapping(target_dir, input, logfile, configname):
+    best_template_score = None
+    reference_header_text = None
+
+    cmd = "/opt/moss/kma/kma -i {} -o {}kma_mapping -t_db /opt/moss_db/{}/REFDB.ATG -ID 0 -nf -mem_mode -sasm -ef".format(input, target_dir, configname)
+    os.system(cmd)
+
     try:
-        infile = open("{}template_kma_results.res".format(target_dir), 'r')
+        infile = open("{}kma_mapping.res".format(target_dir), 'r')
         for line in infile:
             line = line.rstrip()
             line = line.split("\t")
             if line[0][0] != "#":
                 if float(line[1]) > best_template_score:
                     best_template_score = float(line[1])
-                    header_text = line[0]
+                    reference_header_text = line[0]
 
 
-        template_found = True
-        return best_template_score, template_found, header_text
+        template_search_result = True
+        template_score, template_search_result, reference_header_text
 
     #If no match are found, the sample will be defined as a new reference.
     except IndexError as error:
@@ -497,9 +487,9 @@ def KMA_mapping(total_filenames, target_dir, kma_database_path, logfile, kma_pat
             "None of the given templates matches any of the entries in given ref_kma_database. The input reads will now be assembled and added to the reference ref_kma_database as a new reference. After this the program will be stopped, and thus no distance matrix based analysis will be carried out.",
             file=logfile)
         # Perform assembly based on input
-        template_found = False
+        template_search_result = False
         print("FoundnoTemplate")
-        return best_template_score, template_found, header_text
+        template_score, template_search_result, reference_header_text
     ###
 
 def illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion,configname, laptop, consensus_name):
