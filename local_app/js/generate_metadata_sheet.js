@@ -75,7 +75,6 @@ function generate_table(input_array) {
 
       for (var j = 0; j < columnNames.length; j++) {
         var identifier = jsonData[columnNames[j]];
-        console.log(identifier);
         var td = document.createElement('td');
         td.style.textAlign = "center";
         td.id = `outer${i}${j}`;
@@ -88,7 +87,7 @@ function generate_table(input_array) {
                 td.appendChild(input);
                 tr.appendChild(td);
                 continue;
-            } else {
+            } else if (typeof identifier === "object") {
                 console.log(typeof identifier);
             }
 
