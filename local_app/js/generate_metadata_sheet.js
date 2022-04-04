@@ -134,9 +134,112 @@ function find_model_from_input(flowcell, kit, db_dir, algorithm){
             }
 }
 
-function fetch_guppy_data() {
-    console.log("test");
+
+function fetch_guppy_data(){
+    var db_dir = document.getElementById('current-config').innerHTML;
+
+    readTextFile("/opt/moss_db/" + "test1" +"/static_files/workflow.json", function(text){
+        var data = JSON.parse(text);
+        document.getElementById('workflowjson').innerHTML = data;
+
+        var items = data;
+
+        var result_flowcell = [];
+        var result_kit = [];
+        var result_barcoding_config_name = [];
+        var result_model_version = [];
+
+        for (var item, i = 0; item = items[i++];) {
+          var flowcell = item.flowcell;
+          var kit = item.kit;
+          var barcoding_config_name = item.barcoding_config_name;
+          var model_version = item.model_version;
+          result_flowcell.push(flowcell);
+          result_kit.push(kit);
+          result_barcoding_config_name.push(barcoding_config_name);
+          result_model_version.push(model_version);
+        }
+
+        const unique_flowcell = [...new Set(result_flowcell)];
+        const unique_kit = [...new Set(result_kit)];
+        const unique_barcoding_config_name = [...new Set(result_barcoding_config_name)];
+        const unique_model_version = [...new Set(result_model_version)];
+
+        var select = document.getElementById("flow-cell");
+        //var unames = ["Alpha", "Bravo", "Charlie", "Delta", "Echo"];
+        for (var i = 0; i < unique_flowcell.length; i++) {
+            var opt = unique_flowcell[i];
+            var el = document.createElement("option");
+            el.textContent = opt;
+            el.value = opt;
+            select.appendChild(el);
+          }
+
+        var select = document.getElementById("kit");
+        //var unames = ["Alpha", "Bravo", "Charlie", "Delta", "Echo"];
+        for (var i = 0; i < unique_kit.length; i++) {
+            var opt = unique_kit[i];
+            var el = document.createElement("option");
+            el.textContent = opt;
+            el.value = opt;
+            select.appendChild(el);
+          }
+
+        var select = document.getElementById("barcoding_config_name");
+        for (var i = 0; i < unique_barcoding_config_name.length; i++) {
+            var opt = unique_barcoding_config_name[i];
+            var el = document.createElement("option");
+            el.textContent = opt;
+            el.value = opt;
+            select.appendChild(el);
+          }
+
+        var select = document.getElementById("model_version");
+        for (var i = 0; i < unique_model_version.length; i++) {
+            var opt = unique_model_version[i];
+            var el = document.createElement("option");
+            el.textContent = opt;
+            el.value = opt;
+            select.appendChild(el);
+          }
+
+    });
+
+
+
+
+    readTextFile(db_dir + "static_files/barcodes.json", function(text){
+        var data = JSON.parse(text);
+        var items = data;
+
+        var result_barcode = [];
+
+        for (var item, i = 0; item = items[i++];) {
+          var barcode = item.barcode;
+          result_barcode.push(barcode);
+        }
+
+        const unique_barcode = [...new Set(result_barcode)];
+
+        var select = document.getElementById("demux");
+        var opt = "No multiplexing";
+        var el = document.createElement("option");
+        el.textContent = opt;
+        el.value = opt;
+        select.appendChild(el);
+        //var unames = ["Alpha", "Bravo", "Charlie", "Delta", "Echo"];
+        for (var i = 0; i < unique_barcode.length; i++) {
+            var opt = unique_barcode[i];
+            var el = document.createElement("option");
+            el.textContent = opt;
+            el.value = opt;
+            select.appendChild(el);
+          }
+
+    });
 }
+
+
 function start_base_calling(){
 
     var flowcell = document.getElementById('flow-cell').value;
