@@ -92,6 +92,10 @@ function generate_table(input_array) {
                 td.classList.add("select");
                 var input = document.createElement('select');
                 input.id = `input${i}${j}`;
+                var option = document.createElement("option");
+                option.value = "hand";
+                option.text = "Hand";
+                input.add(option);
                 td.appendChild(input);
                 tr.appendChild(td);
                 continue;
