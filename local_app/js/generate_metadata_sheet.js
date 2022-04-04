@@ -32,7 +32,9 @@ function create_metadata_table(){
 
     create_button.type = "button";
     create_button.id = "generate-metadata-sheet";
-    create_button.innerHTML = "Create metadata sheet for sequencing and analysis"
+    create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
+    var mybr = document.createElement('br');
+    document.getElementById('metadata-table-div').appendChild(mybr);
     document.getElementById('metadata-table-div').appendChild(create_button);
 
 }
