@@ -53,7 +53,7 @@ function generate_table(input_array) {
 
     var thead = document.createElement('thead');
     var headRow = document.createElement('tr');
-    var columnNames = ["Sample", "SeqType", "Use current IP location", "City", "Country"];
+    var columnNames = ["Sample Name", "Barcode number"];
 
     for (var i = 0; i < 5; i++) {
       var th = document.createElement('th');
