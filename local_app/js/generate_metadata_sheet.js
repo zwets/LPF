@@ -88,7 +88,13 @@ function generate_table(input_array) {
                 tr.appendChild(td);
                 continue;
             } else if (typeof identifier === "object") {
-                console.log(typeof identifier);
+                td.defaultValue = "";
+                td.classList.add("select");
+                var input = document.createElement('input');
+                input.id = `input${i}${j}`;
+                td.appendChild(input);
+                tr.appendChild(td);
+                continue;
             }
 
         }
