@@ -10,12 +10,10 @@ function create_metadata_table(){
 
     var input = document.getElementById('multiple-input-type').value;
     var input_number = parseInt(input);
-    console.log(input_number);
-    var sequence_type = document.getElementById("multiple-input-type").value;
 
     var children = "";
-    for (var i = 0; i < input.files.length; ++i) {
-        children +=  input.files.item(i).path + ',';
+    for (var i = 0; i < input_number; ++i) {
+        children +=  "test" + ',';
      }
     var parallel_input = children.slice(0, -1);
     var input_array = parallel_input.split(",");
