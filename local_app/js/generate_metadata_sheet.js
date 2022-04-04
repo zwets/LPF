@@ -28,7 +28,7 @@ function create_metadata_table(){
     document.getElementById('metadata-table-div').appendChild(append_table);
 
     var create_button = document.createElement('button');
-    table.classList.add('button-7');
+    create_button.classList.add('button-7');
 
     create_button.type = "button";
     create_button.id = "generate-metadata-sheet";
