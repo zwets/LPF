@@ -28,14 +28,11 @@ function create_metadata_table(){
     document.getElementById('metadata-table-div').appendChild(append_table);
 
     var create_button = document.createElement('button');
+    table.classList.add('button-7');
 
     create_button.type = "button";
-    create_button.id = "generate-multiple-index-button";
-    create_button.style.width = '225px'; // setting the width to 200px
-    create_button.style.height = '20px'; // setting the height to 200px
-    create_button.innerHTML = "Create multiple analysis index file"
-    create_button.style.margin='0px 2px';
-    document.getElementById('metadata-table-div').appendChild("<br>");
+    create_button.id = "generate-metadata-sheet";
+    //document.getElementById('metadata-table-div').appendChild("<br>");
     document.getElementById('metadata-table-div').appendChild(create_button);
 
 }
