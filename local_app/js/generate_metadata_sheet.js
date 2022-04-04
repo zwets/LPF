@@ -62,7 +62,7 @@ function generate_table(input_array) {
 
     for (var i = 0; i < columnNames.length; i++) {
       var th = document.createElement('th');
-      th.appendChild(document.createTextNode(columnNames[i]));
+      th.appendChild(document.createTextNode(columnNames[i].replace("_", " ")));
       headRow.appendChild(th);
     }
 
