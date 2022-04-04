@@ -44,6 +44,8 @@ function create_metadata_table(){
 
 function generate_table(input_array) {
 
+    console.log(input_array);
+
     var new_input_array = input_array.sort();
 
     var array_len = new_input_array.length;
@@ -53,7 +55,7 @@ function generate_table(input_array) {
 
     var thead = document.createElement('thead');
     var headRow = document.createElement('tr');
-    var columnNames = ["Sample Name", "Barcode number"];
+    var columnNames = ["Barcode number", "Sample Name"];
 
     for (var i = 0; i < 5; i++) {
       var th = document.createElement('th');
