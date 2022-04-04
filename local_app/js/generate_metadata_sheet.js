@@ -74,12 +74,10 @@ function generate_table(input_array) {
       var tr = document.createElement('tr');
 
       for (var j = 0; j < columnNames.length; j++) {
+        console.log(columnNames[j]);
         var td = document.createElement('td');
         td.style.textAlign = "center";
         td.id = `outer${i}${j}`;
-
-        console.log(`outer${i}${j}`);
-
         if (j >= 1) {
             if (j == 1) {
                 td.classList.add("input");
