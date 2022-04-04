@@ -13,7 +13,11 @@ function create_metadata_table(){
 
     var children = "";
     for (var i = 0; i < input_number; ++i) {
-        children +=  "test" + ',';
+        if (i >= 10) {
+            children +=  i.toString() + ',';
+        } else {
+            children +=  "0" + i.toString() + ',';
+        }
      }
     var parallel_input = children.slice(0, -1);
     var input_array = parallel_input.split(",");
