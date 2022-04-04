@@ -55,7 +55,7 @@ function generate_table(input_array) {
 
     var thead = document.createElement('thead');
     var headRow = document.createElement('tr');
-    var columnNames = ["Barcode number", "Sample Name"];
+    var columnNames = ["Barcode number"];
 
     for (var i = 0; i < 5; i++) {
       var th = document.createElement('th');
