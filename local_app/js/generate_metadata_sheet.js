@@ -73,7 +73,7 @@ function generate_table(input_array) {
     for (var i = 0; i < array_len; i++) {
       var tr = document.createElement('tr');
 
-      for (var j = 0; j < 5; j++) {
+      for (var j = 0; j < columnNames.length; j++) {
         var td = document.createElement('td');
         td.style.textAlign = "center";
         td.id = `outer${i}${j}`;
