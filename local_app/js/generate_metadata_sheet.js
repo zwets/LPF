@@ -208,7 +208,7 @@ function fetch_guppy_data(){
 
 
 
-    readTextFile(db_dir + "static_files/barcodes.json", function(text){
+    readTextFile("/opt/moss_db/" + "test1" +"/static_files/barcodes.json", function(text){
         var data = JSON.parse(text);
         var items = data;
 
