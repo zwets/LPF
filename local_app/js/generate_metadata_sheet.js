@@ -55,10 +55,11 @@ function generate_table(input_array) {
     var headRow = document.createElement('tr');
     var columnNames = ["Barcode number"];
 
+    const jsonData= require('/opt/moss/datafiles/ena_list.json');
+    console.log(jsonData);
+
     for (var i = 0; i < 5; i++) {
       var th = document.createElement('th');
-      //th.style.borderLeft = "1px solid #000"
-      //th.style.borderRight = "1px solid #000"
       th.appendChild(document.createTextNode(columnNames[i]));
       headRow.appendChild(th);
     }
