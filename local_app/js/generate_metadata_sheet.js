@@ -103,7 +103,7 @@ function generate_table(input_array) {
       headRow.appendChild(th);
     }
 
-    thead.appendChild(headRow);
+    table.appendChild(headRow);
 
     //var tbody = document.createElement('tbody');
     //tbody.id = "tbody";
@@ -149,11 +149,11 @@ function generate_table(input_array) {
       }
 
 
-      tbody.appendChild(tr);
+      table.appendChild(tr);
     }
 
-    table.appendChild(thead);
-    table.appendChild(tbody);
+    //table.appendChild(thead);
+    //table.appendChild(tbody);
     return table
 }
 
