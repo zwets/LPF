@@ -55,7 +55,7 @@ function create_metadata_table(){
         }
       csv_string = csv_string.concat(`file_location\n`);
 
-      var remaining_rows = row[1:];
+      var remaining_rows = rows[1:];
       console.log(remaining_rows);
 
 
