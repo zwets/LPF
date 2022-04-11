@@ -46,7 +46,7 @@ function create_metadata_table(){
       var input = document.getElementById('multiple-input-type').value;
       var input_number = parseInt(input);
 
-      const csv_string = "";
+      var csv_string = "";
       var rows = document.getElementById("metadata_csv_table").rows;
       var header_row = rows[0];
 
