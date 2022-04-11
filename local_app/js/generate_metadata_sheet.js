@@ -47,8 +47,9 @@ function create_metadata_table(){
       var input_number = parseInt(input);
 
       var csv_string = "";
-      var rows = document.getElementsByTagName("metadata_csv_table")[0].rows;
-      console.log(document.getElementsByTagName("metadata_csv_table")[0]);
+      console.log(document..getElementById("metadata_csv_table"));
+      var rows = document..getElementById("metadata_csv_table")[0].rows;
+      console.log(document..getElementById("metadata_csv_table")[0]);
       console.log(rows);
       var last = rows[rows.length - 1];
       var cell = last.cells[0];
