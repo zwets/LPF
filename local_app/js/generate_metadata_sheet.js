@@ -55,12 +55,12 @@ function create_metadata_table(){
         }
       csv_string = csv_string.concat(`file_location\n`);
 
-      var remaining_rows = rows[1:];
+
+
+      var remaining_rows = rows.slice(1);
       console.log(remaining_rows);
 
-
-      console.log(rows);
-      console.log(rows[0]);
+      
       var last = rows[rows.length - 1];
       var cell = last.cells[0];
       var value = cell.innerHTML
