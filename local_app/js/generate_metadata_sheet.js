@@ -59,7 +59,7 @@ function create_metadata_table(){
       console.log(remaining_rows);
 
 
-      console.log(rows)
+      console.log(rows);
       console.log(rows[0]);
       var last = rows[rows.length - 1];
       var cell = last.cells[0];
