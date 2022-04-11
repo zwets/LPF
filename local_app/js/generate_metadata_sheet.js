@@ -101,7 +101,7 @@ function generate_table(input_array) {
     console.log(columnNames);
 
     for (var i = 0; i < columnNames.length; i++) {
-      var th = document.createElement('th');
+      var th = document.createElement('td');
       th.appendChild(document.createTextNode(columnNames[i].replace("_", " ")));
       headRow.appendChild(th);
     }
