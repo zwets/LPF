@@ -32,12 +32,13 @@
  -->
 
   <div class="main" id="main">
-    <main data-router-wrapper>
-      <section data-router-view="Guide" class="Guide">
-        <div class="Guide-content">
-            <div class ="Guide-presentation">
-                <h1>Generate a metadata sheet for analysis</h1></div>
-            <div class ="Guide-presentation" hidden>
+      <main data-router-wrapper>
+          <section data-router-view="Guide" class="Guide">
+          <div class="Guide-content">
+              <div class ="Guide-presentation">
+                  <h1>Generate a metadata sheet for analysis</h1>
+              </div>
+              <div class ="Guide-presentation" hidden>
                 <h1>Generate a metadata sheet for analysis</h1>
 
                 Your current system configuration is:
@@ -45,13 +46,13 @@
                 <pre id="current-config"></pre>
                 <div hidden>
                     MOSS path: <pre id="current-exepath"></pre>
-
                 </div>
-            </div>
+              </div>
 
             <div class="MOSS-arguments" id="MOSS-arguments">
                 <b>Please provide the following information about your sequences:</b>
-              <br><br>
+                <br>
+                <br>
                 <div class="generate-metadata-sheet" id="generate-metadata-sheet">
                     <div class="generate-multiple-index-file-section" id="generate-multiple-index-file-section">
                         <label for="multiple-input-type">Number of samples:</label>
@@ -70,28 +71,37 @@
                             <option value="11">11</option>
                             <option value="12">12</option>
                         </select>
-                        <br><br>
+                        <br>
+                        <br>
                         Flow-cell type:
                         <select name="flow-cell" id="flow-cell">
                           </select>
-                        <br><br>
+                        <br>
+                        <br>
                         Nanopore kit:
                         <select name="kit" id="kit">
-                          </select> <br><br>
+                          </select> <br>
+                        <br>
                         Demultiplex (barcodes):
                         <select name="demux" id="demux">
-                          </select> <br><br>
+                          </select> <br>
+                        <br>
 
                         <div class="base-call-fast5-section" id="base-call-fast5-section">
                         <form action="/action_page.php">
                             Select the basecall output folder which contains subfolders names barcode01, barcode02, barcode03 etc.:
-                            <input type="file" id="barcode-folder" name="barcode-folder" webkitdirectory directory multiple value=""><br> <br>
-                    </div>
+                            <input type="file" id="barcode-folder" name="barcode-folder" webkitdirectory directory multiple value="">
+                            <br>
+                            <br>
+                        </form>
+                        </div>
 
                         <br> <br>
 
                         <button class="button-7" role="button" onclick="create_metadata_table()";>Generate metadata table</button>
-                    </div><br>
+                    </div>
+
+                    <br>
 
                     <div id="metadata-table-div">
 
