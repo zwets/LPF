@@ -46,6 +46,11 @@ function create_metadata_table(){
       var input = document.getElementById('multiple-input-type').value;
       var input_number = parseInt(input);
 
+      var csv_string = "";
+      //header
+      var header_row = document.getElementById('thead_tr');
+      console.log(header_row);
+
       //Load obj to csv function
       }
     create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
