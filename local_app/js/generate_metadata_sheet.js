@@ -65,11 +65,14 @@ function create_metadata_table(){
       var output_csv_file = `/opt/moss_db/${current_moss_system}/metadata_csv/${experiment_name}.csv`;
       //Here insert validation function for ENA compatability
       //Check in file exists
-      if (output_csv_file.exists()) {
-        console.log("exists");
-      } else {
-        console.log("Does not exists");
-      }
+
+      if (fs.existsSync(output_csv_file)) {
+          // path exists
+          console.log("exists:", output_csv_file);
+        } else {
+          console.log("DOES NOT exist:", output_csv_file);
+        }
+
       fs.writeFile(output_csv_file, csv_string, err => {
           if (err) {
             console.error(err)
