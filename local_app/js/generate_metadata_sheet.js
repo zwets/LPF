@@ -5,8 +5,13 @@ var mkdirp = require('mkdirp');
 
 
 function create_metadata_table(){
-    var fastq_path = document.getElementById('upload-config-file').value;
-    console.log(fastq_path);
+    var bc_folder = document.getElementById('fast5-input-field');
+
+    var bc_folder_path = bc_folder.files.item(0).path;
+    var path_list = bc_folder_path.split("/");
+    var path_slice= path_list.slice(1, -1);
+    var bc_final_path = "/" + path_slice.join("/") + "/";
+    console.log(bc_final_path);
 
     document.getElementById('metadata-table-div').innerHTML = "";
     //document.getElementById('analyse-multiple-index-file-section').innerHTML = "";

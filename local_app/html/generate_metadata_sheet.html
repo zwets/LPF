@@ -81,8 +81,13 @@
                         Demultiplex (barcodes):
                         <select name="demux" id="demux">
                           </select> <br><br>
-                        <label for="upload-config-file">Select fastq files:</label>
-                        <input type="file" id="upload-config-file"/>
+
+                        <div class="base-call-fast5-section" id="base-call-fast5-section">
+                        <form action="/action_page.php">
+                            Select the basecall output folder which contains subfolders names barcode01, barcode02, barcode03 etc.:
+                            <input type="file" id="barcode-folder" name="barcode-folder" webkitdirectory directory multiple value=""><br> <br>
+                    </div>
+
                         <br> <br>
 
                         <button class="button-7" role="button" onclick="create_metadata_table()";>Generate metadata table</button>
