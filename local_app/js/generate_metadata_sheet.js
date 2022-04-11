@@ -66,7 +66,7 @@ function create_metadata_table(){
           }
         }
       console.log(csv_string);
-      var current_moss_system = require('./data.json')["current_working_db"];
+      var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
       console.log(current_moss_system)
       /*
       set fso = CreateObject("Scripting.FileSystemObject");
