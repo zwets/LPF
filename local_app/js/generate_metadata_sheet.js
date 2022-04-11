@@ -84,10 +84,9 @@ function create_metadata_table(){
           create_button.style.height = "150px";
 
           var mybr = document.createElement('br');
-          document.getElementById('metadata-table-div').appendChild(mybr);
-          document.getElementById('metadata-table-div').appendChild(mybr);
-          document.getElementById('metadata-table-div').appendChild(mybr);
-          document.getElementById('metadata-table-div').appendChild(mybr);
+          document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
+          document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
+
           document.getElementById('metadata-table-div').appendChild(create_button);
           //Make go to analyses shortcut
         })
