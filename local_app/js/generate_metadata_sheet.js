@@ -43,7 +43,7 @@ function create_metadata_table(){
       var header_row = rows[0];
 
       for (var i = 0; i < header_row.cells.length; i++) {
-          csv_string = csv_string.concat(`${header_row.cells[i].innerHTML}, `);
+          csv_string = csv_string.concat(`${header_row.cells[i].innerHTML},`);
         }
       csv_string = csv_string.concat(`file_location\n`);
 
@@ -56,7 +56,7 @@ function create_metadata_table(){
       for (var i = 0; i < rows.length; i++) {
           if (i>0) {
             for (var t = 0; t < rows[i].cells.length; t++) {
-              csv_string = csv_string.concat(`${rows[i].cells[t].value}, `);
+              csv_string = csv_string.concat(`${rows[i].cells[t].value},`);
               }
             csv_string = csv_string.concat(`${bc_final_path}\n`);
           }
@@ -64,6 +64,12 @@ function create_metadata_table(){
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
       var output_csv_file = `/opt/moss_db/${current_moss_system}/metadata_csv/${experiment_name}.csv`;
       //Here insert validation function for ENA compatability
+      //Check in file exists
+      if (output_csv_file.exists()) {
+        console.log("exists");
+      } else {
+        console.log("Does not exists");
+      }
       fs.writeFile(output_csv_file, csv_string, err => {
           if (err) {
             console.error(err)
