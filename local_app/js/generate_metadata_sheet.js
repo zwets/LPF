@@ -5,6 +5,9 @@ var mkdirp = require('mkdirp');
 
 
 function create_metadata_table(){
+    var fastq_path = document.getElementById('upload-config-file').value;
+    console.log(fastq_path);
+
     document.getElementById('metadata-table-div').innerHTML = "";
     //document.getElementById('analyse-multiple-index-file-section').innerHTML = "";
 
