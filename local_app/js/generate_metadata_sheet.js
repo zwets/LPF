@@ -69,9 +69,11 @@ function create_metadata_table(){
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
       set fso = CreateObject("Scripting.FileSystemObject");
       var output_csv_file = `/opt/moss_db/${current_moss_system}/metadata_csv/§{experiment_name}.csv`;
+      console.log(output_csv_file);
+      /*
       set s = fso.CreateTextFile(output_csv_file, True);
       s.writeline(csv_string);
-      s.Close();
+      s.Close();*/
       //Load obj to csv function
     }
     create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
