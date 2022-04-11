@@ -46,7 +46,7 @@ function create_metadata_table(){
       var input = document.getElementById('multiple-input-type').value;
       var input_number = parseInt(input);
 
-      var csv_string = "";
+      const csv_string = "";
       var rows = document.getElementById("metadata_csv_table").rows;
       var header_row = rows[0];
 
@@ -68,12 +68,14 @@ function create_metadata_table(){
       console.log(csv_string);
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
       var output_csv_file = `/opt/moss_db/${current_moss_system}/metadata_csv/${experiment_name}.csv`;
-      set fso = CreateObject("Scripting.FileSystemObject");
-      /*
-      set s = fso.CreateTextFile(output_csv_file, True);
-      s.writeline(csv_string);
-      s.Close();*/
-      //Load obj to csv function
+      fs.writeFile(output_csv_file, csv_string, err => {
+          if (err) {
+            console.error(err)
+            return
+          }
+          //file written successfully
+        })
+
     }
     create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
     var mybr = document.createElement('br');
