@@ -49,6 +49,14 @@ function create_metadata_table(){
       var csv_string = "";
       console.log(document.getElementById("metadata_csv_table"));
       var rows = document.getElementById("metadata_csv_table").rows;
+      var header_row = rows[0];
+      for (var i = 0; i < header_row.length; i++) {
+          csv_string = csv_string.concat(header_row[i], `);
+        }
+      csv_string.concat(header_row[i]\n);`
+
+      console.log(csv_string);`
+
       console.log(rows)
       console.log(rows[0]);
       var last = rows[rows.length - 1];
