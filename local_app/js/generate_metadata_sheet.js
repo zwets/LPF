@@ -48,11 +48,9 @@ function create_metadata_table(){
 
       var csv_string = "";
       console.log(document.getElementById("metadata_csv_table"));
-      console.log(document.getElementById("metadata_csv_table")[0]);
-      console.log(document.getElementById("metadata_csv_table")[0][0]);
-      var rows = document.getElementById("metadata_csv_table")[0].rows;
-      console.log(document.getElementById("metadata_csv_table")[0]);
-      console.log(rows);
+      var rows = document.getElementById("metadata_csv_table").rows;
+      console.log(rows)
+      console.log(rows[0]);
       var last = rows[rows.length - 1];
       var cell = last.cells[0];
       var value = cell.innerHTML
@@ -101,7 +99,7 @@ function generate_table(input_array) {
     console.log(columnNames);
 
     for (var i = 0; i < columnNames.length; i++) {
-      var th = document.createElement('td');
+      var th = document.createElement('th');
       th.appendChild(document.createTextNode(columnNames[i].replace("_", " ")));
       headRow.appendChild(th);
     }
