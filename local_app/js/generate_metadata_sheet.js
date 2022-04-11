@@ -68,9 +68,8 @@ function create_metadata_table(){
       console.log(csv_string);
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
       set fso = CreateObject("Scripting.FileSystemObject");
-      console.log(current_moss_system)
       var output_csv_file = `/opt/moss_db/${current_moss_system}/metadata_csv/§{experiment_name}.csv`;
-      set s   = fso.CreateTextFile(output_csv_file, True);
+      set s = fso.CreateTextFile(output_csv_file, True);
       s.writeline(csv_string);
       s.Close();
       //Load obj to csv function
