@@ -43,12 +43,22 @@ function create_metadata_table(){
     create_button.onclick = function() {
       var experiment_name = document.getElementById('experiment-name').value;
       console.log("experiment_name");
+      var input = document.getElementById('multiple-input-type').value;
+      var input_number = parseInt(input);
+
+      //Load obj to csv function
       }
     create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
     var mybr = document.createElement('br');
     document.getElementById('metadata-table-div').appendChild(mybr);
     document.getElementById('metadata-table-div').appendChild(create_button);
 
+}
+
+function create_csv_from_obj(obj, experiment_name) {
+    //check if experiment_name taken
+    //if not {
+    //  print obj to csv in /opt/moss_db/{current_dir}/metadata_csv/{experiment_name}.csv
 }
 
 function generate_table(input_array) {
@@ -63,7 +73,9 @@ function generate_table(input_array) {
     table.classList.add('table');
 
     var thead = document.createElement('thead');
+    thead.id = "thead";
     var headRow = document.createElement('tr');
+    tr.id = "thead_tr"
     var columnNames = ["Barcode number"];
 
     const jsonData= require('/opt/moss/datafiles/ena_list.json');
@@ -80,9 +92,11 @@ function generate_table(input_array) {
     thead.appendChild(headRow);
 
     var tbody = document.createElement('tbody');
+    thead.id = "tbody";
 
     for (var i = 0; i < array_len; i++) {
       var tr = document.createElement('tr');
+      tr.id = "tbody_tr_" + (i).toString();
 
       for (var j = 0; j < columnNames.length; j++) {
         var identifier = jsonData[columnNames[j]];
