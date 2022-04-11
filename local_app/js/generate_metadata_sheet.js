@@ -57,10 +57,10 @@ function create_metadata_table(){
 
 
 
-      var remaining_rows = rows.slice(1);
-      console.log(remaining_rows);
+      for (var i = 0; i < rows.length; i++) {
+          console.log(rows[i]);
+        }
 
-      
       var last = rows[rows.length - 1];
       var cell = last.cells[0];
       var value = cell.innerHTML
