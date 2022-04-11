@@ -5,7 +5,7 @@ var mkdirp = require('mkdirp');
 
 
 function create_metadata_table(){
-    var bc_folder = document.getElementById('fast5-input-field');
+    var bc_folder = document.getElementById('barcode-folder');
 
     var bc_folder_path = bc_folder.files.item(0).path;
     var path_list = bc_folder_path.split("/");
