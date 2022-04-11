@@ -75,7 +75,7 @@ function generate_table(input_array) {
     var thead = document.createElement('thead');
     thead.id = "thead";
     var headRow = document.createElement('tr');
-    tr.id = "thead_tr";
+    headRow.id = "thead_tr";
     var columnNames = ["Barcode number"];
 
     const jsonData= require('/opt/moss/datafiles/ena_list.json');
@@ -92,7 +92,7 @@ function generate_table(input_array) {
     thead.appendChild(headRow);
 
     var tbody = document.createElement('tbody');
-    thead.id = "tbody";
+    tbody.id = "tbody";
 
     for (var i = 0; i < array_len; i++) {
       var tr = document.createElement('tr');
