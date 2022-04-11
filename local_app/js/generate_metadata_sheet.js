@@ -41,7 +41,8 @@ function create_metadata_table(){
     create_button.type = "button";
     create_button.id = "generate-metadata-sheet";
     create_button.onclick = function() {
-      console.log("onclick test")
+      var experiment_name = document.getElementById('experiment-name').value;
+      console.log("experiment_name")
       }
     create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
     var mybr = document.createElement('br');
