@@ -94,12 +94,11 @@ function create_metadata_table(){
             })
 
         }
-        create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
-        var mybr = document.createElement('br');
-        document.getElementById('metadata-table-div').appendChild(mybr);
-        document.getElementById('metadata-table-div').appendChild(create_button);
-
-      }
+       }
+    create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
+    var mybr = document.createElement('br');
+    document.getElementById('metadata-table-div').appendChild(mybr);
+    document.getElementById('metadata-table-div').appendChild(create_button);
 
 }
 
