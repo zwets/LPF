@@ -66,19 +66,25 @@ function create_metadata_table(){
           }
         }
       console.log(csv_string);
-      var last = rows[rows.length - 1];
-      var cell = last.cells[0];
-      var value = cell.innerHTML
+      var current_moss_system = require('./data.json')["current_working_db"];
+      console.log(current_moss_system)
+      /*
+      set fso = CreateObject("Scripting.FileSystemObject");
+      var current_moss_system = require('./data.json')["current_working_db"];
+      console.log(current_moss_system)
+      var output_csv_file = `/opt/moss_db/${}/metadata_csv/§{experiment_name}.csv`;
+      set s   = fso.CreateTextFile("/optfilename.txt", True);
 
-      console.log(last);
-      console.log(cell);
-      console.log(value);
-      //header
-      var header_row = document.getElementById('thead_tr');
-      console.log(header_row);
+      var firstName = document.getElementById('FirstName');
+      var lastName  = document.getElementById('lastName');
 
+      s.writeline("First Name :" + FirstName);
+      s.writeline("Last Name :" + lastName);
+
+      s.writeline("-----------------------------");
+      s.Close();*/
       //Load obj to csv function
-      }
+    }
     create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
     var mybr = document.createElement('br');
     document.getElementById('metadata-table-div').appendChild(mybr);
