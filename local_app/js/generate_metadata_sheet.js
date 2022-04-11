@@ -73,6 +73,7 @@ function create_metadata_table(){
             console.error(err)
             return
           }
+          alert(`The metadata csv file has been created and is stored at ${output_csv_file}`);
           //file written successfully
         })
 
