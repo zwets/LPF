@@ -47,17 +47,18 @@ function create_metadata_table(){
       var input_number = parseInt(input);
 
       var csv_string = "";
-      console.log(document.getElementById("metadata_csv_table"));
       var rows = document.getElementById("metadata_csv_table").rows;
       var header_row = rows[0];
-      console.log(header_row.cells.length);
+
       for (var i = 0; i < header_row.cells.length; i++) {
           csv_string = csv_string.concat(`${header_row.cells[i].innerHTML}, `);
         }
       csv_string = csv_string.concat(`file_location\n`);
 
-      console.log(csv_string);
+      var remaining_rows = row[1:];
+      console.log(remaining_rows)
 
+      
       console.log(rows)
       console.log(rows[0]);
       var last = rows[rows.length - 1];
