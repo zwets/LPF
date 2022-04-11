@@ -5,13 +5,6 @@ var mkdirp = require('mkdirp');
 
 
 function create_metadata_table(){
-    var bc_folder = document.getElementById('barcode-folder');
-
-    var bc_folder_path = bc_folder.files.item(0).path;
-    var path_list = bc_folder_path.split("/");
-    var path_slice= path_list.slice(1, -1);
-    var bc_final_path = "/" + path_slice.join("/") + "/";
-    console.log(bc_final_path);
 
     document.getElementById('metadata-table-div').innerHTML = "";
     //document.getElementById('analyse-multiple-index-file-section').innerHTML = "";
@@ -42,7 +35,6 @@ function create_metadata_table(){
     create_button.id = "generate-metadata-sheet";
     create_button.onclick = function() {
       var experiment_name = document.getElementById('experiment-name').value;
-      console.log("experiment_name");
       var input = document.getElementById('multiple-input-type').value;
       var input_number = parseInt(input);
 
@@ -55,19 +47,23 @@ function create_metadata_table(){
         }
       csv_string = csv_string.concat(`file_location\n`);
 
-
+      var bc_folder = document.getElementById('barcode-folder');
+      var bc_folder_path = bc_folder.files.item(0).path;
+      var path_list = bc_folder_path.split("/");
+      var path_slice= path_list.slice(1, -1);
+      var bc_final_path = "/" + path_slice.join("/") + "/";
 
       for (var i = 0; i < rows.length; i++) {
           if (i>0) {
             for (var t = 0; t < rows[i].cells.length; t++) {
               csv_string = csv_string.concat(`${rows[i].cells[t].value}, `);
               }
-            csv_string = csv_string.concat(`file_location\n`);
+            csv_string = csv_string.concat(`${bc_final_path}\n`);
           }
         }
-      console.log(csv_string);
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
       var output_csv_file = `/opt/moss_db/${current_moss_system}/metadata_csv/${experiment_name}.csv`;
+      //Here insert validation function for ENA compatability
       fs.writeFile(output_csv_file, csv_string, err => {
           if (err) {
             console.error(err)
@@ -84,7 +80,6 @@ function create_metadata_table(){
           create_button.style.height = "150px";
           create_button.style.fontSize = "large"
 
-          var mybr = document.createElement('br');
           document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
           document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
 
@@ -125,7 +120,6 @@ function generate_table(input_array) {
     const jsonData= require('/opt/moss/datafiles/ena_list.json');
     const ena_keys = Object.keys(jsonData);
     columnNames.push.apply(columnNames, ena_keys)
-    console.log(columnNames);
 
     for (var i = 0; i < columnNames.length; i++) {
       var th = document.createElement('th');
