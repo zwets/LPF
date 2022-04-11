@@ -88,8 +88,6 @@ function generate_table(input_array) {
     table.id = "metadata_csv_table";
     table.classList.add('table');
 
-    var thead = document.createElement('thead');
-    thead.id = "thead";
     var headRow = document.createElement('tr');
     headRow.id = "thead_tr";
     var columnNames = ["Barcode number"];
@@ -107,8 +105,8 @@ function generate_table(input_array) {
 
     thead.appendChild(headRow);
 
-    var tbody = document.createElement('tbody');
-    tbody.id = "tbody";
+    //var tbody = document.createElement('tbody');
+    //tbody.id = "tbody";
 
     for (var i = 0; i < array_len; i++) {
       var tr = document.createElement('tr');
