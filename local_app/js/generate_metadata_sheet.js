@@ -68,39 +68,38 @@ function create_metadata_table(){
 
       if (fs.existsSync(output_csv_file)) {
           // path exists
-          console.log("exists:", output_csv_file);
+          console.log("A file with this name already exists, please choose another one: ", output_csv_file);
         } else {
-          console.log("DOES NOT exist:", output_csv_file);
+          fs.writeFile(output_csv_file, csv_string, err => {
+              if (err) {
+                console.error(err)
+                return
+              }
+              alert(`The metadata csv file has been created and is stored at ${output_csv_file}`);
+              //file written successfully
+              var create_button = document.createElement('button');
+              create_button.classList.add('button-7');
+              create_button.type = "button";
+              create_button.id = "go-to-analyses-button";
+              create_button.innerHTML = "Proceed to analyses";
+              create_button.style.width = "400px";
+              create_button.style.height = "150px";
+              create_button.style.fontSize = "large"
+
+              document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
+              document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
+
+              document.getElementById('metadata-table-div').appendChild(create_button);
+              //Make go to analyses shortcut
+            })
+
         }
+        create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
+        var mybr = document.createElement('br');
+        document.getElementById('metadata-table-div').appendChild(mybr);
+        document.getElementById('metadata-table-div').appendChild(create_button);
 
-      fs.writeFile(output_csv_file, csv_string, err => {
-          if (err) {
-            console.error(err)
-            return
-          }
-          alert(`The metadata csv file has been created and is stored at ${output_csv_file}`);
-          //file written successfully
-          var create_button = document.createElement('button');
-          create_button.classList.add('button-7');
-          create_button.type = "button";
-          create_button.id = "go-to-analyses-button";
-          create_button.innerHTML = "Proceed to analyses";
-          create_button.style.width = "400px";
-          create_button.style.height = "150px";
-          create_button.style.fontSize = "large"
-
-          document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
-          document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
-
-          document.getElementById('metadata-table-div').appendChild(create_button);
-          //Make go to analyses shortcut
-        })
-
-    }
-    create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
-    var mybr = document.createElement('br');
-    document.getElementById('metadata-table-div').appendChild(mybr);
-    document.getElementById('metadata-table-div').appendChild(create_button);
+      }
 
 }
 
