@@ -48,6 +48,8 @@ function create_metadata_table(){
 
       var csv_string = "";
       console.log(document.getElementById("metadata_csv_table"));
+      console.log(document.getElementById("metadata_csv_table")[0]);
+      console.log(document.getElementById("metadata_csv_table")[0][0]);
       var rows = document.getElementById("metadata_csv_table")[0].rows;
       console.log(document.getElementById("metadata_csv_table")[0]);
       console.log(rows);
