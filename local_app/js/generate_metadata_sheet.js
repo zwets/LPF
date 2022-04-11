@@ -52,9 +52,9 @@ function create_metadata_table(){
       var header_row = rows[0];
       console.log(header_row.cells.length);
       for (var i = 0; i < header_row.cells.length; i++) {
-          csv_string = csv_string.concat(`${header_row.cells[i]}, `);
+          csv_string = csv_string.concat(`${header_row.cells[i].innerHTML}, `);
         }
-      csv_string.concat(`file_location\n`);
+      csv_string = csv_string.concat(`file_location\n`);
 
       console.log(csv_string);
 
