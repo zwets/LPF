@@ -75,6 +75,19 @@ function create_metadata_table(){
           }
           alert(`The metadata csv file has been created and is stored at ${output_csv_file}`);
           //file written successfully
+          var create_button = document.createElement('button');
+          create_button.classList.add('button-7');
+          create_button.type = "button";
+          create_button.id = "go-to-analyses-button";
+          create_button.innerHTML = "Proceed to analyses";
+          create_button.style.width = "100px";
+          create_button.style.height = "100px";
+
+          var mybr = document.createElement('br');
+          document.getElementById('metadata-table-div').appendChild(mybr);
+          document.getElementById('metadata-table-div').appendChild(mybr);
+          document.getElementById('metadata-table-div').appendChild(create_button);
+          //Make go to analyses shortcut
         })
 
     }
