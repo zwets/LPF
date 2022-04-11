@@ -68,7 +68,7 @@ function create_metadata_table(){
 
       if (fs.existsSync(output_csv_file)) {
           // path exists
-          console.log("A file with this name already exists, please choose another one: ", output_csv_file);
+          alert("A file with this name already exists, please choose another one than: ", output_csv_file);
         } else {
           fs.writeFile(output_csv_file, csv_string, err => {
               if (err) {
