@@ -80,10 +80,12 @@ function create_metadata_table(){
           create_button.type = "button";
           create_button.id = "go-to-analyses-button";
           create_button.innerHTML = "Proceed to analyses";
-          create_button.style.width = "100px";
-          create_button.style.height = "100px";
+          create_button.style.width = "400px";
+          create_button.style.height = "150px";
 
           var mybr = document.createElement('br');
+          document.getElementById('metadata-table-div').appendChild(mybr);
+          document.getElementById('metadata-table-div').appendChild(mybr);
           document.getElementById('metadata-table-div').appendChild(mybr);
           document.getElementById('metadata-table-div').appendChild(mybr);
           document.getElementById('metadata-table-div').appendChild(create_button);
