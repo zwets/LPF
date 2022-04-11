@@ -60,7 +60,7 @@ function create_metadata_table(){
       for (var i = 0; i < rows.length; i++) {
           if (i>0) {
             for (var t = 0; t < rows[i].cells.length; t++) {
-              csv_string = csv_string.concat(`${rows[i].cells[t].innerHTML}, `);
+              csv_string = csv_string.concat(`${rows[i].cells[t].value}, `);
               }
             csv_string = csv_string.concat(`file_location\n`);
           }
