@@ -82,6 +82,7 @@ function create_metadata_table(){
           create_button.innerHTML = "Proceed to analyses";
           create_button.style.width = "400px";
           create_button.style.height = "150px";
+          create_button.style.fontSize = "large"
 
           var mybr = document.createElement('br');
           document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
