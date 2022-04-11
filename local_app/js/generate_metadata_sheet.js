@@ -51,11 +51,11 @@ function create_metadata_table(){
       var rows = document.getElementById("metadata_csv_table").rows;
       var header_row = rows[0];
       console.log(header_row.cells.length);
-      for (var i = 0; i < header_row.length; i++) {
+      for (var i = 0; i < header_row.cells.length; i++) {
           console.log(header_row[i]);
-          csv_string = csv_string.concat(`header_row[i], `);
+          csv_string = csv_string.concat(`header_row.cells[i], `);
         }
-      csv_string.concat(`header_row[i]\n`);
+      csv_string.concat(`file_location\n`);
 
       console.log(csv_string);
 
