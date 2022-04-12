@@ -64,8 +64,6 @@ function create_metadata_table(){
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
       var output_csv_file = `/opt/moss_db/${current_moss_system}/metadata_csv/${experiment_name}.csv`;
       //Here insert validation function for ENA compatability
-      //Check in file exists
-
       if (fs.existsSync(output_csv_file)) {
           // path exists
           alert("A file with this name already exists, please choose another one than: ", output_csv_file);
@@ -82,6 +80,7 @@ function create_metadata_table(){
               create_button.type = "button";
               create_button.id = "go-to-analyses-button";
               create_button.innerHTML = "Proceed to analyses";
+              create_button.onclick="location.href='./analyse.html'";
               create_button.style.width = "400px";
               create_button.style.height = "150px";
               create_button.style.fontSize = "large"
