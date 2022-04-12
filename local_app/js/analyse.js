@@ -15,18 +15,15 @@ storage.get('currentConfig', function(error, data) {
 
 
 function submitSingleAnalysis() {
-
-    var db_dir = document.getElementById('current-config').innerHTML;
-    var exepath = document.getElementById('current-exepath').innerHTML;
-
-    var sequence_type = document.getElementById("single-input-type").value;
-    var input = document.getElementById('single-input-field');
+    var input = document.getElementById('csv_file');
+    console.log(input);
     var children = "";
         for (var i = 0; i < input.files.length; ++i) {
             children +=  input.files.item(i).path + ',';
          }
     var parallel_input = children.slice(0, -1);
     var input_array = parallel_input.split(",");
+    console.log(input_array);
     var threads = document.getElementById('threads').value;
     var jobs = document.getElementById('parallel-jobs').value;
 
