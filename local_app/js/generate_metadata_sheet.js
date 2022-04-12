@@ -80,7 +80,7 @@ function create_metadata_table(){
               create_button.type = "button";
               create_button.id = "go-to-analyses-button";
               create_button.innerHTML = "Proceed to analyses";
-              create_button.onclick="location.href='./analyse.html'";
+              create_button.onClick = "location.href='./analyse.html'";
               create_button.style.width = "400px";
               create_button.style.height = "150px";
               create_button.style.fontSize = "large"
