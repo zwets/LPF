@@ -20,15 +20,9 @@ function submitinit() {
   console.log(execstring);
 
 
-  //console.log("job submitted");
+  console.log("job submitted");
 
-  //alert("job submitted.");
-
-  //location.href = "./index.html";
-
-  //Auto initialization of config!
-  //Loader whilst initializing perhaps?
-  /*
+  alert("job submitted.");
 
   var loader = document.getElementById('loader');
   loader.style.display = 'block';
@@ -64,7 +58,6 @@ function submitinit() {
 
       });
 
-    */
 }
 
 
