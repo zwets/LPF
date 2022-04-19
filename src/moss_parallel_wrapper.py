@@ -44,36 +44,23 @@ def mossAnalysis(jobslist, i):
 def main(csv, jobs, threads, configname):
 
     with open(csv, 'r') as f:
-        line = f.read().split("\n")
-        print (line)
-
-    sys.exit()
-
-    infile = open(csv, 'r')
-    infile_matrix = []
-    for line in infile:
-        line = line.rstrip()
-        print (line)
-        if ";" in line:
-            line = line.split(";")
-        elif "," in line:
-            line = line.split(",")
-        infile_matrix.append(line)
-    infile.close()
+        line = f.read().split("\n")[0:-1]
+        metadata_headers = line[0]
+        metadata_list = line[1:]
 
     if jobs > 8:
         sys.exit("Currently a maximum of 8 jobs are permitted in parallel.")
 
     filelist = []
     jobslist = []
-    for i in range(len(infile_matrix)-1):
-        filelist.append(infile_matrix[i+1][0])
-        cmd = "python3 {}/src/moss.py -seqType {} -configname {} -thread {} -metadata \"{}\" -metadata_headers \"{}\"".format(configname, threads, ",".join(infile_matrix[i+1]), ",".join(infile_matrix[0]))
+    for i in range(len(metadata_list)):
+        cmd = "python3 /opt/moss/src/moss.py -configname {} -thread {} -metadata \"{}\" -metadata_headers \"{}\"".format(configname, threads, metadata_list[i], metadata_headers)
         jobslist.append(cmd)
-        metadata_dict = moss.prod_metadata_dict(",".join(infile_matrix[i + 1]), ",".join(infile_matrix[0]))
-        csv = metadata_dict['csv'].split()[0]
         entryid = moss.md5(csv)
         moss_sql.init_status_table(entryid, "Queued", "Not Determined", "0", "10", "Queued", configname)
+
+    print (jobslist)
+    sys.exit()
 
     Parallel(n_jobs=jobs)(delayed(mossAnalysis)(jobslist, i) for i in range(len(jobslist)))
     print ("Analysis complete")
