@@ -22,17 +22,15 @@ function submitSingleAnalysis() {
          }
     var parallel_input = children.slice(0, -1);
     var input_array = parallel_input.split(",");
-    console.log(input_array[0]); //This is name
-    var threads = document.getElementById('threads').value;
-    var jobs = document.getElementById('parallel-jobs').value;
+    var csv_path = input_array[0];
 
     var cmd_msg = `python3 ${exepath}src/moss_parallel_wrapper.py -i ${input_array[0]} -input_type ${sequence_type} -db_dir ${db_dir} -exepath ${exepath} -threads ${threads} -jobs ${jobs}`;
 
     execute_command_as_subprocess(cmd_msg);
 
-
-
 }
+
+
 function execute_command_as_subprocess(cmd, print_msg) {
     console.log(cmd);
 
