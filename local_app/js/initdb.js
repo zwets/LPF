@@ -42,7 +42,6 @@ function submitinit() {
     console.error(`stderr: ${stderr}`);
 
     //Automatic change of correct system config to
-    console.log(exepath)
     console.log(init_path)
     alert("Your database has been set up!");
 
