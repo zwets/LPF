@@ -57,7 +57,7 @@ def main(csv, jobs, threads, configname):
         cmd = "python3 /opt/moss/src/moss.py -configname {} -thread {} -metadata \"{}\" -metadata_headers \"{}\"".format(configname, threads, metadata_list[i], metadata_headers)
         jobslist.append(cmd)
         entryid = moss.md5(csv)
-        moss_sql.init_status_table(entryid, "Queued", "Not Determined", "0", "10", "Queued", configname)
+        #moss_sql.init_status_table(entryid, "Queued", "Not Determined", "0", "10", "Queued", configname)
 
     print (jobslist)
     sys.exit()
