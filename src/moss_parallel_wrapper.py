@@ -41,7 +41,7 @@ args = parser.parse_args()
 def mossAnalysis(jobslist, i):
     os.system(jobslist[i]) #Jobs not queued yet- fix
 
-def main(csv, jobs, threads, csv_type, configname, exepath):
+def main(csv, jobs, threads, configname):
 
     with open(csv, 'r') as f:
         line = f.read()
@@ -68,7 +68,7 @@ def main(csv, jobs, threads, csv_type, configname, exepath):
     jobslist = []
     for i in range(len(infile_matrix)-1):
         filelist.append(infile_matrix[i+1][0])
-        cmd = "python3 {}/src/moss.py -seqType {} -configname {} -thread {} -exepath {} -metadata \"{}\" -metadata_headers \"{}\"".format(exepath, csv_type, configname, threads, exepath, ",".join(infile_matrix[i+1]), ",".join(infile_matrix[0]))
+        cmd = "python3 {}/src/moss.py -seqType {} -configname {} -thread {} -metadata \"{}\" -metadata_headers \"{}\"".format(configname, threads, ",".join(infile_matrix[i+1]), ",".join(infile_matrix[0]))
         jobslist.append(cmd)
         metadata_dict = moss.prod_metadata_dict(",".join(infile_matrix[i + 1]), ",".join(infile_matrix[0]))
         csv = metadata_dict['csv'].split()[0]
@@ -79,5 +79,5 @@ def main(csv, jobs, threads, csv_type, configname, exepath):
     print ("Analysis complete")
 
 if __name__== "__main__":
-  main(args.csv, args.jobs, args.threads, args.csv_type, args.configname, args.exepath)
+  main(args.csv, args.jobs, args.threads, args.configname)
 
