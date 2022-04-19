@@ -44,7 +44,7 @@ def mossAnalysis(jobslist, i):
 def main(csv, jobs, threads, configname):
 
     with open(csv, 'r') as f:
-        line = f.read()
+        line = f.read().split("\n")
         print (line)
 
     sys.exit()
