@@ -48,12 +48,15 @@ def main(csv, jobs, threads, configname):
         line = f.read().split("\n")[0:-1]
         metadata_headers = line[0]
         metadata_list = line[1:]
+        input_dir = line[1][-1]
 
     if jobs > 8:
         sys.exit("Currently a maximum of 8 jobs are permitted in parallel.")
 
-    filelist = []
     jobslist = []
+    #function here to check for mulitple_files, barcodes etc in input directory.
+    filelist = moss.derive_finalized_filenames(input_dir)
+    sys.exit()
     for i in range(len(metadata_list)):
         cmd = "python3 /opt/moss/src/moss.py -configname {} -thread {} -metadata \"{}\" -metadata_headers \"{}\"".format(configname, threads, metadata_list[i], metadata_headers)
         jobslist.append(cmd)

@@ -42,6 +42,22 @@ import dataframe_image as dfi
 
 #Utility functions
 
+def derive_finalized_filenames(input_dir):
+    """
+    Either, directory have barcode01-barocdeX subdirectories. if so:
+        Check number of files. If >1, check combined file. If non, create.
+    else:
+        evaluate.
+
+    """
+    directory_type = None
+
+    sub_directories = os.listdir(input_dir)
+    print (sub_directories)
+
+    return ["test", "test2"]
+
+
 def create_directory_from_dict(dict, path):
     for directory in dict:
         os.system("mkdir {}{}".format(path, directory))
