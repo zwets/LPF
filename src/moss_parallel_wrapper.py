@@ -48,7 +48,7 @@ def main(csv, jobs, threads, configname):
         line = f.read().split("\n")[0:-1]
         metadata_headers = line[0]
         metadata_list = line[1:]
-        input_dir = line[1][-1]
+        input_dir = metadata_list[0].split(",")[-1]
 
     if jobs > 8:
         sys.exit("Currently a maximum of 8 jobs are permitted in parallel.")
