@@ -55,6 +55,7 @@ def main(csv, jobs, threads, configname):
 
     jobslist = []
     #function here to check for mulitple_files, barcodes etc in input directory.
+    print (input_dir)
     filelist = moss.derive_finalized_filenames(input_dir)
     sys.exit()
     for i in range(len(metadata_list)):
