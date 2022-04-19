@@ -48,6 +48,9 @@ def moss_pipeline(configname, metadata, metadata_headers):
     moss.sql_execute_command("INSERT INTO statustable(entryid, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
         entryid, "Initializing", "Not determined", "1", "10", "Running", str(datetime.datetime.now())[0:-7],), configname)
 
+    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", configname), configname)
+
+
     logfile = moss.moss_mkfs(configname, entryid)
 
     #Make moss pip lib for practice and future work. Dont use print, but use linux concat to not have to open file the entirety.
