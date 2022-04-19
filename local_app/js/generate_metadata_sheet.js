@@ -195,7 +195,6 @@ function generate_table(input_array) {
 function find_model_from_input(flowcell, kit, db_dir, algorithm){
     var model = "";
     var database_system = require('/opt/moss_db/config.json').current_working_db;
-    console.log(database_system);
     const data = require("/opt/moss_db/" + database_system +"/static_files/workflow.json");
     for (var i = 0; i < data.length; i++) {
                 if (data[i].flowcell == flowcell) {
@@ -213,7 +212,6 @@ function find_model_from_input(flowcell, kit, db_dir, algorithm){
 function fetch_guppy_data(){
     var db_dir = document.getElementById('current-config').innerHTML;
     var database_system = require('/opt/moss_db/config.json').current_working_db;
-    console.log(database_system);
     readTextFile("/opt/moss_db/" + database_system +"/static_files/workflow.json", function(text){
         var data = JSON.parse(text);
         document.getElementById('workflowjson').innerHTML = data;
