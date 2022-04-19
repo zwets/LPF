@@ -12,27 +12,11 @@ function getfolder(id) {
 
 
 function submitinit() {
-  var init_path = document.getElementById("init-path").value + "/";
   var config_name = document.getElementById("config-name").value;
-  var exepath = getfolder("exe-path");
 
   var kmaindex_path = document.getElementById("kmaindex-path").value;
-  if (kmaindex_path == "") {
-    kmaindex_path = "";
-  } else {
-    var kmaindex_path = getfolder("kmaindex-path");
-  }
 
-  var execstring = `python3 ${exepath}src/moss_init.py -db_dir ${init_path} -exepath ${exepath} -configname ${config_name}`
-  console.log(execstring);
-
-
-
-
-  if (kmaindex_path != ""){
-    execstring = execstring.concat(` -kmaindex_db_path ${kmaindex_path}`);
-    }
-
+  var execstring = `python3 /opt/moss/src/moss_init.py -configname ${config_name} -kmaindex_db_path ${kmaindex_path}`
   console.log(execstring);
 
 
@@ -44,6 +28,8 @@ function submitinit() {
 
   //Auto initialization of config!
   //Loader whilst initializing perhaps?
+  /*
+
   var loader = document.getElementById('loader');
   loader.style.display = 'block';
   document.getElementById('loadermessage').innerHTML = "Setting up database system. Depending on the database size, this might take some time (>20 min).";
@@ -78,7 +64,7 @@ function submitinit() {
 
       });
 
-
-  }
+    */
+}
 
 
