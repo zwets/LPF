@@ -194,7 +194,9 @@ function generate_table(input_array) {
 
 function find_model_from_input(flowcell, kit, db_dir, algorithm){
     var model = "";
-    const data = require("/opt/moss_db/" + "test1" +"/static_files/workflow.json");
+    var database_system = require('/opt/moss_db/condig.json').current_working_db;
+    console.log(database_system);
+    const data = require("/opt/moss_db/" + database_system +"/static_files/workflow.json");
     for (var i = 0; i < data.length; i++) {
                 if (data[i].flowcell == flowcell) {
                     if (data[i].kit == kit) {
@@ -210,8 +212,9 @@ function find_model_from_input(flowcell, kit, db_dir, algorithm){
 
 function fetch_guppy_data(){
     var db_dir = document.getElementById('current-config').innerHTML;
-
-    readTextFile("/opt/moss_db/" + "test1" +"/static_files/workflow.json", function(text){
+    var database_system = require('/opt/moss_db/condig.json').current_working_db;
+    console.log(database_system);
+    readTextFile("/opt/moss_db/" + database_system +"/static_files/workflow.json", function(text){
         var data = JSON.parse(text);
         document.getElementById('workflowjson').innerHTML = data;
 
@@ -279,9 +282,7 @@ function fetch_guppy_data(){
     });
 
 
-
-
-    readTextFile("/opt/moss_db/" + "test1" +"/static_files/barcodes.json", function(text){
+    readTextFile("/opt/moss_db/" + database_system +"/static_files/barcodes.json", function(text){
         var data = JSON.parse(text);
         var items = data;
 

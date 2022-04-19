@@ -44,11 +44,6 @@ function submitinit() {
     //Automatic change of correct system config to
     console.log(exepath)
     console.log(init_path)
-
-    storage.set('currentConfig', { exepath: exepath, db_dir: init_path }, function(error) {
-            loader.style.display = 'none';
-            if (error) throw error;
-        });
     alert("Your database has been set up!");
 
     loader.style.display = 'none';
