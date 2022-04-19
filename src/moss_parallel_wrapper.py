@@ -59,8 +59,8 @@ def main(csv, jobs, threads, configname):
         jobslist.append(cmd)
         entryid = moss.md5(csv)
         moss.sql_execute_command(
-            "INSERT INTO statustable(entryid, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
-                entryid, "Initializing", "Not determined", "0", "10", "Queued", str(datetime.datetime.now())[0:-7], ),
+            "INSERT INTO statustable(entryid, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
+                entryid, "Initializing", "Not determined", "0", "10", "Queued", str(datetime.datetime.now())[0:-7]),
             configname)
 
     Parallel(n_jobs=jobs)(delayed(mossAnalysis)(jobslist, i) for i in range(len(jobslist)))
