@@ -36,7 +36,7 @@
           <section data-router-view="Guide" class="Guide">
           <div class="Guide-content">
               <div class ="Guide-presentation">
-                  <h1>Generate a metadata sheet for analysis</h1>
+                  <h1>Generate a metadata sheet for analysis from fast5 files</h1>
               </div>
               <div class ="Guide-presentation" hidden>
                 <h1>Generate a metadata sheet for analysis</h1>
@@ -87,14 +87,14 @@
                           </select> <br>
                         <br>
 
-                        Enter a name of the sequencing experiment (This will be the name of your .csv file):
+                        Enter the name of the sequencing experiment (This will be the name of your .csv file):
                         <input type="text" id="experiment-name" name="experiment-name" value=""><br>
 
                         <br>
 
                         <div class="base-call-fast5-section" id="base-call-fast5-section">
                         <form action="/action_page.php">
-                            Select the basecall output folder which contains subfolders names barcode01, barcode02, barcode03 etc.:
+                            Select the folder containing all the raw fast5 files:
                             <input type="file" id="barcode-folder" name="barcode-folder" webkitdirectory directory multiple value="">
                             <br>
                         </form>
@@ -102,7 +102,7 @@
 
                         <br>
 
-                        <button class="button-7" role="button" onclick="create_metadata_table()";>Generate metadata table</button>
+                        <button class="button-7" role="button" onclick="create_metadata_table_fast5()";>Generate metadata table</button>
                     </div>
 
                     <br>

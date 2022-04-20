@@ -3,6 +3,105 @@ const fs = require('fs')
 const storage = require('electron-json-storage');
 var mkdirp = require('mkdirp');
 
+function create_metadata_table_fast5(){
+
+    document.getElementById('metadata-table-div').innerHTML = "";
+    //document.getElementById('analyse-multiple-index-file-section').innerHTML = "";
+
+    var input = document.getElementById('multiple-input-type').value;
+    var input_number = parseInt(input);
+
+    var children = "";
+    for (var i = 0; i < input_number; ++i) {
+        if (i >= 9) {
+            children +=  (i+1).toString() + ',';
+        } else {
+            children +=  "0" + (i+1).toString() + ',';
+        }
+     }
+    var parallel_input = children.slice(0, -1);
+    var input_array = parallel_input.split(",");
+
+
+    append_table = generate_table(input_array)
+
+    document.getElementById('metadata-table-div').appendChild(append_table);
+
+    var create_button = document.createElement('button');
+    create_button.classList.add('button-7');
+
+    create_button.type = "button";
+    create_button.id = "generate-metadata-sheet";
+    create_button.onclick = function() {
+      var experiment_name = document.getElementById('experiment-name').value;
+      var input = document.getElementById('multiple-input-type').value;
+      var input_number = parseInt(input);
+
+      var csv_string = "";
+      var rows = document.getElementById("metadata_csv_table").rows;
+      var header_row = rows[0];
+
+      for (var i = 0; i < header_row.cells.length; i++) {
+          csv_string = csv_string.concat(`${header_row.cells[i].innerHTML},`);
+        }
+      csv_string = csv_string.concat(`file_location\n`);
+
+      var bc_folder = document.getElementById('barcode-folder');
+      var bc_folder_path = bc_folder.files.item(0).path;
+      var path_list = bc_folder_path.split("/");
+      var path_slice= path_list.slice(1, -1);
+      var bc_final_path = "/" + path_slice.join("/") + "/";
+
+      for (var i = 0; i < rows.length; i++) {
+          if (i>0) {
+            for (var t = 0; t < rows[i].cells.length; t++) {
+              csv_string = csv_string.concat(`${rows[i].cells[t].value},`);
+              }
+            csv_string = csv_string.concat(`${bc_final_path}\n`);
+          }
+        }
+      var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
+      var output_csv_file = `/opt/moss_db/${current_moss_system}/metadata_csv/${experiment_name}.csv`;
+      //Here insert validation function for ENA compatability
+      if (fs.existsSync(output_csv_file)) {
+          // path exists
+          alert("A file with this name already exists, please choose another one than: ", output_csv_file);
+        } else {
+          fs.writeFile(output_csv_file, csv_string, err => {
+              if (err) {
+                console.error(err)
+                return
+              }
+              alert(`The metadata csv file has been created and is stored at ${output_csv_file}`);
+              //file written successfully
+              var create_button = document.createElement('button');
+              create_button.classList.add('button-7');
+              create_button.type = "button";
+              create_button.id = "go-to-analyses-button";
+              create_button.innerHTML = "Proceed to analyses";
+              create_button.onclick = function() {
+                location.href='./analyse.html';
+              }
+              create_button.style.width = "400px";
+              create_button.style.height = "150px";
+              create_button.style.fontSize = "large"
+
+              document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
+              document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
+
+              document.getElementById('metadata-table-div').appendChild(create_button);
+              //Make go to analyses shortcut
+            })
+
+        }
+       }
+    create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
+    var mybr = document.createElement('br');
+    document.getElementById('metadata-table-div').appendChild(mybr);
+    document.getElementById('metadata-table-div').appendChild(create_button);
+
+}
+
 
 function create_metadata_table(){
 
