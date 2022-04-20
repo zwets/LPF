@@ -53,6 +53,35 @@ def derive_finalized_filenames(input_dir):
     directory_type = None
 
     sub_directories = os.listdir(input_dir)
+    if len(sub_directories) > 1:
+        dir_list = list()
+        file_list = list()
+        for item in sub_directories:
+            if os.path.isfile(input_dir + item):
+                file_list.append(item)
+            elif os.path.isdir(input_dir + item):
+                dir_list.append(item)
+        if len(dir_list) > 0 and len(file_list) == 0:
+            #Only directories
+        elif len(file_list) > 0 and len(dir_list) == 0:
+            #Only files
+
+        elif len(file_list) > 0 and len(dir_list) > 0:
+            #Mix
+        #CONTINUE
+
+    else:
+        #Check if one fastq
+        if os.path.isfile(input_dir + sub_directories[0]):
+            if sub_directories[0].endswith('.fastq') or sub_directories[0].endswith('.fastq.gz'):
+                #Assume that this one, single fastq file is the whole input.
+                return (input_dir + sub_directories[0], "single_input_fastq")
+            else:
+                sys.exit("The input does not appear to be a fastq file")
+        elif os.path.isdir(input_dir + sub_directories[0]):
+            if sub_directories[0] != "barcode01":
+                sys.exit("The input fastq files given in the metadata sheet are not correct. Please see the documentation at <LINK> for the correct input format.")
+
     print (sub_directories)
 
     return ["test", "test2"]

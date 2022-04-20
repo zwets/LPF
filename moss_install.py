@@ -22,8 +22,10 @@ def main():
     move_moss_repo(cwd)
     install_app()
 
-    if not os.path.exists("/opt/moss_db"):
-        os.system("sudo mkdir -m 777 /opt/moss_db")
+    path_list = ["/opt/moss_db", "/opt/moss_data/", "/opt/moss_data/fast5/", "/opt/moss_data/fastq/"]
+    for item in path_list:
+        if not os.path.exists(item):
+            os.system("sudo mkdir -m 777 {}".format(item))
 
     #Make solution for finders
 
