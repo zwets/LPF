@@ -39,7 +39,7 @@ isolatedb = args.configname + "moss.db"
 conn = sqlite3.connect(isolatedb)
 c = conn.cursor()
 
-c.execute("SELECT * FROM isolatetable")
+c.execute("SELECT * FROM isolate_table")
 referencelist = c.fetchall()
 phylo_dict = dict()
 for item in referencelist:

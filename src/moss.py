@@ -42,13 +42,13 @@ def moss_pipeline(configname, metadata, metadata_headers):
 
     configname, metadata_dict, input, samplename, entryid = moss.moss_init(configname, metadata, metadata_headers)
 
-    moss.sql_execute_command("INSERT INTO isolatetable(entryid, reference_header_text, samplename, analysistimestamp, plasmids, amrgenes, virulencegenes, referenceid) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
+    moss.sql_execute_command("INSERT INTO isolate_table(entryid, reference_header_text, samplename, analysistimestamp, plasmids, amrgenes, virulencegenes, referenceid) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
         entryid, "Initializing", samplename, str(datetime.datetime.now())[0:-7], "", "", "", ""), configname)
 
-    moss.sql_execute_command("INSERT INTO statustable(entryid, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
+    moss.sql_execute_command("INSERT INTO status_table(entryid, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
         entryid, "Initializing", "Not determined", "1", "10", "Running", str(datetime.datetime.now())[0:-7],), configname)
 
-    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", configname), configname)
+    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", configname), configname)
 
 
     logfile = moss.moss_mkfs(configname, entryid)
@@ -56,7 +56,7 @@ def moss_pipeline(configname, metadata, metadata_headers):
     #Make moss pip lib for practice and future work. Dont use print, but use linux concat to not have to open file the entirety.
     moss.print_to_logfile("# input: {}".format(input), logfile, True)
 
-    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", configname), configname)
+    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", configname), configname)
 
 
     #Rewrite finders with alfred's CGElib
@@ -74,7 +74,7 @@ def moss_pipeline(configname, metadata, metadata_headers):
     mlst_result = moss.run_mlst(exepath, total_filenames, target_dir, reference_header_text, seqType)
 
     #Genertic SQL query
-    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "KMA Mapping", "Not Determined", "3", "10", "Running", configname), configname)
+    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "KMA Mapping", "Not Determined", "3", "10", "Running", configname), configname)
 
     sys.exit("TEST")
     #This should be done during kma mapping!
@@ -95,7 +95,7 @@ def moss_pipeline(configname, metadata, metadata_headers):
     warning, riskcategory, allresgenes, amrinfo = moss.checkAMRrisks(target_dir, entryid, configname, reference_header_text, exepath,
                                                                      logfile)
 
-    moss.sql_execute_command("UPDATE isolatetable SET {}, {}, {}, {}, {} WHERE {}".format(entryid, reference_header_text, samplename,
+    moss.sql_execute_command("UPDATE isolate_table SET {}, {}, {}, {}, {} WHERE {}".format(entryid, reference_header_text, samplename,
                                                     plasmid_string.replace("'", "''"),
                                                     allresgenes.replace(", ", ",").replace("'", "''"),
                                                     virulence_string.replace("'", "''"), configname))
@@ -115,7 +115,7 @@ def moss_pipeline(configname, metadata, metadata_headers):
         moss.run_assembly(entryid, configname, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
                           illumina_name2, jobid, exepath, kma_database_path, start_time, logfile, associated_species)
 
-    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "IPC check", "Alignment", "4", "10", "Running", configname), configname)
+    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "IPC check", "Alignment", "4", "10", "Running", configname), configname)
 
     #Semaphores should be managed better tbh. Function within function?
     result, action = moss.acquire_semaphore("ipc_index_refdb", configname, 1, 7200)
@@ -150,19 +150,19 @@ def moss_pipeline(configname, metadata, metadata_headers):
     if inputType == "nanopore":
         moss.nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, exepath + "kma/kma", templateaccesion, configname, laptop, consensus_name)
 
-    referenceid = moss.sql_fetch("SELECT entryid FROM referencetable WHERE reference_header_text = '{}'".format(reference_header_text), configname)[0][0]
+    referenceid = moss.sql_fetch("SELECT entryid FROM reference_table WHERE reference_header_text = '{}'".format(reference_header_text), configname)[0][0]
 
-    moss.sql_execute_command("UPDATE isolatetable SET referenceid = '{}' WHERE entryid = '{}'".format(referenceid, entryid), configname)
+    moss.sql_execute_command("UPDATE isolate_table SET referenceid = '{}' WHERE entryid = '{}'".format(referenceid, entryid), configname)
 
     #Managed in function when consensus in created ffs.
     cmd = "cp {}{}.fsa {}/consensus_sequences/{}.fsa".format(target_dir, consensus_name, configname, consensus_name)
     os.system(cmd)
 
     #Generic SQL query
-    moss.sql_execute_command("UPDATE isolatetable SET consensus_name = '{}.fsa' WHERE entryid = '{}'".format(consensus_name, entryid), configname)
-    related_isolates = moss.sql_fetch("SELECT consensus_name FROM isolatetable WHERE referenceid = '{}'".format(referenceid), configname)[0][0].split(",")
+    moss.sql_execute_command("UPDATE isolate_table SET consensus_name = '{}.fsa' WHERE entryid = '{}'".format(consensus_name, entryid), configname)
+    related_isolates = moss.sql_fetch("SELECT consensus_name FROM isolate_table WHERE referenceid = '{}'".format(referenceid), configname)[0][0].split(",")
 
-    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "CCphylo", "Alignment", "5", "10", "Running", configname), configname)
+    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "CCphylo", "Alignment", "5", "10", "Running", configname), configname)
 
 
     #Fine, but can we include add ccphylo related in one function?
@@ -190,29 +190,29 @@ def moss_pipeline(configname, metadata, metadata_headers):
         moss.run_assembly(entryid, configname, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
                           illumina_name2, jobid, exepath, kma_database_path, start_time, logfile, associated_species)
     #generic sql query
-    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Distance Matrix", "Alignment", "6", "10", "Running", configname), configname)
+    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Distance Matrix", "Alignment", "6", "10", "Running", configname), configname)
 
     #ccphylo in function
     cmd = "{}ccphylo/ccphylo tree -i {}/phytree_output/distance_matrix -o {}/phytree_output/tree.newick".format(exepath, target_dir, target_dir)
     os.system(cmd)
 
     #Include all of the below in alignment_related_function
-    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Phylo Tree imaging", "Alignment", "7", "10", "Running", configname), configname)
+    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Phylo Tree imaging", "Alignment", "7", "10", "Running", configname), configname)
 
 
     image_location = moss.create_phylo_tree(configname, reference_header_text, target_dir)
 
-    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Database updating", "Alignment", "8", "10", "Running", configname), configname)
+    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Database updating", "Alignment", "8", "10", "Running", configname), configname)
 
     #moss_sql.update_reference_table(entryid, None, None, None, reference_header_text, configname)
 
-    moss.sql_execute_command("INSERT INTO amrtable(entryid, samplename, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, samplename, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), reference_header_text, riskcategory.replace("'", "''"), warning.replace("'", "''")), configname)
+    moss.sql_execute_command("INSERT INTO amr_table(entryid, samplename, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, samplename, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), reference_header_text, riskcategory.replace("'", "''"), warning.replace("'", "''")), configname)
 
-    moss.sql_execute_command("UPDATE isolatetable SET {}, {}, {}, {}, {} WHERE {}".format(entryid, reference_header_text, samplename, plasmid_string.replace("'", "''"), allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''")), configname)
+    moss.sql_execute_command("UPDATE isolate_table SET {}, {}, {}, {}, {} WHERE {}".format(entryid, reference_header_text, samplename, plasmid_string.replace("'", "''"), allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''")), configname)
 
     entries, values = moss.sql_string_metadata(metadata_dict)
 
-    moss.sql_execute_command("INSERT INTO metadatatable(entryid, {}) VALUES('{}', {})".format(entries, entryid.replace("'", "''"), values), configname)
+    moss.sql_execute_command("INSERT INTO metadata_table(entryid, {}) VALUES('{}', {})".format(entries, entryid.replace("'", "''"), values), configname)
 
     new_plasmid_string, new_virulence_string, new_amr_string = moss.scan_reference_vs_isolate_cge(plasmid_string, allresgenes.replace(", ", ","), virulence_string, reference_header_text, configname)
 
@@ -225,20 +225,20 @@ def moss_pipeline(configname, metadata, metadata_headers):
     print("Run time: {}".format(run_time))
     print("Run time: {}".format(run_time), file=logfile)
 
-    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Outbreak Finder", "Alignment", "9", "10", "Running", configname), configname)
+    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Outbreak Finder", "Alignment", "9", "10", "Running", configname), configname)
 
     #Outbreak_finder wtf? really?
     cmd = "python3 {}src/outbreak_finder.py -configname {}".format(exepath, configname) #WTF TBD
     os.system(cmd)
 
-    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Running", configname), configname)
+    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Running", configname), configname)
 
     #Still fails here for multiple non-sync analyses
     #Both alignment report and assembly is fuckly. Fix it.
     moss.compileReportAlignment(target_dir, entryid, configname, image_location, reference_header_text, exepath, related_isolates) #No report compiled for assemblies! Look into it! #TBD
 
     logfile.close()
-    moss.sql_execute_command("UPDATE statustable SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Finished", configname), configname)
+    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Finished", configname), configname)
 
 
 def main():

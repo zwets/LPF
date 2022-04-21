@@ -105,13 +105,13 @@ def update_reference_table(entryid, amrgenes, virulencegenes, plasmids, header_t
     virulencegenes_statement = "virulencegenes = '{}'".format(virulencegenes)
     plasmids_statement = "plasmids = '{}'".format(plasmids)
     if amrgenes != None:
-        dbstring = "UPDATE referencetable SET {} WHERE header_text = '{}'".format(amrgenes_statement, header_text)
+        dbstring = "UPDATE reference_table SET {} WHERE header_text = '{}'".format(amrgenes_statement, header_text)
         c.execute(dbstring)
     if virulencegenes != None:
-        dbstring = "UPDATE referencetable SET {} WHERE header_text = '{}'".format(virulencegenes_statement, header_text)
+        dbstring = "UPDATE reference_table SET {} WHERE header_text = '{}'".format(virulencegenes_statement, header_text)
         c.execute(dbstring)
     if plasmids != None:
-        dbstring = "UPDATE referencetable SET {} WHERE header_text = '{}'".format(plasmids_statement, header_text)
+        dbstring = "UPDATE reference_table SET {} WHERE header_text = '{}'".format(plasmids_statement, header_text)
         c.execute(dbstring)
 
     conn.commit()
@@ -223,7 +223,7 @@ def init_insert_reference_table(configname):
         entryid = md5(sequence)
         #TMP SOLUTION TO AVOID ENTRYCLASHES:
         if entryid not in ids:
-            dbstring = "INSERT INTO referencetable(entryid, header_text, amrgenes, virulencegenes, plasmids) VALUES('{}', '{}' ,'{}', '{}' ,'{}')".format(entryid, header_text.replace("'", "''"), "", "", "", "")
+            dbstring = "INSERT INTO reference_table(entryid, header_text, amrgenes, virulencegenes, plasmids) VALUES('{}', '{}' ,'{}', '{}' ,'{}')".format(entryid, header_text.replace("'", "''"), "", "", "", "")
             ids.append(entryid)
             c.execute(dbstring)
 
@@ -442,7 +442,7 @@ def prod_metadata_dict(metadata, metadata_headers):
 #def check_to_destroy_shm_db(kma_path, kma_database_path, configname, logfile):
 #    conn = sqlite3.connect(configname + "moss.db")
 #    c = conn.cursor()
-##    c.execute("SELECT * FROM ipctable WHERE header_text = '{}'".format(header_text))
+##    c.execute("SELECT * FROM ipc_table WHERE header_text = '{}'".format(header_text))
 #    refdata = c.fetchall()
 #    conn.close()
 #
@@ -757,7 +757,7 @@ def claim_semaphore(semaphore, configname, value):
 
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
-    dbstring = "UPDATE ipctable SET {} = '{}' WHERE ipc = '{}'".format(semaphore, int(value)-1, 'IPC')
+    dbstring = "UPDATE ipc_table SET {} = '{}' WHERE ipc = '{}'".format(semaphore, int(value)-1, 'IPC')
     c.execute(dbstring)
     conn.commit()
     conn.close()
@@ -795,7 +795,7 @@ def release_semaphore(semaphore, configname):
 
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
-    dbstring = "UPDATE ipctable SET {} = '{}'".format(semaphore, int(value) + 1)
+    dbstring = "UPDATE ipc_table SET {} = '{}'".format(semaphore, int(value) + 1)
     c.execute(dbstring)
     conn.commit()
     conn.close()
@@ -809,7 +809,7 @@ def check_sql_semaphore_value(configname, semaphore):
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT {} FROM ipctable".format(semaphore))
+    c.execute("SELECT {} FROM ipc_table".format(semaphore))
     refdata = c.fetchall()
     conn.close()
 
@@ -877,7 +877,7 @@ def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string,
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT plasmids FROM isolatetable WHERE header_text = '{}'".format(header_text))
+    c.execute("SELECT plasmids FROM isolate_table WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
 
     print (refdata)
@@ -890,7 +890,7 @@ def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string,
     else:
         plasmids_reference= []
 
-    c.execute("SELECT virulencegenes FROM isolatetable WHERE header_text = '{}'".format(header_text))
+    c.execute("SELECT virulencegenes FROM isolate_table WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
     if refdata != []:
         if refdata[0][0] == None:
@@ -900,7 +900,7 @@ def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string,
     else:
         virulencegenes_reference = []
 
-    c.execute("SELECT amrgenes FROM isolatetable WHERE header_text = '{}'".format(header_text))
+    c.execute("SELECT amrgenes FROM isolate_table WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
     if refdata != []:
         if refdata[0][0] == None:
@@ -1041,7 +1041,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
             conn = sqlite3.connect(isolatedb)
             c = conn.cursor()
             #Here, check and insert amrgenes, virulencegenes, plasmids.
-            dbstring = "INSERT INTO referencetable(entryid, header_text) VALUES ('{}', '{}')".format(entryid, associated_species)
+            dbstring = "INSERT INTO reference_table(entryid, header_text) VALUES ('{}', '{}')".format(entryid, associated_species)
             c.execute(dbstring)
             conn.commit()  # Need IPC
             conn.close()
@@ -1113,7 +1113,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
 
         conn = sqlite3.connect(isolatedb)
         c = conn.cursor()
-        dbstring = "INSERT INTO referencetable(entryid, header_text) VALUES('{}', '{}')".format(entryid, associated_species)
+        dbstring = "INSERT INTO reference_table(entryid, header_text) VALUES('{}', '{}')".format(entryid, associated_species)
         c.execute(dbstring)
         conn.commit()  # Need IPC
         conn.close()
@@ -1142,13 +1142,13 @@ def uniqueNameCheck(input):
     conn = sqlite3.connect(configname + "moss.db")
     c = conn.cursor()
 
-    c.execute("SELECT * FROM isolatetable WHERE samplename = '{}'".format(samplename))
+    c.execute("SELECT * FROM isolate_table WHERE samplename = '{}'".format(samplename))
     refdata = c.fetchall()
 
     if refdata != []:
         sys.exit("An isolate sample has the same filename as your input. Please change your input file's name.")
 
-    c.execute("SELECT * FROM referencetable WHERE header_text = '{}'".format(header))
+    c.execute("SELECT * FROM reference_table WHERE header_text = '{}'".format(header))
     refdata = c.fetchall()
 
     if refdata != []:
@@ -1199,10 +1199,10 @@ def findTemplateNumber(configname, name):
 def makeDBinfo(isolatedb):
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
-    c.execute("SELECT * FROM isolatetable")
+    c.execute("SELECT * FROM isolate_table")
     refdata = c.fetchall()
     isolatenumber = len(refdata)
-    c.execute("SELECT * FROM referencetable")
+    c.execute("SELECT * FROM reference_table")
     refdata = c.fetchall()
     referencenumber = len(refdata)
     conn.close()
@@ -1252,7 +1252,7 @@ def lastClusterAddition(configname, header_text):
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT entryid, analysistimestamp FROM isolatetable WHERE header_text = '{}' ORDER BY analysistimestamp DESC".format(header_text)) #Dårlig løsning, ikke skalerbar til >5M isolates
+    c.execute("SELECT entryid, analysistimestamp FROM isolate_table WHERE header_text = '{}' ORDER BY analysistimestamp DESC".format(header_text)) #Dårlig løsning, ikke skalerbar til >5M isolates
     refdata = c.fetchall()
     conn.close()
     return refdata
@@ -1262,7 +1262,7 @@ def isolate_file_name(configname, entryid):
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT samplename FROM isolatetable WHERE entryid = '{}'".format(entryid))
+    c.execute("SELECT samplename FROM isolate_table WHERE entryid = '{}'".format(entryid))
     refdata = c.fetchall()
     conn.close()
     element = refdata[0][0]
@@ -1320,7 +1320,7 @@ def generate_amr_resistance_profile_table(configname, entryid, pdf, target_dir, 
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT phenotypes FROM amrtable WHERE entryid = '{}'".format(entryid))
+    c.execute("SELECT phenotypes FROM amr_table WHERE entryid = '{}'".format(entryid))
     refdata = c.fetchall()
     conn.close()
 
@@ -1358,7 +1358,7 @@ def time_of_analysis(configname, entryid):
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT analysistimestamp FROM isolatetable WHERE entryid = '{}'".format(entryid))
+    c.execute("SELECT analysistimestamp FROM isolate_table WHERE entryid = '{}'".format(entryid))
     refdata = c.fetchall()
     conn.close()
     element = refdata[0][0]
@@ -1425,7 +1425,7 @@ def retrieve_cge_counts(target_dir, ID, configname, image_location, header_text,
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT plasmids FROM isolatetable WHERE entryid = '{}'".format(ID))
+    c.execute("SELECT plasmids FROM isolate_table WHERE entryid = '{}'".format(ID))
     refdata = c.fetchall()
 
     if refdata[0][0] == None:
@@ -1433,7 +1433,7 @@ def retrieve_cge_counts(target_dir, ID, configname, image_location, header_text,
     else:
         plasmids_isolate = refdata[0][0].split(",")
 
-    c.execute("SELECT virulencegenes FROM isolatetable WHERE entryid = '{}'".format(ID))
+    c.execute("SELECT virulencegenes FROM isolate_table WHERE entryid = '{}'".format(ID))
     refdata = c.fetchall()
 
     if refdata[0][0] == None:
@@ -1441,7 +1441,7 @@ def retrieve_cge_counts(target_dir, ID, configname, image_location, header_text,
     else:
         virulencegenes_isolate = refdata[0][0].split(",")
 
-    c.execute("SELECT amrgenes FROM isolatetable WHERE entryid = '{}'".format(ID))
+    c.execute("SELECT amrgenes FROM isolate_table WHERE entryid = '{}'".format(ID))
     refdata = c.fetchall()
 
     if refdata[0][0] == None:
@@ -1449,7 +1449,7 @@ def retrieve_cge_counts(target_dir, ID, configname, image_location, header_text,
     else:
         amrgenes_isolate = refdata[0][0].split(",")
 
-    c.execute("SELECT plasmids FROM referencetable WHERE header_text = '{}'".format(header_text))
+    c.execute("SELECT plasmids FROM reference_table WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
 
     if refdata[0][0] == None:
@@ -1457,7 +1457,7 @@ def retrieve_cge_counts(target_dir, ID, configname, image_location, header_text,
     else:
         plasmids_reference = refdata[0][0].split(",")
 
-    c.execute("SELECT virulencegenes FROM referencetable WHERE header_text = '{}'".format(header_text))
+    c.execute("SELECT virulencegenes FROM reference_table WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
 
     if refdata[0][0] == None:
@@ -1465,7 +1465,7 @@ def retrieve_cge_counts(target_dir, ID, configname, image_location, header_text,
     else:
         virulencegenes_reference = refdata[0][0].split(",")
 
-    c.execute("SELECT amrgenes FROM referencetable WHERE header_text = '{}'".format(header_text))
+    c.execute("SELECT amrgenes FROM reference_table WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
 
     if refdata[0][0] == None:
@@ -1589,7 +1589,7 @@ def compare_plasmid_isolate_vs_cluster(plasmid_list, header_text, configname):
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT plasmids FROM referencetable WHERE header_text = '{}'".format(header_text))
+    c.execute("SELECT plasmids FROM reference_table WHERE header_text = '{}'".format(header_text))
     refdata = c.fetchall()
     conn.close()
     element = refdata[0]

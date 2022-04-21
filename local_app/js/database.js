@@ -36,7 +36,7 @@ function displayContents(contents) {
   //}
   //stmt.finalize();
 
-  //db.each("SELECT * FROM isolatetable AS id", function(err, row) {
+  //db.each("SELECT * FROM isolate_table AS id", function(err, row) {
   //    console.log(row.id);
   //});
   //db.close();
@@ -58,7 +58,7 @@ function logdb() {
 
     db.serialize(function() {
 
-      db.each("SELECT entryid AS id FROM isolatetable", function(err, row) {
+      db.each("SELECT entryid AS id FROM isolate_table", function(err, row) {
             console.log(row.id);
             console.log(row.id[0]);
         });

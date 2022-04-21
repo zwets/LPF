@@ -67,7 +67,7 @@ function showFinishedAnalyses() {
     storage.get('currentConfig', function(error, data) {
               if (error) throw error;
 
-              let sql = `SELECT * FROM statustable`;
+              let sql = `SELECT * FROM status_table`;
               document.getElementById('showData').innerHTML="" ;
                 let db_dir = document.getElementById('current-config').innerHTML
                 const db = require('better-sqlite3')(db_dir + 'moss.db');

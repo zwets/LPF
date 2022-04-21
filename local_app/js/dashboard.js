@@ -91,7 +91,7 @@ function sql_data_query_table(data_obj, data) {
 function showMostRecentIsolates() {
     document.getElementById('button-panel').innerHTML = "";
     document.getElementById('search-area').innerHTML = "";
-    let sql = `SELECT * FROM isolatetable`;
+    let sql = `SELECT * FROM isolate_table`;
     let db_dir = document.getElementById('current-config').innerHTML
     const db = require('better-sqlite3')(db_dir + 'moss.db');
     const data_obj = db.prepare(sql).all();
@@ -221,23 +221,23 @@ function search_db_query(sql) {
 function search_function(string) {
     let query = document.getElementById('search_field').value;
     if (string == "Reference name") { //Not done
-        let sql = `SELECT * FROM referencetable WHERE refname LIKE '%${query}%'`;
+        let sql = `SELECT * FROM reference_table WHERE refname LIKE '%${query}%'`;
         var data_obj = search_db_query(sql);
         return data_obj
     } else if (string == "Reference Header ID") {
-        let sql = `SELECT * FROM referencetable WHERE headerid LIKE '%${query}%'`;
+        let sql = `SELECT * FROM reference_table WHERE headerid LIKE '%${query}%'`;
         var data_obj = search_db_query(sql);
         return data_obj
     } else if (string == "Reference Specie") {
-      let sql = `SELECT * FROM referencetable WHERE headerid LIKE '%${query}%'`;
+      let sql = `SELECT * FROM reference_table WHERE headerid LIKE '%${query}%'`;
       var data_obj = search_db_query(sql);
       return data_obj
     } else if (string == "Isolate Name") {
-        let sql = `SELECT * FROM isolatetable WHERE samplename LIKE '%${query}%'`;
+        let sql = `SELECT * FROM isolate_table WHERE samplename LIKE '%${query}%'`;
         var data_obj = search_db_query(sql);
         return data_obj
     } else if (string == "Isolate Specie") {
-        let sql = `SELECT * FROM isolatetable WHERE headerid LIKE '%${query}%'`;
+        let sql = `SELECT * FROM isolate_table WHERE headerid LIKE '%${query}%'`;
         var data_obj = search_db_query(sql);
         return data_obj
     } else if (string == "Run ID") {
@@ -247,15 +247,15 @@ function search_function(string) {
     } else if (string == "Sequence Type") {
         return data_obj
     } else if (string == "Resistance Genes") {
-        let sql = `SELECT * FROM isolatetable WHERE amrgenes LIKE '%${query}%'`;
+        let sql = `SELECT * FROM isolate_table WHERE amrgenes LIKE '%${query}%'`;
         var data_obj = search_db_query(sql);
         return data_obj
     } else if (string == "Plasmids") {
-        let sql = `SELECT * FROM isolatetable WHERE plasmids LIKE '%${query}%'`;
+        let sql = `SELECT * FROM isolate_table WHERE plasmids LIKE '%${query}%'`;
         var data_obj = search_db_query(sql);
         return data_obj
     } else if (string == "Virulence Genes") {
-         let sql = `SELECT * FROM isolatetable WHERE virulencegenes LIKE '%${query}%'`;
+         let sql = `SELECT * FROM isolate_table WHERE virulencegenes LIKE '%${query}%'`;
          var data_obj = search_db_query(sql);
          return data_obj
     } else {

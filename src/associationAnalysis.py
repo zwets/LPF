@@ -92,7 +92,7 @@ isolatedb = args.configname + "moss.db"
 conn = sqlite3.connect(isolatedb)
 c = conn.cursor()
 
-c.execute("SELECT * FROM referencetable WHERE isolateid != ''")
+c.execute("SELECT * FROM reference_table WHERE isolateid != ''")
 referencelist = c.fetchall()
 
 conn.close()

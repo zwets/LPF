@@ -64,7 +64,7 @@ def main(csv, jobs, threads, configname):
         entryid = moss.md5(metadata_list[i].split()[-1])
         print (metadata_list[i].split()[-1])
         moss.sql_execute_command(
-            "INSERT INTO statustable(entryid, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
+            "INSERT INTO status_table(entryid, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
                 entryid, "Initializing", "Not determined", "0", "10", "Queued", str(datetime.datetime.now())[0:-7]),
             configname)
 
