@@ -81,7 +81,7 @@ function create_metadata_table_fast5(){
               create_button.classList.add('button-7');
               create_button.type = "button";
               create_button.id = "go-to-analyses-button";
-              create_button.innerHTML = "Proceed to analyses";
+              create_button.innerHTML = "Proceed to basecalling overview";
               create_button.onclick = function() {
                 location.href='./analyse.html';
               }
