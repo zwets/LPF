@@ -95,7 +95,10 @@ function create_metadata_table_fast5(){
 
         }
        }
-    create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
+    create_button.innerHTML = "Create metadata sheet and begin automated basecalling";
+    create_button.onclick = function() {
+        console.log("Here start basecalling and log SQL";)
+    }
     var mybr = document.createElement('br');
     document.getElementById('metadata-table-div').appendChild(mybr);
     document.getElementById('metadata-table-div').appendChild(create_button);
