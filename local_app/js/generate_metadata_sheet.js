@@ -3,6 +3,42 @@ const fs = require('fs')
 const storage = require('electron-json-storage');
 var mkdirp = require('mkdirp');
 
+function execute_command_as_subprocess(cmd, start_msg, end_msg) {
+    console.log(cmd);
+
+    alert(print_msg);
+
+    var create_button = document.createElement('button');
+    create_button.classList.add('button-7');
+    create_button.type = "button";
+    create_button.id = "go-to-analyses-button";
+    create_button.innerHTML = "Proceed to basecalling overview";
+    create_button.onclick = function() {
+      location.href='./basecalling.html';
+    }
+    create_button.style.width = "400px";
+    create_button.style.height = "150px";
+    create_button.style.fontSize = "large"
+
+    document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
+    document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
+
+    document.getElementById('metadata-table-div').appendChild(create_button);
+
+    exec(cmd, (error, stdout, stderr) => {
+
+        if (error) {
+            alert(`Process failed`);
+          console.error(`exec error: ${error}`);
+          return;
+        } else {
+            alert(end_msg);
+        }
+
+      });
+
+}
+
 function create_metadata_table_fast5(){
 
     document.getElementById('metadata-table-div').innerHTML = "";
@@ -76,24 +112,10 @@ function create_metadata_table_fast5(){
                 return
               }
               alert(`The metadata csv file has been created and is stored at ${output_csv_file}`);
-              //file written successfully
-              var create_button = document.createElement('button');
-              create_button.classList.add('button-7');
-              create_button.type = "button";
-              create_button.id = "go-to-analyses-button";
-              create_button.innerHTML = "Proceed to basecalling overview";
-              create_button.onclick = function() {
-                location.href='./analyse.html';
-              }
-              create_button.style.width = "400px";
-              create_button.style.height = "150px";
-              create_button.style.fontSize = "large"
 
-              document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
-              document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
+              var cmd_msg = `python3 /ont/moss/src/basecaller_wrapper.py -csv ${output_csv_file}`;
 
-              document.getElementById('metadata-table-div').appendChild(create_button);
-              //Make go to analyses shortcut
+              execute_command_as_subprocess(cmd_msg, "Base calling had started.", "Base calling has been completed.");
             })
 
         }

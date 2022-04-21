@@ -38,7 +38,9 @@ def main(csv):
     with open(csv, 'r') as f:
         data = f.read().split("\n")[0:-1]
 
-    print (data)
+    outfile = open("/opt/moss_db/testttttt", 'w')
+    print (data, file=outfile)
+    outfile.close()
 
 if __name__== "__main__":
   main(args.csv)
