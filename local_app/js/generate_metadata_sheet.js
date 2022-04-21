@@ -3,7 +3,7 @@ const fs = require('fs')
 const storage = require('electron-json-storage');
 var mkdirp = require('mkdirp');
 
-function execute_command_as_subprocess(cmd, start_msg, end_msg) {
+function execute_command_as_subprocess(cmd, start_msg, end_msg, fail_msg) {
     console.log(cmd);
 
     alert(start_msg);
@@ -28,7 +28,7 @@ function execute_command_as_subprocess(cmd, start_msg, end_msg) {
     exec(cmd, (error, stdout, stderr) => {
 
         if (error) {
-            alert(`Process failed`);
+            alert(`fail_msg`);
           console.error(`exec error: ${error}`);
           return;
         } else {
@@ -113,9 +113,9 @@ function create_metadata_table_fast5(){
               }
               alert(`The metadata csv file has been created and is stored at ${output_csv_file}`);
 
-              var cmd_msg = `python3 /ont/moss/src/basecaller_wrapper.py -csv ${output_csv_file}`;
+              var cmd_msg = `python3 /opt/moss/src/basecaller_wrapper.py -csv ${output_csv_file}`;
 
-              execute_command_as_subprocess(cmd_msg, "Base calling had started.", "Base calling has been completed.");
+              execute_command_as_subprocess(cmd_msg, "Base calling had started.", "Base calling has been completed.", "basecalling failed");
             })
 
         }
