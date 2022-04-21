@@ -33,14 +33,23 @@ parser.add_argument('-csv', action="store", type=str, dest='csv', default="", he
 parser.add_argument('-configname', action="store", type=str, dest='configname', default="", help='configname')
 args = parser.parse_args()
 
+
+
 def main(csv):
-
     with open(csv, 'r') as f:
-        data = f.read().split("\n")[0:-1]
+        line = f.read().split("\n")[0:-1]
+        metadata_headers = line[0]
+        metadata_list = line[1:]
 
-    outfile = open("/opt/moss_db/testttttt", 'w')
-    print (data, file=outfile)
-    outfile.close()
+    input_dir = metadata_list[0].split(",")[-1]
+    check_fast5_input(input_dir)
+
+def check_fast5_input(input_dir):
+    files = os.listdir(input_dir)
+    for item in files:
+        if "fast5".upper() not in item.upper():
+            sys.exit("Not all files in the input directory are fast5's.")
+    return True
 
 if __name__== "__main__":
   main(args.csv)
