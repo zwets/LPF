@@ -60,6 +60,9 @@ function create_metadata_table_fast5(){
             csv_string = csv_string.concat(`${bc_final_path}\n`);
           }
         }
+
+      console.log("Here");
+      console.log(csv_string);
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
       var output_csv_file = `/opt/moss_db/${current_moss_system}/metadata_csv/${experiment_name}.csv`;
       //Here insert validation function for ENA compatability
