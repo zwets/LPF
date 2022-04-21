@@ -62,11 +62,14 @@ def derive_finalized_filenames(input_dir):
             elif os.path.isdir(input_dir + item):
                 dir_list.append(item)
         if len(dir_list) > 0 and len(file_list) == 0:
-            #Only directories
+            pass
+            #Only directoriespass
         elif len(file_list) > 0 and len(dir_list) == 0:
+            pass
             #Only files
 
         elif len(file_list) > 0 and len(dir_list) > 0:
+            pass
             #Mix
         #CONTINUE
 
