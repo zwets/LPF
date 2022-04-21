@@ -6,7 +6,7 @@ var mkdirp = require('mkdirp');
 function execute_command_as_subprocess(cmd, start_msg, end_msg) {
     console.log(cmd);
 
-    alert(print_msg);
+    alert(start_msg);
 
     var create_button = document.createElement('button');
     create_button.classList.add('button-7');
