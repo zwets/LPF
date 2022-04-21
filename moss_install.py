@@ -60,7 +60,7 @@ def move_shortcut_script():
     return True
 
 def guppy_installer():
-    os.system("wget https://mirror.oxfordnanoportal.com/software/analysis/ont-guppy_6.0.1_linux64.tar.gz")
+    os.system("wget https://mirror.oxfordnanoportal.com/software/analysis/ont-guppy_6.0.1_linux64.tar.gz --no-check-certificate")
     os.system("tar -xvf ont-guppy_6.0.1_linux64.tar.gz")
 
     return True
