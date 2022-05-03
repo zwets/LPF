@@ -44,6 +44,8 @@ def main(csv):
     input_dir = metadata_list[0].split(",")[-1]
     check_fast5_input(input_dir)
 
+
+
 def check_fast5_input(input_dir):
     files = os.listdir(input_dir)
     for item in files:

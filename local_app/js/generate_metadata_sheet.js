@@ -29,7 +29,7 @@ function execute_command_as_subprocess(cmd, start_msg, end_msg, fail_msg) {
 
         if (error) {
             alert(`${error}`);
-            alert(`fail_msg`);
+            alert(fail_msg);
           console.error(`exec error: ${error}`);
           return;
         } else {

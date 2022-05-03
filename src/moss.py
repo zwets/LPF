@@ -40,7 +40,7 @@ jobid = random.randint(1,100000000)
 def moss_pipeline(configname, metadata, metadata_headers):
     start_time = datetime.datetime.now()
 
-    configname, metadata_dict, input, samplename, entryid = moss.moss_init(configname, metadata, metadata_headers)
+    configname, metadata_dict, input, samplename, entryid, target_dir, ref_db = moss.moss_init(configname, metadata, metadata_headers)
 
     moss.sql_execute_command("INSERT INTO isolate_table(entryid, reference_header_text, samplename, analysistimestamp, plasmids, amrgenes, virulencegenes, referenceid) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
         entryid, "Initializing", samplename, str(datetime.datetime.now())[0:-7], "", "", "", ""), configname)
@@ -60,60 +60,40 @@ def moss_pipeline(configname, metadata, metadata_headers):
 
 
     #Rewrite finders with alfred's CGElib
+    #TBC FOR ALL FINDERS INSERT RELEVANT DATA INTO SQL
     moss.print_to_logfile("# Typing Antibiotics resistance genes with resFinder", logfile, True)
+    #add argument and check function TBD
+    kma_finders(arguments, configname, entryid, input, "/opt/moss/resfinder_db/all")
     moss.print_to_logfile("# Typing Viruence genes with virulenceFinder", logfile, True)
+    kma_finders(arguments, configname, entryid, input, "/opt/moss/virulencefinder_db/all")
     moss.print_to_logfile("# Typing Plasmids with plasmidFinder", logfile, True)
+    kma_finders(arguments, configname, entryid, input, "/opt/moss/resfinder_db/all")
 
     sys.exit("Pre mapping test")
 
     #Rewrite this horrible kma_mapping function. Should be way simpler.
-    template_score, template_search_result, reference_header_text = moss.KMA_mapping(target_dir, input, logfile, configname)
+    template_score, template_search_result, reference_header_text = moss.kma_mapping(target_dir, logfile, input, configname)
 
-    #Rewrite MLST finder perhaps
-    #MLST?
-    mlst_result = moss.run_mlst(exepath, total_filenames, target_dir, reference_header_text, seqType)
+    #check if mlst work TBD
+    mlst_result = moss.run_mlst(input, target_dir, reference_header_text)
 
     #Genertic SQL query
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "KMA Mapping", "Not Determined", "3", "10", "Running", configname), configname)
 
     sys.exit("TEST")
-    #This should be done during kma mapping!
+    #This should be done during kma mapping! #TBD
     best_template = moss.findTemplateNumber(configname, reference_header_text)
 
     moss.print_to_logfile("Best template number: {}".format(best_template), logfile, True)
-
-    #Like what the actual F is this. Instead, during new CGE finders, make sure output in sql compatiable.
-    #Also, we dont need random data now. Should be fetched seperately and used independently.
-    plasmid_count, plasmid_list = moss.plasmid_data_for_report(target_dir + "plasmidFinderResults/data.json",
-                                                               target_dir)
-    plasmid_string = ",".join(plasmid_list)
-    virulence_count, virulence_list = moss.virulence_data_for_report(target_dir + "virulenceFinderResults/data.json",
-                                                                     target_dir, logfile)
-    virulence_string = ",".join(virulence_list)
-
-    #Scrap warning? TBD program should be leaner with fewer, completed functions SCRAP
-    warning, riskcategory, allresgenes, amrinfo = moss.checkAMRrisks(target_dir, entryid, configname, reference_header_text, exepath,
-                                                                     logfile)
-
-    moss.sql_execute_command("UPDATE isolate_table SET {}, {}, {}, {}, {} WHERE {}".format(entryid, reference_header_text, samplename,
-                                                    plasmid_string.replace("'", "''"),
-                                                    allresgenes.replace(", ", ",").replace("'", "''"),
-                                                    virulence_string.replace("'", "''"), configname))
-
-    #New section
-    if best_template == None:
-        template_search_result = False
 
     moss.print_to_logfile("Best template: {}".format(reference_header_text), logfile, True)
 
     moss.print_to_logfile("Best template score: " + str(template_score), logfile, True)
 
-    if template_search_result == False: #NO TEMPLATE FOUND #Being assembly
-        #SCRAP associated species, wtf it is even used for
-        associated_species = "No related reference identified, manual curation required. ID: {} name: {}".format(
-            entryid, samplename)
+    if template_search_result == 1: #1 means error, thus no template found
+        #Implement flye
         moss.run_assembly(entryid, configname, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
-                          illumina_name2, jobid, exepath, kma_database_path, start_time, logfile, associated_species)
+                          illumina_name2, jobid, exepath, kma_database_path, start_time, logfile)
 
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "IPC check", "Alignment", "4", "10", "Running", configname), configname)
 
@@ -142,13 +122,7 @@ def moss_pipeline(configname, metadata, metadata_headers):
     #Again, see above
     consensus_name = "{}_{}_consensus".format(c_name, templateaccesion)
 
-    #actually ok, but no difference between seqType variable names.
-    if inputType == "pe_illumina":
-        moss.illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfile, multi_threading, exepath + "kma/kma", templateaccesion, configname, laptop, consensus_name)
-    elif inputType == "se_illumina":
-        moss.illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, exepath + "kma/kma", templateaccesion, configname, laptop, consensus_name)
-    if inputType == "nanopore":
-        moss.nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, exepath + "kma/kma", templateaccesion, configname, laptop, consensus_name)
+    moss.nanopore_alignment(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, exepath + "kma/kma", templateaccesion, configname, laptop, consensus_name)
 
     referenceid = moss.sql_fetch("SELECT entryid FROM reference_table WHERE reference_header_text = '{}'".format(reference_header_text), configname)[0][0]
 

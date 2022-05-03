@@ -42,6 +42,13 @@ import dataframe_image as dfi
 
 #Utility functions
 
+
+
+def kma_finders(arguments, configname, entryid, input, database):
+    os.system("/opt/moss/kma/kma -i {} -o /opt/moss_db/{}/{}/{} -t_db {} {}".format(input, configname, entryid, entryid, database, arguments))
+
+
+
 def derive_finalized_filenames(input_dir):
     """
     Either, directory have barcode01-barocdeX subdirectories. if so:
@@ -154,7 +161,10 @@ def moss_init(configname, metadata, metadata_headers):
 
     moss.uniqueNameCheck(input)
 
-    return configname, metadata_dict, input, samplename, entryid
+    ref_db = "/opt/moss_db/{}/REFDB.ATG".format(configname)
+    target_dir = "/opt/moss_db/{}/analysis/{}/REFDB.ATG".format(configname, entryid)
+
+    return configname, metadata_dict, input, samplename, entryid, target_dir, ref_db
 
 
 def get_kma_template_number(header_text, configname):
@@ -242,6 +252,8 @@ def print_to_logfile(input, logfile, stdout):
 
 def run_assembly(entryid, configname, samplename, assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, \
                  jobid, exepath, kma_database_path, start_time, logfile, associated_species):
+    #Flye
+    #flye -o out_dir --threads 8 --nano-raw fastq.gz
     moss_sql.update_status_table(entryid, "Unicycler Assembly", "Assembly", "4", "5", "Running", configname)
     if assemblyType == "illumina":
         inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, "",
@@ -374,12 +386,12 @@ def varify_all_dependencies(exepath, laptop):
 
 
 
-def run_mlst(exepath, total_filenames, target_dir, header_text, seqType):
+def run_mlst(input, target_dir, reference_header_text):
 
-    specie = header_text.split()[1].lower() + " " + header_text.split()[2].lower() #Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
+    specie = reference_header_text.split()[1].lower() + " " + reference_header_text.split()[2].lower() #Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
 
     mlst_dict = dict()
-    infile = open(exepath + "mlst/mlst_db/config", 'r')
+    infile = open("/opt/moss/mlst/mlst_db/config", 'r')
     for line in infile:
         if line[0] != "#":
             line = line.split("\t")
@@ -393,18 +405,8 @@ def run_mlst(exepath, total_filenames, target_dir, header_text, seqType):
     if specie in mlst_dict:
         cmd = "mkdir {}/mlstresults".format(target_dir)
         os.system(cmd)
-        if seqType == 'nanopore':
-            cmd = "python3 {}mlst/mlst.py -i {} -o {}mlstresults -mp {}kma/kma -p {}/mlst/mlst_db/ -s {} -nano".format(exepath, total_filenames, target_dir, exepath, exepath, mlst_dict[specie])
-            os.system(cmd)
-        else:
-            cmd = "python3 {}mlst/mlst.py -i {} -o {}mlstresults -mp {}kma/kma -p {}/mlst/mlst_db/ -s {}".format(exepath,
-                                                                                                            total_filenames,
-                                                                                                            target_dir,
-                                                                                                            exepath,
-                                                                                                            exepath,
-                                                                                                            mlst_dict[specie])
-            os.system(cmd)
-        print (cmd)
+        cmd = "python3 /opt/moss/mlst/mlst.py -i {} -o {}mlstresults -mp /opt/moss/kma/kma -p /opt/moss/mlst_db/ -s {} -nano".format(input, target_dir, mlst_dict[specie])
+        os.system(cmd)
         return True
     else:
         print ("no mlst")
@@ -506,14 +508,11 @@ def check_alignment_kma_cov(file):
 
     return coverage
 
-def KMA_mapping(target_dir, input, logfile, configname):
-    best_template_score = None
-    reference_header_text = None
-
-    cmd = "/opt/moss/kma/kma -i {} -o {}kma_mapping -t_db /opt/moss_db/{}/REFDB.ATG -ID 0 -nf -mem_mode -sasm -ef".format(input, target_dir, configname)
-    os.system(cmd)
+def kma_mapping(target_dir, logfile, input, configname):
+    os.system("/opt/moss/kma/kma -i {} -o {}kma_mapping -t_db /opt/moss_db/{}/REFDB.ATG -ID 0 -nf -mem_mode -sasm -ef".format(input, target_dir, configname))
 
     try:
+        best_template_score = 0
         infile = open("{}kma_mapping.res".format(target_dir), 'r')
         for line in infile:
             line = line.rstrip()
@@ -522,11 +521,10 @@ def KMA_mapping(target_dir, input, logfile, configname):
                 if float(line[1]) > best_template_score:
                     best_template_score = float(line[1])
                     reference_header_text = line[0]
-
-
-        template_search_result = True
-        template_score, template_search_result, reference_header_text
-
+        if best_template_score == 0:
+            return (0, 1, "") #template_search_result = 0 = success, thus result found
+        else:
+            return (template_score, 0, reference_header_text)
     #If no match are found, the sample will be defined as a new reference.
     except IndexError as error:
         print(
@@ -537,7 +535,7 @@ def KMA_mapping(target_dir, input, logfile, configname):
         # Perform assembly based on input
         template_search_result = False
         print("FoundnoTemplate")
-        template_score, template_search_result, reference_header_text
+        return (0, 1, "") #template_search_result = 0 means no result found
     ###
 
 def illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion,configname, laptop, consensus_name):
@@ -601,7 +599,7 @@ def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfi
         print("# Illumina mapping completed succesfully", file=logfile)
 
 
-def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, kma_path, templateaccesion, configname, laptop, consensus_name):
+def nanopore_alignment(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, kma_path, templateaccesion, configname, laptop, consensus_name):
     nanopore_name = input[0].split("/")[-1]
 
     # Claim ReafRefDB is ipc_index_refdb is free
@@ -630,77 +628,6 @@ def nanoporeMapping(input, best_template, target_dir, kma_database_path, logfile
             check_shm_kma(kma_path, kma_database_path, cmd, logfile)
         print("# Nanopore mapping completed succesfully", file=logfile)
 
-def loadFiles(path):
-    if path != "":
-        files = os.listdir(path)
-        files.sort()
-    else:
-        files = ""
-    return files
-
-def generate_complete_path_illumina_files(illumina_files, illumina_path_input):
-    path = illumina_path_input
-    complete_path_illumina_files = []
-    for i in range(len(illumina_files)):
-        complete_path_illumina_files.append(path + illumina_files[i])
-    return complete_path_illumina_files
-
-def generate_complete_path_nanopore_files(nanopore_files, nanopore_path_input):
-    path = nanopore_path_input
-    complete_path_nanopore_files = []
-    for i in range(len(nanopore_files)):
-        complete_path_nanopore_files.append(path + nanopore_files[i])
-    return complete_path_nanopore_files
-
-def combine_input_files(illumina_files, nanopore_files):
-    if illumina_files == "":
-        total_input_files = nanopore_files
-    elif nanopore_files == "":
-        total_input_files = illumina_files
-    else:
-        total_input_files = illumina_files + nanopore_files
-    total_input_files = " ".join(total_input_files)
-    return total_input_files
-
-def logfileConditionsResearch(logfile, masking_scheme, prune_distance, bc, ref_kma_database, multi_threading, reference, output_name):
-    logdict = {}
-    if masking_scheme != "":
-        logdict['masking_scheme'] = masking_scheme
-    else:
-        logdict['masking_scheme'] = ""
-    if prune_distance != 10:
-        logdict['prune_distance'] = prune_distance
-    else:
-        logdict['prune_distance'] = 10
-    if bc != 0.7:
-        logdict['bc'] = bc
-    else:
-        logdict['bc'] = 0.7
-    if ref_kma_database != "":
-        logdict['ref_kma_database'] = ref_kma_database
-    else:
-        logdict['ref_kma_database'] = ""
-    if multi_threading != 1:
-        logdict['multi_threading'] = multi_threading
-    else:
-        logdict['multi_threading'] = 1
-    if reference != "":
-        logdict['reference'] = reference
-    else:
-        logdict['reference'] = ""
-    if output_name != "":
-        logdict['output_name'] = output_name
-    else:
-        logdict['output_name'] = ""
-    print (logdict, file=logfile)
-
-def varriansfileRenamer(total_filenames):
-    inputs = total_filenames.split(" ")
-    sorted_input = []
-    for i in range(len(inputs)):
-        name = inputs[i].split("/")[-1]
-        sorted_input.append(name)
-
 def concatenateDraftGenome(input_file):
     cmd = "grep -c \">\" {}".format(input_file)
     proc = subprocess.Popen(cmd, shell=True,
@@ -724,29 +651,6 @@ def concatenateDraftGenome(input_file):
         infile.close()
         writefile.close()
     return id, new_name
-
-def mossCheckInputFiles(input, seqType):
-    if seqType == "nanopore":
-        inputType = "nanopore"
-        total_filenames = input[0]
-        assemblyType = "nanopore"
-    elif seqType == "pe_illumina":
-        if len(input) != 2:
-            sys.exit("You did not give 2 files, yet seqType was set to be pe_illumina")
-        else:
-            inputType = "pe_illumina"
-            total_filenames = " ".join(input)
-            assemblyType = "illumina"
-    elif seqType == "se_illumina":
-        if len(input) != 1:
-            sys.exit("You gave more than 1 file, yet seqType was set to be se_illumina")
-        else:
-            inputType = "se_illumina"
-            total_filenames = input[0]
-            assemblyType = "illumina"
-    else:
-        sys.exit("Incorrent input or seqType")
-    return inputType, total_filenames, assemblyType
 
 def md5(sequence):
     hash_md5 = hashlib.md5(sequence.encode())
@@ -800,9 +704,6 @@ def release_semaphore(semaphore, configname):
     conn.commit()
     conn.close()
 
-
-
-
 def check_sql_semaphore_value(configname, semaphore):
     isolatedb = configname + "moss.db"
 
@@ -814,40 +715,6 @@ def check_sql_semaphore_value(configname, semaphore):
     conn.close()
 
     return int(refdata[0][0])
-
-
-def inputHeader(total_files, inputType):
-    if inputType == "nanopore" or inputType == "se_illumina":
-        if total_files[-3:] == ".gz":
-            infile = open(total_files, 'rb')
-        else:
-            infile = open(total_files, 'r')
-        first_line = infile.readline().rstrip()
-    elif inputType == "pe_illumina":
-        infile = open(total_files[0], 'r')
-        first_line = infile.readline().rstrip()
-    return first_line[1::]
-
-def databaseOverClustering(configname, dbname, kma_path, filename):
-    cmd = "{} dist -t_db {}{} -d 1 -o {}referenceCluster -tmp {}".format(kma_path, configname, dbname, configname, configname)
-    os.system(cmd)
-    distancematrix = []
-    infile = open("{}referenceCluster".format(configname), 'r')
-    for line in infile:
-        line = line.rstrip().split("\t")
-        distancematrix.append(line)
-    infile.close()
-    threshhold = 1000
-    clustercount = 0
-    writefile = open(filename, 'w')
-    for i in range(2,len(distancematrix), 1): #Skip matrixsizeline and first reference line, which has no value #Row
-        for t in range(0, len(distancematrix[i])-1, 1): #Collum
-            if (threshhold > int(distancematrix[i][t+1])):
-                print("{}\t{}\t{}".format(distancematrix[i][0], distancematrix[i][t+1], distancematrix[t+1][0]), file=writefile)
-                clustercount += 1
-    print (clustercount)
-    writefile.close()
-    return clustercount
 
 def ThreshholdDistanceCheck(distancematrixfile, reference, consensus_name):
     infile = open(distancematrixfile, 'r')
@@ -865,108 +732,6 @@ def ThreshholdDistanceCheck(distancematrixfile, reference, consensus_name):
                 index = linecount
                 secondentry = True
         linecount += 1
-
-def scan_reference_vs_isolate_cge(plasmid_string, allresgenes, virulence_string, header_text, configname):
-
-    plasmids_isolate = plasmid_string.split(",")
-    amrgenes_isolate = allresgenes.split(",")
-    virulencegenes_isolate = virulence_string.split(",")
-
-    #This function checks if an isolate has any unique amrgenes, virulencegenes or plasmids vs the cluster and returns them if any are found
-    isolatedb = configname + "moss.db"
-    conn = sqlite3.connect(isolatedb)
-    c = conn.cursor()
-
-    c.execute("SELECT plasmids FROM isolate_table WHERE header_text = '{}'".format(header_text))
-    refdata = c.fetchall()
-
-    print (refdata)
-
-    if refdata != []:
-        if refdata[0][0] == None:
-            plasmids_reference = []
-        else:
-            plasmids_reference = refdata[0][0].split(",")
-    else:
-        plasmids_reference= []
-
-    c.execute("SELECT virulencegenes FROM isolate_table WHERE header_text = '{}'".format(header_text))
-    refdata = c.fetchall()
-    if refdata != []:
-        if refdata[0][0] == None:
-            virulencegenes_reference = []
-        else:
-            virulencegenes_reference = refdata[0][0].split(",")
-    else:
-        virulencegenes_reference = []
-
-    c.execute("SELECT amrgenes FROM isolate_table WHERE header_text = '{}'".format(header_text))
-    refdata = c.fetchall()
-    if refdata != []:
-        if refdata[0][0] == None:
-            amrgenes_reference = []
-        else:
-            amrgenes_reference = refdata[0][0].split(",")
-    else:
-        amrgenes_reference = []
-
-
-    conn.close()
-
-    unique_plasmids = list(set(plasmids_isolate).symmetric_difference(set(plasmids_reference)))
-    unique_virulence_genes = list(set(virulencegenes_isolate).symmetric_difference(set(virulencegenes_reference)))
-    unique_amr_genes = list(set(amrgenes_isolate).symmetric_difference(set(amrgenes_reference)))
-
-    if len(unique_plasmids) > 0:
-        new_plasmid_string = plasmid_string + "," + ",".join(unique_plasmids)
-    else:
-        new_plasmid_string = None
-
-    if len(unique_virulence_genes) > 0:
-        new_virulence_string = virulence_string + "," + ",".join(unique_virulence_genes)
-    else:
-        new_virulence_string = None
-
-    if len(unique_amr_genes) > 0:
-        new_amr_string = allresgenes + "," + ",".join(unique_amr_genes)
-    else:
-        new_amr_string = None
-    if new_plasmid_string is not None:
-        new_plasmid_string = new_plasmid_string.replace("'", "''")
-    if new_virulence_string is not None:
-        new_virulence_string = new_virulence_string.replace("'", "''")
-    if new_amr_string is not None:
-        new_amr_string = new_amr_string.replace("'", "''")
-
-
-
-    return new_plasmid_string, new_virulence_string, new_amr_string
-
-
-
-
-
-def generateFigtree(inputfile, jobid):
-    #Figtree doesnt work on laptop
-
-    cmd = "docker run --name figtree{} -v {}:/tmp/tree.tree biocontainers/figtree:v1.4.4-3-deb_cv1 figtree -graphic PNG -width 500 -height 500 /tmp/tree.tree /tmp/tree.png".format(jobid, inputfile)
-    os.system(cmd)
-
-    filelist = inputfile.split("/")
-    namelenght = len(filelist[-1])
-    inputdir = inputfile[0:-namelenght]
-
-    proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("figtree", jobid), shell=True,
-                            stdout=subprocess.PIPE, )
-    output = proc.communicate()[0]
-    id = output.decode().rstrip()
-    cmd = "docker cp {}:/tmp/tree.png {}tree.png".format(id, inputdir)
-    os.system(cmd)
-
-    cmd = "docker container rm {}".format(id)
-    os.system(cmd)
-
-    return ("{}tree.png".format(inputdir))
 
 def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, jobid, samplename, kma_path, kma_database_path, entryid, isolatedb, configname, associated_species):
     if assemblyType == "illumina":
@@ -1156,34 +921,6 @@ def uniqueNameCheck(input):
 
     conn.close()
 
-def semaphoreInitCheck():
-    # Check if an assembly is currently running
-
-    #Mangler, check for value, if 0, ergo assembly quit
-
-
-    semaphore = posix_ipc.Semaphore("/ipc_index_refdb", posix_ipc.O_CREAT, initial_value=1)
-    assembly_semaphore_value = semaphore.value
-    if assembly_semaphore_value == 0:
-        print ("Another subprocess is currently writing to the reference database")
-        try:
-            semaphore.acquire(timeout=18000)  # Wait maxium of 5 hours.
-            semaphore.release()  # No database writing, clear to go
-        except posix_ipc.BusyError as error:
-            semaphore.unlink()
-            sys.exit("ipc_index_refdb semaphore is jammed. A process waited > 5H to write to the reference database. Run CleanSemaphore.py to wipe all phores")
-
-    # Check if an assembly is currently running
-    semaphore = posix_ipc.Semaphore("/ReadRefDB", posix_ipc.O_CREAT, initial_value=100) #Maximum of 100 readers
-    assembly_semaphore_value = semaphore.value
-    if assembly_semaphore_value == 0:
-        try:
-            semaphore.acquire(timeout=3600)  # Wait max 1h to see if someone is writing to database
-            semaphore.release()  # No database writing, clear to go
-        except posix_ipc.BusyError as error:
-            print("ReadRefDB semaphore is jammed. Unlinking it by running cleanSemaphore.py")
-            semaphore.unlink()
-
 def findTemplateNumber(configname, name):
     infile = open(configname + "REFDB.ATG.name", 'r')
     t = 1
@@ -1194,42 +931,6 @@ def findTemplateNumber(configname, name):
         else:
             t = t + 1
     infile.close()
-
-
-def makeDBinfo(isolatedb):
-    conn = sqlite3.connect(isolatedb)
-    c = conn.cursor()
-    c.execute("SELECT * FROM isolate_table")
-    refdata = c.fetchall()
-    isolatenumber = len(refdata)
-    c.execute("SELECT * FROM reference_table")
-    refdata = c.fetchall()
-    referencenumber = len(refdata)
-    conn.close()
-
-def runResFinder(exepath, total_filenames, target_dir, seqType):
-    #cmd = "python3 {}resfinder/run_resfinder.py -ifq {} -o {}resfinderResults -b {}resfinder/cge/ncbi-blast-2.10.1+/bin/blastn -acq".format(exepath, total_filenames, target_dir, exepath)
-    if seqType == 'nanopore':
-        cmd = "python3 {}resfinder/run_resfinder.py -ifq {} -o {}resfinderResults -k {}kma/kma -acq -nano".format(exepath, total_filenames, target_dir, exepath)
-        os.system(cmd)
-    else:
-        cmd = "python3 {}resfinder/run_resfinder.py -ifq {} -o {}resfinderResults -k {}kma/kma -acq".format(exepath,
-                                                                                                            total_filenames,
-                                                                                                            target_dir,
-                                                                                                            exepath)
-        os.system(cmd)
-
-def runPlasmidFinder(exepath, total_filenames, target_dir):
-    cmd = "mkdir {}plasmidFinderResults".format(target_dir)
-    os.system(cmd)
-    cmd = "python3 {}plasmidfinder/plasmidfinder.py -i {} -o {}plasmidFinderResults -mp {}kma/kma -p {}plasmidfinder/plasmidfinder_db".format(exepath, total_filenames, target_dir, exepath, exepath)
-    os.system(cmd)
-
-def runVirulenceFinder(exepath, total_filenames, target_dir):
-    cmd = "mkdir {}virulenceFinderResults".format(target_dir)
-    os.system(cmd)
-    cmd = "python3 {}virulencefinder/virulencefinder.py -i {} -o {}virulenceFinderResults -mp {}kma/kma -p {}virulencefinder/virulencefinder_db".format(exepath, total_filenames, target_dir, exepath, exepath)
-    os.system(cmd)
 
 def run_quast(target_dir, jobid):
     cmd = "docker run --name quast{} -v {}/assembly_results/:/data/assembly_results/ staphb/quast quast.py /data/assembly_results/assembly.fasta -o /output/quast_output".format(
@@ -1353,21 +1054,9 @@ def generate_amr_resistance_profile_table(configname, entryid, pdf, target_dir, 
 
     return reflist, panel_found, panel_list
 
-def time_of_analysis(configname, entryid):
-    isolatedb = configname + "moss.db"
-    conn = sqlite3.connect(isolatedb)
-    c = conn.cursor()
-
-    c.execute("SELECT analysistimestamp FROM isolate_table WHERE entryid = '{}'".format(entryid))
-    refdata = c.fetchall()
-    conn.close()
-    element = refdata[0][0]
-
-
-
-    return element
 
 def run_bandage(target_dir, jobid):
+    #TBD run bandage in assembly func
     cmd = "docker run --name bandage{} -v {}/assembly_results/:/data/assembly_results/ nanozoo/bandage Bandage image /data/assembly_results/assembly.gfa contigs.jpg".format(
         jobid, target_dir)
     os.system(cmd)
@@ -1513,8 +1202,6 @@ def compileReportAlignment(target_dir, ID, configname, image_location, header_te
                  "".format(ID, file_name, header_text)
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(10)
-
-    analysistimestamp = time_of_analysis(configname, ID)
     pdf.set_font('Arial', '', 10)
     #Cell here
 
@@ -1583,23 +1270,6 @@ def compileReportAlignment(target_dir, ID, configname, image_location, header_te
 
 
     pdf.output(target_dir + filename, 'F')
-
-def compare_plasmid_isolate_vs_cluster(plasmid_list, header_text, configname):
-    isolatedb = configname + "moss.db"
-    conn = sqlite3.connect(isolatedb)
-    c = conn.cursor()
-
-    c.execute("SELECT plasmids FROM reference_table WHERE header_text = '{}'".format(header_text))
-    refdata = c.fetchall()
-    conn.close()
-    element = refdata[0]
-
-
-    if refdata[0][0] == None:
-        list = []
-    else:
-        list = refdata[0][0].split(",")
-    return list
 
 
 def resfinderPage(tabfile, pdf, target_dir):
@@ -1745,95 +1415,6 @@ def create_title(pdf, id, string):
   pdf.write(5, f"{string}")
   pdf.ln(10)
   pdf.set_text_color(0, 0, 0)
-
-def checkAMRrisks(target_dir, entryid, configname, header_text, exepath, logfile):
-    warning = []
-    riskcategory = []
-    tabfile = target_dir + "resfinderResults/ResFinder_results_tab.txt"
-    infile = open(tabfile, 'r')
-    allresgenes = []
-    resdata = []
-    for line in infile:
-        line = line.rstrip().split("\t")
-        if line[0] != "Resistance gene": #Skip first line
-            resdata.append(line[7].upper())
-            if line[0] not in allresgenes:
-                allresgenes.append(line[0])
-    infile.close()
-
-    pheno_file = target_dir + "resfinderResults/pheno_table.txt"
-    infile = open(pheno_file, 'r')
-    amrinfo = []
-    for line in infile:
-        if line[0] != "#":
-            line = line.rstrip().split("\t")
-            if len(line) > 1:
-                if len(line) == 5:
-                    nlist = line[4].split(", ")
-                    tlist = []
-                    for item in nlist:
-                        id = item.split(" ")[0]
-                        tlist.append(id)
-                    line[4] = "@".join(tlist)
-                else:
-                    line.append("")
-                line = ",".join(line)
-                amrinfo.append(line)
-
-    infile.close()
-
-
-    with open(exepath + "datafiles/AMR_Watch_list.json") as json_file:
-        amr_list = json.load(json_file)
-    json_file.close()
-
-
-    header_textlist = header_text.split()
-    speciename = (header_textlist[1] + " " + header_textlist[2]).upper()
-
-    for category in amr_list:
-        for specie in amr_list[category]:
-            if specie.upper() in speciename: #If the species from the isolate is in the watch list
-                if type(amr_list[category][specie]) == list:
-                    for risk_gene in amr_list[category][specie]:
-                        for resistance_gene in resdata:
-                            if risk_gene.upper() in resistance_gene:  # If match is found as substring in any resistance hit from ResFinder
-                                msg = "{}: {}".format(speciename, resistance_gene)
-                                risk = category
-                                if msg not in warning:
-                                    warning.append(msg)
-                                if risk not in riskcategory:
-                                    riskcategory.append(risk)
-                else:
-                    for resistance_gene in resdata:
-                        if amr_list[category][specie].upper() in resistance_gene: #If match is found as substring in any resistance hit from ResFinder
-                            msg = "{}: {}".format(speciename, resistance_gene)
-                            risk = category
-                            if msg not in warning:
-                                warning.append(msg)
-                            if risk not in riskcategory:
-                                riskcategory.append(risk)
-    if warning == []:
-        warning = ""
-    else:
-        warning = ", ".join(warning)
-    if len(riskcategory) > 1:
-        riskcategory = str(max(riskcategory))
-    elif len(riskcategory) == 1:
-        riskcategory = str(riskcategory[0])
-    else:
-        riskcategory = "0"
-    if allresgenes == []:
-        allresgenes = ""
-    else:
-        allresgenes = ", ".join(allresgenes)
-    if amrinfo == []:
-        amrinfo = ""
-    else:
-        amrinfo = ";".join(amrinfo)
-    return warning, riskcategory, allresgenes, amrinfo
-
-
 
 
 
