@@ -54,7 +54,7 @@ def main(csv, jobs, configname):
 
     jobslist = []
     #function here to check for mulitple_files, barcodes etc in input directory.
-    filelist = moss.derive_finalized_filenames(input_dir)
+    #filelist = moss.derive_finalized_filenames(input_dir)
     for i in range(len(metadata_list)):
         cmd = "python3 /opt/moss/src/moss.py -configname {} -metadata \"{}\" -metadata_headers \"{}\"".format(configname, metadata_list[i], metadata_headers)
         jobslist.append(cmd)
