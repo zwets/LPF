@@ -292,7 +292,6 @@ function generate_table_fastq(input_number) {
             }
         else if (j == 1) {
             td.defaultValue = "";
-            td.classList.add("label");
             var label = document.createElement('label');
             label.id = `input${i}${j}`;
             label.innerHTML = sample_name;
