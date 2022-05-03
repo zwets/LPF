@@ -164,17 +164,17 @@ function create_metadata_table_fastq(){
       var bc_final_path = "/" + path_slice.join("/") + "/";
       var barcode_list = [];
 
-      for (var i = 0; i < rows.length; i++) {
-          if (i>0) {
+      for (var i = 1; i < rows.length; i++) {
             for (var t = 0; t < rows[i].cells.length; t++) {
               console.log(rows[i].cells[t].value);
+              console.log(rows[i].cells[t].innerHTML);
               if (t == 0) {
                 barcode_list.push(rows[i].cells[t].value);
               }
               csv_string = csv_string.concat(`${rows[i].cells[t].value},`);
               }
             csv_string = csv_string.concat(`${bc_final_path},fastq\n`);
-          }
+
         }
       console.log(barcode_list);
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
