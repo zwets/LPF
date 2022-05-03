@@ -281,6 +281,7 @@ function generate_table_fastq(input_number) {
                 tr.appendChild(td);
                 continue;
             }
+        }
         else {
             td.defaultValue = "";
             td.classList.add("select");
@@ -297,8 +298,6 @@ function generate_table_fastq(input_number) {
             td.appendChild(input);
             tr.appendChild(td);
             continue;
-        }
-
         }
         //td.appendChild(document.createTextNode(new_input_array[i]));
         tr.appendChild(td);
