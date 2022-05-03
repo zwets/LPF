@@ -145,6 +145,7 @@ def moss_mkfs(configname, entryid):
 
 def moss_init(configname, metadata, metadata_headers):
     metadata_dict = prod_metadata_dict(metadata, metadata_headers)
+    print (metadata_dict)
     input = metadata_dict['input'].split()[0]
 
     if metadata_dict['latitude'] == '' or metadata_dict['longitude'] == '':
