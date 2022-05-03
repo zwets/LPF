@@ -166,11 +166,14 @@ function create_metadata_table_fastq(){
 
       for (var i = 0; i < rows.length; i++) {
             for (var t = 0; t < rows[i].cells.length; t++) {
-            console.log(document.getElementById(`input${[i]}${[t]}`).value);
-              if (t == 0) {
-                barcode_list.push(rows[i].cells[t].value);
+            var table_item = document.getElementById(`input${[i]}${[t]}`).value;
+              if (t == 1) {
+                barcode_list.push(table_item[0]);
+                csv_string = csv_string.concat(`${table_item[0]},`);
                 }
-              csv_string = csv_string.concat(`${rows[i].cells[t].value},`);
+              else {
+                csv_string = csv_string.concat(`${table_item},`);
+                }
               }
             csv_string = csv_string.concat(`${bc_final_path},fastq\n`);
 
