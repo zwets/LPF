@@ -138,21 +138,8 @@ function create_metadata_table_fastq(){
     var input = document.getElementById('multiple-input-type').value;
     var input_number = parseInt(input);
 
-    var children = "";
-    for (var i = 0; i < input_number; ++i) {
-        if (i >= 9) {
-            children +=  (i+1).toString() + ',';
-        } else {
-            children +=  "0" + (i+1).toString() + ',';
-        }
-     }
-    var parallel_input = children.slice(0, -1);
-    var input_array = parallel_input.split(",");
 
-    console.log(input_array);
-
-
-    append_table = generate_table_fastq(input_array)
+    append_table = generate_table_fastq(input_number)
 
     document.getElementById('metadata-table-div').appendChild(append_table);
 
@@ -238,10 +225,7 @@ function create_csv_from_obj(obj, experiment_name) {
     //  print obj to csv in /opt/moss_db/{current_dir}/metadata_csv/{experiment_name}.csv
 }
 
-function generate_table_fastq(input_array) {
-    var new_input_array = input_array.sort();
-
-    var array_len = new_input_array.length;
+function generate_table_fastq(input_number) {
 
     var table = document.createElement('table');
     table.id = "metadata_csv_table";
@@ -263,10 +247,7 @@ function generate_table_fastq(input_array) {
 
     table.appendChild(headRow);
 
-    //var tbody = document.createElement('tbody');
-    //tbody.id = "tbody";
-
-    for (var i = 0; i < array_len; i++) {
+    for (var i = 0; i < input_number; i++) {
       var tr = document.createElement('tr');
       tr.id = "tbody_tr_" + (i).toString();
 
@@ -300,6 +281,22 @@ function generate_table_fastq(input_array) {
                 tr.appendChild(td);
                 continue;
             }
+        else {
+            td.defaultValue = "";
+            td.classList.add("select");
+            var input = document.createElement('select');
+            input.id = `input${i}${j}`;
+            var object_options = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+            for (var t = 0; t < object_options.length; t++) {
+                var option = document.createElement("option");
+                option.value = object_options[t];
+                option.text = object_options[t];
+                input.add(option);
+            }
+            td.appendChild(input);
+            tr.appendChild(td);
+            continue;
+        }
 
         }
         td.appendChild(document.createTextNode(new_input_array[i]));
