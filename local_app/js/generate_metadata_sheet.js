@@ -164,7 +164,7 @@ function create_metadata_table_fastq(){
       var bc_final_path = "/" + path_slice.join("/") + "/";
       var barcode_list = [];
 
-      for (var i = 0; i < rows.length; i++) {
+      for (var i = 0; i < rows.length-1; i++) {
             for (var t = 0; t < rows[i].cells.length; t++) {
             var table_item = document.getElementById(`input${[i]}${[t]}`).value;
             console.log(table_item);
