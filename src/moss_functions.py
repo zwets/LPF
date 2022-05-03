@@ -150,6 +150,8 @@ def moss_init(configname, metadata, metadata_headers):
         #TBD
         input = "{}/barcode{}/{}.fastq.gz".format(metadata_dict['file_location'], metadata_dict['barcode_number'])
     else:
+        samplename = metadata_dict['sample name']
+        input = metadata_dict['file_location'] + samplename
 
 
     if metadata_dict['latitude'] == '' or metadata_dict['longitude'] == '':
