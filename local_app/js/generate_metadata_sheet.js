@@ -285,6 +285,7 @@ function generate_table_fastq(input_number) {
                     option.text = object_options[t];
                     input.add(option);
                 }
+                input.defaultValue = object_options[0];
                 td.appendChild(input);
                 tr.appendChild(td);
                 continue;
@@ -295,6 +296,7 @@ function generate_table_fastq(input_number) {
             var label = document.createElement('label');
             label.id = `input${i}${j}`;
             label.innerHTML = sample_name;
+            label.value = sample_name;
             td.appendChild(label);
             tr.appendChild(td);
             continue;
@@ -311,6 +313,7 @@ function generate_table_fastq(input_number) {
                 option.text = object_options[t];
                 input.add(option);
             }
+            input.defaultValue = object_options[0];
             td.appendChild(input);
             tr.appendChild(td);
             continue;
