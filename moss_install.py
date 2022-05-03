@@ -160,7 +160,7 @@ def check_anaconda():
     os.system("conda create --name moss_env")
     os.system("source activate moss_env")
     os.system("conda install -c bioconda flye")
-    
+
     if name_check and version_check:
         return True
     else:
