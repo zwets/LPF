@@ -185,7 +185,7 @@ function create_metadata_table_fastq(){
             for (var t = 0; t < rows[i].cells.length; t++) {
               csv_string = csv_string.concat(`${rows[i].cells[t].value},`);
               }
-            csv_string = csv_string.concat(`${bc_final_path}, fastq\n`);
+            csv_string = csv_string.concat(`${bc_final_path},fastq\n`);
           }
         }
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];

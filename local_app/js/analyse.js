@@ -15,22 +15,23 @@ storage.get('currentConfig', function(error, data) {
 
 
 function submitSingleAnalysis() {
-    var input = document.getElementById('csv_file');
+    var input = document.getElementById('single-input-field');
     var children = "";
         for (var i = 0; i < input.files.length; ++i) {
             children +=  input.files.item(i).path + ',';
          }
     var parallel_input = children.slice(0, -1);
     var input_array = parallel_input.split(",");
-    var csv_path = input_array[0];
 
-    var cmd_msg = `conda run -n base python3 ${exepath}src/moss_parallel_wrapper.py -i ${input_array[0]} -input_type ${sequence_type} -db_dir ${db_dir} -exepath ${exepath} -threads ${threads} -jobs ${jobs}`;
+    console.log(input_array);
 
-    execute_command_as_subprocess(cmd_msg);
+    //var cmd_msg = `conda run -n base python3 /opt/moss/src/moss_parallel_wrapper.py -csv ${input_array[0]} -threads ${8}`;
+
+    //execute_command_as_subprocess(cmd_msg);
+
+
 
 }
-
-
 function execute_command_as_subprocess(cmd, print_msg) {
     console.log(cmd);
 
