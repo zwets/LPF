@@ -16,7 +16,7 @@ function submitinit() {
 
   var kmaindex_path = getfolder("kmaindex-path");
 
-  var execstring = `python3 /opt/moss/src/moss_init.py -configname ${config_name} -kmaindex_db_path ${kmaindex_path}`
+  var execstring = `conda run -n base python3 /opt/moss/src/moss_init.py -configname ${config_name} -kmaindex_db_path ${kmaindex_path}`
   console.log(execstring);
 
 
