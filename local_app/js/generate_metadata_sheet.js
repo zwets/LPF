@@ -231,7 +231,7 @@ function generate_table_fastq(input_number) {
     table.classList.add('table');
 
     var bc_folder = document.getElementById('fastq-folder');
-    console.log(bc_folder.files.item(0);
+    //console.log(bc_folder.files.item(0);
     console.log(bc_folder.files.item(0).path);
 
     var headRow = document.createElement('tr');
