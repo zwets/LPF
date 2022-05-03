@@ -124,6 +124,9 @@ function create_metadata_table_fast5(){
 
 }
 
+function hasDuplicates(array) {
+    return (new Set(array)).size !== array.length;
+}
 
 function create_metadata_table_fastq(){
 
@@ -168,17 +171,20 @@ function create_metadata_table_fastq(){
             for (var t = 0; t < rows[i].cells.length; t++) {
             var table_item = document.getElementById(`input${[i]}${[t]}`).value;
             console.log(table_item);
-              if (t == 1) {
-                barcode_list.push(table_item[0]);
-                csv_string = csv_string.concat(`${table_item[0]},`);
+              if (t == 0) {
+                barcode_list.push(table_item);
+                csv_string = csv_string.concat(`${table_item},`);
                 }
-              csv_string = csv_string.concat(`${table_item},`);
+              else if (t == 1) {
+                csv_string = csv_string.concat(`${table_item[0]},`);
+              }
+              else {
+                csv_string = csv_string.concat(`${table_item},`);
+              }
             }
             csv_string = csv_string.concat(`${bc_final_path},fastq\n`);
 
         }
-
-      console.log(barcode_list);
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
       var output_csv_file = `/opt/moss_db/${current_moss_system}/metadata_csv/${experiment_name}.csv`;
       //Here insert validation function for ENA compatability
@@ -188,7 +194,8 @@ function create_metadata_table_fastq(){
         } else {
           //check barcodes
 
-          fs.writeFile(output_csv_file, csv_string, err => {
+          if (hasDuplicates(barcode_list) == false) {
+            fs.writeFile(output_csv_file, csv_string, err => {
               if (err) {
                 console.error(err)
                 return
@@ -213,6 +220,10 @@ function create_metadata_table_fastq(){
               document.getElementById('metadata-table-div').appendChild(create_button);
               //Make go to analyses shortcut
             })
+          }
+          else {
+            alert("Some isolates have been given the same barcode");
+          }
 
         }
        }
