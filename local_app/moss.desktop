@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Exec=/opt/moss/local_app/dist/linux-unpacked/moss
+Exec=bash -c "source ~/.bashrc && /opt/moss/local_app/moss_launch.sh"
 Name=Microbial Outbreak Surveillance System (MOSS)
 GenericName=Microbial Outbreak Surveillance System (MOSS)
 Icon=/opt/moss/local_app/images/report-icon.png
