@@ -129,7 +129,7 @@ function create_metadata_table_fast5(){
 }
 
 
-function create_metadata_table(){
+function create_metadata_table_fastq(){
 
     document.getElementById('metadata-table-div').innerHTML = "";
     //document.getElementById('analyse-multiple-index-file-section').innerHTML = "";
