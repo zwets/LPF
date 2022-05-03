@@ -142,10 +142,6 @@ def sql_execute_command(command, configname):
 def moss_mkfs(configname, entryid):
     target_dir = "/opt/moss_db/{}/analysis/{}/".format(configname, entryid)
     os.system("mkdir {}".format(target_dir))
-    logfilename = "{}/logfile_{}".format(target_dir, entryid)
-    logfile = open(logfilename, 'w')
-
-    return logfile
 
 def moss_init(configname, metadata, metadata_headers):
     metadata_dict = moss.prod_metadata_dict(metadata, metadata_headers)
@@ -245,13 +241,8 @@ def check_assembly_result(path):
 
     return True
 
-def print_to_logfile(input, logfile, stdout):
-    print (input, file=logfile)
-    if stdout:
-        print (input)
-
 def run_assembly(entryid, configname, samplename, assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, \
-                 jobid, exepath, kma_database_path, start_time, logfile, associated_species):
+                 jobid, exepath, kma_database_path, start_time,  associated_species):
     #Flye
     #flye -o out_dir --threads 8 --nano-raw fastq.gz
     moss_sql.update_status_table(entryid, "Unicycler Assembly", "Assembly", "4", "5", "Running", configname)
@@ -264,12 +255,10 @@ def run_assembly(entryid, configname, samplename, assemblyType, inputType, targe
                                    exepath + "kma/kma", kma_database_path, entryid, configname + "moss.db", configname,
                                    associated_species)
     time = datetime.datetime.now()-start_time
-    moss.print_to_logfile("Run time: {}".format(time), logfile, True)
     moss_sql.update_status_table(entryid, "Compiling Assembly PDF", "Assembly", "5", "5", "Running", configname)
 
     compileReportAssembly(target_dir, entryid, configname, associated_species, exepath)
 
-    logfile.close()
     moss_sql.update_status_table(entryid, "Assembly completed", "Assembly", "5", "5", "Finished", configname)
     sys.exit("No template was found, so input was added to references.")
 
@@ -441,19 +430,8 @@ def prod_metadata_dict(metadata, metadata_headers):
         metadict[metadata_headers[i]] = metadata[i]
     return metadict
 
-#def check_to_destroy_shm_db(kma_path, kma_database_path, configname, logfile):
-#    conn = sqlite3.connect(configname + "moss.db")
-#    c = conn.cursor()
-##    c.execute("SELECT * FROM ipc_table WHERE header_text = '{}'".format(header_text))
-#    refdata = c.fetchall()
-#    conn.close()
-#
-#    if running_json == {} and queue_json == {}: #Take Down DB from shm
-#        os.system("{}_shm -t_db {} -destroy".format(kma_path, kma_database_path))
-#        print ("{}_shm -t_db {} -destroy".format(kma_path, kma_database_path), file=logfile)
 
-
-def check_shm_kma(kma_path, kma_database_path, cmd, logfile):
+def check_shm_kma(kma_path, kma_database_path, cmd):
     try: #Check if KMA db in shm
         cmd_stdout = check_output(cmd, stderr=STDOUT, shell=True).decode()
     except Exception as e:
@@ -508,7 +486,7 @@ def check_alignment_kma_cov(file):
 
     return coverage
 
-def kma_mapping(target_dir, logfile, input, configname):
+def kma_mapping(target_dir,  input, configname):
     os.system("/opt/moss/kma/kma -i {} -o {}kma_mapping -t_db /opt/moss_db/{}/REFDB.ATG -ID 0 -nf -mem_mode -sasm -ef".format(input, target_dir, configname))
 
     try:
@@ -529,16 +507,14 @@ def kma_mapping(target_dir, logfile, input, configname):
     except IndexError as error:
         print(
             "None of the given templates matches any of the entries in given ref_kma_database. The input reads will now be assembled and added to the reference ref_kma_database as a new reference. After this the program will be stopped, and thus no distance matrix based analysis will be carried out.")
-        print(
-            "None of the given templates matches any of the entries in given ref_kma_database. The input reads will now be assembled and added to the reference ref_kma_database as a new reference. After this the program will be stopped, and thus no distance matrix based analysis will be carried out.",
-            file=logfile)
+
         # Perform assembly based on input
         template_search_result = False
         print("FoundnoTemplate")
         return (0, 1, "") #template_search_result = 0 means no result found
     ###
 
-def illuminaMappingForward(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion,configname, laptop, consensus_name):
+def illuminaMappingForward(input, best_template, target_dir, kma_database_path,  multi_threading, kma_path, templateaccesion,configname, laptop, consensus_name):
     illumina_name = input[0].split("/")[-1]
 
     #Claim ReafRefDB is ipc_index_refdb is free
@@ -563,13 +539,10 @@ def illuminaMappingForward(input, best_template, target_dir, kma_database_path, 
             cmd = "{} -i {} -o {} -t_db {} -ref_fsa -ca -dense -cge -nf -vcf -bc90 -Mt1 {} -t {} -shm".format(
                 kma_path, input[0][0], target_dir + consensus_name, kma_database_path,
                 str(best_template), str(multi_threading))
-            print(cmd, file=logfile)
-            check_shm_kma(kma_path, kma_database_path, cmd, logfile)
-        print("# Illumina mapping completed succesfully", file=logfile)
+            check_shm_kma(kma_path, kma_database_path, cmd)
 
 
-def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfile, multi_threading, kma_path, templateaccesion, configname, laptop, consensus_name):
-    print (input, file=logfile)
+def illuminaMappingPE(input, best_template, target_dir, kma_database_path,  multi_threading, kma_path, templateaccesion, configname, laptop, consensus_name):
     illumina_name = input[0].split("/")[-1]
 
     # Claim ReafRefDB is ipc_index_refdb is free
@@ -594,12 +567,10 @@ def illuminaMappingPE(input, best_template, target_dir, kma_database_path, logfi
             cmd = "{} -ipe {} {} -o {} -t_db {} -ref_fsa -ca -dense -nf -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
                 kma_path, input[0], input[1], target_dir + consensus_name,
                 kma_database_path, str(best_template), str(multi_threading))
-            print(cmd, file=logfile)
-            check_shm_kma(kma_path, kma_database_path, cmd, logfile)
-        print("# Illumina mapping completed succesfully", file=logfile)
+            check_shm_kma(kma_path, kma_database_path, cmd)
 
 
-def nanopore_alignment(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, kma_path, templateaccesion, configname, laptop, consensus_name):
+def nanopore_alignment(input, best_template, target_dir, kma_database_path,  multi_threading, bc, kma_path, templateaccesion, configname, laptop, consensus_name):
     nanopore_name = input[0].split("/")[-1]
 
     # Claim ReafRefDB is ipc_index_refdb is free
@@ -624,9 +595,7 @@ def nanopore_alignment(input, best_template, target_dir, kma_database_path, logf
             cmd = "{} -i {} -o {} -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {} -shm".format(
                 kma_path, input[0], target_dir + consensus_name, kma_database_path,
                 str(best_template), str(multi_threading), str(bc))
-            print(cmd, file=logfile)
-            check_shm_kma(kma_path, kma_database_path, cmd, logfile)
-        print("# Nanopore mapping completed succesfully", file=logfile)
+            check_shm_kma(kma_path, kma_database_path, cmd)
 
 def concatenateDraftGenome(input_file):
     cmd = "grep -c \">\" {}".format(input_file)
@@ -1347,7 +1316,7 @@ def plasmid_data_for_report(jsoninput, target_dir):
         plasmid_list = []
     return count1, plasmid_list
 
-def virulence_data_for_report(jsoninput, target_dir, logfile):
+def virulence_data_for_report(jsoninput, target_dir):
     #HERE SOMETHINIG HAPPEND CHECK
     if os.path.isfile(jsoninput):
         with open(jsoninput) as json_file:

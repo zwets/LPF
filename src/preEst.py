@@ -82,7 +82,7 @@ def SurveillancePipeline(i_illumina, i_nanopore,
     print("# Preliminary estimation of:", file=logfile)
     print("-input: {}".format(total_filenames), file=logfile)
 
-    best_template, best_template_score, template_found, header_text = moss.findTemplateSurveillance(total_filenames, target_dir, kma_database_path, logfile, kma_path)
+    best_template, best_template_score, template_found, header_text = moss.findTemplateSurveillance(total_filenames, target_dir, kma_database_path,  kma_path)
 
     print ("Reference identification results:", file = logfile)
     print ("Best Template ID: {}".format(best_template), file = logfile)

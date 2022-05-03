@@ -51,27 +51,23 @@ def moss_pipeline(configname, metadata, metadata_headers):
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", configname), configname)
 
 
-    logfile = moss.moss_mkfs(configname, entryid)
+    moss.moss_mkfs(configname, entryid)
 
     #Make moss pip lib for practice and future work. Dont use print, but use linux concat to not have to open file the entirety.
-    moss.print_to_logfile("# input: {}".format(input), logfile, True)
 
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", configname), configname)
 
 
     #TBC FOR ALL FINDERS INSERT RELEVANT DATA INTO SQL
-    moss.print_to_logfile("# Typing Antibiotics resistance genes with resFinder", logfile, True)
-    #add argument and check function TBD
+    # #add argument and check function TBD
     kma_finders("", configname, entryid, input, "/opt/moss/resfinder_db/all")
-    moss.print_to_logfile("# Typing Viruence genes with virulenceFinder", logfile, True)
     kma_finders("", configname, entryid, input, "/opt/moss/virulencefinder_db/all")
-    moss.print_to_logfile("# Typing Plasmids with plasmidFinder", logfile, True)
     kma_finders("", configname, entryid, input, "/opt/moss/resfinder_db/all")
 
     sys.exit("Pre mapping test")
 
     #Rewrite this horrible kma_mapping function. Should be way simpler.
-    template_score, template_search_result, reference_header_text = moss.kma_mapping(target_dir, logfile, input, configname)
+    template_score, template_search_result, reference_header_text = moss.kma_mapping(target_dir, input, configname)
 
     #check if mlst work TBD
     mlst_result = moss.run_mlst(input, target_dir, reference_header_text)
@@ -83,16 +79,10 @@ def moss_pipeline(configname, metadata, metadata_headers):
     #This should be done during kma mapping! #TBD
     best_template = moss.findTemplateNumber(configname, reference_header_text)
 
-    moss.print_to_logfile("Best template number: {}".format(best_template), logfile, True)
-
-    moss.print_to_logfile("Best template: {}".format(reference_header_text), logfile, True)
-
-    moss.print_to_logfile("Best template score: " + str(template_score), logfile, True)
-
     if template_search_result == 1: #1 means error, thus no template found
         #Implement flye
         moss.run_assembly(entryid, configname, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
-                          illumina_name2, jobid, exepath, kma_database_path, start_time, logfile)
+                          illumina_name2, jobid, exepath, kma_database_path, start_time)
 
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "IPC check", "Alignment", "4", "10", "Running", configname), configname)
 
@@ -121,7 +111,7 @@ def moss_pipeline(configname, metadata, metadata_headers):
     #Again, see above
     consensus_name = "{}_{}_consensus".format(c_name, templateaccesion)
 
-    moss.nanopore_alignment(input, best_template, target_dir, kma_database_path, logfile, multi_threading, bc, exepath + "kma/kma", templateaccesion, configname, laptop, consensus_name)
+    moss.nanopore_alignment(input, best_template, target_dir, kma_database_path,  multi_threading, bc, exepath + "kma/kma", templateaccesion, configname, laptop, consensus_name)
 
     referenceid = moss.sql_fetch("SELECT entryid FROM reference_table WHERE reference_header_text = '{}'".format(reference_header_text), configname)[0][0]
 
@@ -143,7 +133,6 @@ def moss_pipeline(configname, metadata, metadata_headers):
 
     #Why is cc phylo not in a function?
     cmd = "{} dist -i {}/phytree_output/* -r \"{}\" -mc 0.01 -nm 0 -o {}/phytree_output/distance_matrix".format(exepath + "ccphylo/ccphylo", target_dir, reference_header_text, target_dir)
-    print (cmd, file = logfile)
 
     if prune_distance != 0 :
         cmd += " -pr {}".format(prune_distance)
@@ -153,15 +142,13 @@ def moss_pipeline(configname, metadata, metadata_headers):
     # Check if acceptable snp distance
     distance = moss.ThreshholdDistanceCheck("{}/phytree_output/distance_matrix".format(target_dir), reference_header_text.split()[0]+".fsa", consensus_name+".fsa")
     #Print in function ffs
-    print ("Distance : " + str(distance), file = logfile)
-    print ("Distance : " + str(distance))
 
     if distance > 300: #SNP distance
         #No associated species
         reference_header_text = reference_header_text.split()
         associated_species = "{} {} assembly from ID: {}, SNP distance from best verified reference: {}".format(reference_header_text[1], reference_header_text[2], entryid, distance)
         moss.run_assembly(entryid, configname, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
-                          illumina_name2, jobid, exepath, kma_database_path, start_time, logfile, associated_species)
+                          illumina_name2, jobid, exepath, kma_database_path, start_time,  associated_species)
     #generic sql query
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Distance Matrix", "Alignment", "6", "10", "Running", configname), configname)
 
@@ -195,8 +182,6 @@ def moss_pipeline(configname, metadata, metadata_headers):
 
     end_time = datetime.datetime.now()
     run_time = end_time - start_time
-    print("Run time: {}".format(run_time))
-    print("Run time: {}".format(run_time), file=logfile)
 
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Outbreak Finder", "Alignment", "9", "10", "Running", configname), configname)
 
@@ -209,8 +194,6 @@ def moss_pipeline(configname, metadata, metadata_headers):
     #Still fails here for multiple non-sync analyses
     #Both alignment report and assembly is fuckly. Fix it.
     moss.compileReportAlignment(target_dir, entryid, configname, image_location, reference_header_text, exepath, related_isolates) #No report compiled for assemblies! Look into it! #TBD
-
-    logfile.close()
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Finished", configname), configname)
 
 
