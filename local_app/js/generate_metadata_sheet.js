@@ -165,9 +165,8 @@ function create_metadata_table_fastq(){
       var barcode_list = [];
 
       for (var i = 1; i < rows.length; i++) {
+            console.log(rows[i]);
             for (var t = 0; t < rows[i].cells.length; t++) {
-              console.log(rows[i].cells[t].value);
-              console.log(rows[i].cells[t].innerHTML);
               if (t == 0) {
                 barcode_list.push(rows[i].cells[t].value);
               }
@@ -234,8 +233,6 @@ function generate_table_fastq(input_number) {
     table.classList.add('table');
 
     var bc_folder = document.getElementById('fastq-folder');
-    //console.log(bc_folder.files.item(0);
-    //console.log(bc_folder.files.item(0).path);
 
     var headRow = document.createElement('tr');
     headRow.id = "thead_tr";
@@ -260,7 +257,6 @@ function generate_table_fastq(input_number) {
 
       for (var j = 0; j < columnNames.length; j++) {
         var identifier = jsonData[columnNames[j]];
-        console.log(identifier);
         var td = document.createElement('td');
         td.style.textAlign = "center";
         td.id = `outer${i}${j}`;
@@ -332,8 +328,6 @@ function generate_table_fastq(input_number) {
 }
 
 function generate_table_fast5(input_array) {
-
-    console.log(input_array);
 
     var new_input_array = input_array.sort();
 
