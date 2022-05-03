@@ -26,9 +26,9 @@ function submitSingleAnalysis() {
 
     console.log(input_array);
 
-    //var cmd_msg = `conda run -n base python3 /opt/moss/src/moss_parallel_wrapper.py -csv ${input_array[0]} -threads ${8}`;
+    var cmd_msg = `conda run -n base python3 /opt/moss/src/moss_parallel_wrapper.py -csv ${input_array[0]} -threads ${8}`;
 
-    //execute_command_as_subprocess(cmd_msg);
+    execute_command_as_subprocess(cmd_msg);
 
 
 

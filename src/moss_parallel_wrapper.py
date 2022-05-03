@@ -57,16 +57,15 @@ def main(csv, jobs, threads, configname):
     #function here to check for mulitple_files, barcodes etc in input directory.
     print (input_dir)
     filelist = moss.derive_finalized_filenames(input_dir)
-    sys.exit()
     for i in range(len(metadata_list)):
         cmd = "python3 /opt/moss/src/moss.py -configname {} -thread {} -metadata \"{}\" -metadata_headers \"{}\"".format(configname, threads, metadata_list[i], metadata_headers)
         jobslist.append(cmd)
         entryid = moss.md5(metadata_list[i].split()[-1])
         print (metadata_list[i].split()[-1])
-        moss.sql_execute_command(
-            "INSERT INTO status_table(entryid, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
-                entryid, "Initializing", "Not determined", "0", "10", "Queued", str(datetime.datetime.now())[0:-7]),
-            configname)
+        #moss.sql_execute_command(
+        #    "INSERT INTO status_table(entryid, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
+        #        entryid, "Initializing", "Not determined", "0", "10", "Queued", str(datetime.datetime.now())[0:-7]),
+        #    configname)
 
     Parallel(n_jobs=jobs)(delayed(mossAnalysis)(jobslist, i) for i in range(len(jobslist)))
     print ("Analysis complete")

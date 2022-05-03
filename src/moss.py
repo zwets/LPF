@@ -41,7 +41,8 @@ def moss_pipeline(configname, metadata, metadata_headers):
     start_time = datetime.datetime.now()
 
     configname, metadata_dict, input, samplename, entryid, target_dir, ref_db = moss.moss_init(configname, metadata, metadata_headers)
-
+    print (configname, metadata, metadata_headers)
+    sys.exit()
     moss.sql_execute_command("INSERT INTO isolate_table(entryid, reference_header_text, samplename, analysistimestamp, plasmids, amrgenes, virulencegenes, referenceid) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
         entryid, "Initializing", samplename, str(datetime.datetime.now())[0:-7], "", "", "", ""), configname)
 
