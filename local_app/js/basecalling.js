@@ -169,7 +169,7 @@ function start_base_calling(){
     }
 
     if (check_basecall_name) {
-        cmd = `python3 ${exepath}src/basecall_and_concat.py -i ${input_path}  -d ${base_call_output} -n ${output_dir} -exepath ${exepath}`
+        cmd = `conda run -n base python3 ${exepath}src/basecall_and_concat.py -i ${input_path}  -d ${base_call_output} -n ${output_dir} -exepath ${exepath}`
 
         var model = find_model_from_input(flowcell, kit, db_dir, algorithm);
         cmd = cmd.concat(` -c ${model}`)

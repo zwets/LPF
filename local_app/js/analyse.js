@@ -24,7 +24,7 @@ function submitSingleAnalysis() {
     var input_array = parallel_input.split(",");
     var csv_path = input_array[0];
 
-    var cmd_msg = `python3 ${exepath}src/moss_parallel_wrapper.py -i ${input_array[0]} -input_type ${sequence_type} -db_dir ${db_dir} -exepath ${exepath} -threads ${threads} -jobs ${jobs}`;
+    var cmd_msg = `conda run -n base python3 ${exepath}src/moss_parallel_wrapper.py -i ${input_array[0]} -input_type ${sequence_type} -db_dir ${db_dir} -exepath ${exepath} -threads ${threads} -jobs ${jobs}`;
 
     execute_command_as_subprocess(cmd_msg);
 

@@ -114,7 +114,7 @@ function create_metadata_table_fast5(){
               }
               alert(`The metadata csv file has been created and is stored at ${output_csv_file}`);
 
-              var cmd_msg = `python3 /opt/moss/src/basecaller_wrapper.py -csv ${output_csv_file}`;
+              var cmd_msg = `conda run -n base python3 /opt/moss/src/basecaller_wrapper.py -csv ${output_csv_file}`;
 
               execute_command_as_subprocess(cmd_msg, "Base calling had started.", "Base calling has been completed.", "basecalling failed");
             })

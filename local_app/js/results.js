@@ -22,7 +22,7 @@ function recompilereports() {
     storage.get('currentConfig', function(error, data) {
           if (error) throw error;
 
-          execstring = `python3 ${data.exepath}src/testpdf.py -db_dir ${data.db_dir} -exepath ${data.exepath}`;
+          execstring = `conda run -n base python3 ${data.exepath}src/testpdf.py -db_dir ${data.db_dir} -exepath ${data.exepath}`;
           console.log(execstring)
 
           exec(execstring, (error, stdout, stderr) => {

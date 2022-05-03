@@ -32,7 +32,7 @@ function ubuntu_update_soft() {
     var loader = document.getElementById('loader');
     loader.style.display = 'block';
 
-    cmd = `python3 ${exepath}src/moss_update.py -exepath ${exepath}`;
+    cmd = `conda run -n base python3 ${exepath}src/moss_update.py -exepath ${exepath}`;
     console.log(cmd);
 
     document.getElementById('loadermessage').innerHTML = "Updating dependencies";
@@ -70,7 +70,7 @@ function ubuntu_update_force() {
     var loader = document.getElementById('loader');
     loader.style.display = 'block';
 
-    cmd = `python3 ${exepath}src/moss_update.py -exepath ${exepath} -force`;
+    cmd = `conda run -n base python3 ${exepath}src/moss_update.py -exepath ${exepath} -force`;
     console.log(cmd);
 
     document.getElementById('loadermessage').innerHTML = "Updating dependencies";
@@ -108,7 +108,7 @@ function mac_update_soft() {
     var loader = document.getElementById('loader');
     loader.style.display = 'block';
 
-    cmd = `python3 ${exepath}src/moss_update.py -exepath ${exepath} -mac`;
+    cmd = `conda run -n base python3 ${exepath}src/moss_update.py -exepath ${exepath} -mac`;
     console.log(cmd);
 
     document.getElementById('loadermessage').innerHTML = "Updating dependencies";
@@ -146,7 +146,7 @@ function mac_update_force() {
     var loader = document.getElementById('loader');
     loader.style.display = 'block';
 
-    cmd = `python3 ${exepath}src/moss_update.py -exepath ${exepath} -mac -force`;
+    cmd = `conda run -n base python3 ${exepath}src/moss_update.py -exepath ${exepath} -mac -force`;
     console.log(cmd);
 
     document.getElementById('loadermessage').innerHTML = "Updating dependencies";

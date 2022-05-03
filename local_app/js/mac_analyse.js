@@ -29,7 +29,7 @@ function submitSingleAnalysis() {
     var input_array = parallel_input.split(",");
     var threads = document.getElementById('threads').value;
 
-    var cmd_msg = `python3 ${exepath}src/moss_parallel_wrapper.py -i ${input_array[0]} -input_type ${sequence_type} -db_dir ${db_dir} -exepath ${exepath} -threads ${threads}`;
+    var cmd_msg = `conda run -n base python3 ${exepath}src/moss_parallel_wrapper.py -i ${input_array[0]} -input_type ${sequence_type} -db_dir ${db_dir} -exepath ${exepath} -threads ${threads}`;
 
     execute_command_as_subprocess(cmd_msg);
 
