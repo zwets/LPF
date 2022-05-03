@@ -167,6 +167,7 @@ function create_metadata_table_fastq(){
       for (var i = 0; i < rows.length; i++) {
           if (i>0) {
             for (var t = 0; t < rows[i].cells.length; t++) {
+              console.log(rows[i].cells[t].value);
               if (t == 0) {
                 barcode_list.push(rows[i].cells[t].value);
               }
