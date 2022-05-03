@@ -232,7 +232,7 @@ function generate_table_fastq(input_number) {
 
     var bc_folder = document.getElementById('fastq-folder');
     //console.log(bc_folder.files.item(0);
-    console.log(bc_folder.files.item(0).path);
+    //console.log(bc_folder.files.item(0).path);
 
     var headRow = document.createElement('tr');
     headRow.id = "thead_tr";
@@ -287,7 +287,7 @@ function generate_table_fastq(input_number) {
             }
         }
         else if (j == 1) {
-
+            console.log(bc_folder.files.item(i).path.split("/")[-1]);
         }
         else {
             td.defaultValue = "";
