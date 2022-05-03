@@ -250,7 +250,7 @@ function generate_table(input_array) {
 
     var headRow = document.createElement('tr');
     headRow.id = "thead_tr";
-    var columnNames = ["Barcode number"];
+    var columnNames = ["barcode number"];
 
     const jsonData= require('/opt/moss/datafiles/ena_list.json');
     const ena_keys = Object.keys(jsonData);
