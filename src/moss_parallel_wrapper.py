@@ -58,7 +58,7 @@ def main(csv, jobs, threads, configname):
     print (input_dir)
     filelist = moss.derive_finalized_filenames(input_dir)
     for i in range(len(metadata_list)):
-        cmd = "python3 /opt/moss/src/moss.py -configname {} -thread {} -metadata \"{}\" -metadata_headers \"{}\"".format(configname, threads, metadata_list[i], metadata_headers)
+        cmd = "python3 /opt/moss/src/moss.py -configname {} -metadata \"{}\" -metadata_headers \"{}\"".format(configname, metadata_list[i], metadata_headers)
         print (cmd)
         jobslist.append(cmd)
         entryid = moss.md5(metadata_list[i].split()[-1])
