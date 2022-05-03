@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Exec=bash -c "source ~/.bashrc && conda activate base && /opt/moss/local_app/dist/linux-unpacked/moss"
+Exec=bash -c "conda activate base && /opt/moss/local_app/dist/linux-unpacked/moss"
 Name=Microbial Outbreak Surveillance System (MOSS)
 GenericName=Microbial Outbreak Surveillance System (MOSS)
 Icon=/opt/moss/local_app/images/report-icon.png
