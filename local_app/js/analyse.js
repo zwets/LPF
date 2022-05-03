@@ -15,7 +15,8 @@ storage.get('currentConfig', function(error, data) {
 
 
 function submitSingleAnalysis() {
-    var input = document.getElementById('single-input-field');
+    var input = document.getElementById('csv_file');
+    console.log(input);
     var children = "";
         for (var i = 0; i < input.files.length; ++i) {
             children +=  input.files.item(i).path + ',';
