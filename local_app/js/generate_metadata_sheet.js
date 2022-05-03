@@ -152,7 +152,7 @@ function create_metadata_table_fastq(){
     console.log(input_array);
 
 
-    append_table = generate_table(input_array)
+    append_table = generate_table_fastq(input_array)
 
     document.getElementById('metadata-table-div').appendChild(append_table);
 
