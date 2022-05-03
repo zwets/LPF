@@ -148,6 +148,19 @@ def check_anaconda():
     version = output.split()[-1][:-1]
     if version > version_check:
         version_check = True
+    #Copy to /bin/
+    cmd = "which conda"
+    proc = subprocess.Popen(cmd, shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0].decode().rstrip()
+    print ("sudo cp {} /bin/.".format(output))
+    os.system("sudo cp {} /bin/.".format(output))
+
+    #create conda env
+    os.system("conda create --name moss_env")
+    os.system("source activate moss_env")
+    os.system("conda install -c bioconda flye")
+    
     if name_check and version_check:
         return True
     else:
