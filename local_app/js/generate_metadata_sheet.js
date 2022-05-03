@@ -253,7 +253,7 @@ function generate_table_fastq(input_number) {
     for (var i = 0; i < input_number; i++) {
       var tr = document.createElement('tr');
       tr.id = "tbody_tr_" + (i).toString();
-      console.log(bc_folder.files.item(i).path);
+      console.log(bc_folder.files.item(i).path.split("/"));
 
       for (var j = 0; j < columnNames.length; j++) {
         var identifier = jsonData[columnNames[j]];
