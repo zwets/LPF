@@ -59,15 +59,14 @@ def moss_pipeline(configname, metadata, metadata_headers):
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", configname), configname)
 
 
-    #Rewrite finders with alfred's CGElib
     #TBC FOR ALL FINDERS INSERT RELEVANT DATA INTO SQL
     moss.print_to_logfile("# Typing Antibiotics resistance genes with resFinder", logfile, True)
     #add argument and check function TBD
-    kma_finders(arguments, configname, entryid, input, "/opt/moss/resfinder_db/all")
+    kma_finders("", configname, entryid, input, "/opt/moss/resfinder_db/all")
     moss.print_to_logfile("# Typing Viruence genes with virulenceFinder", logfile, True)
-    kma_finders(arguments, configname, entryid, input, "/opt/moss/virulencefinder_db/all")
+    kma_finders("", configname, entryid, input, "/opt/moss/virulencefinder_db/all")
     moss.print_to_logfile("# Typing Plasmids with plasmidFinder", logfile, True)
-    kma_finders(arguments, configname, entryid, input, "/opt/moss/resfinder_db/all")
+    kma_finders("", configname, entryid, input, "/opt/moss/resfinder_db/all")
 
     sys.exit("Pre mapping test")
 
