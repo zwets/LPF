@@ -133,7 +133,6 @@ function create_metadata_table_fast5(){
 function create_metadata_table_fastq(){
 
     document.getElementById('metadata-table-div').innerHTML = "";
-    //document.getElementById('analyse-multiple-index-file-section').innerHTML = "";
 
     var input = document.getElementById('multiple-input-type').value;
     var input_number = parseInt(input);
@@ -163,7 +162,7 @@ function create_metadata_table_fastq(){
       csv_string = csv_string.concat(`file_location,`);
       csv_string = csv_string.concat(`ont_type\n`);
 
-      var bc_folder = document.getElementById('barcode-folder');
+      var bc_folder = document.getElementById('fastq-folder');
       var bc_folder_path = bc_folder.files.item(0).path;
       var path_list = bc_folder_path.split("/");
       var path_slice= path_list.slice(1, -1);
@@ -231,6 +230,9 @@ function generate_table_fastq(input_number) {
     table.id = "metadata_csv_table";
     table.classList.add('table');
 
+    var bc_folder = document.getElementById('fastq-folder');
+    console.log(bc_folder.files);
+
     var headRow = document.createElement('tr');
     headRow.id = "thead_tr";
     var columnNames = ["barcode number"];
@@ -257,7 +259,7 @@ function generate_table_fastq(input_number) {
         var td = document.createElement('td');
         td.style.textAlign = "center";
         td.id = `outer${i}${j}`;
-        if (j >= 1) {
+        if (j > 1) {
             if (identifier=="free_text") {
                 td.defaultValue = "";
                 td.classList.add("input");
@@ -282,6 +284,9 @@ function generate_table_fastq(input_number) {
                 tr.appendChild(td);
                 continue;
             }
+        }
+        else if (j == 1) {
+
         }
         else {
             td.defaultValue = "";
