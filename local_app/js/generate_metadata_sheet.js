@@ -60,7 +60,7 @@ function create_metadata_table_fast5(){
     var input_array = parallel_input.split(",");
 
 
-    append_table = generate_table(input_array)
+    append_table = generate_table_fast5(input_array)
 
     document.getElementById('metadata-table-div').appendChild(append_table);
 
@@ -149,6 +149,8 @@ function create_metadata_table_fastq(){
     var parallel_input = children.slice(0, -1);
     var input_array = parallel_input.split(",");
 
+    console.log(input_array);
+
 
     append_table = generate_table(input_array)
 
@@ -236,7 +238,84 @@ function create_csv_from_obj(obj, experiment_name) {
     //  print obj to csv in /opt/moss_db/{current_dir}/metadata_csv/{experiment_name}.csv
 }
 
-function generate_table(input_array) {
+function generate_table_fastq(input_array) {
+    var new_input_array = input_array.sort();
+
+    var array_len = new_input_array.length;
+
+    var table = document.createElement('table');
+    table.id = "metadata_csv_table";
+    table.classList.add('table');
+
+    var headRow = document.createElement('tr');
+    headRow.id = "thead_tr";
+    var columnNames = ["barcode number"];
+
+    const jsonData= require('/opt/moss/datafiles/ena_list.json');
+    const ena_keys = Object.keys(jsonData);
+    columnNames.push.apply(columnNames, ena_keys)
+
+    for (var i = 0; i < columnNames.length; i++) {
+      var th = document.createElement('th');
+      th.appendChild(document.createTextNode(columnNames[i].replace("_", " ")));
+      headRow.appendChild(th);
+    }
+
+    table.appendChild(headRow);
+
+    //var tbody = document.createElement('tbody');
+    //tbody.id = "tbody";
+
+    for (var i = 0; i < array_len; i++) {
+      var tr = document.createElement('tr');
+      tr.id = "tbody_tr_" + (i).toString();
+
+      for (var j = 0; j < columnNames.length; j++) {
+        var identifier = jsonData[columnNames[j]];
+        var td = document.createElement('td');
+        td.style.textAlign = "center";
+        td.id = `outer${i}${j}`;
+        if (j >= 1) {
+            if (identifier=="free_text") {
+                td.defaultValue = "";
+                td.classList.add("input");
+                var input = document.createElement('input');
+                input.id = `input${i}${j}`;
+                td.appendChild(input);
+                tr.appendChild(td);
+                continue;
+            } else if (typeof identifier === "object") {
+                td.defaultValue = "";
+                td.classList.add("select");
+                var input = document.createElement('select');
+                input.id = `input${i}${j}`;
+                var object_options = Object.values(identifier);
+                for (var t = 0; t < object_options.length; t++) {
+                    var option = document.createElement("option");
+                    option.value = object_options[t];
+                    option.text = object_options[t];
+                    input.add(option);
+                }
+                td.appendChild(input);
+                tr.appendChild(td);
+                continue;
+            }
+
+        }
+        td.appendChild(document.createTextNode(new_input_array[i]));
+        tr.appendChild(td);
+      }
+
+
+      table.appendChild(tr);
+    }
+
+    //table.appendChild(thead);
+    //table.appendChild(tbody);
+    return table
+}
+
+function generate_table_fast5(input_array) {
 
     console.log(input_array);
 

@@ -146,7 +146,11 @@ def moss_mkfs(configname, entryid):
 def moss_init(configname, metadata, metadata_headers):
     metadata_dict = prod_metadata_dict(metadata, metadata_headers)
     print (metadata_dict)
-    input = "{}/barcode{}/{}.fastq.gz".format(metadata_dict['file_location'], metadata_dict['barcode_number'])
+    if metadata_dict['ont_type'] == "fast5":
+        #TBD
+        input = "{}/barcode{}/{}.fastq.gz".format(metadata_dict['file_location'], metadata_dict['barcode_number'])
+    else:
+
 
     if metadata_dict['latitude'] == '' or metadata_dict['longitude'] == '':
         latitude, longitude = moss.calc_coordinates_from_location(metadata_dict['city'], metadata_dict['country'])
