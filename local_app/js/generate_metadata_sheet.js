@@ -166,15 +166,16 @@ function create_metadata_table_fastq(){
 
       for (var i = 0; i < rows.length; i++) {
             for (var t = 0; t < rows[i].cells.length; t++) {
-            console.log(document.getElementById(`input${[i]}${[t]}`.value);
+            //console.log(document.getElementById(`input${[i]}${[t]}`.value);
               if (t == 0) {
                 barcode_list.push(rows[i].cells[t].value);
-              }
+                }
               csv_string = csv_string.concat(`${rows[i].cells[t].value},`);
               }
             csv_string = csv_string.concat(`${bc_final_path},fastq\n`);
 
         }
+
       console.log(barcode_list);
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
       var output_csv_file = `/opt/moss_db/${current_moss_system}/metadata_csv/${experiment_name}.csv`;
