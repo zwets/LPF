@@ -169,8 +169,8 @@ function create_metadata_table_fastq(){
             var table_item = document.getElementById(`input${[i]}${[t]}`).value;
             console.log(table_item);
               if (t == 1) {
-                barcode_list.push(table_item.slice(0));
-                csv_string = csv_string.concat(`${table_item.slice(0)},`);
+                barcode_list.push(table_item[0]);
+                csv_string = csv_string.concat(`${table_item[0]},`);
                 }
               csv_string = csv_string.concat(`${table_item},`);
             }
