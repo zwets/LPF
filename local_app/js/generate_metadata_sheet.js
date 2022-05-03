@@ -168,13 +168,12 @@ function create_metadata_table_fastq(){
             for (var t = 0; t < rows[i].cells.length; t++) {
             var table_item = document.getElementById(`input${[i]}${[t]}`).value;
               if (t == 1) {
-                barcode_list.push(table_item[0]);
+                barcode_list.push(table_item);
+                console.log([0])
                 csv_string = csv_string.concat(`${table_item[0]},`);
                 }
-              else {
-                csv_string = csv_string.concat(`${table_item},`);
-                }
-              }
+              csv_string = csv_string.concat(`${table_item},`);
+            }
             csv_string = csv_string.concat(`${bc_final_path},fastq\n`);
 
         }
