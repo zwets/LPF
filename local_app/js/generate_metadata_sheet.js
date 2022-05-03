@@ -89,7 +89,6 @@ function create_metadata_table_fast5(){
       var path_list = bc_folder_path.split("/");
       var path_slice= path_list.slice(1, -1);
       var bc_final_path = "/" + path_slice.join("/") + "/";
-
       for (var i = 0; i < rows.length; i++) {
           if (i>0) {
             for (var t = 0; t < rows[i].cells.length; t++) {
@@ -99,25 +98,21 @@ function create_metadata_table_fast5(){
           }
         }
 
-      console.log("Here");
-      console.log(csv_string);
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
       var output_csv_file = `/opt/moss_db/${current_moss_system}/metadata_csv/${experiment_name}.csv`;
       //Here insert validation function for ENA compatability
       if (fs.existsSync(output_csv_file)) {
           // path exists
           alert("A file with this name already exists, please choose another one than: ", output_csv_file);
-        } else {
+            }
+        else {
+
           fs.writeFile(output_csv_file, csv_string, err => {
               if (err) {
                 console.error(err)
                 return
               }
               alert(`The metadata csv file has been created and is stored at ${output_csv_file}`);
-
-              var cmd_msg = `conda run -n base python3 /opt/moss/src/basecaller_wrapper.py -csv ${output_csv_file}`;
-
-              execute_command_as_subprocess(cmd_msg, "Base calling had started.", "Base calling has been completed.", "basecalling failed");
             })
 
         }
@@ -167,15 +162,20 @@ function create_metadata_table_fastq(){
       var path_list = bc_folder_path.split("/");
       var path_slice= path_list.slice(1, -1);
       var bc_final_path = "/" + path_slice.join("/") + "/";
+      var barcode_list = [];
 
       for (var i = 0; i < rows.length; i++) {
           if (i>0) {
             for (var t = 0; t < rows[i].cells.length; t++) {
+              if (t == 0) {
+                barcode_list.push(rows[i].cells[t].value);
+              }
               csv_string = csv_string.concat(`${rows[i].cells[t].value},`);
               }
             csv_string = csv_string.concat(`${bc_final_path},fastq\n`);
           }
         }
+      console.log(barcode_list);
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
       var output_csv_file = `/opt/moss_db/${current_moss_system}/metadata_csv/${experiment_name}.csv`;
       //Here insert validation function for ENA compatability
@@ -183,6 +183,8 @@ function create_metadata_table_fastq(){
           // path exists
           alert("A file with this name already exists, please choose another one than: ", output_csv_file);
         } else {
+          //check barcodes
+
           fs.writeFile(output_csv_file, csv_string, err => {
               if (err) {
                 console.error(err)
