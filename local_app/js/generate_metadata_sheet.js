@@ -253,7 +253,7 @@ function generate_table_fastq(input_number) {
     for (var i = 0; i < input_number; i++) {
       var tr = document.createElement('tr');
       tr.id = "tbody_tr_" + (i).toString();
-      console.log(bc_folder.files.item(i).path.split("/").slice(-1));
+      var sample_name = bc_folder.files.item(i).path.split("/").slice(-1);
 
       for (var j = 0; j < columnNames.length; j++) {
         var identifier = jsonData[columnNames[j]];
@@ -287,6 +287,16 @@ function generate_table_fastq(input_number) {
                 continue;
                 }
             }
+        else if (j == 1) {
+            td.defaultValue = "";
+            td.classList.add("label");
+            var label = document.createElement('label');
+            label.id = `input${i}${j}`;
+            label.innerHTML = "test";
+            td.appendChild(label);
+            tr.appendChild(td);
+            continue;
+        }
         else {
             td.defaultValue = "";
             td.classList.add("select");
