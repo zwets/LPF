@@ -81,7 +81,8 @@ function create_metadata_table_fast5(){
       for (var i = 0; i < header_row.cells.length; i++) {
           csv_string = csv_string.concat(`${header_row.cells[i].innerHTML},`);
         }
-      csv_string = csv_string.concat(`file_location\n`);
+      csv_string = csv_string.concat(`file_location,`);
+      csv_string = csv_string.concat(`ont_type\n`);
 
       var bc_folder = document.getElementById('barcode-folder');
       var bc_folder_path = bc_folder.files.item(0).path;
@@ -94,7 +95,7 @@ function create_metadata_table_fast5(){
             for (var t = 0; t < rows[i].cells.length; t++) {
               csv_string = csv_string.concat(`${rows[i].cells[t].value},`);
               }
-            csv_string = csv_string.concat(`${bc_final_path}\n`);
+            csv_string = csv_string.concat(`${bc_final_path},fast5\n`);
           }
         }
 
@@ -170,7 +171,8 @@ function create_metadata_table_fastq(){
       for (var i = 0; i < header_row.cells.length; i++) {
           csv_string = csv_string.concat(`${header_row.cells[i].innerHTML},`);
         }
-      csv_string = csv_string.concat(`file_location\n`);
+      csv_string = csv_string.concat(`file_location,`);
+      csv_string = csv_string.concat(`ont_type\n`);
 
       var bc_folder = document.getElementById('barcode-folder');
       var bc_folder_path = bc_folder.files.item(0).path;
@@ -183,7 +185,7 @@ function create_metadata_table_fastq(){
             for (var t = 0; t < rows[i].cells.length; t++) {
               csv_string = csv_string.concat(`${rows[i].cells[t].value},`);
               }
-            csv_string = csv_string.concat(`${bc_final_path}\n`);
+            csv_string = csv_string.concat(`${bc_final_path}, fastq\n`);
           }
         }
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
