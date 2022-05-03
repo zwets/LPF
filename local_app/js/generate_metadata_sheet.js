@@ -292,7 +292,7 @@ function generate_table_fastq(input_number) {
             td.classList.add("label");
             var label = document.createElement('label');
             label.id = `input${i}${j}`;
-            label.innerHTML = "test";
+            label.innerHTML = sample_name;
             td.appendChild(label);
             tr.appendChild(td);
             continue;
