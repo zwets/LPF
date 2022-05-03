@@ -379,7 +379,7 @@ function generate_table_fast5(input_array) {
             }
 
         }
-        td.appendChild(document.createTextNode(new_input_array[i]));
+        //td.appendChild(document.createTextNode(new_input_array[i]));
         tr.appendChild(td);
       }
 
