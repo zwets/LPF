@@ -253,7 +253,6 @@ function generate_table_fastq(input_number) {
 
       for (var j = 0; j < columnNames.length; j++) {
         var identifier = jsonData[columnNames[j]];
-        console.log(identifier);
         var td = document.createElement('td');
         td.style.textAlign = "center";
         td.id = `outer${i}${j}`;
@@ -294,6 +293,7 @@ function generate_table_fastq(input_number) {
                 option.text = object_options[t];
                 input.add(option);
             }
+            console.log(input);
             td.appendChild(input);
             tr.appendChild(td);
             continue;
