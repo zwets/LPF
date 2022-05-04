@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Microbial Outbreak Surveillance System 1.0</title>
     <link rel="stylesheet" href="../css/styles.css">
-    <script src="../js/generate_metadata_sheet.js" type="text/javascript">
+    <script src="../js/generate_metadata_sheet_fastq.js" type="text/javascript">
     </script>
 </head>
 
@@ -56,7 +56,7 @@
                 <div class="generate-metadata-sheet" id="generate-metadata-sheet">
                     <div class="generate-multiple-index-file-section" id="generate-multiple-index-file-section">
                         <label for="multiple-input-type">Number of samples:</label>
-                        <select id="multiple-input-type" name="multiple-input-type" onchange="fetch_guppy_data();">
+                        <select id="multiple-input-type" name="multiple-input-type">
                             <option value="none">none</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -72,19 +72,6 @@
                             <option value="12">12</option>
                         </select>
                         <br>
-                        <br>
-                        Flow-cell type:
-                        <select name="flow-cell" id="flow-cell">
-                          </select>
-                        <br>
-                        <br>
-                        Nanopore kit:
-                        <select name="kit" id="kit">
-                          </select> <br>
-                        <br>
-                        Demultiplex (barcodes):
-                        <select name="demux" id="demux">
-                          </select> <br>
                         <br>
 
                         Enter a name of the sequencing experiment (This will be the name of your .csv file):
