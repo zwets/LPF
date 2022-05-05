@@ -49,7 +49,7 @@ function create_metadata_table_fastq(){
 
     document.getElementById('metadata-table-div').innerHTML = "";
     var input = document.getElementById('input');
-    console.log(input.files);
+    console.log(input.files[0].path);
 
     append_table = generate_table_fastq(input_number)
 
