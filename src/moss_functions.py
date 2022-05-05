@@ -522,7 +522,7 @@ def kma_mapping(target_dir,  input, config_name):
         return (0, 1, "", "") #template_search_result = 0 means no result found
     ###
 
-def nanopore_alignment(input, template_number, target_dir, kma_database_path,  multi_threading, bc, "/opt/moss/kma/kma", templateaccesion, config_name, laptop, consensus_name):
+def nanopore_alignment(input, template_number, target_dir, kma_database_path,  multi_threading, bc, kma_path, templateaccesion, config_name, laptop, consensus_name):
     nanopore_name = input[0].split("/")[-1]
 
     # Claim ReafRefDB is ipc_index_refdb is free
