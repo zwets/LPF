@@ -5,7 +5,6 @@ var mkdirp = require('mkdirp');
 var path = require("path");
 
 function execute_command_as_subprocess(cmd, start_msg, end_msg, fail_msg) {
-    console.log(cmd);
 
     alert(start_msg);
 
@@ -50,7 +49,6 @@ function create_metadata_table_fastq(){
     document.getElementById('metadata-table-div').innerHTML = "";
     var file_list_obj = document.getElementById('input').files;
     var file_number = Object.keys(file_list_obj).length;
-    console.log(file_number);
 
     append_table = generate_table_fastq(file_number)
 
@@ -65,7 +63,6 @@ function create_metadata_table_fastq(){
       var experiment_name = document.getElementById('experiment-name').value;
       var file_list_obj = document.getElementById('input').files;
       var file_number = Object.keys(file_list_obj).length;
-      console.log(file_number);
 
       var csv_string = "";
       var rows = document.getElementById("metadata_csv_table").rows;
@@ -79,7 +76,6 @@ function create_metadata_table_fastq(){
       for (var i = 0; i < rows.length-1; i++) {
             for (var t = 0; t < rows[i].cells.length; t++) {
             var table_item = document.getElementById(`input${[i]}${[t]}`).value;
-            console.log(table_item);
               if (t == 0) {
                 csv_string = csv_string.concat(`${table_item},`);
                 }
@@ -100,25 +96,31 @@ function create_metadata_table_fastq(){
           // path exists
           alert("A file with this name already exists, please choose another one than: ", output_csv_file);
         } else {
-              alert(`The metadata csv file has been created and is stored at ${output_csv_file}`);
-              //file written successfully
-              var create_button = document.createElement('button');
-              create_button.classList.add('button-7');
-              create_button.type = "button";
-              create_button.id = "go-to-analyses-button";
-              create_button.innerHTML = "Proceed to analyses";
-              create_button.onclick = function() {
-                location.href='./analyse.html';
-              }
-              create_button.style.width = "400px";
-              create_button.style.height = "150px";
-              create_button.style.fontSize = "large"
+            fs.writeFile(output_csv_file, csv_string, err => {
+                  if (err) {
+                    console.error(err)
+                    return
+                  }
+                  alert(`The metadata csv file has been created and is stored at ${output_csv_file}`);
+                  var create_button = document.createElement('button');
+                  create_button.classList.add('button-7');
+                  create_button.type = "button";
+                  create_button.id = "go-to-analyses-button";
+                  create_button.innerHTML = "Proceed to analyses";
+                  create_button.onclick = function() {
+                    location.href='./analyse.html';
+                  }
+                  create_button.style.width = "400px";
+                  create_button.style.height = "150px";
+                  create_button.style.fontSize = "large"
 
-              document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
-              document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
+                  document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
+                  document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
 
-              document.getElementById('metadata-table-div').appendChild(create_button);
-              //Make go to analyses shortcut
+                  document.getElementById('metadata-table-div').appendChild(create_button);
+                  //Make go to analyses shortcut
+                })
+
             }
           }
     create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
