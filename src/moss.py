@@ -59,17 +59,18 @@ def moss_pipeline(configname, metadata, metadata_headers):
 
     #TBC FOR ALL FINDERS INSERT RELEVANT DATA INTO SQL
     # #add argument and check function TBD
+    os.system("mkdir {}/finders".format(target_dir))
     moss.kma_finders("-ont -md 5 -1t1 -cge -apm", "resfinder", target_dir, input, "/opt/moss/resfinder_db/all")
     moss.kma_finders("-ont -md 5 -1t1 -cge -apm", "virulencefinder", target_dir, input, "/opt/moss/virulencefinder_db/all")
     moss.kma_finders("-ont -md 5 -1t1 -cge -apm", "resfinder_db", target_dir, input, "/opt/moss/resfinder_db/all")
-
-    sys.exit("Pre mapping test")
 
     #Rewrite this horrible kma_mapping function. Should be way simpler.
     template_score, template_search_result, reference_header_text = moss.kma_mapping(target_dir, input, configname)
 
     #check if mlst work TBD
     mlst_result = moss.run_mlst(input, target_dir, reference_header_text)
+
+    sys.exit("post mlst")
 
     #Genertic SQL query
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "KMA Mapping", "Not Determined", "3", "10", "Running", configname), configname)
