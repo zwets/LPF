@@ -59,10 +59,11 @@
                         <input type="text" id="experiment-name" name="experiment-name" value=""><br>
 
                         <br>
-                        Select a metadata.csv file to analyze:<form action="/action_page.php">
-                          <input type="file" id="fastq-files" name="fastq-files" multiple="multiple" value=""><br><br>
+                        Select fastQ files:
+                        <form action="/action_page.php">
+                          <label for="files">Select files:</label>
+                          <input type="file" id="input" name="input" multiple><br><br>
                         </form>
-
                         <br>
                         <button class="button-7" role="button" onclick="create_metadata_table_fastq()";>Generate metadata table</button>
                     </div>

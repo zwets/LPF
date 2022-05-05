@@ -2,6 +2,7 @@ const { exec } = require('child_process');
 const fs = require('fs')
 const storage = require('electron-json-storage');
 var mkdirp = require('mkdirp');
+var path = require("path");
 
 function execute_command_as_subprocess(cmd, start_msg, end_msg, fail_msg) {
     console.log(cmd);
@@ -47,19 +48,8 @@ function hasDuplicates(array) {
 function create_metadata_table_fastq(){
 
     document.getElementById('metadata-table-div').innerHTML = "";
-    var input = document.getElementById('fastq-folder');
-    console.log(input.files[0]);
-    var children = "";
-        for (var i = 0; i < input.files.length; ++i) {
-            children +=  input.files.item(i).path + ',';
-         }
-    var parallel_input = children.slice(0, -1);
-    var input_array = parallel_input.split(",");
-    console.log(input_array);
-
-    var input = document.getElementById('multiple-input-type').value;
-    var input_number = parseInt(input);
-
+    var input = document.getElementById('input');
+    console.log(input.files);
 
     append_table = generate_table_fastq(input_number)
 
