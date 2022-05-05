@@ -48,8 +48,7 @@ function hasDuplicates(array) {
 function create_metadata_table_fastq(){
 
     document.getElementById('metadata-table-div').innerHTML = "";
-    var input = document.getElementById('input');
-    console.log(input.files[0].path);
+    var input = document.getElementById('input').files;
     var input_number = Object.keys(input).length;
     console.log(input_number);
 
@@ -64,7 +63,7 @@ function create_metadata_table_fastq(){
     create_button.id = "generate-metadata-sheet";
     create_button.onclick = function() {
       var experiment_name = document.getElementById('experiment-name').value;
-      var input = document.getElementById('input');
+      var input = document.getElementById('input').files;
       var input_number = Object.keys(input).length;
       console.log(input_number);
 
