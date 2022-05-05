@@ -59,9 +59,9 @@ def moss_pipeline(configname, metadata, metadata_headers):
 
     #TBC FOR ALL FINDERS INSERT RELEVANT DATA INTO SQL
     # #add argument and check function TBD
-    moss.kma_finders("", "resfinder", target_dir, input, "/opt/moss/resfinder_db/all")
-    moss.kma_finders("", "virulencefinder", target_dir, input, "/opt/moss/virulencefinder_db/all")
-    moss.kma_finders("", "resfinder_db", target_dir, input, "/opt/moss/resfinder_db/all")
+    moss.kma_finders("-ont -md 5 -1t1 -cge -apm", "resfinder", target_dir, input, "/opt/moss/resfinder_db/all")
+    moss.kma_finders("-ont -md 5 -1t1 -cge -apm", "virulencefinder", target_dir, input, "/opt/moss/virulencefinder_db/all")
+    moss.kma_finders("-ont -md 5 -1t1 -cge -apm", "resfinder_db", target_dir, input, "/opt/moss/resfinder_db/all")
 
     sys.exit("Pre mapping test")
 
