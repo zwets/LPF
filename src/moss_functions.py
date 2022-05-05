@@ -400,7 +400,7 @@ def run_mlst(input, target_dir, reference_header_text):
     if specie in mlst_dict:
         cmd = "mkdir {}/mlstresults".format(target_dir)
         os.system(cmd)
-        cmd = "python3 /opt/moss/mlst/mlst.py -i {} -o {}mlstresults -mp /opt/moss/kma/kma -p /opt/moss/mlst_db/ -s {} -nano".format(input, target_dir, mlst_dict[specie])
+        cmd = "python3 /opt/moss/mlst/mlst.py -i {} -o {}mlstresults -mp /opt/moss/kma/kma -p /opt/moss/mlst/mlst_db/ -s {} -nano".format(input, target_dir, mlst_dict[specie])
         os.system(cmd)
         return True
     else:
