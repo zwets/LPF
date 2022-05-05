@@ -48,7 +48,8 @@ function create_metadata_table_fastq(){
 
     document.getElementById('metadata-table-div').innerHTML = "";
     var bc_folder = document.getElementById('fastq-folder');
-    console.log(bc_folder);
+    console.log(bc_folder.value);
+    console.log(bc_folder.innerHTML);
     var bc_folder_path = bc_folder.files.item(0).path;
     console.log(bc_folder_path);
 
