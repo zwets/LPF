@@ -47,11 +47,10 @@ def moss_pipeline(configname, metadata, metadata_headers):
     moss.sql_execute_command("INSERT INTO status_table(entryid, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
         entryid, "Initializing", "Not determined", "1", "10", "Running", str(datetime.datetime.now())[0:-7],), configname)
 
-    print("UPDATE status_table SET entryid={}, status={}, type={}, current_stage={}, final_stage={}, result={}, time_stamp=WHERE {}" \
-        .format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", str(datetime.datetime.now())[0:-7]))
-
-    moss.sql_execute_command("UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\""\
-                             .format("CGE finders", "Not Determined", "2", "10", "Running", str(datetime.datetime.now())[0:-7], entryid), configname)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\""\
+                             .format("Not Determined", "CGE finders", "2", "10", "Running", str(datetime.datetime.now())[0:-7], entryid)
+    print (sql_cmd)
+    moss.sql_execute_command(sql_cmd, configname)
 
     #moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", configname), configname)
 
