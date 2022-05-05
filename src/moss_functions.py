@@ -150,7 +150,6 @@ def moss_init(configname, metadata, metadata_headers):
         #TBD
         input = "{}/barcode{}/{}.fastq.gz".format(metadata_dict['file_location'], metadata_dict['barcode_number'])
     else:
-        sample_name = metadata_dict['sample name']
         input = metadata_dict['file_location']
 
     if metadata_dict['latitude'] == '' or metadata_dict['longitude'] == '':
@@ -158,7 +157,12 @@ def moss_init(configname, metadata, metadata_headers):
         metadata_dict['latitude'] = latitude
         metadata_dict['longitude'] = longitude
 
-    sample_name = input.split("/")[-1]
+    if input.endswith("fastq.gz"):
+        sample_name = input.split("/")[-1][0:-9]
+    elif input.endswich("fastq"):
+        sample_name = input.split("/")[-1][0:-6]
+    else:
+        sys.exit("input is not a fastQ file.")
     entryid = md5(input)
 
     uniqueNameCheck(input, configname)
@@ -248,23 +252,20 @@ def check_assembly_result(path):
     return True
 
 def run_assembly(entryid, configname, sample_name, target_dir, input):
-    #Flye
-    #flye -o out_dir --threads 8 --nano-raw fastq.gz
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\"" \
         .format("Flye Assembly", "reference", "4", "5", "Running", str(datetime.datetime.now())[0:-7], entryid)
     sql_execute_command(sql_cmd, configname)
     flye_assembly(entryid, configname, sample_name, target_dir, input)
-    sys.exit("run_assembly done")
 
-    inputAssemblyFunction(assemblyType, inputType, target_dir, input, "", "", jobid, sample_name,
-                                   exepath + "kma/kma", kma_database_path, entryid, configname + "moss.db", configname,
-                                   associated_species)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\"" \
+        .format("Compiling PDF report", "reference", "5", "5", "Running", str(datetime.datetime.now())[0:-7], entryid)
+    sql_execute_command(sql_cmd, configname)
 
-    moss_sql.update_status_table(entryid, "Compiling Assembly PDF", "Assembly", "5", "5", "Running", configname)
+    compileReportAssembly(target_dir, entryid, configname, associated_species, exepath) #Look at the TBD
 
-    compileReportAssembly(target_dir, entryid, configname, associated_species, exepath)
-
-    moss_sql.update_status_table(entryid, "Assembly completed", "Assembly", "5", "5", "Finished", configname)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\"" \
+        .format("Assembly pipeline completed", "reference", "5", "5", "Completed", str(datetime.datetime.now())[0:-7], entryid)
+    sql_execute_command(sql_cmd, configname)
     sys.exit("No template was found, so input was added to references.")
 
 def init_moss_variables(exepath, configname, ):
@@ -713,10 +714,7 @@ def flye_assembly(entryid, configname, sample_name, target_dir, input):
 
     cmd = "docker run --name assembly_{} -v {}:/tmp/{} staphb/flye flye -o /tmp/assembly_results --threads 8 --nano-raw /tmp/{}".format(
         entryid, input, sample_name, sample_name)
-    print (cmd)
     os.system(cmd)
-
-
 
     proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_", entryid), shell=True,
                             stdout=subprocess.PIPE, )
@@ -726,15 +724,13 @@ def flye_assembly(entryid, configname, sample_name, target_dir, input):
     cmd = "docker cp {}:/tmp/assembly_results {}.".format(id, target_dir)
     os.system(cmd)
 
-    sys.exit("assembly stop ")
-
     cmd = "docker container rm {}".format(id)
     os.system(cmd)
 
     # Concatenate contigs
     infile = open("{}assembly_results/assembly.fasta".format(target_dir), 'r')
     writefile = open("{}{}_assembled.fasta".format(target_dir, sample_name),
-                     'w')  # Adds all contigs to one sequence
+                     'w')  # Adds all contigs to one sequence, thus creating a draft genome.
     sequence = ""
     for line in infile:
         if line[0] != ">":
@@ -751,10 +747,6 @@ def flye_assembly(entryid, configname, sample_name, target_dir, input):
     if result == 'acquired' and action == False:
         cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir,
                                                                  sample_name)  # add assembly to references
-        print(cmd)
-        print(cmd)
-
-        print(cmd)
 
         os.system(cmd)
 
@@ -773,157 +765,6 @@ def flye_assembly(entryid, configname, sample_name, target_dir, input):
     c.execute(dbstring)
     conn.commit()  # Need IPC
     conn.close()
-
-
-def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, jobid, sample_name, kma_path, kma_database_path, entryid, isolatedb, configname, associated_species):
-    if assemblyType == "illumina":
-        if inputType == "pe_illumina":
-            cmd = "mkdir {}dockertmp".format(target_dir)
-            os.system(cmd)
-
-            cmd = "cp {} {}dockertmp/{}".format(input[0], target_dir, illumina_name1)
-            os.system(cmd)
-            cmd = "cp {} {}dockertmp/{}".format(input[1], target_dir, illumina_name2)
-            os.system(cmd)
-
-            cmd = "docker run --name assembly_results{} -v {}dockertmp/:/dockertmp/ nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -1 /dockertmp/{} -2 /dockertmp/{} -o /dockertmp/assembly_results -t 4".format(
-                jobid, target_dir, illumina_name1, illumina_name2)
-            print(cmd)
-            os.system(cmd)
-        elif inputType == "se_illumina":
-            cmd = "docker run --name assembly_results{} -v {}:/dockertmp/{} nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -s /dockertmp/{} -o /dockertmp/assembly_results -t 4".format(
-                jobid, input[0], sample_name, sample_name)
-            os.system(cmd)
-
-        proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_results", jobid), shell=True,
-                                stdout=subprocess.PIPE, )
-        output = proc.communicate()[0]
-        id = output.decode().rstrip()
-
-        cmd = "docker cp {}:/dockertmp/assembly_results {}.".format(id, target_dir)
-        os.system(cmd)
-
-        cmd = "docker container rm {}".format(id)
-        os.system(cmd)
-
-        path = "{}/assembly_results".format(target_dir)
-        if os.path.exists(path):
-            assembly_result = check_assembly_result(path)
-        else:
-            assembly_result = False
-
-        if assembly_result:
-            # concatenate all reads into one file
-
-            infile = open("{}assembly_results/assembly.fasta".format(target_dir), 'r')
-            writefile = open("{}{}_assembled.fasta".format(target_dir, sample_name), 'w')  # Adds all contigs to one sequence
-            sequence = ""
-            for line in infile:
-                if line[0] != ">":
-                    line = line.rstrip()
-                    sequence += line
-            print(">" + sample_name, file=writefile)
-            print(sequence, file=writefile)
-            infile.close()
-            writefile.close()
-
-            #Assembly complete
-
-            #Here, prior to indexeing recheck with kma mapping for new reference hit, else add #DEVELOP
-
-            #Before indexing check semaphore for new reference
-            result, action = acquire_semaphore("ipc_index_refdb", configname, 1, 7200)
-            if result == 'acquired' and action == False:
-                cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir,
-                                                                         sample_name)  # add assembly to references
-                os.system(cmd)
-                release_semaphore("ipc_index_refdb", configname)
-
-            elif result != 'acquired' and action == True:
-                result += " : ipc_index_refdb"
-                sys.exit(result)
-            else:
-                sys.exit('A semaphore related issue has occured.')
-
-            conn = sqlite3.connect(isolatedb)
-            c = conn.cursor()
-            #Here, check and insert amrgenes, virulencegenes, plasmids.
-            dbstring = "INSERT INTO reference_table(entryid, reference_header_text) VALUES ('{}', '{}')".format(entryid, associated_species)
-            c.execute(dbstring)
-            conn.commit()  # Need IPC
-            conn.close()
-
-            cmd = "mkdir {}datafiles/isolatefiles/{}".format(configname, sample_name)
-            os.system(cmd)
-
-            cmd = "mkdir {}datafiles/distancematrices/{}".format(configname, sample_name)
-            os.system(cmd)
-        else:
-            #Fix sql status table and update to falied assembly run.
-            sys.exit("Assembly failed")
-
-
-
-    elif assemblyType == "nanopore":
-        ##docker pull nanozoo/unicycler:0.4.7-0--c0404e6
-        print("no template TRUE runnning nanopore assembly")
-
-        cmd = "docker run --name assembly_results{} -v {}:/tmp/{} nanozoo/unicycler:0.4.7-0--c0404e6 unicycler -l /tmp/{} -o /tmp/assembly_results -t 4".format(
-            jobid, input[0], sample_name, sample_name)
-        os.system(cmd)
-
-        proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_results", jobid), shell=True,
-                                stdout=subprocess.PIPE, )
-        output = proc.communicate()[0]
-        id = output.decode().rstrip()
-
-        cmd = "docker cp {}:/tmp/assembly_results {}.".format(id, target_dir)
-        os.system(cmd)
-
-        cmd = "docker container rm {}".format(id)
-        os.system(cmd)
-
-        # Concatenate contigs
-        infile = open("{}assembly_results/assembly.fasta".format(target_dir), 'r')
-        writefile = open("{}{}_assembled.fasta".format(target_dir, sample_name), 'w')  # Adds all contigs to one sequence
-        sequence = ""
-        for line in infile:
-            if line[0] != ">":
-                line = line.rstrip()
-                sequence += line
-        print(">" + sample_name, file=writefile)
-        print(sequence, file=writefile)
-        infile.close()
-        writefile.close()
-
-        # Assembly complete
-
-        result, action = acquire_semaphore("ipc_index_refdb", configname, 1, 7200)
-        if result == 'acquired' and action == False:
-            cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir,
-                                                                     sample_name)  # add assembly to references
-            print (cmd)
-            print (cmd)
-
-            print (cmd)
-
-            os.system(cmd)
-
-
-            release_semaphore("ipc_index_refdb", configname)
-
-        elif result != 'acquired' and action == True:
-            result += " : ipc_index_refdb"
-            sys.exit(result)
-        else:
-            sys.exit('A semaphore related issue has occured.')
-
-        conn = sqlite3.connect(isolatedb)
-        c = conn.cursor()
-        dbstring = "INSERT INTO reference_table(entryid, reference_header_text) VALUES('{}', '{}')".format(entryid, associated_species)
-        c.execute(dbstring)
-        conn.commit()  # Need IPC
-        conn.close()
 
 
 def uniqueNameCheck(input, configname):
