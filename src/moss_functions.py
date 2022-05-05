@@ -624,9 +624,10 @@ def reset_semaphore(semaphore, config_name):
     conn.close()
 
 def release_semaphore(semaphore, config_name):
+
+    value = check_sql_semaphore_value(semaphore, config_name)
     if value > 1:
         sys.exit("Semaphores are jammed. Contact Author, this is an unexpected issue.")
-    value = check_sql_semaphore_value(semaphore, config_name)
 
     isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
 
