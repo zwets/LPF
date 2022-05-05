@@ -56,10 +56,6 @@ def moss_pipeline(configname, metadata, metadata_headers):
 
 
     moss.moss_mkfs(configname, entryid)
-
-    #Make moss pip lib for practice and future work. Dont use print, but use linux concat to not have to open file the entirety.
-
-    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", configname), configname)
     sys.exit("Pre finders test")
 
     #TBC FOR ALL FINDERS INSERT RELEVANT DATA INTO SQL
