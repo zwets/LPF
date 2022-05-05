@@ -106,7 +106,7 @@ def create_directory_from_dict(dict, path):
 
 #def update_reference_table(entryid, amrgenes, virulencegenes, plasmids, reference_header_text, configname):
 #    #TMP function. replace later.
-#    conn = sqlite3.connect(configname + "moss.db")
+#    conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
 #    c = conn.cursor()
 #    amrgenes_statement = "amrgenes = '{}'".format(amrgenes)
 #    virulencegenes_statement = "virulencegenes = '{}'".format(virulencegenes)
@@ -125,7 +125,7 @@ def create_directory_from_dict(dict, path):
 #    conn.close()
 
 def sql_fetch(string, configname):
-    conn = sqlite3.connect(configname + "moss.db")
+    conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
     c.execute(string)
     data = c.fetchall()
@@ -634,7 +634,7 @@ def md5(sequence):
     return hash_md5.hexdigest()
 
 def claim_semaphore(semaphore, configname, value):
-    isolatedb = configname + "moss.db"
+    isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
 
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
@@ -672,7 +672,7 @@ def acquire_semaphore(semaphore, configname, expected, time_limit):
 def release_semaphore(semaphore, configname):
     value = check_sql_semaphore_value(configname, semaphore)
 
-    isolatedb = configname + "moss.db"
+    isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
 
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
@@ -834,7 +834,7 @@ def run_quast(target_dir, jobid):
     os.system(cmd)
 
 def lastClusterAddition(configname, reference_header_text):
-    isolatedb = configname + "moss.db"
+    isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
@@ -844,7 +844,7 @@ def lastClusterAddition(configname, reference_header_text):
     return refdata
 
 def isolate_file_name(configname, entryid):
-    isolatedb = configname + "moss.db"
+    isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
@@ -902,7 +902,7 @@ def generate_amr_resistance_profile_table(configname, entryid, pdf, target_dir, 
 
 
     # antiomicrobial, Class, Resistant/no resitance, match, genes.
-    isolatedb = configname + "moss.db"
+    isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
@@ -995,7 +995,7 @@ def compileReportAssembly(target_dir, ID, configname, associated_species, exepat
 
 
 def retrieve_cge_counts(target_dir, ID, configname, image_location, reference_header_text, exepath):
-    isolatedb = configname + "moss.db"
+    isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 

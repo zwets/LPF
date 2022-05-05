@@ -87,7 +87,7 @@ confirmedAssociates = []
 assonumber = args.association_size
 addedclusters = 0
 
-isolatedb = args.configname + "moss.db"
+isolatedb = args."/opt/moss_db/{}/moss.db".format(config_name)
 
 conn = sqlite3.connect(isolatedb)
 c = conn.cursor()

@@ -34,7 +34,7 @@ parser.add_argument('-configname', action="store", type=str, dest='configname', 
 
 args = parser.parse_args()
 
-isolatedb = args.configname + "moss.db"
+isolatedb = args."/opt/moss_db/{}/moss.db".format(config_name)
 
 conn = sqlite3.connect(isolatedb)
 c = conn.cursor()
