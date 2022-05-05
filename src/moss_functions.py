@@ -613,7 +613,19 @@ def acquire_semaphore(semaphore, config_name, expected, time_limit):
 
     return result, action
 
+def reset_semaphore(semaphore, config_name):
+    isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
+
+    conn = sqlite3.connect(isolatedb)
+    c = conn.cursor()
+    dbstring = "UPDATE ipc_table SET {} = '{}'".format(semaphore, 1)
+    c.execute(dbstring)
+    conn.commit()
+    conn.close()
+
 def release_semaphore(semaphore, config_name):
+    if value > 1:
+        sys.exit("Semaphores are jammed. Contact Author, this is an unexpected issue.")
     value = check_sql_semaphore_value(semaphore, config_name)
 
     isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)

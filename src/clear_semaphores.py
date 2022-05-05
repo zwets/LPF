@@ -44,6 +44,6 @@ config_name = "test1"
 
 print(moss.check_sql_semaphore_value( "ipc_index_refdb", config_name))
 
-moss.release_semaphore("ipc_index_refdb", config_name)
+moss.reset_semaphore("ipc_index_refdb", config_name)
 
 print(moss.check_sql_semaphore_value( "ipc_index_refdb", config_name))
