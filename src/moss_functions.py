@@ -161,7 +161,7 @@ def moss_init(configname, metadata, metadata_headers):
     samplename = input.split("/")[-1]
     entryid = md5(input)
 
-    uniqueNameCheck(input)
+    uniqueNameCheck(input, configname)
 
     ref_db = "/opt/moss_db/{}/REFDB.ATG".format(configname)
     target_dir = "/opt/moss_db/{}/analysis/{}/REFDB.ATG".format(configname, entryid)
@@ -859,7 +859,7 @@ def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_n
         conn.close()
 
 
-def uniqueNameCheck(input):
+def uniqueNameCheck(input, configname):
     samplename = input.split("/")[-1]
 
     if input[-3:] == ".gz":
@@ -879,7 +879,7 @@ def uniqueNameCheck(input):
     else:
         accession = input.split("/")[-1]
 
-    conn = sqlite3.connect(configname + "moss.db")
+    conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(configname))
     c = conn.cursor()
 
     c.execute("SELECT * FROM isolate_table WHERE samplename = '{}'".format(samplename))
