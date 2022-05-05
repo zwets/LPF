@@ -50,8 +50,8 @@ def moss_pipeline(configname, metadata, metadata_headers):
     print("UPDATE status_table SET entryid={}, status={}, type={}, current_stage={}, final_stage={}, result={}, time_stamp=WHERE {}" \
         .format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", str(datetime.datetime.now())[0:-7]))
 
-    moss.sql_execute_command("UPDATE status_table SET entryid={}, status={}, type={}, current_stage={}, final_stage={}, result={}, time_stamp=WHERE {}"\
-                             .format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", str(datetime.datetime.now())[0:-7]), configname)
+    moss.sql_execute_command("UPDATE status_table SET entryid=\"{}\", status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE {}"\
+                             .format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", str(datetime.datetime.now())[0:-7]), configname, configname)
 
     #moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", configname), configname)
 
