@@ -46,7 +46,7 @@ def moss_pipeline(configname, metadata, metadata_headers):
         entryid, "Initializing", "Not determined", "1", "10", "Running", str(datetime.datetime.now())[0:-7],), configname)
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\""\
-                             .format("Not Determined", "CGE finders", "2", "10", "Running", str(datetime.datetime.now())[0:-7], entryid)
+                             .format("CGE finders", "Not Determined", "2", "10", "Running", str(datetime.datetime.now())[0:-7], entryid)
     moss.sql_execute_command(sql_cmd, configname)
 
     #moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", configname), configname)
@@ -62,7 +62,7 @@ def moss_pipeline(configname, metadata, metadata_headers):
     moss.kma_finders("-ont -md 5 -1t1 -cge -apm", "resfinder_db", target_dir, input, "/opt/moss/resfinder_db/all")
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\"" \
-        .format("Not Determined", "KMA Mapping", "3", "10", "Running", str(datetime.datetime.now())[0:-7], entryid)
+        .format("KMA Mapping", "Not Determined", "3", "10", "Running", str(datetime.datetime.now())[0:-7], entryid)
     moss.sql_execute_command(sql_cmd, configname)
 
     #Rewrite this horrible kma_mapping function. Should be way simpler.
