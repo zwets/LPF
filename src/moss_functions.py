@@ -522,62 +522,6 @@ def kma_mapping(target_dir,  input, config_name):
         return (0, 1, "", "") #template_search_result = 0 means no result found
     ###
 
-def illuminaMappingForward(input, template_number, target_dir, kma_database_path,  multi_threading, "/opt/moss/kma/kma", templateaccesion,config_name, laptop, consensus_name):
-    illumina_name = input[0].split("/")[-1]
-
-    #Claim ReafRefDB is ipc_index_refdb is free
-    # Check if an assembly is currently running
-    result, action = acquire_semaphore("ipc_index_refdb", config_name, 1, 7200)
-    if result == 'acquired' and action == False:
-        release_semaphore("ipc_index_refdb", config_name)
-    elif result != 'acquired' and action == True:
-        result += " : ipc_index_refdb, didn't map due to running assembly"
-        sys.exit(result)
-    else:
-        sys.exit('A semaphore related issue has occured.')
-
-    if input[0] != "":
-        if laptop:
-            cmd = "{} -i {} -o {} -t_db {} -ref_fsa -ca -dense -nf -cge -vcf -bc90 -Mt1 {} -t {}".format(
-                "/opt/moss/kma/kma", input[0][0], target_dir + consensus_name, kma_database_path,
-                str(template_number), str(multi_threading))
-            os.system(cmd)
-        else:
-
-            cmd = "{} -i {} -o {} -t_db {} -ref_fsa -ca -dense -cge -nf -vcf -bc90 -Mt1 {} -t {} -shm".format(
-                "/opt/moss/kma/kma", input[0][0], target_dir + consensus_name, kma_database_path,
-                str(template_number), str(multi_threading))
-            check_shm_kma("/opt/moss/kma/kma", kma_database_path, cmd)
-
-
-def illuminaMappingPE(input, template_number, target_dir, kma_database_path,  multi_threading, "/opt/moss/kma/kma", templateaccesion, config_name, laptop, consensus_name):
-    illumina_name = input[0].split("/")[-1]
-
-    # Claim ReafRefDB is ipc_index_refdb is free
-    # Check if an assembly is currently running
-
-    result, action = acquire_semaphore("ipc_index_refdb", config_name, 1, 7200)
-    if result == 'acquired' and action == False:
-        release_semaphore("ipc_index_refdb", config_name)
-    elif result != 'acquired' and action == True:
-        result += " : ipc_index_refdb, didn't map due to running assembly"
-        sys.exit(result)
-    else:
-        sys.exit('A semaphore related issue has occured.')
-
-    if input[0] != "":
-        if laptop:
-            cmd = "{} -ipe {} {} -o {} -t_db {} -ref_fsa -ca -dense -nf -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
-                "/opt/moss/kma/kma", input[0], input[1], target_dir + consensus_name,
-                kma_database_path, str(template_number), str(multi_threading))
-            os.system(cmd)
-        else:
-            cmd = "{} -ipe {} {} -o {} -t_db {} -ref_fsa -ca -dense -nf -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
-                "/opt/moss/kma/kma", input[0], input[1], target_dir + consensus_name,
-                kma_database_path, str(template_number), str(multi_threading))
-            check_shm_kma("/opt/moss/kma/kma", kma_database_path, cmd)
-
-
 def nanopore_alignment(input, template_number, target_dir, kma_database_path,  multi_threading, bc, "/opt/moss/kma/kma", templateaccesion, config_name, laptop, consensus_name):
     nanopore_name = input[0].split("/")[-1]
 
