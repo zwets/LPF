@@ -959,7 +959,7 @@ def uniqueNameCheck(input, configname):
 def findTemplateNumber(configname, name):
     if name == None:
         return ""
-    infile = open(configname + "REFDB.ATG.name", 'r')
+    infile = open("/opt/moss_db/{}/REFDB.ATG.name".format(configname), 'r')
     t = 1
     for line in infile:
         if line.rstrip() == name:
