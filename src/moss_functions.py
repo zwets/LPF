@@ -252,15 +252,10 @@ def run_assembly(entryid, configname, sample_name, assemblyType, inputType, targ
     #Flye
     #flye -o out_dir --threads 8 --nano-raw fastq.gz
     moss_sql.update_status_table(entryid, "Unicycler Assembly", "Assembly", "4", "5", "Running", configname)
-    if assemblyType == "illumina":
-        inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, "",
-                                   jobid, sample_name, exepath + "kma/kma", kma_database_path, entryid,
-                                   configname + "moss.db", configname, associated_species)
-    elif assemblyType == "nanopore":
-        inputAssemblyFunction(assemblyType, inputType, target_dir, input, "", "", jobid, sample_name,
+    inputAssemblyFunction(assemblyType, inputType, target_dir, input, "", "", jobid, sample_name,
                                    exepath + "kma/kma", kma_database_path, entryid, configname + "moss.db", configname,
                                    associated_species)
-    time = datetime.datetime.now()-start_time
+
     moss_sql.update_status_table(entryid, "Compiling Assembly PDF", "Assembly", "5", "5", "Running", configname)
 
     compileReportAssembly(target_dir, entryid, configname, associated_species, exepath)
@@ -496,19 +491,21 @@ def kma_mapping(target_dir,  input, configname):
     os.system("/opt/moss/kma/kma -i {} -o {}kma_mapping -t_db /opt/moss_db/{}/REFDB.ATG -ID 0 -nf -mem_mode -sasm -ef".format(input, target_dir, configname))
 
     try:
-        best_template_score = 0
+        template_number_score = 0
+        reference_header_text = None
         infile = open("{}kma_mapping.res".format(target_dir), 'r')
         for line in infile:
             line = line.rstrip()
             line = line.split("\t")
             if line[0][0] != "#":
-                if float(line[1]) > best_template_score:
-                    best_template_score = float(line[1])
+                if float(line[1]) > template_number_score:
+                    template_number_score = float(line[1])
                     reference_header_text = line[0]
-        if best_template_score == 0:
-            return (0, 1, "") #template_search_result = 0 = success, thus result found
+        template_number = findTemplateNumber(configname, reference_header_text)
+        if template_number_score == 0:
+            return (0, 1, "", template_number) #template_search_result = 0 (index 1) its a hit. Here its not.
         else:
-            return (best_template_score, 0, reference_header_text)
+            return (template_number_score, 0, reference_header_text, template_number)
     #If no match are found, the sample will be defined as a new reference.
     except IndexError as error:
         print(
@@ -517,10 +514,10 @@ def kma_mapping(target_dir,  input, configname):
         # Perform assembly based on input
         template_search_result = False
         print("FoundnoTemplate")
-        return (0, 1, "") #template_search_result = 0 means no result found
+        return (0, 1, "", "") #template_search_result = 0 means no result found
     ###
 
-def illuminaMappingForward(input, best_template, target_dir, kma_database_path,  multi_threading, kma_path, templateaccesion,configname, laptop, consensus_name):
+def illuminaMappingForward(input, template_number, target_dir, kma_database_path,  multi_threading, kma_path, templateaccesion,configname, laptop, consensus_name):
     illumina_name = input[0].split("/")[-1]
 
     #Claim ReafRefDB is ipc_index_refdb is free
@@ -538,17 +535,17 @@ def illuminaMappingForward(input, best_template, target_dir, kma_database_path, 
         if laptop:
             cmd = "{} -i {} -o {} -t_db {} -ref_fsa -ca -dense -nf -cge -vcf -bc90 -Mt1 {} -t {}".format(
                 kma_path, input[0][0], target_dir + consensus_name, kma_database_path,
-                str(best_template), str(multi_threading))
+                str(template_number), str(multi_threading))
             os.system(cmd)
         else:
 
             cmd = "{} -i {} -o {} -t_db {} -ref_fsa -ca -dense -cge -nf -vcf -bc90 -Mt1 {} -t {} -shm".format(
                 kma_path, input[0][0], target_dir + consensus_name, kma_database_path,
-                str(best_template), str(multi_threading))
+                str(template_number), str(multi_threading))
             check_shm_kma(kma_path, kma_database_path, cmd)
 
 
-def illuminaMappingPE(input, best_template, target_dir, kma_database_path,  multi_threading, kma_path, templateaccesion, configname, laptop, consensus_name):
+def illuminaMappingPE(input, template_number, target_dir, kma_database_path,  multi_threading, kma_path, templateaccesion, configname, laptop, consensus_name):
     illumina_name = input[0].split("/")[-1]
 
     # Claim ReafRefDB is ipc_index_refdb is free
@@ -567,16 +564,16 @@ def illuminaMappingPE(input, best_template, target_dir, kma_database_path,  mult
         if laptop:
             cmd = "{} -ipe {} {} -o {} -t_db {} -ref_fsa -ca -dense -nf -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
                 kma_path, input[0], input[1], target_dir + consensus_name,
-                kma_database_path, str(best_template), str(multi_threading))
+                kma_database_path, str(template_number), str(multi_threading))
             os.system(cmd)
         else:
             cmd = "{} -ipe {} {} -o {} -t_db {} -ref_fsa -ca -dense -nf -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
                 kma_path, input[0], input[1], target_dir + consensus_name,
-                kma_database_path, str(best_template), str(multi_threading))
+                kma_database_path, str(template_number), str(multi_threading))
             check_shm_kma(kma_path, kma_database_path, cmd)
 
 
-def nanopore_alignment(input, best_template, target_dir, kma_database_path,  multi_threading, bc, kma_path, templateaccesion, configname, laptop, consensus_name):
+def nanopore_alignment(input, template_number, target_dir, kma_database_path,  multi_threading, bc, kma_path, templateaccesion, configname, laptop, consensus_name):
     nanopore_name = input[0].split("/")[-1]
 
     # Claim ReafRefDB is ipc_index_refdb is free
@@ -595,12 +592,12 @@ def nanopore_alignment(input, best_template, target_dir, kma_database_path,  mul
         if laptop:
             cmd = "{} -i {} -o {} -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {}".format(
                 kma_path, input[0], target_dir + consensus_name, kma_database_path,
-                str(best_template), str(multi_threading), str(bc))
+                str(template_number), str(multi_threading), str(bc))
             os.system(cmd)
         else:
             cmd = "{} -i {} -o {} -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {} -shm".format(
                 kma_path, input[0], target_dir + consensus_name, kma_database_path,
-                str(best_template), str(multi_threading), str(bc))
+                str(template_number), str(multi_threading), str(bc))
             check_shm_kma(kma_path, kma_database_path, cmd)
 
 def concatenateDraftGenome(input_file):
@@ -707,6 +704,69 @@ def ThreshholdDistanceCheck(distancematrixfile, reference, consensus_name):
                 index = linecount
                 secondentry = True
         linecount += 1
+
+def flye_assembly(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, jobid, sample_name, kma_path,
+ kma_database_path, entryid, isolatedb, configname, associated_species):
+
+    cmd = "docker run --name assembly_{} -v {}:/tmp/{} staphb/flye flye -o /tmp/assembly_results --threads 8 --nano-raw /tmp/{}".format(
+        entryid, input, sample_name, sample_name)
+    print (cmd)
+    os.system(cmd)
+
+    proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_", entryid), shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0]
+    id = output.decode().rstrip()
+
+    cmd = "docker cp {}:/tmp/assembly_results {}.".format(id, target_dir)
+    os.system(cmd)
+
+    cmd = "docker container rm {}".format(id)
+    os.system(cmd)
+
+    # Concatenate contigs
+    infile = open("{}assembly_results/assembly.fasta".format(target_dir), 'r')
+    writefile = open("{}{}_assembled.fasta".format(target_dir, sample_name),
+                     'w')  # Adds all contigs to one sequence
+    sequence = ""
+    for line in infile:
+        if line[0] != ">":
+            line = line.rstrip()
+            sequence += line
+    print(">" + sample_name, file=writefile)
+    print(sequence, file=writefile)
+    infile.close()
+    writefile.close()
+
+    # Assembly complete
+
+    result, action = acquire_semaphore("ipc_index_refdb", configname, 1, 7200)
+    if result == 'acquired' and action == False:
+        cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir,
+                                                                 sample_name)  # add assembly to references
+        print(cmd)
+        print(cmd)
+
+        print(cmd)
+
+        os.system(cmd)
+
+        release_semaphore("ipc_index_refdb", configname)
+
+    elif result != 'acquired' and action == True:
+        result += " : ipc_index_refdb"
+        sys.exit(result)
+    else:
+        sys.exit('A semaphore related issue has occured.')
+
+    conn = sqlite3.connect(isolatedb)
+    c = conn.cursor()
+    dbstring = "INSERT INTO reference_table(entryid, reference_header_text) VALUES('{}', '{}')".format(entryid,
+                                                                                                       associated_species)
+    c.execute(dbstring)
+    conn.commit()  # Need IPC
+    conn.close()
+
 
 def inputAssemblyFunction(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, jobid, sample_name, kma_path, kma_database_path, entryid, isolatedb, configname, associated_species):
     if assemblyType == "illumina":
@@ -897,6 +957,8 @@ def uniqueNameCheck(input, configname):
     conn.close()
 
 def findTemplateNumber(configname, name):
+    if name == None:
+        return ""
     infile = open(configname + "REFDB.ATG.name", 'r')
     t = 1
     for line in infile:

@@ -35,8 +35,6 @@ parser.add_argument("-metadata_headers", action="store", dest="metadata_headers"
 
 args = parser.parse_args()
 
-jobid = random.randint(1,100000000)
-
 def moss_pipeline(configname, metadata, metadata_headers):
     start_time = datetime.datetime.now()
 
@@ -49,7 +47,6 @@ def moss_pipeline(configname, metadata, metadata_headers):
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\""\
                              .format("Not Determined", "CGE finders", "2", "10", "Running", str(datetime.datetime.now())[0:-7], entryid)
-    print (sql_cmd)
     moss.sql_execute_command(sql_cmd, configname)
 
     #moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", configname), configname)
@@ -64,26 +61,21 @@ def moss_pipeline(configname, metadata, metadata_headers):
     moss.kma_finders("-ont -md 5 -1t1 -cge -apm", "virulencefinder", target_dir, input, "/opt/moss/virulencefinder_db/all")
     moss.kma_finders("-ont -md 5 -1t1 -cge -apm", "resfinder_db", target_dir, input, "/opt/moss/resfinder_db/all")
 
+    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\"" \
+        .format("Not Determined", "KMA Mapping", "3", "10", "Running", str(datetime.datetime.now())[0:-7], entryid)
+    moss.sql_execute_command(sql_cmd, configname)
+
     #Rewrite this horrible kma_mapping function. Should be way simpler.
-    template_score, template_search_result, reference_header_text = moss.kma_mapping(target_dir, input, configname)
+    template_score, template_search_result, reference_header_text, template_number = moss.kma_mapping(target_dir, input, configname)
 
-    #check if mlst work TBD
-    mlst_result = moss.run_mlst(input, target_dir, reference_header_text)
-
-    sys.exit("post mlst")
-
-    #Genertic SQL query
-    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "KMA Mapping", "Not Determined", "3", "10", "Running", configname), configname)
-
-    sys.exit("TEST")
-    #This should be done during kma mapping! #TBD
-    best_template = moss.findTemplateNumber(configname, reference_header_text)
+    mlst_result = moss.run_mlst(input, target_dir, reference_header_text) #TBD mlst_result used for what?
 
     if template_search_result == 1: #1 means error, thus no template found
-        #Implement flye
+        #Implement flye TBD later.
         moss.run_assembly(entryid, configname, sample_name, assemblyType, inputType, target_dir, input, illumina_name1,
                           illumina_name2, jobid, exepath, kma_database_path, start_time)
-
+        sys.exit("HERE")
+    sys.exit("NO ASSEMBLY")
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "IPC check", "Alignment", "4", "10", "Running", configname), configname)
 
     #Semaphores should be managed better tbh. Function within function?
@@ -111,7 +103,7 @@ def moss_pipeline(configname, metadata, metadata_headers):
     #Again, see above
     consensus_name = "{}_{}_consensus".format(c_name, templateaccesion)
 
-    moss.nanopore_alignment(input, best_template, target_dir, kma_database_path,  multi_threading, bc, exepath + "kma/kma", templateaccesion, configname, laptop, consensus_name)
+    moss.nanopore_alignment(input, template_number, target_dir, kma_database_path,  multi_threading, bc, exepath + "kma/kma", templateaccesion, configname, laptop, consensus_name)
 
     referenceid = moss.sql_fetch("SELECT entryid FROM reference_table WHERE reference_header_text = '{}'".format(reference_header_text), configname)[0][0]
 
