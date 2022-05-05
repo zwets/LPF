@@ -47,6 +47,8 @@ def moss_pipeline(configname, metadata, metadata_headers):
     moss.sql_execute_command("INSERT INTO status_table(entryid, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
         entryid, "Initializing", "Not determined", "1", "10", "Running", str(datetime.datetime.now())[0:-7],), configname)
 
+    print("UPDATE status_table SET entryid={}, status={}, type={}, current_stage={}, final_stage={}, result={}, time_stamp=WHERE {}" \
+        .format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", str(datetime.datetime.now())[0:-7]))
 
     moss.sql_execute_command("UPDATE status_table SET entryid={}, status={}, type={}, current_stage={}, final_stage={}, result={}, time_stamp=WHERE {}"\
                              .format(entryid, "CGE finders", "Not Determined", "2", "10", "Running", str(datetime.datetime.now())[0:-7]), configname)
