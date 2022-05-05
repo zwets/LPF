@@ -247,11 +247,13 @@ def check_assembly_result(path):
 
     return True
 
-def run_assembly(entryid, configname, sample_name, assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, \
-                 jobid, exepath, kma_database_path, start_time,  associated_species):
+def run_assembly(entryid, configname, sample_name, target_dir, input):
     #Flye
     #flye -o out_dir --threads 8 --nano-raw fastq.gz
     moss_sql.update_status_table(entryid, "Unicycler Assembly", "Assembly", "4", "5", "Running", configname)
+    flye_assembly(entryid, configname, sample_name, target_dir, input)
+    sys.exit("run_assembly done")
+
     inputAssemblyFunction(assemblyType, inputType, target_dir, input, "", "", jobid, sample_name,
                                    exepath + "kma/kma", kma_database_path, entryid, configname + "moss.db", configname,
                                    associated_species)
@@ -705,13 +707,14 @@ def ThreshholdDistanceCheck(distancematrixfile, reference, consensus_name):
                 secondentry = True
         linecount += 1
 
-def flye_assembly(assemblyType, inputType, target_dir, input, illumina_name1, illumina_name2, jobid, sample_name, kma_path,
- kma_database_path, entryid, isolatedb, configname, associated_species):
+def flye_assembly(entryid, configname, sample_name, target_dir, input):
 
     cmd = "docker run --name assembly_{} -v {}:/tmp/{} staphb/flye flye -o /tmp/assembly_results --threads 8 --nano-raw /tmp/{}".format(
         entryid, input, sample_name, sample_name)
     print (cmd)
     os.system(cmd)
+
+
 
     proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_", entryid), shell=True,
                             stdout=subprocess.PIPE, )
@@ -720,6 +723,8 @@ def flye_assembly(assemblyType, inputType, target_dir, input, illumina_name1, il
 
     cmd = "docker cp {}:/tmp/assembly_results {}.".format(id, target_dir)
     os.system(cmd)
+
+    sys.exit("assembly stop ")
 
     cmd = "docker container rm {}".format(id)
     os.system(cmd)
