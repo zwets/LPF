@@ -713,7 +713,7 @@ def ThreshholdDistanceCheck(distancematrixfile, reference, consensus_name):
 def flye_assembly(entryid, configname, sample_name, target_dir, input):
 
     cmd = "docker run --name assembly_{} -v {}:/tmp/{} staphb/flye flye -o /tmp/assembly_results --threads 8 --nano-raw /tmp/{}".format(
-        entryid, input, sample_name, sample_name)
+        entryid, input, input.split("/")[-1], input.split("/")[-1])
     os.system(cmd)
 
     proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_", entryid), shell=True,
@@ -729,7 +729,7 @@ def flye_assembly(entryid, configname, sample_name, target_dir, input):
 
     # Concatenate contigs
     infile = open("{}assembly_results/assembly.fasta".format(target_dir), 'r')
-    writefile = open("{}{}_assembled.fasta".format(target_dir, sample_name),
+    writefile = open("{}{}_assembly.fasta".format(target_dir, sample_name),
                      'w')  # Adds all contigs to one sequence, thus creating a draft genome.
     sequence = ""
     for line in infile:
@@ -745,7 +745,7 @@ def flye_assembly(entryid, configname, sample_name, target_dir, input):
 
     result, action = acquire_semaphore("ipc_index_refdb", configname, 1, 7200)
     if result == 'acquired' and action == False:
-        cmd = "{} index -t_db {} -i {}{}_assembled.fasta".format(kma_path, kma_database_path, target_dir,
+        cmd = "{} index -t_db {} -i {}{}_assembly.fasta".format(kma_path, kma_database_path, target_dir,
                                                                  sample_name)  # add assembly to references
 
         os.system(cmd)
