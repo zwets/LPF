@@ -702,7 +702,7 @@ def flye_assembly(entryid, config_name, sample_name, target_dir, input):
     else:
         sys.exit('A semaphore related issue has occured.')
 
-    conn = sqlite3.connect(isolatedb)
+    conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
     dbstring = "INSERT INTO reference_table(entryid, reference_header_text) VALUES('{}', '{}')".format(entryid,
                                                                                                        associated_species)
