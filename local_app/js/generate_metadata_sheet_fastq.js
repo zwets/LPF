@@ -159,11 +159,12 @@ function create_csv_from_obj(obj, experiment_name) {
 
 function generate_table_fastq(input_number) {
 
+    var input = document.getElementById('input').files;
+
+
     var table = document.createElement('table');
     table.id = "metadata_csv_table";
     table.classList.add('table');
-
-    var bc_folder = document.getElementById('fastq-folder');
 
     var headRow = document.createElement('tr');
     headRow.id = "thead_tr";
@@ -184,6 +185,7 @@ function generate_table_fastq(input_number) {
     for (var i = 0; i < input_number; i++) {
       var tr = document.createElement('tr');
       tr.id = "tbody_tr_" + (i).toString();
+      console.log(input);
       var sample_name = input[i].path.split("/").slice(-1);
 
       for (var j = 0; j < columnNames.length; j++) {
