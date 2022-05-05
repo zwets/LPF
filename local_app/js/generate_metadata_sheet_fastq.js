@@ -169,7 +169,7 @@ function generate_table_fastq(file_number) {
         var td = document.createElement('td');
         td.style.textAlign = "center";
         td.id = `outer${i}${j}`;
-        if (j > 1) {
+        if (j > 0) {
             if (identifier=="free_text") {
                 td.defaultValue = "";
                 td.classList.add("input");
@@ -196,7 +196,7 @@ function generate_table_fastq(file_number) {
                 continue;
                 }
             }
-        else if (j == 1) {
+        else if (j == 0) {
             td.defaultValue = "";
             var label = document.createElement('label');
             label.id = `input${i}${j}`;
