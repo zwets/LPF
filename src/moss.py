@@ -44,7 +44,7 @@ def moss_pipeline(configname, metadata, metadata_headers):
     moss.sql_execute_command("INSERT INTO isolate_table(entryid, samplename, header_text, analysistimestamp, samplingtimestamp, amrgenes, virulencegenes, plasmids, consensus_name, referenceid) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"\
         .format(entryid, samplename, "", str(datetime.datetime.now())[0:-7], metadata_dict["collection date"], "", "", "", "", ""), configname)
 
-    moss.sql_execute_command("INSERT INTO status_table(entryid, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
+    moss.sql_execute_command("INSERT INTO status_table(entryid, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
         entryid, "Initializing", "Not determined", "1", "10", "Running", str(datetime.datetime.now())[0:-7],), configname)
 
 
