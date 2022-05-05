@@ -682,7 +682,7 @@ def release_semaphore(semaphore, configname):
     conn.close()
 
 def check_sql_semaphore_value(configname, semaphore):
-    isolatedb = configname + "moss.db"
+    isolatedb = "/opt/moss_db/{}/moss.db".format(configname)
 
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
