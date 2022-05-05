@@ -437,13 +437,13 @@ def prod_metadata_dict(metadata, metadata_headers):
     return metadict
 
 
-def check_shm_kma("/opt/moss/kma/kma", kma_database_path, cmd):
-    try: #Check if KMA db in shm
-        cmd_stdout = check_output(cmd, stderr=STDOUT, shell=True).decode()
-    except Exception as e:
-        os.system("{}_shm -t_db {}".format("/opt/moss/kma/kma", kma_database_path)) #Loads DB
-        os.system(cmd)
-        return True
+#def check_shm_kma("/opt/moss/kma/kma", kma_database_path, cmd):
+#    try: #Check if KMA db in shm
+#        cmd_stdout = check_output(cmd, stderr=STDOUT, shell=True).decode()
+#    except Exception as e:
+#        os.system("{}_shm -t_db {}".format("/opt/moss/kma/kma", kma_database_path)) #Loads DB
+#        os.system(cmd)
+#        return True
 
 def correctPathCheck(pathName):
     if pathName == "":
