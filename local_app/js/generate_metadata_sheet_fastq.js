@@ -47,11 +47,14 @@ function hasDuplicates(array) {
 function create_metadata_table_fastq(){
 
     document.getElementById('metadata-table-div').innerHTML = "";
-    var bc_folder = document.getElementById('fastq-folder');
-    console.log(bc_folder.value);
-    console.log(bc_folder.innerHTML);
-    var bc_folder_path = bc_folder.files.item(0).path;
-    console.log(bc_folder_path);
+    var input = document.getElementById('fastq-folder');
+    var children = "";
+        for (var i = 0; i < input.files.length; ++i) {
+            children +=  input.files.item(i).path + ',';
+         }
+    var parallel_input = children.slice(0, -1);
+    var input_array = parallel_input.split(",");
+    console.log(input_array);
 
     var input = document.getElementById('multiple-input-type').value;
     var input_number = parseInt(input);
