@@ -745,7 +745,7 @@ def flye_assembly(entryid, config_name, sample_name, target_dir, input):
 
     result, action = acquire_semaphore("ipc_index_refdb", config_name, 1, 7200)
     if result == 'acquired' and action == False:
-        cmd = "{} index -t_db {} -i {}{}_assembly.fasta".format(kma_path, kma_database_path, target_dir,
+        cmd = "{} index -t_db {} -i {}{}_assembly.fasta".format(kma_path, "/opt/moss_db/{}/REFDB.ATG".format(config_name), target_dir,
                                                                  sample_name)  # add assembly to references
 
         os.system(cmd)
