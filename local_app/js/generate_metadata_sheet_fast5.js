@@ -404,6 +404,24 @@ function generate_table_fast5(input_array) {
                 tr.appendChild(td);
                 continue;
             }
+            /*
+        else {
+            td.defaultValue = "";
+            td.classList.add("select");
+            var input = document.createElement('select');
+            input.id = `input${i}${j}`;
+            var object_options = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+            for (var t = 0; t < object_options.length; t++) {
+                var option = document.createElement("option");
+                option.value = object_options[t];
+                option.text = object_options[t];
+                input.add(option);
+            }
+            input.defaultValue = object_options[0];
+            td.appendChild(input);
+            tr.appendChild(td);
+            continue;
+        }*/
 
         }
         td.appendChild(document.createTextNode(new_input_array[i]));

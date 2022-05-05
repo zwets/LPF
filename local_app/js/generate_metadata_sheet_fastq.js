@@ -76,20 +76,11 @@ function create_metadata_table_fastq(){
         }
       csv_string = csv_string.concat(`file_location,`);
       csv_string = csv_string.concat(`ont_type\n`);
-      /*
-      var bc_folder = document.getElementById('fastq-folder');
-      var bc_folder_path = bc_folder.files.item(0).path;
-      var path_list = bc_folder_path.split("/");
-      var path_slice= path_list.slice(1, -1);
-      var bc_final_path = "/" + path_slice.join("/") + "/";
-      var barcode_list = [];
-      */
       for (var i = 0; i < rows.length-1; i++) {
             for (var t = 0; t < rows[i].cells.length; t++) {
             var table_item = document.getElementById(`input${[i]}${[t]}`).value;
             console.log(table_item);
               if (t == 0) {
-                //barcode_list.push(table_item);
                 csv_string = csv_string.concat(`${table_item},`);
                 }
               else if (t == 1) {
@@ -128,11 +119,8 @@ function create_metadata_table_fastq(){
 
               document.getElementById('metadata-table-div').appendChild(create_button);
               //Make go to analyses shortcut
-            })
+            }
           }
-
-        }
-       }
     create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
     var mybr = document.createElement('br');
     document.getElementById('metadata-table-div').appendChild(mybr);
@@ -218,25 +206,6 @@ function generate_table_fastq(file_number) {
             tr.appendChild(td);
             continue;
         }
-        /*
-        else {
-            td.defaultValue = "";
-            td.classList.add("select");
-            var input = document.createElement('select');
-            input.id = `input${i}${j}`;
-            var object_options = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
-            for (var t = 0; t < object_options.length; t++) {
-                var option = document.createElement("option");
-                option.value = object_options[t];
-                option.text = object_options[t];
-                input.add(option);
-            }
-            input.defaultValue = object_options[0];
-            td.appendChild(input);
-            tr.appendChild(td);
-            continue;
-        }*/
-        //td.appendChild(document.createTextNode(new_input_array[i]));
         tr.appendChild(td);
       }
 
