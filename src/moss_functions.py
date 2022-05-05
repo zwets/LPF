@@ -151,7 +151,7 @@ def moss_init(configname, metadata, metadata_headers):
         input = "{}/barcode{}/{}.fastq.gz".format(metadata_dict['file_location'], metadata_dict['barcode_number'])
     else:
         samplename = metadata_dict['sample name']
-        input = metadata_dict['file_location'] + samplename
+        input = metadata_dict['file_location']
 
     if metadata_dict['latitude'] == '' or metadata_dict['longitude'] == '':
         latitude, longitude = calc_coordinates_from_location(metadata_dict['city'], metadata_dict['country'])
@@ -170,7 +170,7 @@ def moss_init(configname, metadata, metadata_headers):
 
 
 def get_kma_template_number(header_text, configname):
-    infile = open(configname + "REFDB.ATG.name", 'r')
+    infile = open("/opt/moss_db/{}/REFDB.ATG.name".format(configname), 'r')
     t = 1
     number = 0
     for line in infile:
