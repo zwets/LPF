@@ -508,7 +508,7 @@ def kma_mapping(target_dir,  input, configname):
         if best_template_score == 0:
             return (0, 1, "") #template_search_result = 0 = success, thus result found
         else:
-            return (template_score, 0, reference_header_text)
+            return (best_template_score, 0, reference_header_text)
     #If no match are found, the sample will be defined as a new reference.
     except IndexError as error:
         print(
