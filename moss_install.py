@@ -41,7 +41,7 @@ def main():
 
 def download_finder_dbs():
     os.system("git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git")
-    os.system("git clone https://bitbucket.org/genomicepidemiology/resfinder_db.git.git")
+    os.system("git clone https://git@bitbucket.org/genomicepidemiology/resfinder_db.git resfinder_db")
     os.system("git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git")
     os.system("/opt/moss/kma/kma_index -i /opt/moss/plasmidfinder_db/*.fsa -o /opt/moss/plasmidfinder_db/all")
     os.system("/opt/moss/kma/kma_index -i /opt/moss/plasmidfinder_db/*.fsa -o /opt/moss/resfinder_db/all")
