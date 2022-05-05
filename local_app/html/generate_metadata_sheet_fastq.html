@@ -55,23 +55,6 @@
                 <br>
                 <div class="generate-metadata-sheet" id="generate-metadata-sheet">
                     <div class="generate-multiple-index-file-section" id="generate-multiple-index-file-section">
-                        <label for="multiple-input-type">Number of samples:</label>
-                        <select id="multiple-input-type" name="multiple-input-type">
-                            <option value="none">none</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
-                        </select>
-                        <br>
                         <br>
                         Enter a name of the sequencing experiment (This will be the name of your .csv file):
                         <input type="text" id="experiment-name" name="experiment-name" value=""><br>
@@ -79,10 +62,11 @@
                         <br>
 
                         <div class="base-call-fast5-section" id="base-call-fast5-section">
+
                         <form action="/action_page.php">
-                            Select the folder which contains your fastQ files (Only one whole fastq per isolate):
-                            <input type="file" id="fastq-folder" name="fastq-folder" webkitdirectory directory multiple value="">
-                            <br>
+                          <label for="fastq-files">Select files:</label>
+                          <input type="file" id="fastq-files" name="fastq-files" multiple><br><br>
+                          <input type="submit">
                         </form>
                         </div>
 
