@@ -593,14 +593,14 @@ def acquire_semaphore(semaphore, config_name, expected, time_limit):
     result = ""
     action = False
     semaphore_status = False
-    value = check_sql_semaphore_value(config_name, semaphore)
+    value = check_sql_semaphore_value(semaphore, config_name)
     print ("Semapore value : " + str(value))
     if value != expected:
         while value != expected:
             print (running_time)
             time.sleep(10)
             running_time += 10
-            value = check_sql_semaphore_value(config_name, semaphore)
+            value = check_sql_semaphore_value(semaphore, config_name)
             if running_time >= time_limit:
                 result = "Running time exceeded the 7200, a semaphore is likely jammed"
                 action = True
@@ -614,7 +614,7 @@ def acquire_semaphore(semaphore, config_name, expected, time_limit):
     return result, action
 
 def release_semaphore(semaphore, config_name):
-    value = check_sql_semaphore_value(config_name, semaphore)
+    value = check_sql_semaphore_value(semaphore, config_name)
 
     isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
 
@@ -625,7 +625,7 @@ def release_semaphore(semaphore, config_name):
     conn.commit()
     conn.close()
 
-def check_sql_semaphore_value(config_name, semaphore):
+def check_sql_semaphore_value(semaphore, config_name):
     isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
 
     conn = sqlite3.connect(isolatedb)

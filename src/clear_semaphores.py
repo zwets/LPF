@@ -42,6 +42,8 @@ import dataframe_image as dfi
 
 config_name = "test1"
 
+print(moss.check_sql_semaphore_value( "ipc_index_refdb", config_name))
+
 moss.release_semaphore("ipc_index_refdb", config_name)
 
-print(moss.check_sql_semaphore_value(config_name, "ipc_index_refdb"))
+print(moss.check_sql_semaphore_value( "ipc_index_refdb", config_name))
