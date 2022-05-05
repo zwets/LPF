@@ -90,7 +90,7 @@ function create_metadata_table_fastq(){
                 csv_string = csv_string.concat(`${table_item},`);
               }
             }
-            csv_string = csv_string.concat(`${bc_final_path},fastq\n`);
+            csv_string = csv_string.concat(`${file_list_obj[i].path},fastq\n`);
 
         }
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
