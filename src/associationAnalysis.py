@@ -26,7 +26,7 @@ import datetime
 parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
 parser.add_argument('-reference', action="store", type=str, dest='reference', default="", help='Accesion ID of the reference you wish to do an association analysis of')
 parser.add_argument('-as', action="store", type=int, default=1, dest='association_size', help='Maximum number of nearby clusters you wish to include. Nearby clusters will only be included, if the cluster is within 3000 basepairs')
-parser.add_argument('-configname', action="store", type=str, dest='configname', default="", help='Path to your DB-directory')
+parser.add_argument('-config_name', action="store", type=str, dest='config_name', default="", help='Path to your DB-directory')
 parser.add_argument("-exepath", action="store", dest="exepath", default = "", help="Complete path to the moss repo that you cloned, in which your kma and ccphylo folder at located.")
 parser.add_argument("-nonewcluster", action="store_false", dest="newcluster", default = True, help="Use this flag, if you DO NOT wish to calculate a new reference cluster")
 parser.add_argument("-o", action="store", dest="output", help="Name that you would like the output directory to be called.")
@@ -38,14 +38,14 @@ start_time = datetime.datetime.now()
 kma_path = args.exepath + "kma/kma"
 ccphylo_path = args.exepath + "ccphylo/ccphylo"
 
-configname = moss.correctPathCheck(args.configname)
+config_name = moss.correctPathCheck(args.config_name)
 exepath = moss.correctPathCheck(args.exepath)
 
 if args.newcluster == True:
-    cmd = "{} dist -t_db {}{} -d 1 -o {}datafiles/referenceCluster -tmp {}".format(kma_path, configname, "REFDB.ATG", configname, configname)
+    cmd = "{} dist -t_db {}{} -d 1 -o {}datafiles/referenceCluster -tmp {}".format(kma_path, config_name, "REFDB.ATG", config_name, config_name)
     os.system(cmd)
 
-infile = open("{}/datafiles/referenceCluster".format(configname), 'r')
+infile = open("{}/datafiles/referenceCluster".format(config_name), 'r')
 distancematrix = []
 referenceposition = ""
 linecount = 0
@@ -123,34 +123,34 @@ print ("Number of confirmed Associates: {}".format(len(confirmedAssociates)))
 print (confirmedAssociates)
 
 
-cmd = "mkdir {}/analysis/{}".format(configname, args.output)
+cmd = "mkdir {}/analysis/{}".format(config_name, args.output)
 os.system(cmd)
 
-cmd = "mkdir {}/analysis/{}/consensussequences".format(configname, args.output)
+cmd = "mkdir {}/analysis/{}/consensussequences".format(config_name, args.output)
 os.system(cmd)
 
-cmd = "mkdir {}/analysis/{}/newoutput/".format(configname, args.output)
+cmd = "mkdir {}/analysis/{}/newoutput/".format(config_name, args.output)
 os.system(cmd)
 
 for i in range(len(confirmedAssociates)):
-    cmd = "cp {}datafiles/isolatefiles/{}/* {}analysis/{}/consensussequences/.".format(configname, confirmedAssociates[i].split(" ")[0], configname, args.output)
+    cmd = "cp {}datafiles/isolatefiles/{}/* {}analysis/{}/consensussequences/.".format(config_name, confirmedAssociates[i].split(" ")[0], config_name, args.output)
     os.system(cmd)
 
-cmd = "cp {}datafiles/isolatefiles/{}/* {}analysis/{}/consensussequences/.".format(configname, args.reference, configname, args.output)
+cmd = "cp {}datafiles/isolatefiles/{}/* {}analysis/{}/consensussequences/.".format(config_name, args.reference, config_name, args.output)
 os.system(cmd)
 
-cmd = "rm {}analysis/{}/consensussequences/{}*".format(configname, args.output, args.reference)
+cmd = "rm {}analysis/{}/consensussequences/{}*".format(config_name, args.output, args.reference)
 os.system(cmd)
 
 
 for i in range(len(confirmedAssociates)): #Don't include reference from other clusters
-    cmd = "rm {}analysis/{}/consensussequences/{}".format(configname, args.output, confirmedAssociates[i].split(" ")[0])
+    cmd = "rm {}analysis/{}/consensussequences/{}".format(config_name, args.output, confirmedAssociates[i].split(" ")[0])
     os.system(cmd)
 
 
 
 
-infile = open("{}REFDB.ATG.name".format(configname), 'r')
+infile = open("{}REFDB.ATG.name".format(config_name), 'r')
 linenumber = 1
 for line in infile:
     line = line.rstrip()
@@ -160,13 +160,13 @@ for line in infile:
     linenumber += 1
 infile.close()
 
-files = os.listdir("{}/analysis/{}/consensussequences/".format(configname, args.output))
+files = os.listdir("{}/analysis/{}/consensussequences/".format(config_name, args.output))
 files.sort()
 complete_path_files = []
 
 
 for i in range(len(files)):
-    infile = open("{}analysis/{}/consensussequences/".format(configname, args.output) + files[i], 'r')
+    infile = open("{}analysis/{}/consensussequences/".format(config_name, args.output) + files[i], 'r')
     sequence = ""
     for line in infile:
         line = line.rstrip()
@@ -181,24 +181,24 @@ for i in range(len(files)):
     sequence = sequence.replace("c", "n")
     sequence = sequence.replace("g", "n")
 
-    outfile = open("{}analysis/{}/consensussequences/".format(configname, args.output) + "hardmasked_" + files[i], 'w')
+    outfile = open("{}analysis/{}/consensussequences/".format(config_name, args.output) + "hardmasked_" + files[i], 'w')
     print (header, file = outfile)
     print (sequence, file = outfile)
     outfile.close()
-    complete_path_files.append("{}analysis/{}/consensussequences/".format(configname, args.output) + "hardmasked_" + files[i])
+    complete_path_files.append("{}analysis/{}/consensussequences/".format(config_name, args.output) + "hardmasked_" + files[i])
 
 
 for i in range(len(complete_path_files)):
-    cmd = "{} -i {} -o  {}/analysis/{}/newoutput/nc_{} -t_db {}/{} -ref_fsa -nf -na -ca -dense -cge -vcf -bc90 -Mt1 {}".format(kma_path, complete_path_files[i], configname, args.output, files[i], configname, "REFDB.ATG", templateid)
+    cmd = "{} -i {} -o  {}/analysis/{}/newoutput/nc_{} -t_db {}/{} -ref_fsa -nf -na -ca -dense -cge -vcf -bc90 -Mt1 {}".format(kma_path, complete_path_files[i], config_name, args.output, files[i], config_name, "REFDB.ATG", templateid)
     os.system(cmd)
 
-cmd = "{} dist -i {}/analysis/{}/newoutput/*.fsa -o {}/analysis/{}/distmatrix.phy -r \"{}\" -f 9 -mc 1 -nm 0".format(ccphylo_path, configname, args.output, configname, args.output, reference_header_text)
+cmd = "{} dist -i {}/analysis/{}/newoutput/*.fsa -o {}/analysis/{}/distmatrix.phy -r \"{}\" -f 9 -mc 1 -nm 0".format(ccphylo_path, config_name, args.output, config_name, args.output, reference_header_text)
 os.system(cmd)
 
 
-cmd = "{} tree -i {}/analysis/{}/distmatrix.phy -o {}/analysis/{}/tree.newick".format(ccphylo_path, configname, args.output, configname, args.output)
+cmd = "{} tree -i {}/analysis/{}/distmatrix.phy -o {}/analysis/{}/tree.newick".format(ccphylo_path, config_name, args.output, config_name, args.output)
 os.system(cmd)
-moss.generateFigtree("{}/analysis/{}/tree.newick".format(configname, args.output), args.reference)
+moss.generateFigtree("{}/analysis/{}/tree.newick".format(config_name, args.output), args.reference)
 
 end_time = datetime.datetime.now()
 run_time = end_time - start_time

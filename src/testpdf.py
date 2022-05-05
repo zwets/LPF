@@ -20,17 +20,17 @@ import threading
 
 
 parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
-parser.add_argument('-configname', action="store", type=str, dest='configname', default="", help='configname')
-parser.add_argument('-exepath', action="store", type=str, dest='exepath', default="", help='configname')
+parser.add_argument('-config_name', action="store", type=str, dest='config_name', default="", help='config_name')
+parser.add_argument('-exepath', action="store", type=str, dest='exepath', default="", help='config_name')
 
 args = parser.parse_args()
 
-configname = args.configname
+config_name = args.config_name
 exepath = args.exepath
 
-onlyfiles = [f for f in os.listdir(configname + "/analysis/") if os.path.isdir(os.path.join(configname + "/analysis/", f))]
+onlyfiles = [f for f in os.listdir(config_name + "/analysis/") if os.path.isdir(os.path.join(config_name + "/analysis/", f))]
 for file in onlyfiles:
-    logfile = configname + "/analysis/" + file + "/logf*"
+    logfile = config_name + "/analysis/" + file + "/logf*"
 
     cmd = "grep \"Best template: \" {}".format(logfile)
     proc = subprocess.Popen(cmd, shell=True,
@@ -42,9 +42,9 @@ for file in onlyfiles:
     reference_header_text = " ".join(reference_header_text)
 
     entryid = file
-    target_dir = configname + "analysis/" + entryid + "/"
-    logfile = configname + "/analysis/" + file + "/logf*"
-    inputdir = "{}/datafiles/distancematrices/{}/".format(configname, reference_header_text)
+    target_dir = config_name + "analysis/" + entryid + "/"
+    logfile = config_name + "/analysis/" + file + "/logf*"
+    inputdir = "{}/datafiles/distancematrices/{}/".format(config_name, reference_header_text)
     image_location = "{}tree.png".format(inputdir)
     cmd = "grep \"mpr:\" {}".format(logfile)
     proc = subprocess.Popen(cmd, shell=True,
@@ -58,10 +58,10 @@ for file in onlyfiles:
                                                                                                              file)
 
     if result == 'true':
-        moss.compileReportAlignment(target_dir, entryid, configname, image_location, reference_header_text, exepath)  # No report compiled for assemblies! Look into it! #TBD
+        moss.compileReportAlignment(target_dir, entryid, config_name, image_location, reference_header_text, exepath)  # No report compiled for assemblies! Look into it! #TBD
     elif result == 'false':
-        moss.compileReportAssembly(target_dir, entryid, configname, associated_species, exepath)
+        moss.compileReportAssembly(target_dir, entryid, config_name, associated_species, exepath)
 
-#value = moss.check_sql_semaphore_value(configname, 'ipc_index_refdb')
-#moss.compileReportAlignment(target_dir, entryid, configname, image_location, reference_header_text, exepath)  # No report compiled for assemblies! Look into it! #TBD
-#moss.compileReportAssembly(target_dir, entryid, configname, image_location, associated_species, exepath)
+#value = moss.check_sql_semaphore_value(config_name, 'ipc_index_refdb')
+#moss.compileReportAlignment(target_dir, entryid, config_name, image_location, reference_header_text, exepath)  # No report compiled for assemblies! Look into it! #TBD
+#moss.compileReportAssembly(target_dir, entryid, config_name, image_location, associated_species, exepath)

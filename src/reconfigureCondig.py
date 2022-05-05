@@ -28,7 +28,7 @@ with open(args.file) as json_file:
     referencejson = json.load(json_file)
 json_file.close()
 
-referencejson["configname"] = localPath
+referencejson["config_name"] = localPath
 
 referencejson["exepath"] = exepath
 

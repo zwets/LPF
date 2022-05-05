@@ -30,7 +30,7 @@ from joblib import Parallel, delayed
 parser = argparse.ArgumentParser(description='.')
 parser.add_argument('-info', type=int, help='surveillance info')
 parser.add_argument('-csv', action="store", type=str, dest='csv', default="", help='metadata csv file')
-parser.add_argument('-configname', action="store", type=str, dest='configname', default="", help='configname')
+parser.add_argument('-config_name', action="store", type=str, dest='config_name', default="", help='config_name')
 args = parser.parse_args()
 
 

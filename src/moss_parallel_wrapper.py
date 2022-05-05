@@ -35,13 +35,13 @@ parser = argparse.ArgumentParser(description='.')
 parser.add_argument('-info', type=int, help='surveillance info')
 parser.add_argument('-csv', action="store", type=str, dest='csv', default="", help='metadata csv file')
 parser.add_argument("-jobs", type=int, action="store", dest="jobs", default = 1, help="Number of jobs to be run in parallel. Default is 4. Consider your computational capabilities!")
-parser.add_argument('-configname', action="store", type=str, dest='configname', default="", help='configname')
+parser.add_argument('-config_name', action="store", type=str, dest='config_name', default="", help='config_name')
 args = parser.parse_args()
 
 def mossAnalysis(jobslist, i):
     os.system(jobslist[i]) #Jobs not queued yet- fix
 
-def main(csv, jobs, configname):
+def main(csv, jobs, config_name):
 
     with open(csv, 'r') as f:
         line = f.read().split("\n")[0:-1]
@@ -56,17 +56,17 @@ def main(csv, jobs, configname):
     #function here to check for mulitple_files, barcodes etc in input directory.
     #filelist = moss.derive_finalized_filenames(input_dir)
     for i in range(len(metadata_list)):
-        cmd = "python3 /opt/moss/src/moss.py -configname {} -metadata \"{}\" -metadata_headers \"{}\"".format(configname, metadata_list[i], metadata_headers)
+        cmd = "python3 /opt/moss/src/moss.py -config_name {} -metadata \"{}\" -metadata_headers \"{}\"".format(config_name, metadata_list[i], metadata_headers)
         jobslist.append(cmd)
         entryid = moss.md5(metadata_list[i].split()[-1])
         #moss.sql_execute_command(
         #    "INSERT INTO status_table(entryid, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
         #        entryid, "Initializing", "Not determined", "0", "10", "Queued", str(datetime.datetime.now())[0:-7]),
-        #    configname)
+        #    config_name)
 
     Parallel(n_jobs=jobs)(delayed(mossAnalysis)(jobslist, i) for i in range(len(jobslist)))
     print ("Analysis complete")
 
 if __name__== "__main__":
-  main(args.csv, args.jobs, args.configname)
+  main(args.csv, args.jobs, args.config_name)
 

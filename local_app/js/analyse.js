@@ -26,7 +26,7 @@ function submitSingleAnalysis() {
     var config_json = require('/opt/moss_db/config.json');
     console.log(input_array);
 
-    var cmd_msg = `conda run -n base python3 /opt/moss/src/moss_parallel_wrapper.py -csv ${input_array[0]} -configname ${config_json.current_working_db}`;
+    var cmd_msg = `conda run -n base python3 /opt/moss/src/moss_parallel_wrapper.py -csv ${input_array[0]} -config_name ${config_json.current_working_db}`;
     console.log(cmd_msg);
     //execute_command_as_subprocess(cmd_msg);
 

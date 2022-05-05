@@ -23,30 +23,30 @@ import sqlite3
 
 parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
 parser.add_argument('-kmaindex_db_path', action="store", type=str, dest='kmaindex_db_path', default="", help='Path a .ATG kma-index database that is desired to be used a references. It is expected that both the .ATG.name file and .ATG.seq.b file is present in this directory, and that NO OTHER files are present. http://www.cbs.dtu.dk/public/CGE/databases/KmerFinder/version/20190108_stable/ link to bacteria.tar.gz, which is a good option for a starting database')
-parser.add_argument("-configname", action="store", dest="configname", help="Enter a name for your configuration file.")
+parser.add_argument("-config_name", action="store", dest="config_name", help="Enter a name for your configuration file.")
 
 args = parser.parse_args()
 
 kma_path = "/opt/moss/kma/kma"
-configname = args.configname
+config_name = args.config_name
 
 kmaindex_db_path = moss.correctPathCheck(args.kmaindex_db_path)
 
 if not os.path.exists("/opt/moss_db"):
     sys.exit("MOSS has not been correctly initialized. no /opt/moss_db exists")
 
-if not os.path.exists("/opt/moss_db/{}".format(configname)):
-    os.system("mkdir /opt/moss_db/{}".format(configname))
+if not os.path.exists("/opt/moss_db/{}".format(config_name)):
+    os.system("mkdir /opt/moss_db/{}".format(config_name))
 else:
     sys.exit("A moss database of that name already exists on this computer!")
 
-configname = "/opt/moss_db/{}/".format(configname)
+config_name = "/opt/moss_db/{}/".format(config_name)
 
 print ("cloning reference DB, if you are using a big reference DB, this might take a while")
-os.system("cp {}*.ATG.comp.b {}REFDB.ATG.comp.b".format(kmaindex_db_path, configname))
-os.system("cp {}*.ATG.length.b {}REFDB.ATG.length.b".format(kmaindex_db_path, configname))
-os.system("cp {}*.ATG.seq.b {}REFDB.ATG.seq.b".format(kmaindex_db_path, configname))
-os.system("cp {}*.ATG.name {}REFDB.ATG.name".format(kmaindex_db_path, configname))
+os.system("cp {}*.ATG.comp.b {}REFDB.ATG.comp.b".format(kmaindex_db_path, config_name))
+os.system("cp {}*.ATG.length.b {}REFDB.ATG.length.b".format(kmaindex_db_path, config_name))
+os.system("cp {}*.ATG.seq.b {}REFDB.ATG.seq.b".format(kmaindex_db_path, config_name))
+os.system("cp {}*.ATG.name {}REFDB.ATG.name".format(kmaindex_db_path, config_name))
 print ("cloning reference DB complete")
 
 directory_structure = {
@@ -59,10 +59,10 @@ directory_structure = {
     "datafiles": {}
 
 }
-moss.create_directory_from_dict(directory_structure, configname)
+moss.create_directory_from_dict(directory_structure, config_name)
 
 
-conn = sqlite3.connect(configname + 'moss.db')
+conn = sqlite3.connect(config_name + 'moss.db')
 c = conn.cursor()
 
 metadata_string = ""
@@ -98,14 +98,14 @@ conn.close()
 #Can we add tables for genes with pointers? Better solution!
 
 
-moss.init_insert_reference_table(configname)
+moss.init_insert_reference_table(config_name)
 
 # Generate config.json file
 jsondict = dict()
-jsondict["current_working_db"] = args.configname
+jsondict["current_working_db"] = args.config_name
 with open("/opt/moss_db/config.json", 'w') as f_out:
   json.dump(jsondict, f_out)
 f_out.close()
 
-cmd = "python3 /opt/moss/src/createGuppyWorkflowDict.py -current_working_db {}".format(args.configname)
+cmd = "python3 /opt/moss/src/createGuppyWorkflowDict.py -current_working_db {}".format(args.config_name)
 os.system(cmd)

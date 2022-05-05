@@ -104,7 +104,7 @@ def create_directory_from_dict(dict, path):
             os.system("mkdir {}{}/{}".format(path, directory, subdirectory))
     return True
 
-#def update_reference_table(entryid, amrgenes, virulencegenes, plasmids, reference_header_text, configname):
+#def update_reference_table(entryid, amrgenes, virulencegenes, plasmids, reference_header_text, config_name):
 #    #TMP function. replace later.
 #    conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
 #    c = conn.cursor()
@@ -124,7 +124,7 @@ def create_directory_from_dict(dict, path):
 #    conn.commit()
 #    conn.close()
 
-def sql_fetch(string, configname):
+def sql_fetch(string, config_name):
     conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
     c.execute(string)
@@ -132,18 +132,18 @@ def sql_fetch(string, configname):
     conn.close()
     return data
 
-def sql_execute_command(command, configname):
-    conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(configname))
+def sql_execute_command(command, config_name):
+    conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
     c.execute(command)
     conn.commit()
     conn.close()
 
-def moss_mkfs(configname, entryid):
-    target_dir = "/opt/moss_db/{}/analysis/{}/".format(configname, entryid)
+def moss_mkfs(config_name, entryid):
+    target_dir = "/opt/moss_db/{}/analysis/{}/".format(config_name, entryid)
     os.system("mkdir {}".format(target_dir))
 
-def moss_init(configname, metadata, metadata_headers):
+def moss_init(config_name, metadata, metadata_headers):
     metadata_dict = prod_metadata_dict(metadata, metadata_headers)
     print (metadata_dict)
     if metadata_dict['ont_type'] == "fast5":
@@ -165,16 +165,16 @@ def moss_init(configname, metadata, metadata_headers):
         sys.exit("input is not a fastQ file.")
     entryid = md5(input)
 
-    uniqueNameCheck(input, configname)
+    uniqueNameCheck(input, config_name)
 
-    ref_db = "/opt/moss_db/{}/REFDB.ATG".format(configname)
-    target_dir = "/opt/moss_db/{}/analysis/{}/".format(configname, entryid)
+    ref_db = "/opt/moss_db/{}/REFDB.ATG".format(config_name)
+    target_dir = "/opt/moss_db/{}/analysis/{}/".format(config_name, entryid)
 
-    return configname, metadata_dict, input, sample_name, entryid, target_dir, ref_db
+    return config_name, metadata_dict, input, sample_name, entryid, target_dir, ref_db
 
 
-def get_kma_template_number(reference_header_text, configname):
-    infile = open("/opt/moss_db/{}/REFDB.ATG.name".format(configname), 'r')
+def get_kma_template_number(reference_header_text, config_name):
+    infile = open("/opt/moss_db/{}/REFDB.ATG.name".format(config_name), 'r')
     t = 1
     number = 0
     for line in infile:
@@ -185,24 +185,24 @@ def get_kma_template_number(reference_header_text, configname):
     infile.close()
     return t
 
-def make_phytree_output_folder(configname, target_dir, isolate_list, exepath, reference_header_text):
+def make_phytree_output_folder(config_name, target_dir, isolate_list, exepath, reference_header_text):
     cmd = "mkdir {}/phytree_output".format(target_dir)
     os.system(cmd)
 
     for item in isolate_list:
-        path = "{}consensus_sequences/{}".format(configname, item)
+        path = "{}consensus_sequences/{}".format(config_name, item)
         cmd = "cp {} {}/phytree_output/.".format(path, target_dir)
         os.system(cmd)
 
-    number = get_kma_template_number(reference_header_text, configname)
+    number = get_kma_template_number(reference_header_text, config_name)
     header_name = reference_header_text.split()[0]
-    cmd = "{}/kma/kma seq2fasta -t_db {}REFDB.ATG -seqs {} > {}/phytree_output/{}.fsa".format(exepath, configname, number, target_dir, header_name)
+    cmd = "{}/kma/kma seq2fasta -t_db {}REFDB.ATG -seqs {} > {}/phytree_output/{}.fsa".format(exepath, config_name, number, target_dir, header_name)
     os.system(cmd)
 
     cmd = "cp {}*_consensus.fsa {}phytree_output/.".format(target_dir, target_dir)
     os.system(cmd)
 
-def create_phylo_tree(configname, reference_header_text, target_dir):
+def create_phylo_tree(config_name, reference_header_text, target_dir):
     tree = Phylo.read("{}phytree_output/tree.newick".format(target_dir), 'newick')
     Phylo.draw(tree, do_show=False)
     pylab.savefig("{}phytree_output/tree.png".format(target_dir))
@@ -221,16 +221,16 @@ def moss_shortcut_init(exepath):
     cmd = "chmod a+x ~/bin/moss"
     os.system(cmd)
 
-def init_insert_reference_table(configname):
-    infile = open(configname + "REFDB.ATG.name", 'r')
+def init_insert_reference_table(config_name):
+    infile = open(config_name + "REFDB.ATG.name", 'r')
     t = 1
-    conn = sqlite3.connect(configname + 'moss.db')
+    conn = sqlite3.connect(config_name + 'moss.db')
     c = conn.cursor()
     ids = list()
 
     for line in infile:
         line = line.rstrip()
-        cmd = "/opt/moss/kma/kma seq2fasta -t_db {}/REFDB.ATG -seqs {}".format(configname, t)
+        cmd = "/opt/moss/kma/kma seq2fasta -t_db {}/REFDB.ATG -seqs {}".format(config_name, t)
         proc = subprocess.Popen(cmd, shell=True,
                                 stdout=subprocess.PIPE, )
         output = proc.communicate()[0].decode()
@@ -251,26 +251,26 @@ def check_assembly_result(path):
 
     return True
 
-def run_assembly(entryid, configname, sample_name, target_dir, input):
+def run_assembly(entryid, config_name, sample_name, target_dir, input):
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\"" \
         .format("Flye Assembly", "reference", "4", "5", "Running", str(datetime.datetime.now())[0:-7], entryid)
-    sql_execute_command(sql_cmd, configname)
-    flye_assembly(entryid, configname, sample_name, target_dir, input)
+    sql_execute_command(sql_cmd, config_name)
+    flye_assembly(entryid, config_name, sample_name, target_dir, input)
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\"" \
         .format("Compiling PDF report", "reference", "5", "5", "Running", str(datetime.datetime.now())[0:-7], entryid)
-    sql_execute_command(sql_cmd, configname)
+    sql_execute_command(sql_cmd, config_name)
 
-    compileReportAssembly(target_dir, entryid, configname, associated_species, exepath) #Look at the TBD
+    compileReportAssembly(target_dir, entryid, config_name, associated_species, exepath) #Look at the TBD
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\"" \
         .format("Assembly pipeline completed", "reference", "5", "5", "Completed", str(datetime.datetime.now())[0:-7], entryid)
-    sql_execute_command(sql_cmd, configname)
+    sql_execute_command(sql_cmd, config_name)
     sys.exit("No template was found, so input was added to references.")
 
-def init_moss_variables(exepath, configname, ):
-    referenceSyncFile = configname + "syncFiles/referenceSync.json"
-    isolateSyncFile = configname + "syncFiles/isolateSync.json"
+def init_moss_variables(exepath, config_name, ):
+    referenceSyncFile = config_name + "syncFiles/referenceSync.json"
+    isolateSyncFile = config_name + "syncFiles/isolateSync.json"
     return kma_path
 
 def update_pip_dependencies():
@@ -492,8 +492,8 @@ def check_alignment_kma_cov(file):
 
     return coverage
 
-def kma_mapping(target_dir,  input, configname):
-    os.system("/opt/moss/kma/kma -i {} -o {}kma_mapping -t_db /opt/moss_db/{}/REFDB.ATG -ID 0 -nf -mem_mode -sasm -ef".format(input, target_dir, configname))
+def kma_mapping(target_dir,  input, config_name):
+    os.system("/opt/moss/kma/kma -i {} -o {}kma_mapping -t_db /opt/moss_db/{}/REFDB.ATG -ID 0 -nf -mem_mode -sasm -ef".format(input, target_dir, config_name))
 
     try:
         template_number_score = 0
@@ -506,7 +506,7 @@ def kma_mapping(target_dir,  input, configname):
                 if float(line[1]) > template_number_score:
                     template_number_score = float(line[1])
                     reference_header_text = line[0]
-        template_number = findTemplateNumber(configname, reference_header_text)
+        template_number = findTemplateNumber(config_name, reference_header_text)
         if template_number_score == 0:
             return (0, 1, "", template_number) #template_search_result = 0 (index 1) its a hit. Here its not.
         else:
@@ -522,14 +522,14 @@ def kma_mapping(target_dir,  input, configname):
         return (0, 1, "", "") #template_search_result = 0 means no result found
     ###
 
-def illuminaMappingForward(input, template_number, target_dir, kma_database_path,  multi_threading, kma_path, templateaccesion,configname, laptop, consensus_name):
+def illuminaMappingForward(input, template_number, target_dir, kma_database_path,  multi_threading, kma_path, templateaccesion,config_name, laptop, consensus_name):
     illumina_name = input[0].split("/")[-1]
 
     #Claim ReafRefDB is ipc_index_refdb is free
     # Check if an assembly is currently running
-    result, action = acquire_semaphore("ipc_index_refdb", configname, 1, 7200)
+    result, action = acquire_semaphore("ipc_index_refdb", config_name, 1, 7200)
     if result == 'acquired' and action == False:
-        release_semaphore("ipc_index_refdb", configname)
+        release_semaphore("ipc_index_refdb", config_name)
     elif result != 'acquired' and action == True:
         result += " : ipc_index_refdb, didn't map due to running assembly"
         sys.exit(result)
@@ -550,15 +550,15 @@ def illuminaMappingForward(input, template_number, target_dir, kma_database_path
             check_shm_kma(kma_path, kma_database_path, cmd)
 
 
-def illuminaMappingPE(input, template_number, target_dir, kma_database_path,  multi_threading, kma_path, templateaccesion, configname, laptop, consensus_name):
+def illuminaMappingPE(input, template_number, target_dir, kma_database_path,  multi_threading, kma_path, templateaccesion, config_name, laptop, consensus_name):
     illumina_name = input[0].split("/")[-1]
 
     # Claim ReafRefDB is ipc_index_refdb is free
     # Check if an assembly is currently running
 
-    result, action = acquire_semaphore("ipc_index_refdb", configname, 1, 7200)
+    result, action = acquire_semaphore("ipc_index_refdb", config_name, 1, 7200)
     if result == 'acquired' and action == False:
-        release_semaphore("ipc_index_refdb", configname)
+        release_semaphore("ipc_index_refdb", config_name)
     elif result != 'acquired' and action == True:
         result += " : ipc_index_refdb, didn't map due to running assembly"
         sys.exit(result)
@@ -578,15 +578,15 @@ def illuminaMappingPE(input, template_number, target_dir, kma_database_path,  mu
             check_shm_kma(kma_path, kma_database_path, cmd)
 
 
-def nanopore_alignment(input, template_number, target_dir, kma_database_path,  multi_threading, bc, kma_path, templateaccesion, configname, laptop, consensus_name):
+def nanopore_alignment(input, template_number, target_dir, kma_database_path,  multi_threading, bc, kma_path, templateaccesion, config_name, laptop, consensus_name):
     nanopore_name = input[0].split("/")[-1]
 
     # Claim ReafRefDB is ipc_index_refdb is free
     # Check if an assembly is currently running
 
-    result, action = acquire_semaphore("ipc_index_refdb", configname, 1, 7200)
+    result, action = acquire_semaphore("ipc_index_refdb", config_name, 1, 7200)
     if result == 'acquired' and action == False:
-        release_semaphore("ipc_index_refdb", configname)
+        release_semaphore("ipc_index_refdb", config_name)
     elif result != 'acquired' and action == True:
         result += " : ipc_index_refdb, didn't map due to running assembly"
         sys.exit(result)
@@ -633,7 +633,7 @@ def md5(sequence):
     hash_md5 = hashlib.md5(sequence.encode())
     return hash_md5.hexdigest()
 
-def claim_semaphore(semaphore, configname, value):
+def claim_semaphore(semaphore, config_name, value):
     isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
 
     conn = sqlite3.connect(isolatedb)
@@ -643,34 +643,34 @@ def claim_semaphore(semaphore, configname, value):
     conn.commit()
     conn.close()
 
-def acquire_semaphore(semaphore, configname, expected, time_limit):
+def acquire_semaphore(semaphore, config_name, expected, time_limit):
 
     running_time = 0
     result = ""
     action = False
     semaphore_status = False
-    value = check_sql_semaphore_value(configname, semaphore)
+    value = check_sql_semaphore_value(config_name, semaphore)
 
     if value != expected:
         while value != expected:
             print (running_time)
             time.sleep(10)
             running_time += 10
-            value = check_sql_semaphore_value(configname, semaphore)
+            value = check_sql_semaphore_value(config_name, semaphore)
             if running_time >= time_limit:
                 result = "Running time exceeded the 7200, a semaphore is likely jammed"
                 action = True
                 break
-        claim_semaphore(semaphore, configname, value)
+        claim_semaphore(semaphore, config_name, value)
         result = "acquired"
     else:
-        claim_semaphore(semaphore, configname, value)
+        claim_semaphore(semaphore, config_name, value)
         result = "acquired"
 
     return result, action
 
-def release_semaphore(semaphore, configname):
-    value = check_sql_semaphore_value(configname, semaphore)
+def release_semaphore(semaphore, config_name):
+    value = check_sql_semaphore_value(config_name, semaphore)
 
     isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
 
@@ -681,8 +681,8 @@ def release_semaphore(semaphore, configname):
     conn.commit()
     conn.close()
 
-def check_sql_semaphore_value(configname, semaphore):
-    isolatedb = "/opt/moss_db/{}/moss.db".format(configname)
+def check_sql_semaphore_value(config_name, semaphore):
+    isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
 
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
@@ -710,7 +710,7 @@ def ThreshholdDistanceCheck(distancematrixfile, reference, consensus_name):
                 secondentry = True
         linecount += 1
 
-def flye_assembly(entryid, configname, sample_name, target_dir, input):
+def flye_assembly(entryid, config_name, sample_name, target_dir, input):
 
     cmd = "docker run --name assembly_{} -v {}:/tmp/{} staphb/flye flye -o /tmp/assembly_results --threads 8 --nano-raw /tmp/{}".format(
         entryid, input, input.split("/")[-1], input.split("/")[-1])
@@ -743,14 +743,14 @@ def flye_assembly(entryid, configname, sample_name, target_dir, input):
 
     # Assembly complete
 
-    result, action = acquire_semaphore("ipc_index_refdb", configname, 1, 7200)
+    result, action = acquire_semaphore("ipc_index_refdb", config_name, 1, 7200)
     if result == 'acquired' and action == False:
         cmd = "{} index -t_db {} -i {}{}_assembly.fasta".format(kma_path, kma_database_path, target_dir,
                                                                  sample_name)  # add assembly to references
 
         os.system(cmd)
 
-        release_semaphore("ipc_index_refdb", configname)
+        release_semaphore("ipc_index_refdb", config_name)
 
     elif result != 'acquired' and action == True:
         result += " : ipc_index_refdb"
@@ -767,7 +767,7 @@ def flye_assembly(entryid, configname, sample_name, target_dir, input):
     conn.close()
 
 
-def uniqueNameCheck(input, configname):
+def uniqueNameCheck(input, config_name):
     sample_name = input.split("/")[-1]
 
     if input[-3:] == ".gz":
@@ -787,7 +787,7 @@ def uniqueNameCheck(input, configname):
     else:
         accession = input.split("/")[-1]
 
-    conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(configname))
+    conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
 
     c.execute("SELECT * FROM sample_table WHERE sample_name = '{}'".format(sample_name))
@@ -804,10 +804,10 @@ def uniqueNameCheck(input, configname):
 
     conn.close()
 
-def findTemplateNumber(configname, name):
+def findTemplateNumber(config_name, name):
     if name == None:
         return ""
-    infile = open("/opt/moss_db/{}/REFDB.ATG.name".format(configname), 'r')
+    infile = open("/opt/moss_db/{}/REFDB.ATG.name".format(config_name), 'r')
     t = 1
     for line in infile:
         if line.rstrip() == name:
@@ -833,7 +833,7 @@ def run_quast(target_dir, jobid):
     cmd = "docker container rm {}".format(id)
     os.system(cmd)
 
-def lastClusterAddition(configname, reference_header_text):
+def lastClusterAddition(config_name, reference_header_text):
     isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
@@ -843,7 +843,7 @@ def lastClusterAddition(configname, reference_header_text):
     conn.close()
     return refdata
 
-def isolate_file_name(configname, entryid):
+def isolate_file_name(config_name, entryid):
     isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
@@ -856,7 +856,7 @@ def isolate_file_name(configname, entryid):
     return element
 
 
-def generate_amr_resistance_profile_table(configname, entryid, pdf, target_dir, exepath, reference_header_text):
+def generate_amr_resistance_profile_table(config_name, entryid, pdf, target_dir, exepath, reference_header_text):
 
     panel_found = False
     panel_list = []
@@ -958,7 +958,7 @@ def run_bandage(target_dir, jobid):
     os.system(cmd)
 
 
-def compileReportAssembly(target_dir, ID, configname, associated_species, exepath):
+def compileReportAssembly(target_dir, ID, config_name, associated_species, exepath):
     #QA checks?
     #Quast?
 
@@ -994,7 +994,7 @@ def compileReportAssembly(target_dir, ID, configname, associated_species, exepat
     pdf.output(target_dir + filename, 'F')
 
 
-def retrieve_cge_counts(target_dir, ID, configname, image_location, reference_header_text, exepath):
+def retrieve_cge_counts(target_dir, ID, config_name, image_location, reference_header_text, exepath):
     isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
@@ -1066,20 +1066,20 @@ def mlst_sequence_type(target_dir):
 
 
 
-def compileReportAlignment(target_dir, ID, configname, image_location, reference_header_text, exepath, related_isolates):
+def compileReportAlignment(target_dir, ID, config_name, image_location, reference_header_text, exepath, related_isolates):
     pdf = FPDF()  # A4 (210 by 297 mm)
 
     filename = "{}_report.pdf".format(ID) #ADD idd
     clusterSize = len(related_isolates)
-    latestAddition = lastClusterAddition(configname, reference_header_text)
-    phenotypes, panel_found, panel_list = generate_amr_resistance_profile_table(configname, ID, pdf, target_dir, exepath, reference_header_text)
+    latestAddition = lastClusterAddition(config_name, reference_header_text)
+    phenotypes, panel_found, panel_list = generate_amr_resistance_profile_table(config_name, ID, pdf, target_dir, exepath, reference_header_text)
 
     ''' First Page '''
     pdf.add_page()
     pdf.image(exepath + "/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
     create_title(pdf, ID, "MOSS analytical report")
     pdf.ln(5)
-    file_name = isolate_file_name(configname, ID)
+    file_name = isolate_file_name(config_name, ID)
     pdf.set_font('Arial', '', 12)
     textstring = "ID: {} \n" \
                  "Sample name: {} \n" \
@@ -1109,7 +1109,7 @@ def compileReportAlignment(target_dir, ID, configname, image_location, reference
 
     sequence_type = mlst_sequence_type(target_dir)
 
-    plasmids_isolate, virulencegenes_isolate, amrgenes_isolate, plasmids_reference, virulencegenes_reference, amrgenes_reference = retrieve_cge_counts(target_dir, ID, configname, image_location, reference_header_text, exepath)
+    plasmids_isolate, virulencegenes_isolate, amrgenes_isolate, plasmids_reference, virulencegenes_reference, amrgenes_reference = retrieve_cge_counts(target_dir, ID, config_name, image_location, reference_header_text, exepath)
     textstring = "AMR genes in this sample: {}. \n" \
                  "AMR genes in this cluster: {}. \n" \
                  "Plasmids in this sample: {}. \n" \

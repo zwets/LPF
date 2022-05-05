@@ -13,7 +13,7 @@ import moss_functions as moss
 
 
 parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
-parser.add_argument('-i', action="store", type=str, dest='input', default="", help='configname for moss directory')
+parser.add_argument('-i', action="store", type=str, dest='input', default="", help='config_name for moss directory')
 args = parser.parse_args()
 
 isolatedb = args.input + "moss.db"
