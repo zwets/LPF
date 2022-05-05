@@ -177,7 +177,7 @@ def moss_pipeline(configname, metadata, metadata_headers):
 
     #Get ride of these strings. Make relational tables for genes too.
 
-    moss.update_reference_table(entryid, new_amr_string, new_virulence_string, new_plasmid_string, reference_header_text, configname)
+    #moss.update_reference_table(entryid, new_amr_string, new_virulence_string, new_plasmid_string, reference_header_text, configname)
 
     end_time = datetime.datetime.now()
     run_time = end_time - start_time

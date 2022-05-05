@@ -105,25 +105,25 @@ def create_directory_from_dict(dict, path):
             os.system("mkdir {}{}/{}".format(path, directory, subdirectory))
     return True
 
-def update_reference_table(entryid, amrgenes, virulencegenes, plasmids, reference_header_text, configname):
-    #TMP function. replace later.
-    conn = sqlite3.connect(configname + "moss.db")
-    c = conn.cursor()
-    amrgenes_statement = "amrgenes = '{}'".format(amrgenes)
-    virulencegenes_statement = "virulencegenes = '{}'".format(virulencegenes)
-    plasmids_statement = "plasmids = '{}'".format(plasmids)
-    if amrgenes != None:
-        dbstring = "UPDATE reference_table SET {} WHERE reference_header_text = '{}'".format(amrgenes_statement, reference_header_text)
-        c.execute(dbstring)
-    if virulencegenes != None:
-        dbstring = "UPDATE reference_table SET {} WHERE reference_header_text = '{}'".format(virulencegenes_statement, reference_header_text)
-        c.execute(dbstring)
-    if plasmids != None:
-        dbstring = "UPDATE reference_table SET {} WHERE reference_header_text = '{}'".format(plasmids_statement, reference_header_text)
-        c.execute(dbstring)
-
-    conn.commit()
-    conn.close()
+#def update_reference_table(entryid, amrgenes, virulencegenes, plasmids, reference_header_text, configname):
+#    #TMP function. replace later.
+#    conn = sqlite3.connect(configname + "moss.db")
+#    c = conn.cursor()
+#    amrgenes_statement = "amrgenes = '{}'".format(amrgenes)
+#    virulencegenes_statement = "virulencegenes = '{}'".format(virulencegenes)
+#    plasmids_statement = "plasmids = '{}'".format(plasmids)
+#    if amrgenes != None:
+#        dbstring = "UPDATE reference_table SET {} WHERE reference_header_text = '{}'".format(amrgenes_statement, reference_header_text)
+#        c.execute(dbstring)
+#    if virulencegenes != None:
+#        dbstring = "UPDATE reference_table SET {} WHERE reference_header_text = '{}'".format(virulencegenes_statement, reference_header_text)
+#        c.execute(dbstring)
+#    if plasmids != None:
+#        dbstring = "UPDATE reference_table SET {} WHERE reference_header_text = '{}'".format(plasmids_statement, reference_header_text)
+#        c.execute(dbstring)
+#
+#    conn.commit()
+#    conn.close()
 
 def sql_fetch(string, configname):
     conn = sqlite3.connect(configname + "moss.db")
@@ -236,7 +236,7 @@ def init_insert_reference_table(configname):
         entryid = md5(sequence)
         #TMP SOLUTION TO AVOID ENTRYCLASHES:
         if entryid not in ids:
-            dbstring = "INSERT INTO reference_table(entryid, reference_header_text, amrgenes, virulencegenes, plasmids) VALUES('{}', '{}' ,'{}', '{}' ,'{}')".format(entryid, reference_header_text.replace("'", "''"), "", "", "", "")
+            dbstring = "INSERT INTO reference_table(entryid, reference_header_text) VALUES('{}', '{}')".format(entryid, reference_header_text.replace("'", "''"))
             ids.append(entryid)
             c.execute(dbstring)
 
