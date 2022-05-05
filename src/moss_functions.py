@@ -44,8 +44,9 @@ import dataframe_image as dfi
 
 
 
-def kma_finders(arguments, configname, entryid, input, database):
-    os.system("/opt/moss/kma/kma -i {} -o /opt/moss_db/{}/{}/{} -t_db {} {}".format(input, configname, entryid, entryid, database, arguments))
+def kma_finders(arguments, outputname, target_dir, input, database):
+    os.system("mkdir {}/finders".format(target_dir))
+    os.system("/opt/moss/kma/kma -i {} -o {}/finders/{} -t_db {} {}".format(input, target_dir, outputname, database, arguments))
 
 
 
