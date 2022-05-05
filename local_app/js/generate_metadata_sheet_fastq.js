@@ -186,6 +186,7 @@ function generate_table_fastq(input_number) {
       var tr = document.createElement('tr');
       tr.id = "tbody_tr_" + (i).toString();
       console.log(input);
+      console.log(input[i].path);
       var sample_name = input[i].path.split("/").slice(-1);
 
       for (var j = 0; j < columnNames.length; j++) {
