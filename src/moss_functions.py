@@ -594,7 +594,7 @@ def acquire_semaphore(semaphore, config_name, expected, time_limit):
     action = False
     semaphore_status = False
     value = check_sql_semaphore_value(config_name, semaphore)
-
+    print ("Semapore value : " + str(value))
     if value != expected:
         while value != expected:
             print (running_time)
