@@ -184,7 +184,7 @@ function generate_table_fastq(input_number) {
     for (var i = 0; i < input_number; i++) {
       var tr = document.createElement('tr');
       tr.id = "tbody_tr_" + (i).toString();
-      var sample_name = bc_folder.files.item(i).path.split("/").slice(-1);
+      var sample_name = input.item(i).path;
 
       for (var j = 0; j < columnNames.length; j++) {
         var identifier = jsonData[columnNames[j]];
