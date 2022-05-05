@@ -48,9 +48,9 @@ function hasDuplicates(array) {
 function create_metadata_table_fastq(){
 
     document.getElementById('metadata-table-div').innerHTML = "";
-    var input = document.getElementById('input').files;
-    var input_number = Object.keys(input).length;
-    console.log(input_number);
+    var file_list_obj = document.getElementById('input').files;
+    var file_number = Object.keys(input).length;
+    console.log(file_number);
 
     append_table = generate_table_fastq(input_number)
 
@@ -63,9 +63,9 @@ function create_metadata_table_fastq(){
     create_button.id = "generate-metadata-sheet";
     create_button.onclick = function() {
       var experiment_name = document.getElementById('experiment-name').value;
-      var input = document.getElementById('input').files;
-      var input_number = Object.keys(input).length;
-      console.log(input_number);
+      var file_list_obj = document.getElementById('input').files;
+      var file_number = Object.keys(input).length;
+      console.log(file_number);
 
       var csv_string = "";
       var rows = document.getElementById("metadata_csv_table").rows;
@@ -76,20 +76,20 @@ function create_metadata_table_fastq(){
         }
       csv_string = csv_string.concat(`file_location,`);
       csv_string = csv_string.concat(`ont_type\n`);
-
+      /*
       var bc_folder = document.getElementById('fastq-folder');
       var bc_folder_path = bc_folder.files.item(0).path;
       var path_list = bc_folder_path.split("/");
       var path_slice= path_list.slice(1, -1);
       var bc_final_path = "/" + path_slice.join("/") + "/";
       var barcode_list = [];
-
+      */
       for (var i = 0; i < rows.length-1; i++) {
             for (var t = 0; t < rows[i].cells.length; t++) {
             var table_item = document.getElementById(`input${[i]}${[t]}`).value;
             console.log(table_item);
               if (t == 0) {
-                barcode_list.push(table_item);
+                //barcode_list.push(table_item);
                 csv_string = csv_string.concat(`${table_item},`);
                 }
               else if (t == 1) {
@@ -157,9 +157,9 @@ function create_csv_from_obj(obj, experiment_name) {
     //  print obj to csv in /opt/moss_db/{current_dir}/metadata_csv/{experiment_name}.csv
 }
 
-function generate_table_fastq(input_number) {
+function generate_table_fastq(file_number) {
 
-    var input = document.getElementById('input').files;
+    var file_list_obj = document.getElementById('input').files;
 
 
     var table = document.createElement('table');
@@ -182,12 +182,13 @@ function generate_table_fastq(input_number) {
 
     table.appendChild(headRow);
 
-    for (var i = 0; i < input_number; i++) {
+    for (var i = 0; i < file_number; i++) {
       var tr = document.createElement('tr');
       tr.id = "tbody_tr_" + (i).toString();
-      console.log(input);
-      console.log(input[i].path);
-      var sample_name = input[i].path.split("/").slice(-1);
+      console.log(file_list_obj);
+      console.log(file_list_obj[i]);
+      console.log(file_list_obj[i].path);
+      var sample_name = file_list_obj[i].path.split("/").slice(-1);
 
       for (var j = 0; j < columnNames.length; j++) {
         var identifier = jsonData[columnNames[j]];
