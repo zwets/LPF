@@ -52,7 +52,7 @@ function create_metadata_table_fastq(){
     var file_number = Object.keys(input).length;
     console.log(file_number);
 
-    append_table = generate_table_fastq(input_number)
+    append_table = generate_table_fastq(file_number)
 
     document.getElementById('metadata-table-div').appendChild(append_table);
 
@@ -64,7 +64,7 @@ function create_metadata_table_fastq(){
     create_button.onclick = function() {
       var experiment_name = document.getElementById('experiment-name').value;
       var file_list_obj = document.getElementById('input').files;
-      var file_number = Object.keys(input).length;
+      var file_number = Object.keys(file_list_obj).length;
       console.log(file_number);
 
       var csv_string = "";
