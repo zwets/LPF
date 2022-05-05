@@ -156,10 +156,12 @@ def check_anaconda():
     print ("sudo cp {} /bin/.".format(output))
     os.system("sudo cp {} /bin/.".format(output))
 
-    #create conda env
-    os.system("conda create --name moss_env")
-    #os.system("source activate moss_env")
-    #os.system("conda install -c bioconda flye")
+    cmd = "conda env list"
+    proc = subprocess.Popen(cmd, shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0].decode().rstrip()
+    if "base" not in output:
+        os.system("conda create --name base")
 
     if name_check and version_check:
         return True
