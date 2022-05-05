@@ -252,7 +252,7 @@ def run_assembly(entryid, configname, sample_name, target_dir, input):
     #flye -o out_dir --threads 8 --nano-raw fastq.gz
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\"" \
         .format("Flye Assembly", "reference", "4", "5", "Running", str(datetime.datetime.now())[0:-7], entryid)
-    moss.sql_execute_command(sql_cmd, configname)
+    sql_execute_command(sql_cmd, configname)
     flye_assembly(entryid, configname, sample_name, target_dir, input)
     sys.exit("run_assembly done")
 
