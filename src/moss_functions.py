@@ -165,7 +165,7 @@ def moss_init(configname, metadata, metadata_headers):
     uniqueNameCheck(input, configname)
 
     ref_db = "/opt/moss_db/{}/REFDB.ATG".format(configname)
-    target_dir = "/opt/moss_db/{}/analysis/{}/REFDB.ATG".format(configname, entryid)
+    target_dir = "/opt/moss_db/{}/analysis/{}/".format(configname, entryid)
 
     return configname, metadata_dict, input, sample_name, entryid, target_dir, ref_db
 
