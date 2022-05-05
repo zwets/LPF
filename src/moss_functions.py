@@ -251,11 +251,11 @@ def check_assembly_result(path):
 
     return True
 
-def run_assembly(entryid, config_name, sample_name, target_dir, input):
+def run_assembly(entryid, config_name, sample_name, target_dir, input, reference_header_text):
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\"" \
         .format("Flye Assembly", "reference", "4", "5", "Running", str(datetime.datetime.now())[0:-7], entryid)
     sql_execute_command(sql_cmd, config_name)
-    flye_assembly(entryid, config_name, sample_name, target_dir, input)
+    flye_assembly(entryid, config_name, sample_name, target_dir, input, reference_header_text)
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\"" \
         .format("Compiling PDF report", "reference", "5", "5", "Running", str(datetime.datetime.now())[0:-7], entryid)
@@ -654,7 +654,7 @@ def ThreshholdDistanceCheck(distancematrixfile, reference, consensus_name):
                 secondentry = True
         linecount += 1
 
-def flye_assembly(entryid, config_name, sample_name, target_dir, input):
+def flye_assembly(entryid, config_name, sample_name, target_dir, input, reference_header_text):
 
     cmd = "docker run --name assembly_{} -v {}:/tmp/{} staphb/flye flye -o /tmp/assembly_results --threads 8 --nano-raw /tmp/{}".format(
         entryid, input, input.split("/")[-1], input.split("/")[-1])
@@ -680,7 +680,8 @@ def flye_assembly(entryid, config_name, sample_name, target_dir, input):
         if line[0] != ">":
             line = line.rstrip()
             sequence += line
-    print(">" + sample_name, file=writefile)
+    new_header_text = ">Assembly of raw reads, closest reference was : " + reference_header_text[1:]
+    print(new_header_text, file=writefile)
     print(sequence, file=writefile)
     infile.close()
     writefile.close()
@@ -702,12 +703,13 @@ def flye_assembly(entryid, config_name, sample_name, target_dir, input):
     else:
         sys.exit('A semaphore related issue has occured.')
 
+    associated_species =
+
     conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
-    dbstring = "INSERT INTO reference_table(entryid, reference_header_text) VALUES('{}', '{}')".format(entryid,
-                                                                                                       associated_species)
+    dbstring = "INSERT INTO reference_table(entryid, reference_header_text) VALUES('{}', '{}')".format(entryid, new_header_text)
     c.execute(dbstring)
-    conn.commit()  # Need IPC
+    conn.commit()
     conn.close()
 
 

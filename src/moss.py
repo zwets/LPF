@@ -69,7 +69,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     template_score, template_search_result, reference_header_text, template_number = moss.kma_mapping(target_dir, input, config_name)
 
     mlst_result = moss.run_mlst(input, target_dir, reference_header_text) #TBD mlst_result used for what?
-    moss.run_assembly(entryid, config_name, sample_name, target_dir, input)
+    moss.run_assembly(entryid, config_name, sample_name, target_dir, input, reference_header_text)
     sys.exit("HERE")
     if template_search_result == 1: #1 means error, thus no template found
         #Implement flye TBD later.
