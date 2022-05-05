@@ -64,7 +64,7 @@ def SurveillancePipeline(i_illumina, i_nanopore,
 
     inputType, total_filenames, assemblyType = moss.mossCheckInputFiles(i_illumina, i_nanopore)
 
-    kma_path = exepath + "kma/kma"
+    "/opt/moss/kma/kma" = exepath + "kma/kma"
     referencedb = config_name + "REFDB.ATG"
 
     if output_name[0] == "/":
@@ -82,7 +82,7 @@ def SurveillancePipeline(i_illumina, i_nanopore,
     print("# Preliminary estimation of:", file=logfile)
     print("-input: {}".format(total_filenames), file=logfile)
 
-    template_number, template_number_score, template_found, reference_header_text = moss.findTemplateSurveillance(total_filenames, target_dir, kma_database_path,  kma_path)
+    template_number, template_number_score, template_found, reference_header_text = moss.findTemplateSurveillance(total_filenames, target_dir, kma_database_path,  "/opt/moss/kma/kma")
 
     print ("Reference identification results:", file = logfile)
     print ("Best Template ID: {}".format(template_number), file = logfile)

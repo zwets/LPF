@@ -271,7 +271,7 @@ def run_assembly(entryid, config_name, sample_name, target_dir, input):
 def init_moss_variables(exepath, config_name, ):
     referenceSyncFile = config_name + "syncFiles/referenceSync.json"
     isolateSyncFile = config_name + "syncFiles/isolateSync.json"
-    return kma_path
+    return "/opt/moss/kma/kma"
 
 def update_pip_dependencies():
     cmd = "python3 -m pip install --upgrade fpdf"
@@ -437,11 +437,11 @@ def prod_metadata_dict(metadata, metadata_headers):
     return metadict
 
 
-def check_shm_kma(kma_path, kma_database_path, cmd):
+def check_shm_kma("/opt/moss/kma/kma", kma_database_path, cmd):
     try: #Check if KMA db in shm
         cmd_stdout = check_output(cmd, stderr=STDOUT, shell=True).decode()
     except Exception as e:
-        os.system("{}_shm -t_db {}".format(kma_path, kma_database_path)) #Loads DB
+        os.system("{}_shm -t_db {}".format("/opt/moss/kma/kma", kma_database_path)) #Loads DB
         os.system(cmd)
         return True
 
@@ -522,7 +522,7 @@ def kma_mapping(target_dir,  input, config_name):
         return (0, 1, "", "") #template_search_result = 0 means no result found
     ###
 
-def illuminaMappingForward(input, template_number, target_dir, kma_database_path,  multi_threading, kma_path, templateaccesion,config_name, laptop, consensus_name):
+def illuminaMappingForward(input, template_number, target_dir, kma_database_path,  multi_threading, "/opt/moss/kma/kma", templateaccesion,config_name, laptop, consensus_name):
     illumina_name = input[0].split("/")[-1]
 
     #Claim ReafRefDB is ipc_index_refdb is free
@@ -539,18 +539,18 @@ def illuminaMappingForward(input, template_number, target_dir, kma_database_path
     if input[0] != "":
         if laptop:
             cmd = "{} -i {} -o {} -t_db {} -ref_fsa -ca -dense -nf -cge -vcf -bc90 -Mt1 {} -t {}".format(
-                kma_path, input[0][0], target_dir + consensus_name, kma_database_path,
+                "/opt/moss/kma/kma", input[0][0], target_dir + consensus_name, kma_database_path,
                 str(template_number), str(multi_threading))
             os.system(cmd)
         else:
 
             cmd = "{} -i {} -o {} -t_db {} -ref_fsa -ca -dense -cge -nf -vcf -bc90 -Mt1 {} -t {} -shm".format(
-                kma_path, input[0][0], target_dir + consensus_name, kma_database_path,
+                "/opt/moss/kma/kma", input[0][0], target_dir + consensus_name, kma_database_path,
                 str(template_number), str(multi_threading))
-            check_shm_kma(kma_path, kma_database_path, cmd)
+            check_shm_kma("/opt/moss/kma/kma", kma_database_path, cmd)
 
 
-def illuminaMappingPE(input, template_number, target_dir, kma_database_path,  multi_threading, kma_path, templateaccesion, config_name, laptop, consensus_name):
+def illuminaMappingPE(input, template_number, target_dir, kma_database_path,  multi_threading, "/opt/moss/kma/kma", templateaccesion, config_name, laptop, consensus_name):
     illumina_name = input[0].split("/")[-1]
 
     # Claim ReafRefDB is ipc_index_refdb is free
@@ -568,17 +568,17 @@ def illuminaMappingPE(input, template_number, target_dir, kma_database_path,  mu
     if input[0] != "":
         if laptop:
             cmd = "{} -ipe {} {} -o {} -t_db {} -ref_fsa -ca -dense -nf -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
-                kma_path, input[0], input[1], target_dir + consensus_name,
+                "/opt/moss/kma/kma", input[0], input[1], target_dir + consensus_name,
                 kma_database_path, str(template_number), str(multi_threading))
             os.system(cmd)
         else:
             cmd = "{} -ipe {} {} -o {} -t_db {} -ref_fsa -ca -dense -nf -cge -vcf -bc90 -Mt1 {} -t {} -shm".format(
-                kma_path, input[0], input[1], target_dir + consensus_name,
+                "/opt/moss/kma/kma", input[0], input[1], target_dir + consensus_name,
                 kma_database_path, str(template_number), str(multi_threading))
-            check_shm_kma(kma_path, kma_database_path, cmd)
+            check_shm_kma("/opt/moss/kma/kma", kma_database_path, cmd)
 
 
-def nanopore_alignment(input, template_number, target_dir, kma_database_path,  multi_threading, bc, kma_path, templateaccesion, config_name, laptop, consensus_name):
+def nanopore_alignment(input, template_number, target_dir, kma_database_path,  multi_threading, bc, "/opt/moss/kma/kma", templateaccesion, config_name, laptop, consensus_name):
     nanopore_name = input[0].split("/")[-1]
 
     # Claim ReafRefDB is ipc_index_refdb is free
@@ -596,14 +596,14 @@ def nanopore_alignment(input, template_number, target_dir, kma_database_path,  m
     if input[0] != "":
         if laptop:
             cmd = "{} -i {} -o {} -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {}".format(
-                kma_path, input[0], target_dir + consensus_name, kma_database_path,
+                "/opt/moss/kma/kma", input[0], target_dir + consensus_name, kma_database_path,
                 str(template_number), str(multi_threading), str(bc))
             os.system(cmd)
         else:
             cmd = "{} -i {} -o {} -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {} -shm".format(
-                kma_path, input[0], target_dir + consensus_name, kma_database_path,
+                "/opt/moss/kma/kma", input[0], target_dir + consensus_name, kma_database_path,
                 str(template_number), str(multi_threading), str(bc))
-            check_shm_kma(kma_path, kma_database_path, cmd)
+            check_shm_kma("/opt/moss/kma/kma", kma_database_path, cmd)
 
 def concatenateDraftGenome(input_file):
     cmd = "grep -c \">\" {}".format(input_file)
@@ -745,7 +745,7 @@ def flye_assembly(entryid, config_name, sample_name, target_dir, input):
 
     result, action = acquire_semaphore("ipc_index_refdb", config_name, 1, 7200)
     if result == 'acquired' and action == False:
-        cmd = "{} index -t_db {} -i {}{}_assembly.fasta".format(kma_path, "/opt/moss_db/{}/REFDB.ATG".format(config_name), target_dir,
+        cmd = "{} index -t_db {} -i {}{}_assembly.fasta".format("/opt/moss/kma/kma", "/opt/moss_db/{}/REFDB.ATG".format(config_name), target_dir,
                                                                  sample_name)  # add assembly to references
 
         os.system(cmd)

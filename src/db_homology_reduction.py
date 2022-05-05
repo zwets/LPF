@@ -36,10 +36,10 @@ args = parser.parse_args()
 config_name = moss.correctPathCheck(args.config_name)
 exepath = moss.correctPathCheck(args.exepath)
 
-kma_path = exepath + "kma/kma"
+"/opt/moss/kma/kma" = exepath + "kma/kma"
 
 
-clusternumber = moss.databaseOverClustering(config_name, args.dbname, kma_path, config_name + "clusterreport")
+clusternumber = moss.databaseOverClustering(config_name, args.dbname, "/opt/moss/kma/kma", config_name + "clusterreport")
 
 if clusternumber > 0:
     killList = []
@@ -52,7 +52,7 @@ if clusternumber > 0:
     infile.close()
 
     print ("starting homology reduction")
-    cmd = "{} seq2fasta -t_db {}{} > {}homoredREFDB.fasta".format(kma_path, config_name, args.dbname, config_name)
+    cmd = "{} seq2fasta -t_db {}{} > {}homoredREFDB.fasta".format("/opt/moss/kma/kma", config_name, args.dbname, config_name)
     os.system(cmd)
 
     infile = open(config_name + "homoredREFDB.fasta", 'r')
@@ -70,7 +70,7 @@ if clusternumber > 0:
     infile.close()
     outfile.close()
 
-    cmd = "{} index -i {}reduceddb.fasta -Sparse ATG -o {}homologyReducedDB.ATG".format(kma_path, config_name, config_name)
+    cmd = "{} index -i {}reduceddb.fasta -Sparse ATG -o {}homologyReducedDB.ATG".format("/opt/moss/kma/kma", config_name, config_name)
     os.system(cmd)
 
     #Cleaning

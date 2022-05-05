@@ -35,14 +35,14 @@ args = parser.parse_args()
 
 start_time = datetime.datetime.now()
 
-kma_path = args.exepath + "kma/kma"
+"/opt/moss/kma/kma" = args.exepath + "kma/kma"
 ccphylo_path = args.exepath + "ccphylo/ccphylo"
 
 config_name = moss.correctPathCheck(args.config_name)
 exepath = moss.correctPathCheck(args.exepath)
 
 if args.newcluster == True:
-    cmd = "{} dist -t_db {}{} -d 1 -o {}datafiles/referenceCluster -tmp {}".format(kma_path, config_name, "REFDB.ATG", config_name, config_name)
+    cmd = "{} dist -t_db {}{} -d 1 -o {}datafiles/referenceCluster -tmp {}".format("/opt/moss/kma/kma", config_name, "REFDB.ATG", config_name, config_name)
     os.system(cmd)
 
 infile = open("{}/datafiles/referenceCluster".format(config_name), 'r')
@@ -189,7 +189,7 @@ for i in range(len(files)):
 
 
 for i in range(len(complete_path_files)):
-    cmd = "{} -i {} -o  {}/analysis/{}/newoutput/nc_{} -t_db {}/{} -ref_fsa -nf -na -ca -dense -cge -vcf -bc90 -Mt1 {}".format(kma_path, complete_path_files[i], config_name, args.output, files[i], config_name, "REFDB.ATG", templateid)
+    cmd = "{} -i {} -o  {}/analysis/{}/newoutput/nc_{} -t_db {}/{} -ref_fsa -nf -na -ca -dense -cge -vcf -bc90 -Mt1 {}".format("/opt/moss/kma/kma", complete_path_files[i], config_name, args.output, files[i], config_name, "REFDB.ATG", templateid)
     os.system(cmd)
 
 cmd = "{} dist -i {}/analysis/{}/newoutput/*.fsa -o {}/analysis/{}/distmatrix.phy -r \"{}\" -f 9 -mc 1 -nm 0".format(ccphylo_path, config_name, args.output, config_name, args.output, reference_header_text)
