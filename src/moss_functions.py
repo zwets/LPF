@@ -159,7 +159,7 @@ def moss_init(configname, metadata, metadata_headers):
         metadata_dict['longitude'] = longitude
 
     samplename = input.split("/")[-1]
-    entryid = moss.md5(input)
+    entryid = md5(input)
 
     uniqueNameCheck(input)
 
