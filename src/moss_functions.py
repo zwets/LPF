@@ -154,14 +154,14 @@ def moss_init(configname, metadata, metadata_headers):
         input = metadata_dict['file_location'] + samplename
 
     if metadata_dict['latitude'] == '' or metadata_dict['longitude'] == '':
-        latitude, longitude = moss.calc_coordinates_from_location(metadata_dict['city'], metadata_dict['country'])
+        latitude, longitude = calc_coordinates_from_location(metadata_dict['city'], metadata_dict['country'])
         metadata_dict['latitude'] = latitude
         metadata_dict['longitude'] = longitude
 
     samplename = input.split("/")[-1]
     entryid = moss.md5(input)
 
-    moss.uniqueNameCheck(input)
+    uniqueNameCheck(input)
 
     ref_db = "/opt/moss_db/{}/REFDB.ATG".format(configname)
     target_dir = "/opt/moss_db/{}/analysis/{}/REFDB.ATG".format(configname, entryid)
