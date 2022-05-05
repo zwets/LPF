@@ -128,6 +128,7 @@ function create_metadata_table_fastq(){
 
               document.getElementById('metadata-table-div').appendChild(create_button);
               //Make go to analyses shortcut
+            })
           }
 
         }
@@ -217,7 +218,7 @@ function generate_table_fastq(file_number) {
             tr.appendChild(td);
             continue;
         }
-
+        /*
         else {
             td.defaultValue = "";
             td.classList.add("select");
@@ -234,7 +235,7 @@ function generate_table_fastq(file_number) {
             td.appendChild(input);
             tr.appendChild(td);
             continue;
-        }
+        }*/
         //td.appendChild(document.createTextNode(new_input_array[i]));
         tr.appendChild(td);
       }
@@ -248,24 +249,6 @@ function generate_table_fastq(file_number) {
     return table
 }
 
-
-
-
-function find_model_from_input(flowcell, kit, db_dir, algorithm){
-    var model = "";
-    var database_system = require('/opt/moss_db/config.json').current_working_db;
-    const data = require("/opt/moss_db/" + database_system +"/static_files/workflow.json");
-    for (var i = 0; i < data.length; i++) {
-                if (data[i].flowcell == flowcell) {
-                    if (data[i].kit == kit) {
-                        model = data[i].barcoding_config_name;
-                        model = model.concat(algorithm);
-                        return model;
-                        //document.getElementById('running_model').innerHTML = model;
-                    };
-                };
-            }
-}
 
 
 function readTextFile(file, callback) {
