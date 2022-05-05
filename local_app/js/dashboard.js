@@ -145,14 +145,14 @@ function most_recent_isolates_table(data_obj, data) {
             tr = table.insertRow(-1);
 
             var tabCell = tr.insertCell(-1);
-            tabCell.innerHTML = data_obj[i].samplename;
+            tabCell.innerHTML = data_obj[i].sample_name;
             var tabCell = tr.insertCell(-1);
             tabCell.innerHTML = data_obj[i].collection_date;
 
             var tabCell = tr.insertCell(-1);
             var img = document.createElement('img');
             img.id = data_obj[i].entryid;
-            img.name = data_obj[i].samplename;
+            img.name = data_obj[i].sample_name;
             img.src = data.exepath + "local_app/images/report-icon.png";
             img.setAttribute('height', '17pt');
             img.innerHTML = data_obj[i].entryid;
@@ -178,7 +178,7 @@ function make_table_from_obj(obj) {
     var k = '<tbody>'
     for(i = 0;i < obj.length; i++){
             k+= '<tr>';
-            k+= '<td>' + obj[i].samplename + '</td>';
+            k+= '<td>' + obj[i].sample_name + '</td>';
             k+= '<td>' + obj[i].timestamp + '</td>';
             k+= '</tr>';
         }
@@ -233,7 +233,7 @@ function search_function(string) {
       var data_obj = search_db_query(sql);
       return data_obj
     } else if (string == "Isolate Name") {
-        let sql = `SELECT * FROM isolate_table WHERE samplename LIKE '%${query}%'`;
+        let sql = `SELECT * FROM isolate_table WHERE sample_name LIKE '%${query}%'`;
         var data_obj = search_db_query(sql);
         return data_obj
     } else if (string == "Isolate Specie") {

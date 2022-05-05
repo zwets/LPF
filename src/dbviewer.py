@@ -23,11 +23,11 @@ args = parser.parse_args()
 conn = sqlite3.connect(args.input)
 c = conn.cursor()
 print ("refs")
-reflist = (c.execute("SELECT header_text from refs")).fetchall()
+reflist = (c.execute("SELECT reference_header_text from refs")).fetchall()
 for item in reflist:
     print (item[0])
 print ("isolates")
-isolatelist = (c.execute("SELECT header_text, samplename from isolates")).fetchall()
+isolatelist = (c.execute("SELECT reference_header_text, sample_name from isolates")).fetchall()
 for item in isolatelist:
     print ("refrence: {} has isolatemapping; {}".format(item[0], item[1]))
 

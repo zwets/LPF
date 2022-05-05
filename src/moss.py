@@ -40,9 +40,9 @@ jobid = random.randint(1,100000000)
 def moss_pipeline(configname, metadata, metadata_headers):
     start_time = datetime.datetime.now()
 
-    configname, metadata_dict, input, samplename, entryid, target_dir, ref_db = moss.moss_init(configname, metadata, metadata_headers)
-    moss.sql_execute_command("INSERT INTO isolate_table(entryid, samplename, header_text, analysistimestamp, samplingtimestamp, amrgenes, virulencegenes, plasmids, consensus_name, referenceid) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"\
-        .format(entryid, samplename, "", str(datetime.datetime.now())[0:-7], metadata_dict["collection date"], "", "", "", "", ""), configname)
+    configname, metadata_dict, input, sample_name, entryid, target_dir, ref_db = moss.moss_init(configname, metadata, metadata_headers)
+    moss.sql_execute_command("INSERT INTO sample_table(entryid, sample_name, reference_id, amr_genes, virulence_genes, plasmids) VALUES('{}', '{}', '{}', '{}', '{}', '{}')"\
+        .format(entryid, sample_name, "", "", "", "", ""), configname)
 
     moss.sql_execute_command("INSERT INTO status_table(entryid, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
         entryid, "Initializing", "Not determined", "1", "10", "Running", str(datetime.datetime.now())[0:-7],), configname)
@@ -80,7 +80,7 @@ def moss_pipeline(configname, metadata, metadata_headers):
 
     if template_search_result == 1: #1 means error, thus no template found
         #Implement flye
-        moss.run_assembly(entryid, configname, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
+        moss.run_assembly(entryid, configname, sample_name, assemblyType, inputType, target_dir, input, illumina_name1,
                           illumina_name2, jobid, exepath, kma_database_path, start_time)
 
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "IPC check", "Alignment", "4", "10", "Running", configname), configname)
@@ -114,15 +114,15 @@ def moss_pipeline(configname, metadata, metadata_headers):
 
     referenceid = moss.sql_fetch("SELECT entryid FROM reference_table WHERE reference_header_text = '{}'".format(reference_header_text), configname)[0][0]
 
-    moss.sql_execute_command("UPDATE isolate_table SET referenceid = '{}' WHERE entryid = '{}'".format(referenceid, entryid), configname)
+    moss.sql_execute_command("UPDATE sample_table SET referenceid = '{}' WHERE entryid = '{}'".format(referenceid, entryid), configname)
 
     #Managed in function when consensus in created ffs.
     cmd = "cp {}{}.fsa {}/consensus_sequences/{}.fsa".format(target_dir, consensus_name, configname, consensus_name)
     os.system(cmd)
 
     #Generic SQL query
-    moss.sql_execute_command("UPDATE isolate_table SET consensus_name = '{}.fsa' WHERE entryid = '{}'".format(consensus_name, entryid), configname)
-    related_isolates = moss.sql_fetch("SELECT consensus_name FROM isolate_table WHERE referenceid = '{}'".format(referenceid), configname)[0][0].split(",")
+    moss.sql_execute_command("UPDATE sample_table SET consensus_name = '{}.fsa' WHERE entryid = '{}'".format(consensus_name, entryid), configname)
+    related_isolates = moss.sql_fetch("SELECT consensus_name FROM sample_table WHERE referenceid = '{}'".format(referenceid), configname)[0][0].split(",")
 
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "CCphylo", "Alignment", "5", "10", "Running", configname), configname)
 
@@ -146,7 +146,7 @@ def moss_pipeline(configname, metadata, metadata_headers):
         #No associated species
         reference_header_text = reference_header_text.split()
         associated_species = "{} {} assembly from ID: {}, SNP distance from best verified reference: {}".format(reference_header_text[1], reference_header_text[2], entryid, distance)
-        moss.run_assembly(entryid, configname, samplename, assemblyType, inputType, target_dir, input, illumina_name1,
+        moss.run_assembly(entryid, configname, sample_name, assemblyType, inputType, target_dir, input, illumina_name1,
                           illumina_name2, jobid, exepath, kma_database_path, start_time,  associated_species)
     #generic sql query
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Distance Matrix", "Alignment", "6", "10", "Running", configname), configname)
@@ -165,9 +165,9 @@ def moss_pipeline(configname, metadata, metadata_headers):
 
     #moss_sql.update_reference_table(entryid, None, None, None, reference_header_text, configname)
 
-    moss.sql_execute_command("INSERT INTO amr_table(entryid, samplename, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, samplename, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), reference_header_text, riskcategory.replace("'", "''"), warning.replace("'", "''")), configname)
+    moss.sql_execute_command("INSERT INTO amr_table(entryid, sample_name, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entryid, sample_name, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), reference_header_text, riskcategory.replace("'", "''"), warning.replace("'", "''")), configname)
 
-    moss.sql_execute_command("UPDATE isolate_table SET {}, {}, {}, {}, {} WHERE {}".format(entryid, reference_header_text, samplename, plasmid_string.replace("'", "''"), allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''")), configname)
+    moss.sql_execute_command("UPDATE sample_table SET {}, {}, {}, {}, {} WHERE {}".format(entryid, reference_header_text, sample_name, plasmid_string.replace("'", "''"), allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''")), configname)
 
     entries, values = moss.sql_string_metadata(metadata_dict)
 

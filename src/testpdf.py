@@ -37,14 +37,14 @@ for file in onlyfiles:
                             stdout=subprocess.PIPE, )
     output = proc.communicate()[0]
     id = output.decode().rstrip()
-    header_text = id.split()[2]
-    header_text = id.split()[2:]
-    header_text = " ".join(header_text)
+    reference_header_text = id.split()[2]
+    reference_header_text = id.split()[2:]
+    reference_header_text = " ".join(reference_header_text)
 
     entryid = file
     target_dir = configname + "analysis/" + entryid + "/"
     logfile = configname + "/analysis/" + file + "/logf*"
-    inputdir = "{}/datafiles/distancematrices/{}/".format(configname, header_text)
+    inputdir = "{}/datafiles/distancematrices/{}/".format(configname, reference_header_text)
     image_location = "{}tree.png".format(inputdir)
     cmd = "grep \"mpr:\" {}".format(logfile)
     proc = subprocess.Popen(cmd, shell=True,
@@ -58,10 +58,10 @@ for file in onlyfiles:
                                                                                                              file)
 
     if result == 'true':
-        moss.compileReportAlignment(target_dir, entryid, configname, image_location, header_text, exepath)  # No report compiled for assemblies! Look into it! #TBD
+        moss.compileReportAlignment(target_dir, entryid, configname, image_location, reference_header_text, exepath)  # No report compiled for assemblies! Look into it! #TBD
     elif result == 'false':
         moss.compileReportAssembly(target_dir, entryid, configname, associated_species, exepath)
 
 #value = moss.check_sql_semaphore_value(configname, 'ipc_index_refdb')
-#moss.compileReportAlignment(target_dir, entryid, configname, image_location, header_text, exepath)  # No report compiled for assemblies! Look into it! #TBD
+#moss.compileReportAlignment(target_dir, entryid, configname, image_location, reference_header_text, exepath)  # No report compiled for assemblies! Look into it! #TBD
 #moss.compileReportAssembly(target_dir, entryid, configname, image_location, associated_species, exepath)
