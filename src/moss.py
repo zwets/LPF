@@ -122,12 +122,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
 
     #Why is cc phylo not in a function?
     cmd = "/opt/moss/ccphylo/ccphylo dist -i {}/phytree_output/* -r \"{}\" -mc 0.01 -nm 0 -o {}/phytree_output/distance_matrix".format(target_dir, reference_header_text, target_dir)
-
-    if prune_distance != 0 :
-        cmd += " -pr {}".format(prune_distance)
     os.system(cmd)
-
-    sys.exit("cctest")
 
 
     # Check if acceptable snp distance
@@ -140,6 +135,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
         moss.run_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text,
                           associated_species)
 
+    sys.exit("Post disrance check")
     #generic sql query
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entry_id, "Distance Matrix", "Alignment", "6", "10", "Running", config_name), config_name)
 
