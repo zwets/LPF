@@ -203,7 +203,7 @@ def make_phytree_output_folder(config_name, target_dir, isolate_list, reference_
     header_name = reference_header_text.split()[0]
     print (number)
     print (header_name)
-    cmd = "/opt/moss/kma/kma seq2fasta -t_db {}REFDB.ATG -seqs {} > {}/phytree_output/{}.fsa".format(config_name, number, target_dir, header_name)
+    cmd = "/opt/moss/kma/kma seq2fasta -t_db /opt/moss_db/{}/REFDB.ATG -seqs {} > {}/phytree_output/{}.fsa".format(config_name, number, target_dir, header_name)
     print (cmd)
     os.system(cmd)
 
