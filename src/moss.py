@@ -76,7 +76,9 @@ def moss_pipeline(config_name, metadata, metadata_headers):
         #Implement flye TBD later.
         moss.run_assembly(entryid, config_name, sample_name, target_dir, input, reference_header_text,
                           associated_species)
-    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "IPC check", "Alignment", "4", "10", "Running", config_name), config_name)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\"" \
+        .format("IPC check", "Alignment", "4", "10", "Running", str(datetime.datetime.now())[0:-7], entryid)
+    moss.sql_execute_command(sql_cmd, config_name)
 
     #Semaphores should be managed better tbh. Function within function?
     result, action = moss.acquire_semaphore("ipc_index_refdb", config_name, 1, 7200)
