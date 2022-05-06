@@ -167,10 +167,15 @@ def moss_init(config_name, metadata, metadata_headers):
 
     uniqueNameCheck(input, config_name)
 
+    if input.split("/")[-1][-2:] == "gz":
+        c_name = input.split("/")[-1][:-2]
+    else:
+        c_name = input.split("/")[-1][:10]
+
     ref_db = "/opt/moss_db/{}/REFDB.ATG".format(config_name)
     target_dir = "/opt/moss_db/{}/analysis/{}/".format(config_name, entryid)
 
-    return config_name, metadata_dict, input, sample_name, entryid, target_dir, ref_db
+    return config_name, metadata_dict, input, sample_name, entryid, target_dir, ref_db, c_name
 
 
 def get_kma_template_number(reference_header_text, config_name):
@@ -522,12 +527,7 @@ def kma_mapping(target_dir,  input, config_name):
         return (0, 1, "", "") #template_search_result = 0 means no result found
     ###
 
-def nanopore_alignment(input, template_number, target_dir, kma_database_path,  multi_threading, bc, kma_path, templateaccesion, config_name, laptop, consensus_name):
-    nanopore_name = input[0].split("/")[-1]
-
-    # Claim ReafRefDB is ipc_index_refdb is free
-    # Check if an assembly is currently running
-
+def nanopore_alignment(input, template_number, target_dir, consensus_name, config_name):
     result, action = acquire_semaphore("ipc_index_refdb", config_name, 1, 7200)
     if result == 'acquired' and action == False:
         release_semaphore("ipc_index_refdb", config_name)
@@ -536,18 +536,9 @@ def nanopore_alignment(input, template_number, target_dir, kma_database_path,  m
         sys.exit(result)
     else:
         sys.exit('A semaphore related issue has occured.')
-
-    if input[0] != "":
-        if laptop:
-            cmd = "{} -i {} -o {} -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {}".format(
-                "/opt/moss/kma/kma", input[0], target_dir + consensus_name, kma_database_path,
-                str(template_number), str(multi_threading), str(bc))
-            os.system(cmd)
-        else:
-            cmd = "{} -i {} -o {} -t_db {} -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t {} -bc {} -shm".format(
-                "/opt/moss/kma/kma", input[0], target_dir + consensus_name, kma_database_path,
-                str(template_number), str(multi_threading), str(bc))
-            check_shm_kma("/opt/moss/kma/kma", kma_database_path, cmd)
+    cmd = "/opt/moss/kma/kma -i {} -o {} -t_db /opt/moss_db/{}/REFDB.ATG -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t 8 -bc 0.9"\
+        .format(input, target_dir + consensus_name, config_name, str(template_number))
+    os.system(cmd)
 
 def concatenateDraftGenome(input_file):
     cmd = "grep -c \">\" {}".format(input_file)

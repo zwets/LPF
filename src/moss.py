@@ -38,7 +38,7 @@ args = parser.parse_args()
 def moss_pipeline(config_name, metadata, metadata_headers):
     start_time = datetime.datetime.now()
 
-    config_name, metadata_dict, input, sample_name, entryid, target_dir, ref_db = moss.moss_init(config_name, metadata, metadata_headers)
+    config_name, metadata_dict, input, sample_name, entryid, target_dir, ref_db, c_name = moss.moss_init(config_name, metadata, metadata_headers)
     moss.sql_execute_command("INSERT INTO sample_table(entryid, sample_name, reference_id, amr_genes, virulence_genes, plasmids) VALUES('{}', '{}', '{}', '{}', '{}', '{}')"\
         .format(entryid, sample_name, "", "", "", "", ""), config_name)
 
@@ -71,14 +71,11 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     associated_species = "{} - assembly from ID: {}".format(reference_header_text, entryid)
 
     mlst_result = moss.run_mlst(input, target_dir, reference_header_text) #TBD mlst_result used for what?
-    moss.run_assembly(entryid, config_name, sample_name, target_dir, input, reference_header_text, associated_species)
-    sys.exit("HERE")
+
     if template_search_result == 1: #1 means error, thus no template found
         #Implement flye TBD later.
         moss.run_assembly(entryid, config_name, sample_name, target_dir, input, reference_header_text,
                           associated_species)
-        sys.exit("HERE")
-    sys.exit("NO ASSEMBLY")
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "IPC check", "Alignment", "4", "10", "Running", config_name), config_name)
 
     #Semaphores should be managed better tbh. Function within function?
@@ -97,21 +94,15 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     else:
         templateaccesion = reference_header_text
 
-    #WTF here, managed  variablenames earlier, in functions or not at all!
-    if input[0].split("/")[-1][-2:] == "gz":
-        c_name = input[0].split("/")[-1][:-2]
-    else:
-        c_name = input[0].split("/")[-1][:10]
-
-    #Again, see above
     consensus_name = "{}_{}_consensus".format(c_name, templateaccesion)
 
-    moss.nanopore_alignment(input, template_number, target_dir, kma_database_path,  multi_threading, bc, templateaccesion, config_name, laptop, consensus_name)
+    moss.nanopore_alignment(input, template_number, target_dir, consensus_name, config_name)
 
     referenceid = moss.sql_fetch("SELECT entryid FROM reference_table WHERE reference_header_text = '{}'".format(reference_header_text), config_name)[0][0]
 
     moss.sql_execute_command("UPDATE sample_table SET referenceid = '{}' WHERE entryid = '{}'".format(referenceid, entryid), config_name)
 
+    sys.exit("TEST HREE")
     #Managed in function when consensus in created ffs.
     cmd = "cp {}{}.fsa {}/consensus_sequences/{}.fsa".format(target_dir, consensus_name, config_name, consensus_name)
     os.system(cmd)
