@@ -68,8 +68,11 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     #Rewrite this horrible kma_mapping function. Should be way simpler.
     template_score, template_search_result, reference_header_text, template_number = moss.kma_mapping(target_dir, input, config_name)
 
+    associated_species = "{} {} assembly from ID: {}, SNP distance from best verified reference: {}".format(
+        reference_header_text[1], reference_header_text[2], entryid, distance)
+
     mlst_result = moss.run_mlst(input, target_dir, reference_header_text) #TBD mlst_result used for what?
-    moss.run_assembly(entryid, config_name, sample_name, target_dir, input, reference_header_text)
+    moss.run_assembly(entryid, config_name, sample_name, target_dir, input, reference_header_text, associated_species)
     sys.exit("HERE")
     if template_search_result == 1: #1 means error, thus no template found
         #Implement flye TBD later.

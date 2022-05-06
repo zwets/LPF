@@ -251,7 +251,7 @@ def check_assembly_result(path):
 
     return True
 
-def run_assembly(entryid, config_name, sample_name, target_dir, input, reference_header_text):
+def run_assembly(entryid, config_name, sample_name, target_dir, input, reference_header_text, associated_species):
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\"" \
         .format("Flye Assembly", "reference", "4", "5", "Running", str(datetime.datetime.now())[0:-7], entryid)
     sql_execute_command(sql_cmd, config_name)
