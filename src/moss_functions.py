@@ -212,7 +212,7 @@ def create_phylo_tree(config_name, reference_header_text, target_dir):
 
 
 def moss_shortcut_init():
-    outfile = '/opt/moss/src/moss', 'w')
+    outfile = open('/opt/moss/src/moss', 'w')
     print ("#!/usr/bin/env bash", file = outfile)
     print ("echo \'HELLO THERE\'", file = outfile)
     outfile.close()
