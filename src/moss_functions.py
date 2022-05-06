@@ -201,7 +201,10 @@ def make_phytree_output_folder(config_name, target_dir, isolate_list, reference_
 
     number = get_kma_template_number(reference_header_text, config_name)
     header_name = reference_header_text.split()[0]
+    print (number)
+    print (header_name)
     cmd = "/opt/moss/kma/kma seq2fasta -t_db {}REFDB.ATG -seqs {} > {}/phytree_output/{}.fsa".format(config_name, number, target_dir, header_name)
+    print (cmd)
     os.system(cmd)
 
     cmd = "cp {}*_consensus.fsa {}phytree_output/.".format(target_dir, target_dir)
