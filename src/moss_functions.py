@@ -195,7 +195,7 @@ def make_phytree_output_folder(config_name, target_dir, isolate_list, reference_
     os.system(cmd)
 
     for item in isolate_list:
-        path = "{}consensus_sequences/{}".format(config_name, item)
+        path = "/opt/moss_db/{}/consensus_sequences/{}".format(config_name, item)
         cmd = "cp {} {}/phytree_output/.".format(path, target_dir)
         os.system(cmd)
 
