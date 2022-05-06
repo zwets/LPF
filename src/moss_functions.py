@@ -201,16 +201,13 @@ def make_phytree_output_folder(config_name, target_dir, isolate_list, reference_
 
     number = get_kma_template_number(reference_header_text, config_name)
     header_name = reference_header_text.split()[0]
-    print (number)
-    print (header_name)
     cmd = "/opt/moss/kma/kma seq2fasta -t_db /opt/moss_db/{}/REFDB.ATG -seqs {} > {}/phytree_output/{}.fsa".format(config_name, number, target_dir, header_name)
-    print (cmd)
     os.system(cmd)
 
     cmd = "cp {}*_consensus.fsa {}phytree_output/.".format(target_dir, target_dir)
     os.system(cmd)
 
-def create_phylo_tree(config_name, reference_header_text, target_dir):
+def create_phylo_tree(target_dir):
     tree = Phylo.read("{}phytree_output/tree.newick".format(target_dir), 'newick')
     Phylo.draw(tree, do_show=False)
     pylab.savefig("{}phytree_output/tree.png".format(target_dir))

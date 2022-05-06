@@ -135,24 +135,24 @@ def moss_pipeline(config_name, metadata, metadata_headers):
         moss.run_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text,
                           associated_species)
 
-    sys.exit("Post disrance check")
-    #generic sql query
-    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entry_id, "Distance Matrix", "Alignment", "6", "10", "Running", config_name), config_name)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Distance Matrix", "Alignment", "6", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
+    moss.sql_execute_command(sql_cmd, config_name)
 
-    #ccphylo in function
     cmd = "/opt/moss/ccphylo/ccphylo tree --input {}/phytree_output/distance_matrix --output {}/phytree_output/tree.newick".format(target_dir, target_dir)
     os.system(cmd)
 
-    #Include all of the below in alignment_related_function
-    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entry_id, "Phylo Tree imaging", "Alignment", "7", "10", "Running", config_name), config_name)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Phylo Tree imaging", "Alignment", "7", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
+    moss.sql_execute_command(sql_cmd, config_name)
 
+    image_location = moss.create_phylo_tree(target_dir)
 
-    image_location = moss.create_phylo_tree(config_name, reference_header_text, target_dir)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Database updating", "Alignment", "8", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
+    moss.sql_execute_command(sql_cmd, config_name)
 
-    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entry_id, "Database updating", "Alignment", "8", "10", "Running", config_name), config_name)
-
-    #moss_sql.update_reference_table(entry_id, None, None, None, reference_header_text, config_name)
-
+    sys.exit("pre amr")
     moss.sql_execute_command("INSERT INTO amr_table(entry_id, sample_name, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entry_id, sample_name, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), reference_header_text, riskcategory.replace("'", "''"), warning.replace("'", "''")), config_name)
 
     moss.sql_execute_command("UPDATE sample_table SET {}, {}, {}, {}, {} WHERE {}".format(entry_id, reference_header_text, sample_name, plasmid_string.replace("'", "''"), allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''")), config_name)
