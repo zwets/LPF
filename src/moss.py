@@ -75,8 +75,8 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     sys.exit("HERE")
     if template_search_result == 1: #1 means error, thus no template found
         #Implement flye TBD later.
-        moss.run_assembly(entryid, config_name, sample_name, assemblyType, inputType, target_dir, input, illumina_name1,
-                          illumina_name2, jobid, exepath, kma_database_path, start_time)
+        moss.run_assembly(entryid, config_name, sample_name, target_dir, input, reference_header_text,
+                          associated_species)
         sys.exit("HERE")
     sys.exit("NO ASSEMBLY")
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "IPC check", "Alignment", "4", "10", "Running", config_name), config_name)
@@ -106,7 +106,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     #Again, see above
     consensus_name = "{}_{}_consensus".format(c_name, templateaccesion)
 
-    moss.nanopore_alignment(input, template_number, target_dir, kma_database_path,  multi_threading, bc, exepath + "kma/kma", templateaccesion, config_name, laptop, consensus_name)
+    moss.nanopore_alignment(input, template_number, target_dir, kma_database_path,  multi_threading, bc, templateaccesion, config_name, laptop, consensus_name)
 
     referenceid = moss.sql_fetch("SELECT entryid FROM reference_table WHERE reference_header_text = '{}'".format(reference_header_text), config_name)[0][0]
 
@@ -124,10 +124,10 @@ def moss_pipeline(config_name, metadata, metadata_headers):
 
 
     #Fine, but can we include add ccphylo related in one function?
-    moss.make_phytree_output_folder(config_name, target_dir, related_isolates, exepath, reference_header_text)
+    moss.make_phytree_output_folder(config_name, target_dir, related_isolates, reference_header_text)
 
     #Why is cc phylo not in a function?
-    cmd = "{} dist -i {}/phytree_output/* -r \"{}\" -mc 0.01 -nm 0 -o {}/phytree_output/distance_matrix".format(exepath + "ccphylo/ccphylo", target_dir, reference_header_text, target_dir)
+    cmd = "/opt/moss/ccphylo/ccphylo dist -i {}/phytree_output/* -r \"{}\" -mc 0.01 -nm 0 -o {}/phytree_output/distance_matrix".format(target_dir, reference_header_text, target_dir)
 
     if prune_distance != 0 :
         cmd += " -pr {}".format(prune_distance)
@@ -141,13 +141,14 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     if distance > 300: #SNP distance
         #No associated species
         associated_species = "{} - assembly from ID: {}".format(reference_header_text, entryid)
-        moss.run_assembly(entryid, config_name, sample_name, assemblyType, inputType, target_dir, input, illumina_name1,
-                          illumina_name2, jobid, exepath, kma_database_path, start_time,  associated_species)
+        moss.run_assembly(entryid, config_name, sample_name, target_dir, input, reference_header_text,
+                          associated_species)
+
     #generic sql query
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Distance Matrix", "Alignment", "6", "10", "Running", config_name), config_name)
 
     #ccphylo in function
-    cmd = "{}ccphylo/ccphylo tree -i {}/phytree_output/distance_matrix -o {}/phytree_output/tree.newick".format(exepath, target_dir, target_dir)
+    cmd = "/opt/moss/ccphylo/ccphylo tree -i {}/phytree_output/distance_matrix -o {}/phytree_output/tree.newick".format(target_dir, target_dir)
     os.system(cmd)
 
     #Include all of the below in alignment_related_function
@@ -180,14 +181,14 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Outbreak Finder", "Alignment", "9", "10", "Running", config_name), config_name)
 
     #Outbreak_finder wtf? really?
-    cmd = "python3 {}src/outbreak_finder.py -config_name {}".format(exepath, config_name) #WTF TBD
+    cmd = "python3 /opt/moss/src/outbreak_finder.py -config_name {}".format(config_name) #WTF TBD
     os.system(cmd)
 
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Running", config_name), config_name)
 
     #Still fails here for multiple non-sync analyses
     #Both alignment report and assembly is fuckly. Fix it.
-    moss.compileReportAlignment(target_dir, entryid, config_name, image_location, reference_header_text, exepath, related_isolates) #No report compiled for assemblies! Look into it! #TBD
+    moss.compileReportAlignment(target_dir, entryid, config_name, image_location, reference_header_text, related_isolates) #No report compiled for assemblies! Look into it! #TBD
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entryid, "Alignment PDF compiling", "Alignment", "10", "10", "Finished", config_name), config_name)
 
 

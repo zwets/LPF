@@ -185,7 +185,7 @@ def get_kma_template_number(reference_header_text, config_name):
     infile.close()
     return t
 
-def make_phytree_output_folder(config_name, target_dir, isolate_list, exepath, reference_header_text):
+def make_phytree_output_folder(config_name, target_dir, isolate_list, reference_header_text):
     cmd = "mkdir {}/phytree_output".format(target_dir)
     os.system(cmd)
 
@@ -196,7 +196,7 @@ def make_phytree_output_folder(config_name, target_dir, isolate_list, exepath, r
 
     number = get_kma_template_number(reference_header_text, config_name)
     header_name = reference_header_text.split()[0]
-    cmd = "{}/kma/kma seq2fasta -t_db {}REFDB.ATG -seqs {} > {}/phytree_output/{}.fsa".format(exepath, config_name, number, target_dir, header_name)
+    cmd = "/opt/moss/kma/kma seq2fasta -t_db {}REFDB.ATG -seqs {} > {}/phytree_output/{}.fsa".format(config_name, number, target_dir, header_name)
     os.system(cmd)
 
     cmd = "cp {}*_consensus.fsa {}phytree_output/.".format(target_dir, target_dir)
@@ -211,12 +211,12 @@ def create_phylo_tree(config_name, reference_header_text, target_dir):
 
 
 
-def moss_shortcut_init(exepath):
-    outfile = open(exepath + 'src/moss', 'w')
+def moss_shortcut_init():
+    outfile = '/opt/moss/src/moss', 'w')
     print ("#!/usr/bin/env bash", file = outfile)
     print ("echo \'HELLO THERE\'", file = outfile)
     outfile.close()
-    cmd = "mv {}src/moss ~/bin/.".format(exepath)
+    cmd = "mv /opt/moss/src/moss ~/bin/."
     os.system(cmd)
     cmd = "chmod a+x ~/bin/moss"
     os.system(cmd)
@@ -261,14 +261,14 @@ def run_assembly(entryid, config_name, sample_name, target_dir, input, reference
         .format("Compiling PDF report", "reference", "5", "5", "Running", str(datetime.datetime.now())[0:-7], entryid)
     sql_execute_command(sql_cmd, config_name)
 
-    compileReportAssembly(target_dir, entryid, config_name, associated_species, exepath) #Look at the TBD
+    compileReportAssembly(target_dir, entryid, config_name, associated_species) #Look at the TBD
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\"" \
         .format("Assembly pipeline completed", "reference", "5", "5", "Completed", str(datetime.datetime.now())[0:-7], entryid)
     sql_execute_command(sql_cmd, config_name)
     sys.exit("No template was found, so input was added to references.")
 
-def init_moss_variables(exepath, config_name, ):
+def init_moss_variables(config_name, ):
     referenceSyncFile = config_name + "syncFiles/referenceSync.json"
     isolateSyncFile = config_name + "syncFiles/isolateSync.json"
     return "/opt/moss/kma/kma"
@@ -284,12 +284,12 @@ def update_pip_dependencies():
         os.system(cmd)
 
 
-def update_moss_dependencies(exepath, laptop, update_list, force):
+def update_moss_dependencies(laptop, update_list, force):
     if force:
         if laptop:
             print ("laptop FORCE TBD")
         else:
-            cmd = "cd {}".format(exepath)
+            cmd = "cd /opt/moss/"
             os.system(cmd)
             cmd = "rm -rf kma; rm -rf ccphylo; rm -rf mlst; rm -rf resfinder; rm -rf plasmidfinder; rm -rf virulencefinder;"
             os.system(cmd)
@@ -321,12 +321,12 @@ def update_moss_dependencies(exepath, laptop, update_list, force):
             print ("laptop SOFT TBD")
         else:
             if "kma" in update_list:
-                cmd = "cd {}".format(exepath)
+                cmd = "cd /opt/moss/"
                 os.system(cmd)
                 cmd = "git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; git checkout nano; make; cd ..;"
                 os.system(cmd)
             if "ccphylo" in update_list:
-                cmd = "cd {}".format(exepath)
+                cmd = "cd /opt/moss/"
                 os.system(cmd)
                 cmd = "git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;"
                 os.system(cmd)
@@ -357,24 +357,24 @@ def varify_tool(cmd, expected, index_start, index_end):
     else:
         return False
 
-def varify_all_dependencies(exepath, laptop):
+def varify_all_dependencies(laptop):
     update_list = []
-    if not varify_tool("{}/kma/kma -v".format(exepath), '1.3.24', -8, -2):#KMA, expected: KMA-1.3.24+
+    if not varify_tool("/opt/moss/kma/kma -v", '1.3.24', -8, -2):#KMA, expected: KMA-1.3.24+
         update_list.append("kma")
-    if not varify_tool("{}/ccphylo/ccphylo -v".format(exepath), '0.5.3', -6, -1): #ccphylo, expected: CCPhylo-0.5.3
+    if not varify_tool("/opt/moss/ccphylo/ccphylo -v", '0.5.3', -6, -1): #ccphylo, expected: CCPhylo-0.5.3
         update_list.append("ccphylo")
-    if not varify_tool("docker -v".format(exepath), '20.10.8', 15, 22): #docker, Docker version 20.10.8, build 3967b7d28e
+    if not varify_tool("docker -v", '20.10.8', 15, 22): #docker, Docker version 20.10.8, build 3967b7d28e
         update_list.append("docker")
     if not laptop:
         pass #Test CUDA
         #ont-guppy test
-    if not varify_tool("R --version".format(exepath), '4.0.0', 10, 15): #R
+    if not varify_tool("R --version", '4.0.0', 10, 15): #R
         update_list.append("r")
-    if not varify_tool("npm -v".format(exepath), '7.0.0', 0, -1): #npm 7.21.1
+    if not varify_tool("npm -v", '7.0.0', 0, -1): #npm 7.21.1
         update_list.append("npm")
-    if not varify_tool("pip --version".format(exepath), '21.0.0', 4, 10): #pip, pip 21.3.1 from /user/etc/etc
+    if not varify_tool("pip --version", '21.0.0', 4, 10): #pip, pip 21.3.1 from /user/etc/etc
         update_list.append("python3-pip")
-    if not varify_tool("conda --version".format(exepath), '4.0.0', 6, -1): #conda, conda 4.10.1
+    if not varify_tool("conda --version", '4.0.0', 6, -1): #conda, conda 4.10.1
         update_list.append("conda")
     return update_list
 
@@ -812,7 +812,7 @@ def isolate_file_name(config_name, entryid):
     return element
 
 
-def generate_amr_resistance_profile_table(config_name, entryid, pdf, target_dir, exepath, reference_header_text):
+def generate_amr_resistance_profile_table(config_name, entryid, pdf, target_dir, reference_header_text):
 
     panel_found = False
     panel_list = []
@@ -823,7 +823,7 @@ def generate_amr_resistance_profile_table(config_name, entryid, pdf, target_dir,
     panels = []
     antimicrobials = dict()
 
-    infile = open(exepath + "resfinder/db_resfinder/phenotype_panels.txt" ,'r')
+    infile = open("/opt/moss/resfinder/db_resfinder/phenotype_panels.txt" ,'r')
     add_amr_flag = False
     for line in infile:
         line = line.rstrip()
@@ -914,7 +914,7 @@ def run_bandage(target_dir, jobid):
     os.system(cmd)
 
 
-def compileReportAssembly(target_dir, ID, config_name, associated_species, exepath):
+def compileReportAssembly(target_dir, ID, config_name, associated_species):
     #QA checks?
     #Quast?
 
@@ -923,7 +923,7 @@ def compileReportAssembly(target_dir, ID, config_name, associated_species, exepa
 
     ''' First Page '''
     pdf.add_page()
-    pdf.image(exepath + "/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
+    pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
     create_title(pdf, ID, "MOSS analytical report")
     pdf.ln(5)
     pdf.set_font('Arial', '', 12)
@@ -950,7 +950,7 @@ def compileReportAssembly(target_dir, ID, config_name, associated_species, exepa
     pdf.output(target_dir + filename, 'F')
 
 
-def retrieve_cge_counts(target_dir, ID, config_name, image_location, reference_header_text, exepath):
+def retrieve_cge_counts(target_dir, ID, config_name, image_location, reference_header_text):
     isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
@@ -1022,17 +1022,17 @@ def mlst_sequence_type(target_dir):
 
 
 
-def compileReportAlignment(target_dir, ID, config_name, image_location, reference_header_text, exepath, related_isolates):
+def compileReportAlignment(target_dir, ID, config_name, image_location, reference_header_text, related_isolates):
     pdf = FPDF()  # A4 (210 by 297 mm)
 
     filename = "{}_report.pdf".format(ID) #ADD idd
     clusterSize = len(related_isolates)
     latestAddition = lastClusterAddition(config_name, reference_header_text)
-    phenotypes, panel_found, panel_list = generate_amr_resistance_profile_table(config_name, ID, pdf, target_dir, exepath, reference_header_text)
+    phenotypes, panel_found, panel_list = generate_amr_resistance_profile_table(config_name, ID, pdf, target_dir, reference_header_text)
 
     ''' First Page '''
     pdf.add_page()
-    pdf.image(exepath + "/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
+    pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
     create_title(pdf, ID, "MOSS analytical report")
     pdf.ln(5)
     file_name = isolate_file_name(config_name, ID)
@@ -1065,7 +1065,7 @@ def compileReportAlignment(target_dir, ID, config_name, image_location, referenc
 
     sequence_type = mlst_sequence_type(target_dir)
 
-    plasmids_isolate, virulencegenes_isolate, amrgenes_isolate, plasmids_reference, virulencegenes_reference, amrgenes_reference = retrieve_cge_counts(target_dir, ID, config_name, image_location, reference_header_text, exepath)
+    plasmids_isolate, virulencegenes_isolate, amrgenes_isolate, plasmids_reference, virulencegenes_reference, amrgenes_reference = retrieve_cge_counts(target_dir, ID, config_name, image_location, reference_header_text)
     textstring = "AMR genes in this sample: {}. \n" \
                  "AMR genes in this cluster: {}. \n" \
                  "Plasmids in this sample: {}. \n" \
@@ -1086,7 +1086,7 @@ def compileReportAlignment(target_dir, ID, config_name, image_location, referenc
 
     ''' Second Page '''
     pdf.add_page()
-    pdf.image(exepath + "/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 6.5, h=pdf.h / 6.5)
+    pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 6.5, h=pdf.h / 6.5)
     create_title(pdf, ID, "AMR Results")
     pdf.ln(40)
 
@@ -1104,7 +1104,7 @@ def compileReportAlignment(target_dir, ID, config_name, image_location, referenc
 
     ''' Second Page '''
     pdf.add_page()
-    pdf.image(exepath + "/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 6.5, h=pdf.h / 6.5)
+    pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 6.5, h=pdf.h / 6.5)
     create_title(pdf, ID, "Phylogeny results")
     pdf.ln(20)
     pdf.image(image_location, x=10, y=55, w=pdf.w/1.2, h=pdf.h/1.6)
