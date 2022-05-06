@@ -121,7 +121,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     moss.make_phytree_output_folder(config_name, target_dir, related_isolates, reference_header_text)
 
     #Why is cc phylo not in a function?
-    cmd = "/opt/moss/ccphylo/ccphylo dist -i {}/phytree_output/* -r \"{}\" -mc 0.01 -nm 0 -o {}/phytree_output/distance_matrix".format(target_dir, reference_header_text, target_dir)
+    cmd = "/opt/moss/ccphylo/ccphylo dist --input {}/phytree_output/* --reference \"{}\" --min_cov 0.01 --normalization_weight 0 --output {}/phytree_output/distance_matrix".format(target_dir, reference_header_text, target_dir)
     os.system(cmd)
 
 
@@ -140,7 +140,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entry_id, "Distance Matrix", "Alignment", "6", "10", "Running", config_name), config_name)
 
     #ccphylo in function
-    cmd = "/opt/moss/ccphylo/ccphylo tree -i {}/phytree_output/distance_matrix -o {}/phytree_output/tree.newick".format(target_dir, target_dir)
+    cmd = "/opt/moss/ccphylo/ccphylo tree --input {}/phytree_output/distance_matrix --output {}/phytree_output/tree.newick".format(target_dir, target_dir)
     os.system(cmd)
 
     #Include all of the below in alignment_related_function
