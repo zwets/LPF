@@ -77,7 +77,7 @@ for line in infile:
 infile.close()
 metadata_string = metadata_string[:-1]
 
-c.execute("""CREATE TABLE IF NOT EXISTS sample_table(entry_id TEXT PRIMARY KEY, sample_name TEXT, reference_id TEXT, amr_genes TEXT, virulence_genes TEXT, plasmids TEXT)""")
+c.execute("""CREATE TABLE IF NOT EXISTS sample_table(entry_id TEXT PRIMARY KEY, sample_name TEXT, reference_id TEXT, amr_genes TEXT, virulence_genes TEXT, plasmids TEXT, consensus_name TEXT)""")
 conn.commit()
 c.execute("""CREATE TABLE IF NOT EXISTS reference_table(entry_id TEXT PRIMARY KEY, reference_header_text TEXT)""") #Mangler finder results. Implement eventually
 conn.commit()
