@@ -58,7 +58,7 @@ function logdb() {
 
     db.serialize(function() {
 
-      db.each("SELECT entryid AS id FROM isolate_table", function(err, row) {
+      db.each("SELECT entry_id AS id FROM isolate_table", function(err, row) {
             console.log(row.id);
             console.log(row.id[0]);
         });

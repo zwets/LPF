@@ -50,30 +50,30 @@ def sql_fetch(string, config_name):
     return data
 
 
-def insert_consensus_name(entryid, config_name, consensus_name):
+def insert_consensus_name(entry_id, config_name, consensus_name):
     conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
-    entryid_statement = "entryid = '{}'".format(entryid)
+    entry_id_statement = "entry_id = '{}'".format(entry_id)
 
-    dbstring = "UPDATE sample_table SET consensus_name = '{}' WHERE {}".format(consensus_name, entryid_statement)
+    dbstring = "UPDATE sample_table SET consensus_name = '{}' WHERE {}".format(consensus_name, entry_id_statement)
     print (dbstring)
     c.execute(dbstring)
 
     conn.commit()
     conn.close()
 
-def insert_metadata_table(entryid, entries, values, config_name):
+def insert_metadata_table(entry_id, entries, values, config_name):
     conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
 
-    dbstring = "INSERT INTO metadata_table(entryid, {}) VALUES('{}', {})".format(entries, entryid.replace("'", "''"), values)
+    dbstring = "INSERT INTO metadata_table(entry_id, {}) VALUES('{}', {})".format(entries, entry_id.replace("'", "''"), values)
 
     c.execute(dbstring)
 
     conn.commit()
     conn.close()
 
-def update_reference_table(entryid, amrgenes, virulencegenes, plasmids, reference_header_text, config_name):
+def update_reference_table(entry_id, amrgenes, virulencegenes, plasmids, reference_header_text, config_name):
     conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
     amrgenes_statement = "amrgenes = '{}'".format(amrgenes)
@@ -92,33 +92,33 @@ def update_reference_table(entryid, amrgenes, virulencegenes, plasmids, referenc
     conn.commit()
     conn.close()
 
-def insert_amr_table(entryid, sample_name, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning, config_name):
+def insert_amr_table(entry_id, sample_name, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning, config_name):
 
     conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
 
 
-    dbstring = "INSERT INTO amr_table(entryid, sample_name, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"\
-        .format(entryid, sample_name, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning)
+    dbstring = "INSERT INTO amr_table(entry_id, sample_name, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"\
+        .format(entry_id, sample_name, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning)
     c.execute(dbstring)
 
     conn.commit()
     conn.close()
 
-def init_status_table(entryid, status, type, current_stage, final_stage, result, config_name):
+def init_status_table(entry_id, status, type, current_stage, final_stage, result, config_name):
     conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
 
-    dbstring = "INSERT INTO status_table(entryid, status, type, current_stage, final_stage, result) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
-        entryid, status, type, current_stage, final_stage, result)
+    dbstring = "INSERT INTO status_table(entry_id, status, type, current_stage, final_stage, result) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
+        entry_id, status, type, current_stage, final_stage, result)
     c.execute(dbstring)
     conn.commit()
     conn.close()
 
-def update_status_table(entryid, status, type, current_stage, final_stage, result, config_name):
+def update_status_table(entry_id, status, type, current_stage, final_stage, result, config_name):
     conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
-    entryid_statement = "entryid = '{}'".format(entryid)
+    entry_id_statement = "entry_id = '{}'".format(entry_id)
     status_statement = "status = '{}'".format(status)
     type_statement = "type = '{}'".format(type)
     current_stage_statement = "current_stage = '{}'".format(current_stage)
@@ -126,34 +126,34 @@ def update_status_table(entryid, status, type, current_stage, final_stage, resul
     result_statement = "result = '{}'".format(result)
     time_statement = "time_stamp = '{}'".format(str(datetime.datetime.now())[0:-7])
 
-    dbstring = "UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(status_statement, type_statement, current_stage_statement, final_stage_statement, result_statement, time_statement, entryid_statement)
+    dbstring = "UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(status_statement, type_statement, current_stage_statement, final_stage_statement, result_statement, time_statement, entry_id_statement)
     c.execute(dbstring)
 
     conn.commit()
     conn.close()
 
-def init_sample_table(entryid, reference_header_text, sample_name, plasmid_string, allresgenes, virulence_string, config_name, referenceid):
+def init_sample_table(entry_id, reference_header_text, sample_name, plasmid_string, allresgenes, virulence_string, config_name, referenceid):
     conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
-    dbstring = "INSERT INTO sample_table(entryid, reference_header_text, sample_name, analysistimestamp, plasmids, amrgenes, virulencegenes, referenceid) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
-        entryid, reference_header_text, sample_name, str(datetime.datetime.now())[0:-7], plasmid_string.replace("'", "''"),
+    dbstring = "INSERT INTO sample_table(entry_id, reference_header_text, sample_name, analysistimestamp, plasmids, amrgenes, virulencegenes, referenceid) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
+        entry_id, reference_header_text, sample_name, str(datetime.datetime.now())[0:-7], plasmid_string.replace("'", "''"),
         allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''"), referenceid)
 
     c.execute(dbstring)
     conn.commit()
     conn.close()
 
-def update_sample_table(entryid, reference_header_text, sample_name, plasmid_string, allresgenes, virulence_string, config_name):
+def update_sample_table(entry_id, reference_header_text, sample_name, plasmid_string, allresgenes, virulence_string, config_name):
     conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
-    entryid_statement = "entryid = '{}'".format(entryid)
+    entry_id_statement = "entry_id = '{}'".format(entry_id)
     reference_header_text_statement = "reference_header_text = '{}'".format(reference_header_text)
     sample_name_statement = "sample_name = '{}'".format(sample_name)
     plasmid_string_statement = "plasmids = '{}'".format(plasmid_string)
     allresgenes_statement = "amrgenes = '{}'".format(allresgenes)
     virulence_string_statement = "virulencegenes = '{}'".format(virulence_string)
 
-    dbstring = "UPDATE sample_table SET {}, {}, {}, {}, {} WHERE {}".format(reference_header_text_statement, sample_name_statement, plasmid_string_statement, allresgenes_statement, virulence_string_statement, entryid_statement)
+    dbstring = "UPDATE sample_table SET {}, {}, {}, {}, {} WHERE {}".format(reference_header_text_statement, sample_name_statement, plasmid_string_statement, allresgenes_statement, virulence_string_statement, entry_id_statement)
     c.execute(dbstring)
 
     conn.commit()

@@ -41,8 +41,8 @@ for file in onlyfiles:
     reference_header_text = id.split()[2:]
     reference_header_text = " ".join(reference_header_text)
 
-    entryid = file
-    target_dir = config_name + "analysis/" + entryid + "/"
+    entry_id = file
+    target_dir = config_name + "analysis/" + entry_id + "/"
     logfile = config_name + "/analysis/" + file + "/logf*"
     inputdir = "{}/datafiles/distancematrices/{}/".format(config_name, reference_header_text)
     image_location = "{}tree.png".format(inputdir)
@@ -54,14 +54,14 @@ for file in onlyfiles:
     print (id)
     result = id.split()[-1]
 
-    associated_species = "No related reference identified, required manual curation. ID: {} name: {}".format(entryid,
+    associated_species = "No related reference identified, required manual curation. ID: {} name: {}".format(entry_id,
                                                                                                              file)
 
     if result == 'true':
-        moss.compileReportAlignment(target_dir, entryid, config_name, image_location, reference_header_text, exepath)  # No report compiled for assemblies! Look into it! #TBD
+        moss.compileReportAlignment(target_dir, entry_id, config_name, image_location, reference_header_text, exepath)  # No report compiled for assemblies! Look into it! #TBD
     elif result == 'false':
-        moss.compileReportAssembly(target_dir, entryid, config_name, associated_species, exepath)
+        moss.compileReportAssembly(target_dir, entry_id, config_name, associated_species, exepath)
 
 #value = moss.check_sql_semaphore_value(config_name, 'ipc_index_refdb')
-#moss.compileReportAlignment(target_dir, entryid, config_name, image_location, reference_header_text, exepath)  # No report compiled for assemblies! Look into it! #TBD
-#moss.compileReportAssembly(target_dir, entryid, config_name, image_location, associated_species, exepath)
+#moss.compileReportAlignment(target_dir, entry_id, config_name, image_location, reference_header_text, exepath)  # No report compiled for assemblies! Look into it! #TBD
+#moss.compileReportAssembly(target_dir, entry_id, config_name, image_location, associated_species, exepath)

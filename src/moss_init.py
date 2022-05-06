@@ -77,17 +77,17 @@ for line in infile:
 infile.close()
 metadata_string = metadata_string[:-1]
 
-c.execute("""CREATE TABLE IF NOT EXISTS sample_table(entryid TEXT PRIMARY KEY, sample_name TEXT, reference_id TEXT, amr_genes TEXT, virulence_genes TEXT, plasmids TEXT)""")
+c.execute("""CREATE TABLE IF NOT EXISTS sample_table(entry_id TEXT PRIMARY KEY, sample_name TEXT, reference_id TEXT, amr_genes TEXT, virulence_genes TEXT, plasmids TEXT)""")
 conn.commit()
-c.execute("""CREATE TABLE IF NOT EXISTS reference_table(entryid TEXT PRIMARY KEY, reference_header_text TEXT)""") #Mangler finder results. Implement eventually
+c.execute("""CREATE TABLE IF NOT EXISTS reference_table(entry_id TEXT PRIMARY KEY, reference_header_text TEXT)""") #Mangler finder results. Implement eventually
 conn.commit()
-c.execute("""CREATE TABLE IF NOT EXISTS metadata_table(entryid TEXT PRIMARY KEY, {})""".format(metadata_string))
+c.execute("""CREATE TABLE IF NOT EXISTS metadata_table(entry_id TEXT PRIMARY KEY, {})""".format(metadata_string))
 conn.commit()
 c.execute("""CREATE TABLE IF NOT EXISTS ipc_table(ipc TEXT PRIMARY KEY, ipc_index_refdb TEXT, IsolateJSON TEXT, ReferenceJSON TEXT, ReadRefDB TEXT, running_analyses TEXT, queued_analyses TEXT, finished_analyses TEXT)""")
 conn.commit()
-c.execute("""CREATE TABLE IF NOT EXISTS status_table(entryid TEXT PRIMARY KEY, status TEXT, type TEXT, current_stage TEXT, final_stage TEXT, result TEXT, time_stamp TEXT)""")
+c.execute("""CREATE TABLE IF NOT EXISTS status_table(entry_id TEXT PRIMARY KEY, status TEXT, type TEXT, current_stage TEXT, final_stage TEXT, result TEXT, time_stamp TEXT)""")
 conn.commit()
-c.execute( """CREATE TABLE IF NOT EXISTS local_sync_table(entryid TEXT PRIMARY KEY, time_of_analysis TEXT)""")
+c.execute( """CREATE TABLE IF NOT EXISTS local_sync_table(entry_id TEXT PRIMARY KEY, time_of_analysis TEXT)""")
 conn.commit()
 c.execute( """CREATE TABLE IF NOT EXISTS basecalling_table(name TEXT PRIMARY KEY, status TEXT, start_time TEXT, end_time TEXT)""")
 conn.commit()

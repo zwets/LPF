@@ -73,11 +73,11 @@ function sql_data_query_table(data_obj, data) {
             }
             var tabCell = tr.insertCell(-1);
             var img = document.createElement('img');
-            img.id = data_obj[i].entryid;
-            img.name = data_obj[i].entryid;
+            img.id = data_obj[i].entry_id;
+            img.name = data_obj[i].entry_id;
             img.src = data.exepath + "local_app/images/report-icon.png";
             img.setAttribute('height', '17pt');
-            img.innerHTML = data_obj[i].entryid;
+            img.innerHTML = data_obj[i].entry_id;
             img.onclick = function() {openPDF(this.id, data)};
             //el.addEventListener("click", function(){
             //    openPDF(Object.keys(myjson)[i]));
@@ -151,11 +151,11 @@ function most_recent_isolates_table(data_obj, data) {
 
             var tabCell = tr.insertCell(-1);
             var img = document.createElement('img');
-            img.id = data_obj[i].entryid;
+            img.id = data_obj[i].entry_id;
             img.name = data_obj[i].sample_name;
             img.src = data.exepath + "local_app/images/report-icon.png";
             img.setAttribute('height', '17pt');
-            img.innerHTML = data_obj[i].entryid;
+            img.innerHTML = data_obj[i].entry_id;
             img.onclick = function() {openPDF(this.id, data)};
             //el.addEventListener("click", function(){
             //    openPDF(Object.keys(myjson)[i]));

@@ -68,7 +68,7 @@ function sql_data_query_table(data_obj, data, divid) {
         col.push('amrgenes');
         col.push('risklevel');
         col.push('warning');
-        col.push('entryid');
+        col.push('entry_id');
 
         // Create a table.
         var table = document.createElement("table");
@@ -101,9 +101,9 @@ function sql_data_query_table(data_obj, data, divid) {
             img.amrgenes = data_obj[i].amrgenes;
             img.risklevel = data_obj[i].risklevel;
             img.warning = data_obj[i].warning;
-            img.entryid = data_obj[i].entryid;
+            img.entry_id = data_obj[i].entry_id;
             img.setAttribute('height', '17pt');
-            img.innerHTML = data_obj[i].entryid;
+            img.innerHTML = data_obj[i].entry_id;
             tabCell.appendChild(img);
         }
 
@@ -121,7 +121,7 @@ function most_recent_isolates_table(data_obj, data) {
 		var myObject = [];
 
         var col = [];
-        col.push('entryid');
+        col.push('entry_id');
         col.push('sample_name');
         col.push('analysistimestamp');
         col.push('risklevel');
@@ -151,12 +151,12 @@ function most_recent_isolates_table(data_obj, data) {
 
             var tabCell = tr.insertCell(-1);
             var img = document.createElement('img');
-            img.entryid = data_obj[i].entryid;
+            img.entry_id = data_obj[i].entry_id;
             img.sample_name = data_obj[i].sample_name;
             img.analysistimestamp = data_obj[i].analysistimestamp;
             img.risklevel = data_obj[i].risklevel;
             img.setAttribute('height', '17pt');
-            img.innerHTML = data_obj[i].entryid;
+            img.innerHTML = data_obj[i].entry_id;
             tabCell.appendChild(img);
 
         }

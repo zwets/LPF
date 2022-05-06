@@ -104,7 +104,7 @@ def create_directory_from_dict(dict, path):
             os.system("mkdir {}{}/{}".format(path, directory, subdirectory))
     return True
 
-#def update_reference_table(entryid, amrgenes, virulencegenes, plasmids, reference_header_text, config_name):
+#def update_reference_table(entry_id, amrgenes, virulencegenes, plasmids, reference_header_text, config_name):
 #    #TMP function. replace later.
 #    conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
 #    c = conn.cursor()
@@ -139,8 +139,8 @@ def sql_execute_command(command, config_name):
     conn.commit()
     conn.close()
 
-def moss_mkfs(config_name, entryid):
-    target_dir = "/opt/moss_db/{}/analysis/{}/".format(config_name, entryid)
+def moss_mkfs(config_name, entry_id):
+    target_dir = "/opt/moss_db/{}/analysis/{}/".format(config_name, entry_id)
     os.system("mkdir {}".format(target_dir))
 
 def moss_init(config_name, metadata, metadata_headers):
@@ -163,7 +163,7 @@ def moss_init(config_name, metadata, metadata_headers):
         sample_name = input.split("/")[-1][0:-6]
     else:
         sys.exit("input is not a fastQ file.")
-    entryid = md5(input)
+    entry_id = md5(input)
 
     uniqueNameCheck(input, config_name)
 
@@ -173,9 +173,9 @@ def moss_init(config_name, metadata, metadata_headers):
         c_name = input.split("/")[-1][:10]
 
     ref_db = "/opt/moss_db/{}/REFDB.ATG".format(config_name)
-    target_dir = "/opt/moss_db/{}/analysis/{}/".format(config_name, entryid)
+    target_dir = "/opt/moss_db/{}/analysis/{}/".format(config_name, entry_id)
 
-    return config_name, metadata_dict, input, sample_name, entryid, target_dir, ref_db, c_name
+    return config_name, metadata_dict, input, sample_name, entry_id, target_dir, ref_db, c_name
 
 
 def get_kma_template_number(reference_header_text, config_name):
@@ -241,11 +241,11 @@ def init_insert_reference_table(config_name):
         output = proc.communicate()[0].decode()
         reference_header_text = output.split("\n")[0][1:]
         sequence = output.split("\n")[1]
-        entryid = md5(sequence)
+        entry_id = md5(sequence)
         #TMP SOLUTION TO AVOID ENTRYCLASHES:
-        if entryid not in ids:
-            dbstring = "INSERT INTO reference_table(entryid, reference_header_text) VALUES('{}', '{}')".format(entryid, reference_header_text.replace("'", "''"))
-            ids.append(entryid)
+        if entry_id not in ids:
+            dbstring = "INSERT INTO reference_table(entry_id, reference_header_text) VALUES('{}', '{}')".format(entry_id, reference_header_text.replace("'", "''"))
+            ids.append(entry_id)
             c.execute(dbstring)
 
         t += 1
@@ -256,20 +256,20 @@ def check_assembly_result(path):
 
     return True
 
-def run_assembly(entryid, config_name, sample_name, target_dir, input, reference_header_text, associated_species):
-    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\"" \
-        .format("Flye Assembly", "reference", "4", "5", "Running", str(datetime.datetime.now())[0:-7], entryid)
+def run_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text, associated_species):
+    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Flye Assembly", "reference", "4", "5", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     sql_execute_command(sql_cmd, config_name)
-    flye_assembly(entryid, config_name, sample_name, target_dir, input, reference_header_text)
+    flye_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text)
 
-    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\"" \
-        .format("Compiling PDF report", "reference", "5", "5", "Running", str(datetime.datetime.now())[0:-7], entryid)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Compiling PDF report", "reference", "5", "5", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     sql_execute_command(sql_cmd, config_name)
 
-    #compileReportAssembly(target_dir, entryid, config_name, associated_species) #Look at the TBD
+    #compileReportAssembly(target_dir, entry_id, config_name, associated_species) #Look at the TBD
 
-    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\"" \
-        .format("Assembly pipeline completed", "reference", "5", "5", "Completed", str(datetime.datetime.now())[0:-7], entryid)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Assembly pipeline completed", "reference", "5", "5", "Completed", str(datetime.datetime.now())[0:-7], entry_id)
     sql_execute_command(sql_cmd, config_name)
     sys.exit("No template was found, so input was added to references.")
 
@@ -658,13 +658,13 @@ def ThreshholdDistanceCheck(distancematrixfile, reference, consensus_name):
                 secondentry = True
         linecount += 1
 
-def flye_assembly(entryid, config_name, sample_name, target_dir, input, reference_header_text):
+def flye_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text):
 
     cmd = "docker run --name assembly_{} -v {}:/tmp/{} staphb/flye flye -o /tmp/assembly_results --threads 8 --nano-raw /tmp/{}".format(
-        entryid, input, input.split("/")[-1], input.split("/")[-1])
+        entry_id, input, input.split("/")[-1], input.split("/")[-1])
     os.system(cmd)
 
-    proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_", entryid), shell=True,
+    proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_", entry_id), shell=True,
                             stdout=subprocess.PIPE, )
     output = proc.communicate()[0]
     id = output.decode().rstrip()
@@ -708,7 +708,7 @@ def flye_assembly(entryid, config_name, sample_name, target_dir, input, referenc
         sys.exit('A semaphore related issue has occured.')
     conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
-    dbstring = "INSERT INTO reference_table(entryid, reference_header_text) VALUES('{}', '{}')".format(entryid, new_header_text)
+    dbstring = "INSERT INTO reference_table(entry_id, reference_header_text) VALUES('{}', '{}')".format(entry_id, new_header_text)
     c.execute(dbstring)
     conn.commit()
     conn.close()
@@ -785,17 +785,17 @@ def lastClusterAddition(config_name, reference_header_text):
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT entryid, analysistimestamp FROM sample_table WHERE reference_header_text = '{}' ORDER BY analysistimestamp DESC".format(reference_header_text)) #Dårlig løsning, ikke skalerbar til >5M isolates
+    c.execute("SELECT entry_id, analysistimestamp FROM sample_table WHERE reference_header_text = '{}' ORDER BY analysistimestamp DESC".format(reference_header_text)) #Dårlig løsning, ikke skalerbar til >5M isolates
     refdata = c.fetchall()
     conn.close()
     return refdata
 
-def isolate_file_name(config_name, entryid):
+def isolate_file_name(config_name, entry_id):
     isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT sample_name FROM sample_table WHERE entryid = '{}'".format(entryid))
+    c.execute("SELECT sample_name FROM sample_table WHERE entry_id = '{}'".format(entry_id))
     refdata = c.fetchall()
     conn.close()
     element = refdata[0][0]
@@ -803,7 +803,7 @@ def isolate_file_name(config_name, entryid):
     return element
 
 
-def generate_amr_resistance_profile_table(config_name, entryid, pdf, target_dir, reference_header_text):
+def generate_amr_resistance_profile_table(config_name, entry_id, pdf, target_dir, reference_header_text):
 
     panel_found = False
     panel_list = []
@@ -853,7 +853,7 @@ def generate_amr_resistance_profile_table(config_name, entryid, pdf, target_dir,
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT phenotypes FROM amr_table WHERE entryid = '{}'".format(entryid))
+    c.execute("SELECT phenotypes FROM amr_table WHERE entry_id = '{}'".format(entry_id))
     refdata = c.fetchall()
     conn.close()
 
@@ -946,7 +946,7 @@ def retrieve_cge_counts(target_dir, ID, config_name, image_location, reference_h
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    c.execute("SELECT plasmids FROM sample_table WHERE entryid = '{}'".format(ID))
+    c.execute("SELECT plasmids FROM sample_table WHERE entry_id = '{}'".format(ID))
     refdata = c.fetchall()
 
     if refdata[0][0] == None:
@@ -954,7 +954,7 @@ def retrieve_cge_counts(target_dir, ID, config_name, image_location, reference_h
     else:
         plasmids_isolate = refdata[0][0].split(",")
 
-    c.execute("SELECT virulencegenes FROM sample_table WHERE entryid = '{}'".format(ID))
+    c.execute("SELECT virulencegenes FROM sample_table WHERE entry_id = '{}'".format(ID))
     refdata = c.fetchall()
 
     if refdata[0][0] == None:
@@ -962,7 +962,7 @@ def retrieve_cge_counts(target_dir, ID, config_name, image_location, reference_h
     else:
         virulencegenes_isolate = refdata[0][0].split(",")
 
-    c.execute("SELECT amrgenes FROM sample_table WHERE entryid = '{}'".format(ID))
+    c.execute("SELECT amrgenes FROM sample_table WHERE entry_id = '{}'".format(ID))
     refdata = c.fetchall()
 
     if refdata[0][0] == None:
