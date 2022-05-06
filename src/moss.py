@@ -42,6 +42,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     moss.sql_execute_command("INSERT INTO sample_table(entry_id, sample_name, reference_id, amr_genes, virulence_genes, plasmids) VALUES('{}', '{}', '{}', '{}', '{}', '{}')"\
         .format(entry_id, sample_name, "", "", "", "", ""), config_name)
 
+
     moss.sql_execute_command("INSERT INTO status_table(entry_id, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
         entry_id, "Initializing", "Not determined", "1", "10", "Running", str(datetime.datetime.now())[0:-7],), config_name)
 
@@ -70,7 +71,11 @@ def moss_pipeline(config_name, metadata, metadata_headers):
 
     associated_species = "{} - assembly from ID: {}".format(reference_header_text, entry_id)
 
-    mlst_result = moss.run_mlst(input, target_dir, reference_header_text) #TBD mlst_result used for what?
+    mlst_result = moss.run_mlst(input, target_dir, reference_header_text)
+
+    #TBD INSERT FINDER RESULTS AND MLST INTO SQL SAMPLE TABLE
+
+    #TBD NOT HERE, END OF PIPELINE, INSERT METADATA IN SAMPLE SQL FOR COMPLETED SAMPLES, BOTH ALIGNMENT AND ASSEMBLY
 
     if template_search_result == 1: #1 means error, thus no template found
         #Implement flye TBD later.
@@ -152,37 +157,16 @@ def moss_pipeline(config_name, metadata, metadata_headers):
         .format("Database updating", "Alignment", "8", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     moss.sql_execute_command(sql_cmd, config_name)
 
-    sys.exit("pre amr")
-    moss.sql_execute_command("INSERT INTO amr_table(entry_id, sample_name, analysistimestamp, amrgenes, phenotypes, specie, risklevel, warning) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(entry_id, sample_name, str(datetime.datetime.now())[0:-7], allresgenes.replace("'", "''"), amrinfo.replace("'", "''"), reference_header_text, riskcategory.replace("'", "''"), warning.replace("'", "''")), config_name)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Compiling PDF", "Alignment", "9", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
+    moss.sql_execute_command(sql_cmd, config_name)
 
-    moss.sql_execute_command("UPDATE sample_table SET {}, {}, {}, {}, {} WHERE {}".format(entry_id, reference_header_text, sample_name, plasmid_string.replace("'", "''"), allresgenes.replace(", ", ",").replace("'", "''"), virulence_string.replace("'", "''")), config_name)
 
-    entries, values = moss.sql_string_metadata(metadata_dict)
+    #moss.compileReportAlignment(target_dir, entry_id, config_name, image_location, reference_header_text, related_isolates) #No report compiled for assemblies! Look into it! #TBD
 
-    moss.sql_execute_command("INSERT INTO metadata_table(entry_id, {}) VALUES('{}', {})".format(entries, entry_id.replace("'", "''"), values), config_name)
-
-    new_plasmid_string, new_virulence_string, new_amr_string = moss.scan_reference_vs_isolate_cge(plasmid_string, allresgenes.replace(", ", ","), virulence_string, reference_header_text, config_name)
-
-    #Get ride of these strings. Make relational tables for genes too.
-
-    #moss.update_reference_table(entry_id, new_amr_string, new_virulence_string, new_plasmid_string, reference_header_text, config_name)
-
-    end_time = datetime.datetime.now()
-    run_time = end_time - start_time
-
-    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entry_id, "Outbreak Finder", "Alignment", "9", "10", "Running", config_name), config_name)
-
-    #Outbreak_finder wtf? really?
-    cmd = "python3 /opt/moss/src/outbreak_finder.py -config_name {}".format(config_name) #WTF TBD
-    os.system(cmd)
-
-    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entry_id, "Alignment PDF compiling", "Alignment", "10", "10", "Running", config_name), config_name)
-
-    #Still fails here for multiple non-sync analyses
-    #Both alignment report and assembly is fuckly. Fix it.
-    moss.compileReportAlignment(target_dir, entry_id, config_name, image_location, reference_header_text, related_isolates) #No report compiled for assemblies! Look into it! #TBD
-    moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entry_id, "Alignment PDF compiling", "Alignment", "10", "10", "Finished", config_name), config_name)
-
+    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Completed", "Alignment", "10", "10", "Completed", str(datetime.datetime.now())[0:-7], entry_id)
+    moss.sql_execute_command(sql_cmd, config_name)
 
 def main():
     moss_pipeline(args.config_name, args.metadata, args.metadata_headers)
