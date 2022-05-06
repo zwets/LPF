@@ -114,7 +114,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     related_isolates = moss.sql_fetch("SELECT consensus_name FROM sample_table WHERE referenceid = '{}'".format(referenceid), config_name)[0][0].split(",")
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entryid=\"{}\"" \
-        .format("CCphylo", "Alignment", "5", "10", "Running",, str(datetime.datetime.now())[0:-7], entryid)
+        .format("CCphylo", "Alignment", "5", "10", "Running", str(datetime.datetime.now())[0:-7], entryid)
     moss.sql_execute_command(sql_cmd, config_name)
 
     #Fine, but can we include add ccphylo related in one function?
