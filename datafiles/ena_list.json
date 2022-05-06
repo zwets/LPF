@@ -1,6 +1,6 @@
 {
   "sample_name": "free_text",
-  "sequencing_method": ["nanopore"],
+  "sequencing_method": ["nanopore minion, nanopore gridion"],
   "isolation_source": ["isolate", "metagenome"],
   "investigation_type": ["Type 1", "type 2"],
   "collection_date": "free_text",
