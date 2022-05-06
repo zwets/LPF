@@ -104,7 +104,6 @@ def moss_pipeline(config_name, metadata, metadata_headers):
 
     moss.sql_execute_command("UPDATE sample_table SET reference_id = '{}' WHERE entry_id = '{}'".format(reference_id, entry_id), config_name)
 
-    sys.exit("TEST HREE")
     #Managed in function when consensus in created ffs.
     cmd = "cp {}{}.fsa {}/consensus_sequences/{}.fsa".format(target_dir, consensus_name, config_name, consensus_name)
     os.system(cmd)
