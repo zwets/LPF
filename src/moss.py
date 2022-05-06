@@ -68,8 +68,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     #Rewrite this horrible kma_mapping function. Should be way simpler.
     template_score, template_search_result, reference_header_text, template_number = moss.kma_mapping(target_dir, input, config_name)
 
-    associated_species = "{} {} assembly from ID: {}, SNP distance from best verified reference: {}".format(
-        reference_header_text[1], reference_header_text[2], entryid, distance)
+    associated_species = "{} - assembly from ID: {}".format(reference_header_text, entryid)
 
     mlst_result = moss.run_mlst(input, target_dir, reference_header_text) #TBD mlst_result used for what?
     moss.run_assembly(entryid, config_name, sample_name, target_dir, input, reference_header_text, associated_species)
@@ -141,8 +140,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
 
     if distance > 300: #SNP distance
         #No associated species
-        reference_header_text = reference_header_text.split()
-        associated_species = "{} {} assembly from ID: {}, SNP distance from best verified reference: {}".format(reference_header_text[1], reference_header_text[2], entryid, distance)
+        associated_species = "{} - assembly from ID: {}".format(reference_header_text, entryid)
         moss.run_assembly(entryid, config_name, sample_name, assemblyType, inputType, target_dir, input, illumina_name1,
                           illumina_name2, jobid, exepath, kma_database_path, start_time,  associated_species)
     #generic sql query
