@@ -1037,25 +1037,23 @@ def mlst_sequence_type(target_dir):
 
 
 
-def compileReportAlignment(target_dir, ID, config_name, image_location, reference_header_text, related_isolates):
+def compileReportAlignment(target_dir, entry_id, config_name, reference_header_text, related_isolates, resfinder_hits, virulence_hits, plasmid_hits, mlst_type, sample_name):
     pdf = FPDF()  # A4 (210 by 297 mm)
 
-    filename = "{}_report.pdf".format(ID) #ADD idd
+    filename = "{}_report.pdf".format(entry_id) #ADD idd
     clusterSize = len(related_isolates)
-    latestAddition = lastClusterAddition(config_name, reference_header_text)
-    phenotypes, panel_found, panel_list = generate_amr_resistance_profile_table(config_name, ID, pdf, target_dir, reference_header_text)
 
     ''' First Page '''
     pdf.add_page()
     pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
-    create_title(pdf, ID, "MOSS analytical report")
+    create_title(pdf, entry_id, "MOSS analytical report")
     pdf.ln(5)
     file_name = isolate_file_name(config_name, ID)
     pdf.set_font('Arial', '', 12)
     textstring = "ID: {} \n" \
                  "sample_name: {} \n" \
                  "Identified reference: {} \n" \
-                 "".format(ID, file_name, reference_header_text)
+                 "".format(entry_id, sample_name, reference_header_text)
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(10)
     pdf.set_font('Arial', '', 10)
@@ -1070,25 +1068,18 @@ def compileReportAlignment(target_dir, ID, config_name, image_location, referenc
     textstring = "Copenhagen, Denmark \n" \
                  "Time of sampling: 2019-06-11 18:03:00. \n" \
                  "Number of associated isolates: {} \n" \
-                 "Latest addition to cluster: {}. \n" \
-                 "".format(clusterSize, latestAddition[0][1])
+                 "".format(clusterSize)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(5)
     pdf.set_text_color(51, 153, 255)
     pdf.set_font('Arial', '', 12)
     pdf.cell(85, 5, "CGE results: ", 0, 1, 'L')
 
-    sequence_type = mlst_sequence_type(target_dir)
-
-    plasmids_isolate, virulencegenes_isolate, amrgenes_isolate, plasmids_reference, virulencegenes_reference, amrgenes_reference = retrieve_cge_counts(target_dir, ID, config_name, image_location, reference_header_text)
     textstring = "AMR genes in this sample: {}. \n" \
-                 "AMR genes in this cluster: {}. \n" \
                  "Plasmids in this sample: {}. \n" \
-                 "Plasmids in this cluster: {}. \n" \
                  "Virulence genes in this sample: {}. \n" \
-                 "Virulence genes in this cluster: {}. \n" \
                  "MLST: ST{}. \n" \
-                 "".format(len(amrgenes_isolate), len(amrgenes_reference), len(plasmids_isolate), len(plasmids_reference), len(virulencegenes_reference), len(virulencegenes_reference), sequence_type)
+                 "".format(len(resfinder_hits), len(plasmid_hits), len(virulence_hits), mlst_type)
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('Arial', '', 10)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
@@ -1102,7 +1093,7 @@ def compileReportAlignment(target_dir, ID, config_name, image_location, referenc
     ''' Second Page '''
     pdf.add_page()
     pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 6.5, h=pdf.h / 6.5)
-    create_title(pdf, ID, "AMR Results")
+    create_title(pdf, entry_id, "AMR Results")
     pdf.ln(40)
 
     df = pd.read_csv(target_dir + "amr.csv")
@@ -1116,14 +1107,14 @@ def compileReportAlignment(target_dir, ID, config_name, image_location, referenc
     pdf.ln(10)
 
     pdf.set_font('Arial', '', 12)
-
+    """
     ''' Second Page '''
     pdf.add_page()
     pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 6.5, h=pdf.h / 6.5)
     create_title(pdf, ID, "Phylogeny results")
     pdf.ln(20)
     pdf.image(image_location, x=10, y=55, w=pdf.w/1.2, h=pdf.h/1.6)
-
+    """
 
     pdf.output(target_dir + filename, 'F')
 

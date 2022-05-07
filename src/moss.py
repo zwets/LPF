@@ -141,7 +141,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     moss.sql_execute_command(sql_cmd, config_name)
 
 
-    #moss.compileReportAlignment(target_dir, entry_id, config_name, image_location, reference_header_text, related_isolates) #No report compiled for assemblies! Look into it! #TBD
+    moss.compileReportAlignment(target_dir, entry_id, config_name, image_location, reference_header_text, related_isolates) #No report compiled for assemblies! Look into it! #TBD
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("Completed", "Alignment", "10", "10", "Completed", str(datetime.datetime.now())[0:-7], entry_id)
