@@ -1048,7 +1048,7 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
     pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
     create_title(pdf, entry_id, "MOSS analytical report")
     pdf.ln(5)
-    file_name = isolate_file_name(config_name, ID)
+    file_name = isolate_file_name(config_name, entry_id)
     pdf.set_font('Arial', '', 12)
     textstring = "ID: {} \n" \
                  "sample_name: {} \n" \
