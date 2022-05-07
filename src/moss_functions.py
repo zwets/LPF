@@ -191,8 +191,7 @@ def moss_init(config_name, metadata, metadata_headers):
     ref_db = "/opt/moss_db/{}/REFDB.ATG".format(config_name)
     target_dir = "/opt/moss_db/{}/analysis/{}/".format(config_name, entry_id)
 
-    #Insert metadata to sql
-    #parse_meta_data_to_sql(metadata_dict)
+    parse_meta_data_to_sql(metadata_dict)
 
     return config_name, metadata_dict, input, sample_name, entry_id, target_dir, ref_db, c_name
 
