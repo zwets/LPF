@@ -40,8 +40,9 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     moss.sql_execute_command("INSERT INTO sample_table(entry_id, sample_name, reference_id, amr_genes, virulence_genes, plasmids) VALUES('{}', '{}', '{}', '{}', '{}', '{}')"\
         .format(entry_id, sample_name, "", "", "", "", ""), config_name)
 
-    moss.sql_execute_command("INSERT INTO status_table(entry_id, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
-        entry_id, "Initializing", "Not determined", "1", "10", "Running", str(datetime.datetime.now())[0:-7],), config_name)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("CGE finders", "Not Determined", "1", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
+    moss.sql_execute_command(sql_cmd, config_name)
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\""\
                              .format("CGE finders", "Not Determined", "2", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
