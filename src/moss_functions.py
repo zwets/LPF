@@ -42,6 +42,11 @@ import dataframe_image as dfi
 
 #Utility functions
 
+def parse_meta_data_to_sql(metadata_dict):
+    print (metadata_dict)
+    sys.exit()
+    pass
+
 def push_finders_data_sql(target_dir, config_name, entry_id):
     resfinder_hits = parse_kma_res("{}/finders/resfinder.res".format(target_dir))
     virulence_hits = parse_kma_res("{}/finders/virulencefinder.res".format(target_dir))
@@ -135,26 +140,6 @@ def create_directory_from_dict(dict, path):
             os.system("mkdir {}{}/{}".format(path, directory, subdirectory))
     return True
 
-#def update_reference_table(entry_id, amrgenes, virulencegenes, plasmids, reference_header_text, config_name):
-#    #TMP function. replace later.
-#    conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
-#    c = conn.cursor()
-#    amrgenes_statement = "amrgenes = '{}'".format(amrgenes)
-#    virulencegenes_statement = "virulencegenes = '{}'".format(virulencegenes)
-#    plasmids_statement = "plasmids = '{}'".format(plasmids)
-#    if amrgenes != None:
-#        dbstring = "UPDATE reference_table SET {} WHERE reference_header_text = '{}'".format(amrgenes_statement, reference_header_text)
-#        c.execute(dbstring)
-#    if virulencegenes != None:
-#        dbstring = "UPDATE reference_table SET {} WHERE reference_header_text = '{}'".format(virulencegenes_statement, reference_header_text)
-#        c.execute(dbstring)
-#    if plasmids != None:
-#        dbstring = "UPDATE reference_table SET {} WHERE reference_header_text = '{}'".format(plasmids_statement, reference_header_text)
-#        c.execute(dbstring)
-#
-#    conn.commit()
-#    conn.close()
-
 def sql_fetch(string, config_name):
     conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
@@ -205,6 +190,9 @@ def moss_init(config_name, metadata, metadata_headers):
 
     ref_db = "/opt/moss_db/{}/REFDB.ATG".format(config_name)
     target_dir = "/opt/moss_db/{}/analysis/{}/".format(config_name, entry_id)
+
+    #Insert metadata to sql
+    #parse_meta_data_to_sql(metadata_dict)
 
     return config_name, metadata_dict, input, sample_name, entry_id, target_dir, ref_db, c_name
 
