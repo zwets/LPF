@@ -48,7 +48,7 @@ def push_finders_data_sql(target_dir, config_name, entry_id):
     plasmid_hits = parse_kma_res("{}/finders/plasmidfinder.res".format(target_dir))
     mlst_type = parse_mlst_result("{}/mlstresults/data.json".format(target_dir))
 
-    sql_cmd = "UPDATE status_table SET amr_genes=\"{}\", virulence_genes=\"{}\", plasmids=\"{}\", mlst=\"{}\" WHERE entry_id=\"{}\"" \
+    sql_cmd = "UPDATE sample_table SET amr_genes=\"{}\", virulence_genes=\"{}\", plasmids=\"{}\", mlst=\"{}\" WHERE entry_id=\"{}\"" \
         .format(",".join(resfinder_hits).replace("'", "''"), ",".join(virulence_hits).replace("'", "''"), \
                 ",".join(plasmid_hits).replace("'", "''"), mlst_type, entry_id)
     sql_execute_command(sql_cmd, config_name)
