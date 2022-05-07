@@ -42,7 +42,7 @@ import dataframe_image as dfi
 
 #Utility functions
 
-def parse_meta_data_to_sql(metadata_dict):
+def push_meta_data_to_sql(metadata_dict):
     print (metadata_dict)
     sys.exit()
     pass
@@ -191,7 +191,7 @@ def moss_init(config_name, metadata, metadata_headers):
     ref_db = "/opt/moss_db/{}/REFDB.ATG".format(config_name)
     target_dir = "/opt/moss_db/{}/analysis/{}/".format(config_name, entry_id)
 
-    parse_meta_data_to_sql(metadata_dict)
+    push_meta_data_to_sql(metadata_dict)
 
     return config_name, metadata_dict, input, sample_name, entry_id, target_dir, ref_db, c_name
 
@@ -940,7 +940,7 @@ def compileReportAssembly(target_dir, ID, config_name, associated_species):
     pdf.ln(5)
     pdf.set_font('Arial', '', 12)
     textstring = "ID: {} \n" \
-                 "Sample name: {} \n" \
+                 "sample_name: {} \n" \
                  "No reference cluster was identified. \n" \
                  "".format(ID, associated_species) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
@@ -1050,7 +1050,7 @@ def compileReportAlignment(target_dir, ID, config_name, image_location, referenc
     file_name = isolate_file_name(config_name, ID)
     pdf.set_font('Arial', '', 12)
     textstring = "ID: {} \n" \
-                 "Sample name: {} \n" \
+                 "sample_name: {} \n" \
                  "Identified reference: {} \n" \
                  "".format(ID, file_name, reference_header_text)
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)

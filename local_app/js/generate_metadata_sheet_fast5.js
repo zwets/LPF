@@ -258,7 +258,7 @@ function generate_table_fastq(input_number) {
 
     for (var i = 0; i < columnNames.length; i++) {
       var th = document.createElement('th');
-      th.appendChild(document.createTextNode(columnNames[i].replace("_", " ")));
+      th.appendChild(document.createTextNode(columnNames[i]));
       headRow.appendChild(th);
     }
 
@@ -361,7 +361,7 @@ function generate_table_fast5(input_array) {
 
     for (var i = 0; i < columnNames.length; i++) {
       var th = document.createElement('th');
-      th.appendChild(document.createTextNode(columnNames[i].replace("_", " ")));
+      th.appendChild(document.createTextNode(columnNames[i]));
       headRow.appendChild(th);
     }
 

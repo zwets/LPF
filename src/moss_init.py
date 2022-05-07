@@ -89,7 +89,7 @@ c.execute("""CREATE TABLE IF NOT EXISTS status_table(entry_id TEXT PRIMARY KEY, 
 conn.commit()
 c.execute( """CREATE TABLE IF NOT EXISTS local_sync_table(entry_id TEXT PRIMARY KEY, time_of_analysis TEXT)""")
 conn.commit()
-c.execute( """CREATE TABLE IF NOT EXISTS reference_table(name TEXT PRIMARY KEY, status TEXT, start_time TEXT, end_time TEXT)""")
+c.execute( """CREATE TABLE IF NOT EXISTS basecalling_table(name TEXT PRIMARY KEY, status TEXT, start_time TEXT, end_time TEXT)""")
 conn.commit()
 dbstring = "INSERT INTO ipc_table(ipc, ipc_index_refdb, ReadRefDB, running_analyses, queued_analyses, finished_analyses) VALUES('{}' ,'{}', '{}', '{}', '{}', '{}')".format('IPC',1, 100, "", "", "")
 c.execute(dbstring)
