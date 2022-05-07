@@ -43,11 +43,11 @@ import dataframe_image as dfi
 #Utility functions
 
 def push_meta_data_to_sql(metadata_dict, entry_id, config_name):
-    sql_cmd = "UPDATE metadata_table SET sample_name=\"{}\", sequencing_method=\"{}\", isolation_source=\"{}\", investigation_type=\"{}\", \
-    collection_date=\"{}\", latitude=\"{}\", longitude=\"{}\", city=\"{}\", country=\"{}\" WHERE entry_id=\"{}\"" \
-        .format(metadata_dict["sample_name"], metadata_dict["sequencing_method"], metadata_dict["isolation_source"],\
-                metadata_dict["investigation_type"], metadata_dict["collection_date"], metadata_dict["latitude"],\
-                metadata_dict["longitude"], metadata_dict["city"], metadata_dict["country"], entry_id)
+    sql_cmd = "INSERT INTO reference_table(entry_id, sample_name, sequencing_method, isolation_source, investigation_type, \
+    collection_date, latitude, longitude, city, country) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"\
+        .format(entry_id, metadata_dict["sample_name"], metadata_dict["sequencing_method"], metadata_dict["isolation_source"], \
+                metadata_dict["investigation_type"], metadata_dict["collection_date"], metadata_dict["latitude"], \
+                metadata_dict["longitude"], metadata_dict["city"], metadata_dict["country"])
     sql_execute_command(sql_cmd, config_name)
 
 def push_finders_data_sql(target_dir, config_name, entry_id):
