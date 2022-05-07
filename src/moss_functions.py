@@ -42,7 +42,7 @@ import dataframe_image as dfi
 
 #Utility functions
 
-def push_meta_data_to_sql(metadata_dict, entry_id):
+def push_meta_data_to_sql(metadata_dict, entry_id, config_name):
     sql_cmd = "UPDATE metadata_table SET sample_name=\"{}\", sequencing_method=\"{}\", isolation_source=\"{}\", investigation_type=\"{}\", \
     collection_date=\"{}\", latitude=\"{}\", longitude=\"{}\", city=\"{}\", country=\"{}\" WHERE entry_id=\"{}\"" \
         .format(metadata_dict["sample_name"], metadata_dict["sequencing_method"], metadata_dict["isolation_source"],\
@@ -194,7 +194,7 @@ def moss_init(config_name, metadata, metadata_headers):
     ref_db = "/opt/moss_db/{}/REFDB.ATG".format(config_name)
     target_dir = "/opt/moss_db/{}/analysis/{}/".format(config_name, entry_id)
 
-    push_meta_data_to_sql(metadata_dict, entry_id)
+    push_meta_data_to_sql(metadata_dict, entry_id, config_name)
 
     return config_name, metadata_dict, input, sample_name, entry_id, target_dir, ref_db, c_name
 
