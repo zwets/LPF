@@ -42,7 +42,8 @@ import dataframe_image as dfi
 
 #Utility functions
 
-
+def push_finders_data_sql():
+    pass
 
 def kma_finders(arguments, outputname, target_dir, input, database):
     os.system("/opt/moss/kma/kma -i {} -o {}/finders/{} -t_db {} {}".format(input, target_dir, outputname, database, arguments))

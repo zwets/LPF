@@ -44,8 +44,8 @@ def download_finder_dbs():
     os.system("git clone https://git@bitbucket.org/genomicepidemiology/resfinder_db.git resfinder_db")
     os.system("git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git")
     os.system("/opt/moss/kma/kma_index -i /opt/moss/plasmidfinder_db/*.fsa -o /opt/moss/plasmidfinder_db/all")
-    os.system("/opt/moss/kma/kma_index -i /opt/moss/plasmidfinder_db/*.fsa -o /opt/moss/resfinder_db/all")
-    os.system("/opt/moss/kma/kma_index -i /opt/moss/plasmidfinder_db/*.fsa -o /opt/moss/virulencefinder_db/all")
+    os.system("/opt/moss/kma/kma_index -i /opt/moss/resfinder_db/*.fsa -o /opt/moss/resfinder_db/all")
+    os.system("/opt/moss/kma/kma_index -i /opt/moss/virulencefinder_db/*.fsa -o /opt/moss/virulencefinder_db/all")
 
 def install_app():
     os.system("cd /opt/moss/local_app; chmod a+x moss_launch; npm i; ./node_modules/.bin/electron-rebuild; npm run dist;sudo cp moss.desktop /usr/share/applications/.")

@@ -36,12 +36,9 @@ parser.add_argument("-metadata_headers", action="store", dest="metadata_headers"
 args = parser.parse_args()
 
 def moss_pipeline(config_name, metadata, metadata_headers):
-    start_time = datetime.datetime.now()
-
     config_name, metadata_dict, input, sample_name, entry_id, target_dir, ref_db, c_name = moss.moss_init(config_name, metadata, metadata_headers)
     moss.sql_execute_command("INSERT INTO sample_table(entry_id, sample_name, reference_id, amr_genes, virulence_genes, plasmids) VALUES('{}', '{}', '{}', '{}', '{}', '{}')"\
         .format(entry_id, sample_name, "", "", "", "", ""), config_name)
-
 
     moss.sql_execute_command("INSERT INTO status_table(entry_id, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
         entry_id, "Initializing", "Not determined", "1", "10", "Running", str(datetime.datetime.now())[0:-7],), config_name)
@@ -50,17 +47,12 @@ def moss_pipeline(config_name, metadata, metadata_headers):
                              .format("CGE finders", "Not Determined", "2", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     moss.sql_execute_command(sql_cmd, config_name)
 
-    #moss.sql_execute_command("UPDATE status_table SET {}, {}, {}, {}, {}, {} WHERE {}".format(entry_id, "CGE finders", "Not Determined", "2", "10", "Running", config_name), config_name)
-
-
     moss.moss_mkfs(config_name, entry_id)
 
-    #TBC FOR ALL FINDERS INSERT RELEVANT DATA INTO SQL
-    # #add argument and check function TBD
     os.system("mkdir {}/finders".format(target_dir))
     moss.kma_finders("-ont -md 5 -1t1 -cge -apm", "resfinder", target_dir, input, "/opt/moss/resfinder_db/all")
     moss.kma_finders("-ont -md 5 -1t1 -cge -apm", "virulencefinder", target_dir, input, "/opt/moss/virulencefinder_db/all")
-    moss.kma_finders("-ont -md 5 -1t1 -cge -apm", "resfinder_db", target_dir, input, "/opt/moss/resfinder_db/all")
+    moss.kma_finders("-ont -md 5 -1t1 -cge -apm", "plasmidfinder", target_dir, input, "/opt/moss/plasmidfinder_db/all")
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("KMA Mapping", "Not Determined", "3", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
@@ -72,6 +64,8 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     associated_species = "{} - assembly from ID: {}".format(reference_header_text, entry_id)
 
     mlst_result = moss.run_mlst(input, target_dir, reference_header_text)
+
+    moss.push_finders_data_sql()
 
     #TBD INSERT FINDER RESULTS AND MLST INTO SQL SAMPLE TABLE
 
@@ -129,13 +123,9 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     cmd = "/opt/moss/ccphylo/ccphylo dist --input {}/phytree_output/* --reference \"{}\" --min_cov 0.01 --normalization_weight 0 --output {}/phytree_output/distance_matrix".format(target_dir, reference_header_text, target_dir)
     os.system(cmd)
 
-
-    # Check if acceptable snp distance
     distance = moss.ThreshholdDistanceCheck("{}/phytree_output/distance_matrix".format(target_dir), reference_header_text.split()[0]+".fsa", consensus_name+".fsa")
-    #Print in function ffs
 
     if distance > 300: #SNP distance
-        #No associated species
         associated_species = "{} - assembly from ID: {}".format(reference_header_text, entry_id)
         moss.run_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text,
                           associated_species)
