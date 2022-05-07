@@ -59,28 +59,21 @@ def moss_pipeline(config_name, metadata, metadata_headers):
         .format("KMA Mapping", "Not Determined", "3", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     moss.sql_execute_command(sql_cmd, config_name)
 
-    #Rewrite this horrible kma_mapping function. Should be way simpler.
     template_score, template_search_result, reference_header_text, template_number = moss.kma_mapping(target_dir, input, config_name)
 
     associated_species = "{} - assembly from ID: {}".format(reference_header_text, entry_id)
 
-    mlst_result = moss.run_mlst(input, target_dir, reference_header_text)
+    moss.run_mlst(input, target_dir, reference_header_text)
 
-    moss.push_finders_data_sql(target_dir, config_name, entry_id)
-
-    #TBD INSERT FINDER RESULTS AND MLST INTO SQL SAMPLE TABLE
-
-    #TBD NOT HERE, END OF PIPELINE, INSERT METADATA IN SAMPLE SQL FOR COMPLETED SAMPLES, BOTH ALIGNMENT AND ASSEMBLY
+    resfinder_hits, virulence_hits, plasmid_hits, mlst_type = moss.push_finders_data_sql(target_dir, config_name, entry_id)
 
     if template_search_result == 1: #1 means error, thus no template found
-        #Implement flye TBD later.
         moss.run_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text,
                           associated_species)
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("IPC check", "Alignment", "4", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     moss.sql_execute_command(sql_cmd, config_name)
 
-    #Semaphores should be managed better tbh. Function within function?
     result, action = moss.acquire_semaphore("ipc_index_refdb", config_name, 1, 7200)
     if result == 'acquired' and action == False:
         moss.release_semaphore("ipc_index_refdb", config_name)
@@ -90,13 +83,12 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     else:
         sys.exit('A semaphore related issue has occured. ipc_index_refdb update')
 
-    #Dont manage SQL compatibility in mainscript. def variables earlier or in functions and return.
     if " " in reference_header_text:
         templateaccesion = reference_header_text.split(" ")[0]
     else:
         templateaccesion = reference_header_text
 
-    consensus_name = "{}_{}_consensus".format(c_name, templateaccesion)
+    consensus_name = "{}_{}_consensus".format(c_name, templateaccesion) #TBD fix consensus name
 
     moss.nanopore_alignment(input, template_number, target_dir, consensus_name, config_name)
 
@@ -104,11 +96,9 @@ def moss_pipeline(config_name, metadata, metadata_headers):
 
     moss.sql_execute_command("UPDATE sample_table SET reference_id = '{}' WHERE entry_id = '{}'".format(reference_id, entry_id), config_name)
 
-    #Managed in function when consensus in created ffs.
     cmd = "cp {}{}.fsa /opt/moss_db/{}/consensus_sequences/{}.fsa".format(target_dir, consensus_name, config_name, consensus_name)
     os.system(cmd)
 
-    #Generic SQL query
     moss.sql_execute_command("UPDATE sample_table SET consensus_name = '{}.fsa' WHERE entry_id = '{}'".format(consensus_name, entry_id), config_name)
 
     related_isolates = moss.sql_fetch("SELECT consensus_name FROM sample_table WHERE reference_id = '{}'".format(reference_id), config_name)[0][0].split(",")
@@ -117,10 +107,8 @@ def moss_pipeline(config_name, metadata, metadata_headers):
         .format("CCphylo", "Alignment", "5", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     moss.sql_execute_command(sql_cmd, config_name)
 
-    #Fine, but can we include add ccphylo related in one function?
     moss.make_phytree_output_folder(config_name, target_dir, related_isolates, reference_header_text)
 
-    #Why is cc phylo not in a function?
     cmd = "/opt/moss/ccphylo/ccphylo dist --input {}/phytree_output/* --reference \"{}\" --min_cov 0.01 --normalization_weight 0 --output {}/phytree_output/distance_matrix".format(target_dir, reference_header_text, target_dir)
     os.system(cmd)
 
