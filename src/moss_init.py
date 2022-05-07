@@ -66,15 +66,12 @@ conn = sqlite3.connect(config_name + 'moss.db')
 c = conn.cursor()
 
 metadata_string = ""
-infile = open("/opt/moss/datafiles/ENA_list.csv", 'r')
-for line in infile:
-    if '\ufeff' in line:
-        line = line.replace(u'\ufeff', '').split(",")
-    else:
-        line = line.split(",")
-    for item in line:
-        metadata_string += "{} TEXT,".format(item)
-infile.close()
+with open(target_dir + "mlstresults/data.json") as json_file:
+    data = json.load(json_file)
+for item in data:
+    if '\ufeff' in item:
+        item = item.replace(u'\ufeff', '')
+    metadata_string += "{} TEXT,".format(item)
 metadata_string = metadata_string[:-1]
 
 c.execute("""CREATE TABLE IF NOT EXISTS sample_table(entry_id TEXT PRIMARY KEY, sample_name TEXT, reference_id TEXT, amr_genes TEXT, virulence_genes TEXT, plasmids TEXT, consensus_name TEXT, mlst TEXT)""")

@@ -155,7 +155,7 @@ function generate_table_fastq(file_number) {
 
     for (var i = 0; i < columnNames.length; i++) {
       var th = document.createElement('th');
-      th.appendChild(document.createTextNode(columnNames[i].replace("_", " ")));
+      th.appendChild(document.createTextNode(columnNames[i]));
       headRow.appendChild(th);
     }
 
