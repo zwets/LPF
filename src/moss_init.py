@@ -66,7 +66,7 @@ conn = sqlite3.connect(config_name + 'moss.db')
 c = conn.cursor()
 
 metadata_string = ""
-with open(target_dir + "mlstresults/data.json") as json_file:
+with open("/opt/moss/datafiles/ena_list.json") as json_file:
     data = json.load(json_file)
 for item in data:
     if '\ufeff' in item:
