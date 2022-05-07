@@ -70,7 +70,7 @@ def parse_kma_res(filename):
     item_list = list()
     infile = open(filename, 'r')
     for line in infile:
-        if line[0] != "#"
+        if line[0] != "#":
             line = line.split('\t')
             item_list.append(line[0])
     return item_list
