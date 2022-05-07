@@ -42,8 +42,38 @@ import dataframe_image as dfi
 
 #Utility functions
 
-def push_finders_data_sql():
-    pass
+def push_finders_data_sql(target_dir, config_name, entry_id):
+    resfinder_hits = parse_kma_res("{}/finders/resfinder.res".format(target_dir))
+    virulence_hits = parse_kma_res("{}/finders/virulencefinder.res".format(target_dir))
+    plasmid_hits = parse_kma_res("{}/finders/plasmidfinder.res".format(target_dir))
+    mlst_type = parse_mlst_result("{}/mlstresults/data.json".format(target_dir))
+
+    sql_execute_command(
+        "INSERT INTO sample_table(amr_genes, virulence_genes, plasmids, mlst) VALUES('{}', '{}', '{}', '{}') WHERE entry_id=\"{}\"" \
+        .format(",".join(resfinder_hits).replace("'", "''"), ",".join(virulence_hits).replace("'", "''"), \
+                ",".join(plasmid_hits).replace("'", "''"), mlst_type, entry_id), config_name)
+
+    return resfinder_hits, virulence_hits, plasmid_hits, mlst_type
+
+def parse_mlst_result(filename):
+    try:
+        with open(filename) as json_file:
+            data = json.load(json_file)
+        sequence_type = data['mlst']['results']['sequence_type']
+        return sequence_type
+    except:
+        return "Unknown"
+
+
+
+def parse_kma_res(filename):
+    item_list = list()
+    infile = open(filename, 'r')
+    for line in infile:
+        if line[0] != "#"
+            line = line.split('\t')
+            item_list.append(line[0])
+    return item_list
 
 def kma_finders(arguments, outputname, target_dir, input, database):
     os.system("/opt/moss/kma/kma -i {} -o {}/finders/{} -t_db {} {}".format(input, target_dir, outputname, database, arguments))

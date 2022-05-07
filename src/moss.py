@@ -65,7 +65,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
 
     mlst_result = moss.run_mlst(input, target_dir, reference_header_text)
 
-    moss.push_finders_data_sql()
+    moss.push_finders_data_sql(target_dir, config_name, entry_id)
 
     #TBD INSERT FINDER RESULTS AND MLST INTO SQL SAMPLE TABLE
 
