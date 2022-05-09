@@ -78,9 +78,9 @@ def derive_phenotype_virulence(genes, database, target_dir):
             line = line.rstrip().split(":")
             if line[0] in genes:
                 if line[1] in phenotype:
-                    phenotype[line[1]].append(line[0])
+                    phenotype[line[1].strip()].append(line[0])
                 else:
-                    phenotype[line[1]] = [line[0]]
+                    phenotype[line[1].strip()] = [line[0]]
 
     csv_line = "Viruelence, Genes\n"
     for item in phenotype:
@@ -1073,12 +1073,17 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
 
 
 
-    #df = pd.read_csv(target_dir + "amr.csv")
-    #print(df)
+    df = pd.read_csv(target_dir + "amr.csv")
 
-    #df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
-    #dfi.export(df_styled, target_dir + "mytable.png")
-    #pdf.image("{}mytable.png".format(target_dir), x=10, y=40, w=pdf.w / 1.5, h=pdf.h / 1.75)
+    df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
+    dfi.export(df_styled, target_dir + "amr_table.png")
+    pdf.image("{}amr_table.png".format(target_dir), x=10, y=40, w=pdf.w / 1.5, h=pdf.h / 1.75)
+
+    df = pd.read_csv(target_dir + "virulence.csv")
+
+    df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
+    dfi.export(df_styled, target_dir + "virulence_table.png")
+    pdf.image("{}virulence_table.png".format(target_dir), x=10, y=140, w=pdf.w / 1.5, h=pdf.h / 1.75)
 
 
     pdf.ln(10)
