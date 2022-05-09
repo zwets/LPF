@@ -44,7 +44,7 @@ import dataframe_image as dfi
 
 def derive_phenotype(genes, database):
     phenotype = dict()
-    infile = open("opt/moss/{}/notes.txt".format(database), 'r')
+    infile = open("/opt/moss/{}/notes.txt".format(database), 'r')
     for line in infile:
         if line[0] != "#":
             line = line.rstrip().split(":")
