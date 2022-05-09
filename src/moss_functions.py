@@ -1077,13 +1077,13 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
 
     df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
     dfi.export(df_styled, target_dir + "amr_table.png")
-    pdf.image("{}amr_table.png".format(target_dir), x=10, y=40, w=pdf.w / 1.5, h=pdf.h / 1.75)
+    pdf.image("{}amr_table.png".format(target_dir), x=10, y=40, w=pdf.w / 5.5, h=pdf.h / 5.75)
 
     df = pd.read_csv(target_dir + "virulence.csv")
 
     df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
     dfi.export(df_styled, target_dir + "virulence_table.png")
-    pdf.image("{}virulence_table.png".format(target_dir), x=10, y=140, w=pdf.w / 1.5, h=pdf.h / 1.75)
+    pdf.image("{}virulence_table.png".format(target_dir), x=10, y=140, w=pdf.w / 5.5, h=pdf.h / 5.75)
 
 
     pdf.ln(10)
