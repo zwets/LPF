@@ -1083,6 +1083,14 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
 
     pdf.ln(10)
 
+    textstring = "Plasmids found: {}" \
+                 .format(", ".join(plasmid_hits))
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font('Arial', '', 10)
+    pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
+
+
+
     pdf.set_font('Arial', '', 12)
     """
     ''' Second Page '''
