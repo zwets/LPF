@@ -59,12 +59,10 @@ def derive_phenotype_amr(genes, database, target_dir):
                     phenotype[line[1]].append(line[0])
                 else:
                     phenotype[line[1]] = [line[0]]
-    csv_line = "Resistance, Genes\n"
+    csv_data = ("Resistance, Genes")
     for item in phenotype:
-        csv_line += "{},{}\n".format(item, " ".join(phenotype[item]))
-    with open(target_dir + "amr.csv", 'w') as writer:
-        writer.write(csv_line)
-    return phenotype
+        csv_data += ("{},{}").format(item, " ".join(phenotype[item]))
+    return phenotype, csv_data
 
 def derive_phenotype_virulence(genes, database, target_dir):
     new_genes = list()
@@ -82,12 +80,10 @@ def derive_phenotype_virulence(genes, database, target_dir):
                 else:
                     phenotype[line[1].strip()] = [line[0]]
 
-    csv_line = "Viruelence, Genes\n"
+    csv_data = ("Viruelence, Genes")
     for item in phenotype:
-        csv_line += "{},{}\n".format(item, " ".join(phenotype[item]))
-    with open(target_dir + "virulence.csv", 'w') as writer:
-        writer.write(csv_line)
-    return phenotype
+        csv_data += ("{},{}").format(item, " ".join(phenotype[item]))
+    return phenotype, csv_data
 
 
 def push_meta_data_to_sql(metadata_dict, entry_id, config_name):
@@ -1063,28 +1059,27 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
 
     pdf.set_font('Arial', '', 12)
 
-    amr_pheno = derive_phenotype_amr(resfinder_hits, "resfinder_db", target_dir)
-    virulence_pheno = derive_phenotype_virulence(virulence_hits, "virulencefinder_db", target_dir)
+    amr_pheno, csv_data = derive_phenotype_amr(resfinder_hits, "resfinder_db", target_dir)
+    line_height = pdf.font_size * 2.5
+    col_width = pdf.epw / 4  # distribute content evenly
+    for row in csv_data:
+        for datum in row:
+            pdf.multi_cell(col_width, line_height, datum, border=1,
+                           new_x="RIGHT", new_y="TOP", max_line_height=pdf.font_size)
+        pdf.ln(line_height)
 
-    textstring = "{} {}".format(amr_pheno, virulence_pheno)
-    pdf.set_text_color(0, 0, 0)
-    pdf.set_font('Arial', '', 10)
-    pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
 
+    pdf.ln(10)
 
+    virulence_pheno, csv_data = derive_phenotype_virulence(virulence_hits, "virulencefinder_db", target_dir)
 
-    df = pd.read_csv(target_dir + "amr.csv")
-
-    df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
-    dfi.export(df_styled, target_dir + "amr_table.png")
-    pdf.image("{}amr_table.png".format(target_dir), x=10, y=40, w=pdf.w / 3, h=pdf.h / 7)
-
-    df = pd.read_csv(target_dir + "virulence.csv")
-
-    df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
-    dfi.export(df_styled, target_dir + "virulence_table.png")
-    pdf.image("{}virulence_table.png".format(target_dir), x=10, y=120, w=pdf.w / 3, h=pdf.h / 7)
-
+    line_height = pdf.font_size * 2.5
+    col_width = pdf.epw / 4  # distribute content evenly
+    for row in csv_data:
+        for datum in row:
+            pdf.multi_cell(col_width, line_height, datum, border=1,
+                           new_x="RIGHT", new_y="TOP", max_line_height=pdf.font_size)
+        pdf.ln(line_height)
 
     pdf.ln(10)
 
