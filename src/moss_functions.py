@@ -922,9 +922,6 @@ def run_bandage(target_dir, jobid):
 
 
 def compileReportAssembly(target_dir, ID, config_name, associated_species):
-    #QA checks?
-    #Quast?
-
     pdf = FPDF()  # A4 (210 by 297 mm)
     filename = "{}_report.pdf".format(ID)  # ADD idd
 
@@ -1142,10 +1139,7 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
 
     create_phylo_tree(target_dir)
 
-    pdf.image("{}/phytree_output/tree.png".format(target_dir), x=10, y=55, w=pdf.w / 1.5, h=pdf.h / 2)
-
-
-    #Insert tree
+    pdf.image("{}/phytree_output/tree.png".format(target_dir), x=10, y=55, w=pdf.w / 1.5, h=pdf.h / 1.75)
 
     pdf.output(target_dir + filename, 'F')
 
