@@ -364,7 +364,7 @@ def run_assembly(entry_id, config_name, sample_name, target_dir, input, referenc
         .format("Compiling PDF report", "reference", "5", "5", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     sql_execute_command(sql_cmd, config_name)
 
-    #compileReportAssembly(target_dir, entry_id, config_name, associated_species) #Look at the TBD
+    compileReportAssembly(target_dir, entry_id, config_name, associated_species) #Look at the TBD
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("Assembly pipeline completed", "reference", "5", "5", "Completed", str(datetime.datetime.now())[0:-7], entry_id)
