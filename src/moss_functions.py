@@ -280,7 +280,7 @@ def make_phytree_output_folder(config_name, target_dir, isolate_list, reference_
 
 def create_phylo_tree(target_dir):
     with open ("{}phytree_output/tree.newick".format(target_dir)) as fd:
-        data = fd.read()[0]
+        data = fd.read()
     print (data)
     print(data)
     print(data)
