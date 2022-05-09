@@ -295,12 +295,7 @@ def create_phylo_tree(target_dir):
     Phylo.draw(tree, axes=axes, do_show=False)
     plt.savefig("{}/phytree_output/tree.png".format(target_dir), dpi=100)
 
-
-    #tree = Phylo.read("{}phytree_output/tree.newick".format(target_dir), 'newick')
-    #Phylo.draw(tree, do_show=False)
-    #pylab.savefig("{}phytree_output/tree.png".format(target_dir))
-    #image_location = "{}/phytree_output/tree.png".format(target_dir)
-    return image_location
+    return "{}/phytree_output/tree.png".format(target_dir)
 
 def plot_tree(treedata, output_file):
     handle = StringIO(treedata)  # parse the newick string
