@@ -302,7 +302,7 @@ def plot_tree(treedata, output_file):
     tree = Phylo.read(handle, "newick")
     matplotlib.rc('font', size=6)
     # set the size of the figure
-    fig = plt.figure(figsize=(10, 20), dpi=100)
+    fig = plt.figure(figsize=(15, 15), dpi=100)
     # alternatively
     # fig.set_size_inches(10, 20)
     axes = fig.add_subplot(1, 1, 1)
@@ -1139,6 +1139,11 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
     pdf.ln(10)
 
     pdf.cell(85, 5, "Phylo tree for cluser {}: ".format(reference_header_text.split("\t")[0]), 0, 1, 'L')
+
+    create_phylo_tree(target_dir)
+
+    pdf.image("{}/phytree_output/tree.png".format(target_dir), x=10, y=40, w=pdf.w / 2, h=pdf.h / 2)
+
 
     #Insert tree
 
