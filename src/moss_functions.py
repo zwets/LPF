@@ -43,12 +43,12 @@ import dataframe_image as dfi
 #Utility functions
 
 
-def derive_phenotype_amr(genes, database):
+
+def derive_phenotype_amr(genes, database, target_dir):
     new_genes = list()
     for item in genes:
         new_genes.append(item.split("_")[0])
     genes = new_genes
-    print (genes)
     phenotype = dict()
     infile = open("/opt/moss/{}/notes.txt".format(database), 'r')
     for line in infile:
@@ -59,14 +59,18 @@ def derive_phenotype_amr(genes, database):
                     phenotype[line[1]].append(line[0])
                 else:
                     phenotype[line[1]] = [line[0]]
+    csv_line = "Resistance, Genes\n"
+    for item in phenotype:
+        csv_line += "{},{}\n".format(item, phenotype[item])
+    with open(target_dir + "amr.csv", 'w') as writer:
+        writer.write(csv_line)
     return phenotype
 
-def derive_phenotype_virulence(genes, database):
+def derive_phenotype_virulence(genes, database, target_dir)):
     new_genes = list()
     for item in genes:
         new_genes.append(item.split(":")[0])
     genes = new_genes
-    print(genes)
     phenotype = dict()
     infile = open("/opt/moss/{}/notes.txt".format(database), 'r')
     for line in infile:
@@ -77,6 +81,12 @@ def derive_phenotype_virulence(genes, database):
                     phenotype[line[1]].append(line[0])
                 else:
                     phenotype[line[1]] = [line[0]]
+
+    csv_line = "Viruelence, Genes\n"
+    for item in phenotype:
+        csv_line += "{},{}\n".format(item, phenotype[item])
+    with open(target_dir + "virulence.csv", 'w') as writer:
+        writer.write(csv_line)
     return phenotype
 
 
@@ -1053,15 +1063,13 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
 
     pdf.set_font('Arial', '', 12)
 
-    amr_pheno = derive_phenotype_amr(resfinder_hits, "resfinder_db")
-    virulence_pheno = derive_phenotype_virulence(virulence_hits, "virulencefinder_db")
-    print (amr_pheno)
-    print (virulence_pheno)
+    amr_pheno = derive_phenotype_amr(resfinder_hits, "resfinder_db", target_dir)
+    virulence_pheno = derive_phenotype_virulence(virulence_hits, "virulencefinder_db", target_dir)
 
     textstring = "{} {}".format(amr_pheno, virulence_pheno)
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('Arial', '', 10)
-    pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
+    pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False
 
 
 
