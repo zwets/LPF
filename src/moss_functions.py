@@ -286,13 +286,13 @@ def create_phylo_tree(target_dir):
     print(data)
     handle = StringIO(data)  # parse the newick string
     tree = Phylo.read(handle, "newick")
-    matplotlib.rc('font', size=6)
+    matplotlib.rc('font', size=10)
     # set the size of the figure
     fig = plt.figure(figsize=(10, 20), dpi=100)
     # alternatively
     # fig.set_size_inches(10, 20)
     axes = fig.add_subplot(1, 1, 1)
-    Phylo.draw(tree, axes=axes)
+    Phylo.draw(tree, axes=axes, do_show=False)
     plt.savefig("{}/phytree_output/tree.png".format(target_dir), dpi=100)
 
 
