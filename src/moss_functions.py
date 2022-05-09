@@ -42,8 +42,31 @@ import dataframe_image as dfi
 
 #Utility functions
 
-def derive_phenotype(genes, database):
+
+def derive_phenotype_amr(genes, database):
+    new_genes = list()
+    for item in genes:
+        new_genes.append(item.split("_")[0])
+    genes = new_genes
     print (genes)
+    phenotype = dict()
+    infile = open("/opt/moss/{}/notes.txt".format(database), 'r')
+    for line in infile:
+        if line[0] != "#":
+            line = line.rstrip().split(":")
+            if line[0] in genes:
+                if line[1] in phenotype:
+                    phenotype[line[1]].append(line[0])
+                else:
+                    phenotype[line[1]] = [line[0]]
+    return phenotype
+
+def derive_phenotype_virulence(genes, database):
+    new_genes = list()
+    for item in genes:
+        new_genes.append(item.split(":")[0])
+    genes = new_genes
+    print(genes)
     phenotype = dict()
     infile = open("/opt/moss/{}/notes.txt".format(database), 'r')
     for line in infile:
@@ -1030,8 +1053,8 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
 
     pdf.set_font('Arial', '', 12)
 
-    amr_pheno = derive_phenotype(resfinder_hits, "resfinder_db")
-    virulence_pheno = derive_phenotype(virulence_hits, "virulencefinder_db")
+    amr_pheno = derive_phenotype_amr(resfinder_hits, "resfinder_db")
+    virulence_pheno = derive_phenotype_virulence(virulence_hits, "virulencefinder_db")
     print (amr_pheno)
     print (virulence_pheno)
 
