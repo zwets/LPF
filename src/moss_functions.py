@@ -1052,7 +1052,7 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
     ''' Second Page '''
     pdf.add_page()
     pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
-    create_title(pdf, entry_id, "AMR Results")
+    create_title(pdf, entry_id, "CGE Finder results")
     pdf.ln(40)
 
     pdf.ln(10)
@@ -1060,6 +1060,7 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
     pdf.set_font('Arial', '', 12)
 
     amr_pheno, csv_data = derive_phenotype_amr(resfinder_hits, "resfinder_db", target_dir)
+    print(csv_data)
     line_height = pdf.font_size * 2.5
     col_width = pdf.epw / 4  # distribute content evenly
     for row in csv_data:
@@ -1072,7 +1073,7 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
     pdf.ln(10)
 
     virulence_pheno, csv_data = derive_phenotype_virulence(virulence_hits, "virulencefinder_db", target_dir)
-
+    print (csv_data)
     line_height = pdf.font_size * 2.5
     col_width = pdf.epw / 4  # distribute content evenly
     for row in csv_data:
