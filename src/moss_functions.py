@@ -905,7 +905,7 @@ def isolate_file_name(config_name, entry_id):
 
 def run_bandage(target_dir, jobid):
     #TBD run bandage in assembly func
-    cmd = "docker run --name bandage{} -v {}/assembly_results/:/data/assembly_results/ nanozoo/bandage Bandage image /data/assembly_results/assembly.gfa contigs.jpg".format(
+    cmd = "docker run --name bandage{} -v {}/assembly_results/:/data/assembly_results/ nanozoo/bandage Bandage image /data/assembly_results/assembly_graph.gfa contigs.jpg".format(
         jobid, target_dir)
     os.system(cmd)
 
