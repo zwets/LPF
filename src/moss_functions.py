@@ -1057,15 +1057,14 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
     pdf.add_page()
     pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
     create_title(pdf, entry_id, "CGE Finder results")
-    pdf.ln(40)
 
     pdf.ln(10)
 
-    pdf.set_font('Arial', '', 12)
+    pdf.cell(85, 5, "Antimicrobial Genes Found:", 0, 1, 'L')
 
     amr_pheno, csv_data = derive_phenotype_amr(resfinder_hits, "resfinder_db", target_dir)
     print(csv_data)
-    line_height = pdf.font_size * 2.5
+    line_height = pdf.font_size * 1.5
     col_width = pdf.epw / 4  # distribute content evenly
     for row in csv_data:
         for datum in row:
@@ -1075,10 +1074,12 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
 
 
     pdf.ln(10)
+
+    pdf.cell(85, 5, "Virulence Genes Found: ", 0, 1, 'L')
 
     virulence_pheno, csv_data = derive_phenotype_virulence(virulence_hits, "virulencefinder_db", target_dir)
     print (csv_data)
-    line_height = pdf.font_size * 2.5
+    line_height = pdf.font_size * 1.5
     col_width = pdf.epw / 4  # distribute content evenly
     for row in csv_data:
         for datum in row:
@@ -1088,10 +1089,12 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
 
     pdf.ln(10)
 
-    textstring = "Plasmids found: {}" \
-                 .format(", ".join(plasmid_hits))
+    pdf.cell(85, 5, "Plasmids Found:", 0, 1, 'L')
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('Arial', '', 10)
+    textstring = ""
+    for item in plasmid_hits:
+        textstring += "* {}\n".format(item)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
 
 
