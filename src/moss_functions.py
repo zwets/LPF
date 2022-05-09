@@ -43,6 +43,7 @@ import dataframe_image as dfi
 #Utility functions
 
 def derive_phenotype(genes, database):
+    print (genes)
     phenotype = dict()
     infile = open("/opt/moss/{}/notes.txt".format(database), 'r')
     for line in infile:
@@ -1031,6 +1032,8 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
 
     amr_pheno = derive_phenotype(resfinder_hits, "resfinder_db")
     virulence_pheno = derive_phenotype(virulence_hits, "virulencefinder_db")
+    print (amr_pheno)
+    print (virulence_pheno)
 
     textstring = "{} {}".format(amr_pheno, virulence_pheno)
     pdf.set_text_color(0, 0, 0)
