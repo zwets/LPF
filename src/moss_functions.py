@@ -82,7 +82,7 @@ def derive_phenotype_virulence(genes, database, target_dir):
 
     csv_data = [["Viruelence", "Genes"]]
     for item in phenotype:
-        csv_data.append([item, phenotype[item]])
+        csv_data.append([item, ", ".join(phenotype[item])])
     return phenotype, csv_data
 
 
