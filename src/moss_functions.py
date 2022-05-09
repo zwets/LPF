@@ -1069,7 +1069,7 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
     textstring = "{} {}".format(amr_pheno, virulence_pheno)
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('Arial', '', 10)
-    pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False
+    pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
 
 
 
