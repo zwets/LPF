@@ -34,8 +34,10 @@ from geopy.geocoders import Nominatim
 from subprocess import check_output, STDOUT
 
 import moss_sql as moss_sql
-from Bio import Phylo
+import matplotlib
 import matplotlib.pyplot as plt
+from Bio import Phylo
+from io import StringIO
 import pylab
 import dataframe_image as dfi
 
