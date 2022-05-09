@@ -1142,7 +1142,7 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
 
     create_phylo_tree(target_dir)
 
-    pdf.image("{}/phytree_output/tree.png".format(target_dir), x=10, y=40, w=pdf.w / 2, h=pdf.h / 2)
+    pdf.image("{}/phytree_output/tree.png".format(target_dir), x=10, y=55, w=pdf.w / 1.5, h=pdf.h / 2)
 
 
     #Insert tree
