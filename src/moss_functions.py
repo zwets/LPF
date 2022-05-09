@@ -42,6 +42,20 @@ import dataframe_image as dfi
 
 #Utility functions
 
+def derive_phenotype(genes, database):
+    phenotype = dict()
+    infile = open("opt/moss/{}}/notes.txt".format(database), 'r')
+    for line in infile:
+        if line[0] != "#":
+            line = line.rstrip().split(":")
+            if line[0] in genes:
+                if line[1] in phenotype:
+                    phenotype[line[1]].append(line[0])
+                else:
+                    phenotype[line[1]] = [line[0]]
+    return phenotype
+
+
 def push_meta_data_to_sql(metadata_dict, entry_id, config_name):
     sql_cmd = "INSERT INTO metadata_table(entry_id, sample_name, sequencing_method, isolation_source, investigation_type, \
     collection_date, latitude, longitude, city, country) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"\
@@ -827,88 +841,6 @@ def isolate_file_name(config_name, entry_id):
     return element
 
 
-def generate_amr_resistance_profile_table(config_name, entry_id, pdf, target_dir, reference_header_text):
-
-    panel_found = False
-    panel_list = []
-
-    genus = reference_header_text.split()[1]
-    species = reference_header_text.split()[2]
-
-    panels = []
-    antimicrobials = dict()
-
-    infile = open("/opt/moss/resfinder/db_resfinder/phenotype_panels.txt" ,'r')
-    add_amr_flag = False
-    for line in infile:
-        line = line.rstrip()
-        if line != "" and line[0] != "#":
-            line = line.split()
-            if line[0] == ":Panel:":
-                if len(line) == 3:
-                    panels.append("{} {}".format(line[1], line[2]))
-                    antimicrobials["{} {}".format(line[1], line[2])] = []
-                    add_amr_flag = True
-                else:
-                    panels.append(line[1])
-                    antimicrobials[line[1]] = []
-                    add_amr_flag = True
-            elif add_amr_flag == True:
-                if line[0] == ":Include:":
-                    for item in antimicrobials[line[1]]:
-                        antimicrobials[panels[-1]].append(item)
-                else:
-                    antimicrobials[panels[-1]].append(line[0])
-        else:
-            add_amr_flag = False
-    infile.close()
-
-    if "{} {}".format(genus, species) in panels:
-        panel_found = True
-        panel_list = antimicrobials["{} {}".format(genus, species)]
-    elif genus in panels:
-        if len(antimicrobials[genus]) > 1:
-            panel_found = True
-            panel_list = antimicrobials[genus]
-
-
-    # antiomicrobial, Class, Resistant/no resitance, match, genes.
-    isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
-    conn = sqlite3.connect(isolatedb)
-    c = conn.cursor()
-
-    c.execute("SELECT phenotypes FROM amr_table WHERE entry_id = '{}'".format(entry_id))
-    refdata = c.fetchall()
-    conn.close()
-
-    outfile = open(target_dir + "amr.csv", 'w')
-    print ("Opened amr.csv")
-
-    header = "Antimicrobial,Class,Resistance,Match,Genes"
-    reflist = refdata[0][0].split(";")
-
-    print (header, file=outfile)
-
-    if panel_found:
-        for item in reflist:
-            item = item.split(",")
-            if (item[0][0].upper() + item[0][1:]) in panel_list:
-                if item[4] != "":
-                    item[4] = "\"" + item[4].replace("@", ", ") + "\""
-                item = ",".join(item)
-                print(item, file=outfile)
-    else:
-        #Are we missing potential genes?
-        for item in reflist:
-            item = item.split(",")
-            if item[0].split()[0] != "unknown":
-                if item[4] != "":
-                    item[4] = "\"" + item[4].replace("@", ", ") + "\""
-                item = ",".join(item)
-                print (item, file=outfile)
-    outfile.close()
-
-    return reflist, panel_found, panel_list
 
 
 def run_bandage(target_dir, jobid):
@@ -1087,14 +1019,25 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
 
     pdf.set_xy(x=105, y=65)
 
-    #Rsub-script is not called when page is left
-    #Make a python table and print here
-
     ''' Second Page '''
     pdf.add_page()
-    pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 6.5, h=pdf.h / 6.5)
+    pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
     create_title(pdf, entry_id, "AMR Results")
     pdf.ln(40)
+
+    pdf.ln(10)
+
+    pdf.set_font('Arial', '', 12)
+
+    amr_pheno = derive_phenotype(resfinder_hits, "resfinder_db")
+    virulence_pheno = derive_phenotype(virulence_hits, "virulencefinder_db")
+
+    textstring = "{} {}".format(amr_pheno, virulence_pheno)
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font('Arial', '', 10)
+    pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
+
+
 
     #df = pd.read_csv(target_dir + "amr.csv")
     #print(df)
