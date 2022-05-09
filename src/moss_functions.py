@@ -1102,14 +1102,14 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
 
 
     pdf.set_font('Arial', '', 12)
-    """
-    ''' Second Page '''
+
+    ''' Third Page '''
     pdf.add_page()
-    pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 6.5, h=pdf.h / 6.5)
-    create_title(pdf, ID, "Phylogeny results")
-    pdf.ln(20)
-    pdf.image(image_location, x=10, y=55, w=pdf.w/1.2, h=pdf.h/1.6)
-    """
+    pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
+    create_title(pdf, entry_id, "Cluster phylogeny:")
+
+    pdf.cell(85, 5, "Phylo tree for cluser {}: ".format(reference_header_text.split("\t")[0]), 0, 1, 'L')
+
 
     pdf.output(target_dir + filename, 'F')
 
