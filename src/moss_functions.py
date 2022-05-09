@@ -277,13 +277,39 @@ def make_phytree_output_folder(config_name, target_dir, isolate_list, reference_
     os.system(cmd)
 
 def create_phylo_tree(target_dir):
-    tree = Phylo.read("{}phytree_output/tree.newick".format(target_dir), 'newick')
-    Phylo.draw(tree, do_show=False)
-    pylab.savefig("{}phytree_output/tree.png".format(target_dir))
-    image_location = "{}/phytree_output/tree.png".format(target_dir)
+    with open ("{}phytree_output/tree.newick".format(target_dir)) as fd:
+        data = fd.read()[0]
+    handle = StringIO(data)  # parse the newick string
+    tree = Phylo.read(handle, "newick")
+    matplotlib.rc('font', size=6)
+    # set the size of the figure
+    fig = plt.figure(figsize=(10, 20), dpi=100)
+    # alternatively
+    # fig.set_size_inches(10, 20)
+    axes = fig.add_subplot(1, 1, 1)
+    Phylo.draw(tree, axes=axes)
+    plt.savefig("{}/phytree_output/tree.png".format(target_dir), dpi=100)
+
+
+    #tree = Phylo.read("{}phytree_output/tree.newick".format(target_dir), 'newick')
+    #Phylo.draw(tree, do_show=False)
+    #pylab.savefig("{}phytree_output/tree.png".format(target_dir))
+    #image_location = "{}/phytree_output/tree.png".format(target_dir)
     return image_location
 
+def plot_tree(treedata, output_file):
+    handle = StringIO(treedata)  # parse the newick string
+    tree = Phylo.read(handle, "newick")
+    matplotlib.rc('font', size=6)
+    # set the size of the figure
+    fig = plt.figure(figsize=(10, 20), dpi=100)
+    # alternatively
+    # fig.set_size_inches(10, 20)
+    axes = fig.add_subplot(1, 1, 1)
+    Phylo.draw(tree, axes=axes)
+    plt.savefig(output_file, dpi=100)
 
+    return
 
 def moss_shortcut_init():
     outfile = open('/opt/moss/src/moss', 'w')
@@ -1108,8 +1134,13 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
     pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
     create_title(pdf, entry_id, "Cluster phylogeny:")
 
+    pdf.set_font('Arial', '', 10)
+
+    pdf.ln(10)
+
     pdf.cell(85, 5, "Phylo tree for cluser {}: ".format(reference_header_text.split("\t")[0]), 0, 1, 'L')
 
+    #Insert tree
 
     pdf.output(target_dir + filename, 'F')
 
