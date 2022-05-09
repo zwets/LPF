@@ -59,9 +59,10 @@ def derive_phenotype_amr(genes, database, target_dir):
                     phenotype[line[1]].append(line[0])
                 else:
                     phenotype[line[1]] = [line[0]]
-    csv_data = [["Resistance", "Genes"]]
+    csv_data = ()
+    csv_data.add(("Resistance", "Genes"))
     for item in phenotype:
-        csv_data.append([item, phenotype[item]])
+        csv_data.add((item, ", ".join(phenotype[item])))
     return phenotype, csv_data
 
 def derive_phenotype_virulence(genes, database, target_dir):
@@ -80,9 +81,10 @@ def derive_phenotype_virulence(genes, database, target_dir):
                 else:
                     phenotype[line[1].strip()] = [line[0]]
 
-    csv_data = [["Viruelence", "Genes"]]
+    csv_data = ()
+    csv_data.add(("Virulence", "Genes"))
     for item in phenotype:
-        csv_data.append([item, ", ".join(phenotype[item])])
+        csv_data.add((item, ", ".join(phenotype[item])))
     return phenotype, csv_data
 
 
