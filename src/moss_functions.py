@@ -281,6 +281,9 @@ def make_phytree_output_folder(config_name, target_dir, isolate_list, reference_
 def create_phylo_tree(target_dir):
     with open ("{}phytree_output/tree.newick".format(target_dir)) as fd:
         data = fd.read()[0]
+    print (data)
+    print(data)
+    print(data)
     handle = StringIO(data)  # parse the newick string
     tree = Phylo.read(handle, "newick")
     matplotlib.rc('font', size=6)
