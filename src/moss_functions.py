@@ -66,7 +66,7 @@ def derive_phenotype_amr(genes, database, target_dir):
         writer.write(csv_line)
     return phenotype
 
-def derive_phenotype_virulence(genes, database, target_dir)):
+def derive_phenotype_virulence(genes, database, target_dir):
     new_genes = list()
     for item in genes:
         new_genes.append(item.split(":")[0])
