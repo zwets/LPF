@@ -1000,21 +1000,6 @@ def compileReportAssembly(target_dir, ID, config_name, associated_species, resfi
 
     pdf.set_font('Arial', '', 12)
 
-    ''' Third Page '''
-    pdf.add_page()
-    pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
-    create_title(pdf, entry_id, "Cluster phylogeny:")
-
-    pdf.set_font('Arial', '', 10)
-
-    pdf.ln(10)
-
-    pdf.cell(85, 5, "Phylo tree for cluser {}: ".format(reference_header_text.split("\t")[0]), 0, 1, 'L')
-
-    create_phylo_tree(target_dir)
-
-    pdf.image("{}/phytree_output/tree.png".format(target_dir), x=10, y=55, w=pdf.w / 1.5, h=pdf.h / 1.75)
-
     pdf.output(target_dir + filename, 'F')
 
 
