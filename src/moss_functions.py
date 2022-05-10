@@ -945,13 +945,12 @@ def compileReportAssembly(target_dir, ID, config_name, associated_species):
 
     df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
     dfi.export(df_styled, target_dir + "quast_table.png")
-    pdf.image("{}quast_table.png".format(target_dir), x=10, y=80, w=pdf.w / 2.5, h=pdf.h / 3)
+    pdf.image("{}quast_table.png".format(target_dir), x=10, y=100, w=pdf.w / 2.5, h=pdf.h / 3)
     run_bandage(target_dir, ID)
     pdf.set_xy(x=10, y=58)
     pdf.set_font('Arial', '', 14)
     pdf.set_text_color(51, 153, 255)
-    pdf.cell(85, 5, "Contig visualization:", 0, 1, 'L')
-    pdf.image("{}contigs.jpg".format(target_dir), x=65, y=140, w=pdf.w / 2.5, h=pdf.h / 3)
+    pdf.image("{}contigs.jpg".format(target_dir), x=115, y=100, w=pdf.w / 2.5, h=pdf.h / 2.7)
 
     pdf.output(target_dir + filename, 'F')
 
