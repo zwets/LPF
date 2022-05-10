@@ -945,12 +945,74 @@ def compileReportAssembly(target_dir, ID, config_name, associated_species):
 
     df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
     dfi.export(df_styled, target_dir + "quast_table.png")
-    pdf.image("{}quast_table.png".format(target_dir), x=10, y=100, w=pdf.w / 2.5, h=pdf.h / 3)
+    pdf.image("{}quast_table.png".format(target_dir), x=10, y=90, w=pdf.w / 2.5, h=pdf.h / 2.7)
     run_bandage(target_dir, ID)
     pdf.set_xy(x=10, y=58)
     pdf.set_font('Arial', '', 14)
     pdf.set_text_color(51, 153, 255)
-    pdf.image("{}contigs.jpg".format(target_dir), x=115, y=100, w=pdf.w / 2.5, h=pdf.h / 2.7)
+    pdf.image("{}contigs.jpg".format(target_dir), x=115, y=90, w=pdf.w / 2.5, h=pdf.h / 2.7)
+
+    ''' Second Page '''
+    pdf.add_page()
+    pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
+    create_title(pdf, entry_id, "CGE Finder results")
+
+    pdf.set_font('Arial', '', 10)
+
+    pdf.ln(10)
+
+    pdf.cell(85, 5, "Antimicrobial Genes Found:", 0, 1, 'L')
+
+    amr_pheno, csv_data = derive_phenotype_amr(resfinder_hits, "resfinder_db", target_dir)
+    print(csv_data)
+    line_height = pdf.font_size * 3
+    col_width = pdf.epw / 4  # distribute content evenly
+    for row in csv_data:
+        for datum in row:
+            pdf.multi_cell(col_width, line_height, datum, border=1,
+                           new_x="RIGHT", new_y="TOP", max_line_height=pdf.font_size)
+        pdf.ln(line_height)
+
+    pdf.ln(10)
+
+    pdf.cell(85, 5, "Virulence Genes Found: ", 0, 1, 'L')
+
+    virulence_pheno, csv_data = derive_phenotype_virulence(virulence_hits, "virulencefinder_db", target_dir)
+    print(csv_data)
+    line_height = pdf.font_size * 3
+    col_width = pdf.epw / 4  # distribute content evenly
+    for row in csv_data:
+        for datum in row:
+            pdf.multi_cell(col_width, line_height, datum, border=1,
+                           new_x="RIGHT", new_y="TOP", max_line_height=pdf.font_size)
+        pdf.ln(line_height)
+
+    pdf.ln(10)
+
+    pdf.cell(85, 5, "Plasmids Found:", 0, 1, 'L')
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font('Arial', '', 10)
+    textstring = ""
+    for item in plasmid_hits:
+        textstring += "* {}\n".format(item)
+    pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
+
+    pdf.set_font('Arial', '', 12)
+
+    ''' Third Page '''
+    pdf.add_page()
+    pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
+    create_title(pdf, entry_id, "Cluster phylogeny:")
+
+    pdf.set_font('Arial', '', 10)
+
+    pdf.ln(10)
+
+    pdf.cell(85, 5, "Phylo tree for cluser {}: ".format(reference_header_text.split("\t")[0]), 0, 1, 'L')
+
+    create_phylo_tree(target_dir)
+
+    pdf.image("{}/phytree_output/tree.png".format(target_dir), x=10, y=55, w=pdf.w / 1.5, h=pdf.h / 1.75)
 
     pdf.output(target_dir + filename, 'F')
 
