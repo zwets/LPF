@@ -29,11 +29,6 @@
                     Overview of currently running and completed analyses for database configuration: <pre id="current-config"></pre> </div>
 
                 <div>
-                    <input type='button' onclick='recompilereports()'
-                           value='Recompile all analytical reports' />
-                    <h3>
-                        Click the button to create a dynamic table using data extracted from a JSON array.
-                    </h3>
                     <input type='button' onclick='showFinishedAnalyses()'
                            value='Refresh analysis table' />
                     <p id='showData'></p>
@@ -52,6 +47,7 @@
 </div>
 
 <script type="text/javascript">
+    showFinishedAnalyses();
   </script>
 </body>
 </html>
