@@ -17,6 +17,7 @@ function readSingleFile(e) {
 
 function showFinishedAnalyses() {
     var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
+    console.log(current_moss_system + 'moss.db');
     let sql = `SELECT * FROM status_table`;
     document.getElementById('showData').innerHTML="" ;
     const db = require('better-sqlite3')(current_moss_system + 'moss.db');
