@@ -364,7 +364,7 @@ def run_assembly(entry_id, config_name, sample_name, target_dir, input, referenc
         .format("Compiling PDF report", "reference", "5", "5", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     sql_execute_command(sql_cmd, config_name)
 
-    compileReportAssembly(target_dir, entry_id, config_name, associated_species) #Look at the TBD
+    compileReportAssembly(target_dir, entry_id, config_name, associated_species, , resfinder_hits, virulence_hits, plasmid_hits, mlst_type) #Look at the TBD
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("Assembly pipeline completed", "reference", "5", "5", "Completed", str(datetime.datetime.now())[0:-7], entry_id)
@@ -921,7 +921,7 @@ def run_bandage(target_dir, jobid):
     os.system(cmd)
 
 
-def compileReportAssembly(target_dir, ID, config_name, associated_species):
+def compileReportAssembly(target_dir, ID, config_name, associated_species, resfinder_hits, virulence_hits, plasmid_hits, mlst_type):
     entry_id = ID
     pdf = FPDF()  # A4 (210 by 297 mm)
     filename = "{}_report.pdf".format(ID)  # ADD idd
