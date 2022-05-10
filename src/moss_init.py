@@ -29,7 +29,7 @@ def check_and_add_bookmarks(config_name):
     new_bookmark_list = list()
     print (data)
     for item in data:
-        if "moss" not in data:
+        if "moss" not in item:
             new_bookmark_list.append(item.rstrip())
     print (new_bookmark_list)
     new_bookmark_list.append("file:///opt/moss_data")
