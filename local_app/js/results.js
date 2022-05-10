@@ -19,7 +19,7 @@ function showFinishedAnalyses() {
     var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
     let sql = `SELECT * FROM status_table`;
     document.getElementById('showData').innerHTML="" ;
-    let db_dir = document.getElementById('current-config').innerHTML
+    let db_dir = document.getElementById('current-config').innerHTML;
     const db = require('better-sqlite3')(current_moss_system + 'moss.db');
     const sql_data_obj = db.prepare(sql).all();
     console.log(sql_data_obj);
