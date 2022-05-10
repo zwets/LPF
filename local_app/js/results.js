@@ -78,7 +78,7 @@ function tableFromObj(sql_data_obj, db_dir) {
                 var img = document.createElement('img');
                 img.id = sql_data_obj[i].entry_id;
                 img.name = sql_data_obj[i].entry_id;
-                img.src = data.exepath + "local_app/images/report-icon.png";
+                img.src = "/opt/moss/local_app/images/report-icon.png";
                 img.setAttribute('height', '17pt');
                 img.innerHTML = sql_data_obj[i].entry_id;
                 img.onclick = function() {openPDF(this.id, db_dir)};
