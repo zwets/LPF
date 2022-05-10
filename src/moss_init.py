@@ -120,3 +120,5 @@ f_out.close()
 
 cmd = "python3 /opt/moss/src/createGuppyWorkflowDict.py -current_working_db {}".format(args.config_name)
 os.system(cmd)
+
+check_and_add_bookmarks(config_name)
