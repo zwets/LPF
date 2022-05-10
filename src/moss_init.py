@@ -35,7 +35,7 @@ def check_and_add_bookmarks(config_name):
 
     with open("{}/.config/gtk-3.0/bookmarks".format(home), 'w') as fd:
         for item in new_bookmark_list:
-            fd.write(item)
+            fd.write(item + '\n')
 
 
 parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
