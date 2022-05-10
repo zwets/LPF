@@ -53,11 +53,15 @@ def main(csv, jobs, config_name):
         sys.exit("Currently a maximum of 8 jobs are permitted in parallel.")
 
     jobslist = []
-    #function here to check for mulitple_files, barcodes etc in input directory.
-    #filelist = moss.derive_finalized_filenames(input_dir)
+
     for i in range(len(metadata_list)):
         cmd = "python3 /opt/moss/src/moss.py -config_name {} -metadata \"{}\" -metadata_headers \"{}\"".format(config_name, metadata_list[i], metadata_headers)
         jobslist.append(cmd)
+        input = metadata_dict[i]['file_location']
+        entry_id = moss.md5(input)
+        moss.sql_execute_command(
+            "INSERT INTO status_table(entry_id, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')" \
+            .format(entry_id, "Queued", "Queued", "Queued", "Queued", "Queued", ""), config_name)
 
     Parallel(n_jobs=jobs)(delayed(mossAnalysis)(jobslist, i) for i in range(len(jobslist)))
     print ("Analysis complete")

@@ -38,7 +38,7 @@ function execute_command_as_subprocess(cmd, print_msg) {
 
     console.log("Analysis has been submitted");
 
-    alert("Analysis has been submitted");
+    alert("Analysis has been submitted. Go to Results section is the left menu to see process and final results.");
 
     var print_msg = `Analysis is running`;
 
