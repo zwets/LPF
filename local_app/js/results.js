@@ -17,10 +17,10 @@ function readSingleFile(e) {
 
 function showFinishedAnalyses() {
     var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
-    var db_dir = '/opt/moss_db/' + current_moss_system;
+    var db_dir = '/opt/moss_db/' + current_moss_system + "/";
     let sql = `SELECT * FROM status_table`;
     document.getElementById('showData').innerHTML="" ;
-    const db = require('better-sqlite3')(db_dir + '/moss.db');
+    const db = require('better-sqlite3')(db_dir + 'moss.db');
     const sql_data_obj = db.prepare(sql).all();
     console.log(sql_data_obj);
 
