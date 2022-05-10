@@ -69,7 +69,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
 
     if template_search_result == 1: #1 means error, thus no template found
         moss.run_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text,
-                          associated_species)
+                          associated_species, resfinder_hits, virulence_hits, plasmid_hits, mlst_type)
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("IPC check", "Alignment", "4", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     moss.sql_execute_command(sql_cmd, config_name)
@@ -117,7 +117,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     if distance > 300: #SNP distance
         associated_species = "{} - assembly from ID: {}".format(reference_header_text, entry_id)
         moss.run_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text,
-                          associated_species)
+                          associated_species, resfinder_hits, virulence_hits, plasmid_hits, mlst_type)
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("Distance Matrix", "Alignment", "6", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
