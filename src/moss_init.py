@@ -25,7 +25,7 @@ def check_and_add_bookmarks(config_name):
     home = str(Path.home())
 
     with open("{}/.config/gtk-3.0/bookmarks".format(home)) as fd:
-        data = f.readlines()
+        data = fd.readlines()
     new_bookmark_list = list()
     print (data)
     for item in data:
