@@ -40,12 +40,12 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     moss.sql_execute_command("INSERT INTO sample_table(entry_id, sample_name, reference_id, amr_genes, virulence_genes, plasmids) VALUES('{}', '{}', '{}', '{}', '{}', '{}')"\
         .format(entry_id, sample_name, "", "", "", "", ""), config_name)
 
-    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("CGE finders", "Not Determined", "1", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE status_table=\"{}\"" \
+        .format("CGE finders", sample_name, "Not Determined", "1", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     moss.sql_execute_command(sql_cmd, config_name)
 
-    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\""\
-                             .format("CGE finders", "Not Determined", "2", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\""\
+                             .format("CGE finders", sample_name, "Not Determined", "2", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     moss.sql_execute_command(sql_cmd, config_name)
 
     moss.moss_mkfs(config_name, entry_id)
@@ -55,8 +55,8 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     moss.kma_finders("-ont -md 5 -1t1 -cge -apm", "virulencefinder", target_dir, input, "/opt/moss/virulencefinder_db/all")
     moss.kma_finders("-ont -md 5 -1t1 -cge -apm", "plasmidfinder", target_dir, input, "/opt/moss/plasmidfinder_db/all")
 
-    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("KMA Mapping", "Not Determined", "3", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("KMA Mapping", sample_name, "Not Determined", "3", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     moss.sql_execute_command(sql_cmd, config_name)
 
     template_score, template_search_result, reference_header_text, template_number = moss.kma_mapping(target_dir, input, config_name)
@@ -70,8 +70,8 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     if template_search_result == 1: #1 means error, thus no template found
         moss.run_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text,
                           associated_species, resfinder_hits, virulence_hits, plasmid_hits, mlst_type)
-    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("IPC check", "Alignment", "4", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("IPC check", sample_name, "Alignment", "4", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     moss.sql_execute_command(sql_cmd, config_name)
 
     result, action = moss.acquire_semaphore("ipc_index_refdb", config_name, 1, 7200)
@@ -103,8 +103,8 @@ def moss_pipeline(config_name, metadata, metadata_headers):
 
     related_isolates = moss.sql_fetch("SELECT consensus_name FROM sample_table WHERE reference_id = '{}'".format(reference_id), config_name)[0][0].split(",")
 
-    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("CCphylo", "Alignment", "5", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("CCphylo", sample_name, "Alignment", "5", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     moss.sql_execute_command(sql_cmd, config_name)
 
     moss.make_phytree_output_folder(config_name, target_dir, related_isolates, reference_header_text)
@@ -119,32 +119,32 @@ def moss_pipeline(config_name, metadata, metadata_headers):
         moss.run_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text,
                           associated_species, resfinder_hits, virulence_hits, plasmid_hits, mlst_type)
 
-    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("Distance Matrix", "Alignment", "6", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Distance Matrix", sample_name, "Alignment", "6", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     moss.sql_execute_command(sql_cmd, config_name)
 
     cmd = "/opt/moss/ccphylo/ccphylo tree --input {}/phytree_output/distance_matrix --output {}/phytree_output/tree.newick".format(target_dir, target_dir)
     os.system(cmd)
 
-    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("Phylo Tree imaging", "Alignment", "7", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Phylo Tree imaging", sample_name, "Alignment", "7", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     moss.sql_execute_command(sql_cmd, config_name)
 
     image_location = moss.create_phylo_tree(target_dir)
 
-    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("Database updating", "Alignment", "8", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Database updating", sample_name, "Alignment", "8", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     moss.sql_execute_command(sql_cmd, config_name)
 
-    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("Compiling PDF", "Alignment", "9", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Compiling PDF", sample_name, "Alignment", "9", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     moss.sql_execute_command(sql_cmd, config_name)
 
 
     moss.compileReportAlignment(target_dir, entry_id, config_name, reference_header_text, related_isolates, resfinder_hits, virulence_hits, plasmid_hits, mlst_type, sample_name) #No report compiled for assemblies! Look into it! #TBD
 
-    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("Completed", "Alignment", "10", "10", "Completed", str(datetime.datetime.now())[0:-7], entry_id)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Completed", sample_name, "Alignment", "10", "10", "Completed", str(datetime.datetime.now())[0:-7], entry_id)
     moss.sql_execute_command(sql_cmd, config_name)
 
 def main():
