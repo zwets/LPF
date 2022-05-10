@@ -20,6 +20,20 @@ import re
 import json
 import sqlite3
 
+def check_and_add_bookmarks(config_name):
+    with open("~/.config/gtk.3.0/bookmarks") as fd:
+        data = fd.read()
+    new_bookmark_list = list()
+    for item in data:
+        if "moss" not in data:
+            new_bookmark_list.append(item)
+    new_bookmark_list.append("file://opt/moss_data")
+    new_bookmark_list.append("file://opt/moss_db/{}/metadata_csv".format(config_name))
+
+    with ("~/.config/gtk.3.0/bookmarks", 'w') as fd:
+        for item in new_bookmark_list:
+            fd.write(item)
+
 
 parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
 parser.add_argument('-kmaindex_db_path', action="store", type=str, dest='kmaindex_db_path', default="", help='Path a .ATG kma-index database that is desired to be used a references. It is expected that both the .ATG.name file and .ATG.seq.b file is present in this directory, and that NO OTHER files are present. http://www.cbs.dtu.dk/public/CGE/databases/KmerFinder/version/20190108_stable/ link to bacteria.tar.gz, which is a good option for a starting database')
