@@ -17,25 +17,25 @@ function readSingleFile(e) {
 
 function showFinishedAnalyses() {
     var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
-    console.log(current_moss_system + 'moss.db');
+    var db_dir = '/opt/moss_db/' + current_moss_system;
     let sql = `SELECT * FROM status_table`;
     document.getElementById('showData').innerHTML="" ;
-    const db = require('better-sqlite3')('/opt/moss_db/' + current_moss_system + '/moss.db');
+    const db = require('better-sqlite3')(db_dir + '/moss.db');
     const sql_data_obj = db.prepare(sql).all();
     console.log(sql_data_obj);
 
-    tableFromObj(sql_data_obj);
+    tableFromObj(sql_data_obj, db_dir);
 
 }
 
-function openPDF(id, data){
-  console.log(data.db_dir + "analysis/" + document.getElementById(id).name + "/" + id + "_report.pdf");
-  window.open(data.db_dir + "analysis/" + document.getElementById(id).name + "/" + id + "_report.pdf");
+function openPDF(id, db_dir){
+  console.log(db_dir + "analysis/" + document.getElementById(id).name + "/" + id + "_report.pdf");
+  window.open(db_dir + "analysis/" + document.getElementById(id).name + "/" + id + "_report.pdf");
   //return false;
 }
 
 
-function tableFromObj(sql_data_obj) {
+function tableFromObj(sql_data_obj, db_dir) {
         var divShowData = document.getElementById('showData');
         divShowData.innerHTML = "";
 
@@ -81,7 +81,7 @@ function tableFromObj(sql_data_obj) {
                 img.src = data.exepath + "local_app/images/report-icon.png";
                 img.setAttribute('height', '17pt');
                 img.innerHTML = sql_data_obj[i].entry_id;
-                img.onclick = function() {openPDF(this.id, data)};
+                img.onclick = function() {openPDF(this.id, db_dir)};
                 tabCell.appendChild(img);
             };
 
