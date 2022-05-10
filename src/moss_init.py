@@ -32,8 +32,8 @@ def check_and_add_bookmarks(config_name):
         if "moss" not in data:
             new_bookmark_list.append(item.rstrip())
     print (new_bookmark_list)
-    new_bookmark_list.append("file://opt/moss_data")
-    new_bookmark_list.append("file://opt/moss_db/{}/metadata_csv".format(config_name))
+    new_bookmark_list.append("file:///opt/moss_data")
+    new_bookmark_list.append("file:///opt/moss_db/{}/metadata_csv".format(config_name))
 
     with open("{}/.config/gtk-3.0/bookmarks".format(home), 'w') as fd:
         for item in new_bookmark_list:
