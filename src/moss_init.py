@@ -21,7 +21,7 @@ import json
 import sqlite3
 
 def check_and_add_bookmarks(config_name):
-    with open("~/.config/gtk.3.0/bookmarks") as fd:
+    with open("~/.config/gtk-3.0/bookmarks") as fd:
         data = fd.read()
     new_bookmark_list = list()
     for item in data:
@@ -30,7 +30,7 @@ def check_and_add_bookmarks(config_name):
     new_bookmark_list.append("file://opt/moss_data")
     new_bookmark_list.append("file://opt/moss_db/{}/metadata_csv".format(config_name))
 
-    with ("~/.config/gtk.3.0/bookmarks", 'w') as fd:
+    with ("~/.config/gtk-3.0/bookmarks", 'w') as fd:
         for item in new_bookmark_list:
             fd.write(item)
 
