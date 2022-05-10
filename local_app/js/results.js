@@ -2,54 +2,6 @@ const { exec } = require('child_process');
 const fs = require('fs');
 const storage = require('electron-json-storage');
 
-storage.get('currentConfig', function(error, data) {
-  if (error) throw error;
-
-  var element = document.getElementById('current-config');
-  element.textContent = data.db_dir;
-  var exe_path = data.exepath;
-});
-
-
-var configfile = "None";
-document.getElementById("configfile").innerHTML = configfile;
-
-function recompilereports() {
-
-    var loader = document.getElementById('loader');
-    loader.style.display = 'block';
-    document.getElementById('loadermessage').innerHTML = "Recompiling all reports.";
-    storage.get('currentConfig', function(error, data) {
-          if (error) throw error;
-
-          execstring = `conda run -n base python3 ${data.exepath}src/testpdf.py -db_dir ${data.db_dir} -exepath ${data.exepath}`;
-          console.log(execstring)
-
-          exec(execstring, (error, stdout, stderr) => {
-
-
-
-            if (error) {
-              //If error, change accepted ui to failure, which attached message.
-              console.error(`exec error: ${error}`);
-              alert(`exec error: ${error}`);
-              return;
-            }
-            console.log(`stdout: ${stdout}`);
-            console.error(`stderr: ${stderr}`);
-
-            //Automatic change of correct system config to
-            alert("All reports have finished compiling");
-
-            loader.style.display = 'none';
-            document.getElementById('loadermessage').innerHTML = "Finished recompling all reports.";
-
-          });
-    });
-
-
-}
-
 function readSingleFile(e) {
     var file = e.target.files[0];
     if (!file) {
@@ -64,18 +16,15 @@ function readSingleFile(e) {
 }
 
 function showFinishedAnalyses() {
-    storage.get('currentConfig', function(error, data) {
-              if (error) throw error;
+    var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
+    let sql = `SELECT * FROM status_table`;
+    document.getElementById('showData').innerHTML="" ;
+    let db_dir = document.getElementById('current-config').innerHTML
+    const db = require('better-sqlite3')(current_moss_system + 'moss.db');
+    const sql_data_obj = db.prepare(sql).all();
+    console.log(sql_data_obj);
 
-              let sql = `SELECT * FROM status_table`;
-              document.getElementById('showData').innerHTML="" ;
-                let db_dir = document.getElementById('current-config').innerHTML
-                const db = require('better-sqlite3')(db_dir + 'moss.db');
-                const sql_data_obj = db.prepare(sql).all();
-                console.log(sql_data_obj);
-
-                tableFromObj(sql_data_obj, data);
-        });
+    tableFromObj(sql_data_obj, data);
 
 }
 
