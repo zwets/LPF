@@ -38,8 +38,6 @@ function openPDF(id, data){
 function tableFromObj(sql_data_obj) {
         var divShowData = document.getElementById('showData');
         divShowData.innerHTML = "";
-		db_dir = document.getElementById('current-config').innerHTML;
-
 
         // ('Book ID', 'Book Name', 'Category' and 'Price')
         var col = [];
