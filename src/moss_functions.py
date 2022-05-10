@@ -1096,6 +1096,7 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
     clusterSize = len(related_isolates)
 
     ''' First Page '''
+    entry_id = ID
     pdf.add_page()
     pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
     create_title(pdf, entry_id, "MOSS analytical report")
