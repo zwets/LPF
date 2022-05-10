@@ -52,8 +52,6 @@ config_name = args.config_name
 
 check_and_add_bookmarks(config_name)
 
-sys.exit()
-
 kmaindex_db_path = moss.correctPathCheck(args.kmaindex_db_path)
 
 if not os.path.exists("/opt/moss_db"):
