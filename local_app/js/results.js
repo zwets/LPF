@@ -24,7 +24,7 @@ function showFinishedAnalyses() {
     const sql_data_obj = db.prepare(sql).all();
     console.log(sql_data_obj);
 
-    tableFromObj(sql_data_obj, data);
+    tableFromObj(sql_data_obj);
 
 }
 
@@ -35,7 +35,7 @@ function openPDF(id, data){
 }
 
 
-function tableFromObj(sql_data_obj, data) {
+function tableFromObj(sql_data_obj) {
         var divShowData = document.getElementById('showData');
         divShowData.innerHTML = "";
 		db_dir = document.getElementById('current-config').innerHTML;
