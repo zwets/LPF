@@ -33,7 +33,7 @@ def check_and_add_bookmarks(config_name):
     new_bookmark_list.append("file://opt/moss_data")
     new_bookmark_list.append("file://opt/moss_db/{}/metadata_csv".format(config_name))
 
-    with ("{}/.config/gtk-3.0/bookmarks".format(home), 'w') as fd:
+    with open("{}/.config/gtk-3.0/bookmarks".format(home), 'w') as fd:
         for item in new_bookmark_list:
             fd.write(item)
 
@@ -46,6 +46,11 @@ args = parser.parse_args()
 
 kma_path = "/opt/moss/kma/kma"
 config_name = args.config_name
+
+
+check_and_add_bookmarks(config_name)
+
+sys.exit()
 
 kmaindex_db_path = moss.correctPathCheck(args.kmaindex_db_path)
 
@@ -123,5 +128,3 @@ f_out.close()
 
 cmd = "python3 /opt/moss/src/createGuppyWorkflowDict.py -current_working_db {}".format(args.config_name)
 os.system(cmd)
-
-check_and_add_bookmarks(config_name)
