@@ -936,6 +936,7 @@ def compileReportAssembly(target_dir, ID, config_name, associated_species):
                  "No reference cluster was identified. \n" \
                  "".format(ID, associated_species) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
+    pdf.ln(20)
     run_quast(target_dir, ID)
 
     df = pd.read_csv(target_dir + "quast_output/report.tsv", sep='\t')
@@ -943,13 +944,13 @@ def compileReportAssembly(target_dir, ID, config_name, associated_species):
 
     df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
     dfi.export(df_styled, target_dir + "quast_table.png")
-    pdf.image("{}quast_table.png".format(target_dir), x=10, y=40, w=pdf.w / 1.5, h=pdf.h / 1.75)
+    pdf.image("{}quast_table.png".format(target_dir), x=10, y=40, w=pdf.w / 2.5, h=pdf.h / 3)
     run_bandage(target_dir, ID)
     pdf.set_xy(x=10, y=58)
     pdf.set_font('Arial', '', 14)
     pdf.set_text_color(51, 153, 255)
     pdf.cell(85, 5, "Contig visualization:", 0, 1, 'L')
-    pdf.image("{}contigs.jpg".format(target_dir), x=15, y=70, w=pdf.w / 2.2, h=pdf.h / 2.7)
+    pdf.image("{}contigs.jpg".format(target_dir), x=15, y=100, w=pdf.w / 2.5, h=pdf.h / 3)
 
     pdf.output(target_dir + filename, 'F')
 
