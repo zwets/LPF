@@ -53,10 +53,10 @@ def main(args):
     os.system(cmd)
 
 def check_input_name(args):
-    print (args.name)
-    if "barcode".upper() in args.name.upper():
-        args.name = "/".join(args.name.split("/")[:-1])
-    print (args.name)
+    print (args.input)
+    if "barcode".upper() in args.input.upper():
+        input.name = "/".join(args.input.split("/")[:-1])
+    print (args.input)
     files = os.listdir("/opt/moss_data/fast5/")
     if args.name in files:
         sys.exit("This experiment name has already been used. Please choose another one.")
