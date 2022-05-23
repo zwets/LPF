@@ -18,8 +18,8 @@ function update_moss(){
               console.error(`exec error: ${error}`);
               return;
             } else {
-                alert("Base calling has completed.");
-                document.getElementById('loadermessage').innerHTML = `Update has been completed: ${stdout}`;
+                alert("Update has completed.");
+                document.getElementById('loadermessage').innerHTML = `Update has been completed.`;
                 loader.style.display = 'none';
             }
 
