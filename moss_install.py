@@ -9,7 +9,7 @@ args = parser.parse_args()
 
 def main(args):
     if args.light:
-        os.system("cd /opt/moss")
+        os.system("cd /opt/moss; git pull")
         cwd = os.getcwd()
     else:
         cwd = os.getcwd()
