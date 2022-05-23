@@ -41,17 +41,14 @@ def main(args):
     check_input_name(args)
     fast5_path = concat_input(args)
     files = os.listdir(fast5_path)
-    print (files)
-    sys.exit("here")
+    os.system("mkdir /opt/moss_data/fastq/{}".format(args.name))
     for item in files:
-        cmd = "/opt/moss/ont-guppy/bin/./guppy_basecaller -i {}  -s /opt/moss_data/{} --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(args.input, args.directory, args.model)
+        cmd = "/opt/moss/ont-guppy/bin/./guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(fast5_path + item, args.name, args.model)
     if args.chunks != "":
         cmd += " --chunks_per_runner 75"
     if args.bk != "":
         cmd += " --barcode_kits \"{}\"".format(args.bk)
 
-    os.system(cmd)
-    cmd = "cat {}/pass/* > {}{}.fastq.gz".format(args.directory, args.directory, args.name)
     os.system(cmd)
 
 def check_input_name(args):
