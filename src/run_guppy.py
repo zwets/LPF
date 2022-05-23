@@ -56,7 +56,6 @@ def base_call(args):
     for item in files:
         if "barcode".upper() in item.upper():
             barcode_folder.append(item)
-    print (barcode_folder)
     if len(barcode_folder) == 0:
         sys.exit("There are no barcode folders in basecalled fastq. Either data without barcodes were given, or something went wrong during basecalling.")
     for item in barcode_folder:
