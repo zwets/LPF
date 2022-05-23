@@ -38,9 +38,8 @@ parser.add_argument('-c', action="store", type=str, dest='model', default="", he
 args = parser.parse_args()
 
 def main(args):
-    check_input_name(args)
-    if "barcode".upper() in args.name.upper():
-        args.name = "/".join(args.name.split("/")[:-1])
+    args = check_input_name(args)
+    print (args)
     fast5_path = concat_input(args)
     files = os.listdir(fast5_path)
     os.system("mkdir /opt/moss_data/fastq/{}".format(args.name))
@@ -54,9 +53,14 @@ def main(args):
     os.system(cmd)
 
 def check_input_name(args):
+    print (args.name)
+    if "barcode".upper() in args.name.upper():
+        args.name = "/".join(args.name.split("/")[:-1])
+    print (args.name)
     files = os.listdir("/opt/moss_data/fast5/")
     if args.name in files:
         sys.exit("This experiment name has already been used. Please choose another one.")
+    return args
 
 def concat_input(args):
     files = os.listdir(args.input)
