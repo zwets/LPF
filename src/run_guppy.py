@@ -38,7 +38,7 @@ parser.add_argument('-c', action="store", type=str, dest='model', default="", he
 args = parser.parse_args()
 
 def main(args):
-    args = check_input_name(args)
+    check_input_name(args)
     base_call(args)
     sys.exit("HERE")
     fast5_path = concat_input(args)
@@ -52,31 +52,13 @@ def main(args):
     os.system(cmd)
 
 def check_input_name(args):
-    if "barcode".upper() in args.input.upper():
-        args.input = "/".join(args.input.split("/")[:-2])
     files = os.listdir("/opt/moss_data/fast5/")
     if args.name in files:
         sys.exit("This experiment name has already been used. Please choose another one.")
-    return args
 
 def base_call(args):
-    files = os.listdir(args.input)
-    barcode_folder = list()
-    for item in files:
-        if "barcode".upper() in item.upper():
-            barcode_folder.append(item)
-    print(barcode_folder)
-    if len(barcode_folder) == 0:
-        sys.exit(
-            "There are no barcode folders in the pass fast5 folder you provided. Please check and make sure the content of the provided fast5 pass folder in correct.")
-    os.system("mkdir /opt/moss_data/fastq/{}".format(args.name))
-    for item in barcode_folder:
-        os.system("mkdir /opt/moss_data/fastq/{}/{}/".format(args.name, item))
-    for item in files:
-        cmd = "/opt/moss/ont-guppy/bin/./guppy_basecaller -i {}/{}/  -s /opt/moss_data/fastq/{}/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(
-            args.input, item, args.name, item, args.model)
-        print (cmd)
-        #os.system(cmd)
+    cmd = "/opt/moss/ont-guppy/bin/./guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/--device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(args.input, args.name, args.model)
+    print (cmd)
 
 def concat_input(args):
     files = os.listdir(args.input)
