@@ -3,20 +3,11 @@ const fs = require('fs')
 const storage = require('electron-json-storage');
 var mkdirp = require('mkdirp');
 
-
-
-storage.get('currentConfig', function(error, data) {
-  if (error) throw error;
-
-  var element = document.getElementById('current-config');
-  element.textContent = data.db_dir;
-
-});
-
 function fetch_guppy_data(){
-    var db_dir = document.getElementById('current-config').innerHTML;
 
-    readTextFile("/opt/moss_db/" + "test1" +"/static_files/workflow.json", function(text){
+    var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
+
+    readTextFile("/opt/moss_db/" + current_moss_system + "/static_files/workflow.json", function(text){
         var data = JSON.parse(text);
         document.getElementById('workflowjson').innerHTML = data;
 
@@ -86,7 +77,7 @@ function fetch_guppy_data(){
 
 
 
-    readTextFile(db_dir + "static_files/barcodes.json", function(text){
+    readTextFile("/opt/moss_db/" + current_moss_system + "static_files/barcodes.json", function(text){
         var data = JSON.parse(text);
         var items = data;
 
@@ -117,9 +108,9 @@ function fetch_guppy_data(){
     });
 }
 
-function find_model_from_input(flowcell, kit, db_dir, algorithm){
+function find_model_from_input(flowcell, kit, algorithm){
     var model = "";
-    const data = require(db_dir + "static_files/workflow.json");
+    const data = require("/opt/moss_db/" + current_moss_system + "static_files/workflow.json");
     for (var i = 0; i < data.length; i++) {
                 if (data[i].flowcell == flowcell) {
                     if (data[i].kit == kit) {
@@ -140,7 +131,6 @@ function start_base_calling(){
     var barcodes = document.getElementById('demux').value;
     var model_version = document.getElementById('model_version').value;
     var algorithm = document.getElementById('algorithm').value;
-    var db_dir = document.getElementById('current-config').innerHTML;
     var input = document.getElementById('fast5-input-field');
     var output_name = document.getElementById('output-field').value;
 
@@ -164,7 +154,7 @@ function start_base_calling(){
     if (check_basecall_name) {
         cmd = `conda run -n base python3 /opt/moss/src/run_guppy.py -i ${input_path} -n ${output_name}`
 
-        var model = find_model_from_input(flowcell, kit, db_dir, algorithm);
+        var model = find_model_from_input(flowcell, kit, algorithm);
         cmd = cmd.concat(` -c ${model}`)
         console.log(cmd);
 
