@@ -30,7 +30,7 @@ from joblib import Parallel, delayed
 
 
 parser = argparse.ArgumentParser(description='.')
-parser.add_argument('-i', action="store", type=str, dest='input_path', default="", help='input_path')
+parser.add_argument('-i', action="store", type=str, dest='input', default="", help='input')
 parser.add_argument('-n', action="store", type=str, dest='name', default="", help='name')
 parser.add_argument('-bk', action="store", type=str, dest='bk', default="", help='bk')
 parser.add_argument('-chunks', action="store", type=str, dest='chunks', default="", help='chunks')
@@ -44,7 +44,7 @@ def main(args):
     print (files)
     sys.exit("here")
     for item in files:
-        cmd = "/opt/moss/ont-guppy/bin/./guppy_basecaller -i {}  -s /opt/moss_data/{} --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(args.input_path, args.directory, args.model)
+        cmd = "/opt/moss/ont-guppy/bin/./guppy_basecaller -i {}  -s /opt/moss_data/{} --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(args.input, args.directory, args.model)
     if args.chunks != "":
         cmd += " --chunks_per_runner 75"
     if args.bk != "":
@@ -60,7 +60,7 @@ def check_input_name(args):
         sys.exit("This experiment name has already been used. Please choose another one.")
 
 def concat_input(args):
-    files = os.listdir(args.input_path)
+    files = os.listdir(args.input)
     barcode_folder = list()
     for item in files:
         if "barcode".upper() in item.upper():
