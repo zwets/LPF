@@ -151,7 +151,7 @@ function start_base_calling(){
     }
 
     if (check_basecall_name) {
-        cmd = `conda run -n base python3 /opt/moss/src/run_guppy.py -i ${input_path} -n ${output_name}`
+        cmd = `conda run -n base python3 /opt/moss/src/run_guppy.py -i ${input_path} -name ${output_name}`
 
         var model = find_model_from_input(flowcell, kit, algorithm);
         cmd = cmd.concat(` -c ${model}`)
