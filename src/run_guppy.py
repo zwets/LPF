@@ -39,9 +39,11 @@ args = parser.parse_args()
 
 def main(args):
     args = check_input_name(args)
+    base_call(args)
+    sys.exit("HERE")
     fast5_path = concat_input(args)
     os.system("mkdir /opt/moss_data/fastq/{}".format(args.name))
-    cmd = "/opt/moss/ont-guppy/bin/./guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(fast5_path, args.name, args.model)
+    cmd = "/opt/moss/ont-guppy/bin/./guppy_basecaller -i {}/  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(fast5_path, args.name, args.model)
     if args.chunks != "":
         cmd += " --chunks_per_runner 75"
     if args.bk != "":
@@ -56,6 +58,24 @@ def check_input_name(args):
     if args.name in files:
         sys.exit("This experiment name has already been used. Please choose another one.")
     return args
+
+def base_call(args):
+    files = os.listdir(args.input)
+    barcode_folder = list()
+    for item in files:
+        if "barcode".upper() in item.upper():
+            barcode_folder.append(item)
+    print(barcode_folder)
+    if len(barcode_folder) == 0:
+        sys.exit(
+            "There are no barcode folders in the pass fast5 folder you provided. Please check and make sure the content of the provided fast5 pass folder in correct.")
+    os.system("mkdir /opt/moss_data/fastq/{}".format(args.name))
+    for item in barcode_folder:
+        os.system("mkdir /opt/moss_data/fastq/{}/{}/".format(args.name, item))
+    for item in files:
+        cmd = "/opt/moss/ont-guppy/bin/./guppy_basecaller -i {}/{}/  -s /opt/moss_data/fastq/{}/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(
+            args.input, item, args.name, item, args.model)
+        os.system(cmd)
 
 def concat_input(args):
     files = os.listdir(args.input)
