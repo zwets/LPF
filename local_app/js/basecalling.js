@@ -5,9 +5,9 @@ var mkdirp = require('mkdirp');
 
 function fetch_guppy_data(){
 
-    var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
+    var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"] + "/";
 
-    readTextFile("/opt/moss_db/" + current_moss_system + "/static_files/workflow.json", function(text){
+    readTextFile("/opt/moss_db/" + current_moss_system + "static_files/workflow.json", function(text){
         var data = JSON.parse(text);
         document.getElementById('workflowjson').innerHTML = data;
 
