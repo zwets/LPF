@@ -8,6 +8,7 @@ function update_moss(){
     var loader = document.getElementById('loader');
     loader.style.display = 'block';
     document.getElementById('loadermessage').innerHTML = "Basecalling is running";
+    console.log(cmd);
     exec(cmd, (error, stdout, stderr) => {
 
             if (error) {
