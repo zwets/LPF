@@ -4,7 +4,7 @@ import subprocess
 import argparse
 
 parser = argparse.ArgumentParser(description='.')
-parser.add_argument("-light", action="store_true", default = False, dest="light", help="Does not download CGE databases.")
+parser.add_argument("-light", action="store_true", default = False, dest="light", help="Does not download CGE databases and GUPPY for basecalling.")
 args = parser.parse_args()
 
 def main(args):
@@ -15,13 +15,13 @@ def main(args):
     if not os.path.exists("/opt/ont/minknow/"):
         sys.exit("MinKNOW is not installed in /opt/ont/minknow/ . Please locate the installation here, as it should be by default.")
     os.system("pip install -r requirements.txt")
-    guppy_installer()
     install_apt_dependencies()
     os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
     os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
     if not args.light:
         cmd = "git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py /opt/moss/kma/kma_index; cd ..; cd ..;"
         os.system(cmd)
+        guppy_installer()
     #Check APT dependencies
 
     # Moving repo to /usr/etc
