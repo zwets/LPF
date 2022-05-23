@@ -25,7 +25,8 @@ def main(args):
     #Check APT dependencies
 
     # Moving repo to /usr/etc
-    move_moss_repo(cwd)
+    if cwd != "/opt/moss":
+        move_moss_repo(cwd)
     install_app()
 
     path_list = ["/opt/moss_db", "/opt/moss_data/", "/opt/moss_data/fast5/", "/opt/moss_data/fastq/"]
