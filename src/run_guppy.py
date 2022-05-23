@@ -46,7 +46,7 @@ def main(args):
         cmd += " --chunks_per_runner 75"
     if args.bk != "":
         cmd += " --barcode_kits \"{}\"".format(args.bk)
-
+    print (cmd)
     os.system(cmd)
 
 def check_input_name(args):
@@ -59,7 +59,6 @@ def check_input_name(args):
 
 def concat_input(args):
     files = os.listdir(args.input)
-    print (files)
     barcode_folder = list()
     for item in files:
         if "barcode".upper() in item.upper():
