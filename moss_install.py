@@ -8,7 +8,11 @@ parser.add_argument("-light", action="store_true", default = False, dest="light"
 args = parser.parse_args()
 
 def main(args):
-    cwd = os.getcwd()
+    if args.light:
+        os.system("cd /opt/moss")
+        cwd = os.getcwd()
+    else:
+        cwd = os.getcwd()
     check_anaconda()
     docker_check()
     check_nvidia()

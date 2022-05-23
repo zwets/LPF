@@ -7,7 +7,7 @@ function update_moss(){
     var cmd = `conda run -n base python3 /opt/moss/moss_install.py -light`;
     var loader = document.getElementById('loader');
     loader.style.display = 'block';
-    document.getElementById('loadermessage').innerHTML = "Basecalling is running";
+    document.getElementById('loadermessage').innerHTML = "Updating....";
     console.log(cmd);
     exec(cmd, (error, stdout, stderr) => {
 
