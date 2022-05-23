@@ -58,10 +58,12 @@ def check_input_name(args):
 
 def concat_input(args):
     files = os.listdir(args.input)
+    print (files)
     barcode_folder = list()
     for item in files:
         if "barcode".upper() in item.upper():
             barcode_folder.append(item)
+    print (barcode_folder)
     if len(barcode_folder) == 0:
         sys.exit("There are no barcode folders in the pass fast5 folder you provided. Please check and make sure the content of the provided fast5 pass folder in correct.")
     os.system("mkdir /opt/moss_data/fast5/{}".format(args.name))
