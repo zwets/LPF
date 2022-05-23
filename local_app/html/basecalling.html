@@ -46,7 +46,7 @@
                     <div class="base-call-fast5-section" id="base-call-fast5-section">
                         <form action="/action_page.php">
                             Select a folder with pass fast5 files. This folder should contain multiple folders called barcode01-12, if multiplexing is used.:
-                            <input type="file" id="fast5-input-field" name="fast5-input-field" webkitdirectory directory onchange="fetch_guppy_data();"><br> <br>
+                            <input type="file" id="fast5-input-field" name="fast5-input-field" webkitdirectory multiple onchange="fetch_guppy_data();"><br> <br>
                             Experiment name:
                             <input type="text" id="output-field" name="output-field" value=""><br><br>
                             Basecalling algorithm type:
