@@ -55,7 +55,7 @@ def main(args):
 def check_input_name(args):
     print (args.input)
     if "barcode".upper() in args.input.upper():
-        input.name = "/".join(args.input.split("/")[:-1])
+        args.input = "/".join(args.input.split("/")[:-1])
     print (args.input)
     files = os.listdir("/opt/moss_data/fast5/")
     if args.name in files:
