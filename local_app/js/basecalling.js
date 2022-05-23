@@ -134,12 +134,15 @@ function start_base_calling(){
     var model_version = document.getElementById('model_version').value;
     var algorithm = document.getElementById('algorithm').value;
     var input = document.getElementById('fast5-input-field');
+    console.log(input);
     var output_name = document.getElementById('output-field').value;
 
     var single_path = input.files.item(0).path;
     var path_list = single_path.split("/");
     var path_slice= path_list.slice(1, -1);
     var input_path = "/" + path_slice.join("/") + "/";
+    console.log(single_path)
+    console.log(input_path)
 
 
 
