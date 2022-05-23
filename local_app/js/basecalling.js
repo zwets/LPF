@@ -142,8 +142,8 @@ function start_base_calling(){
 
 
     var check_basecall_name = false;
-    if (fs.existsSync(base_call_output)) {
-        alert("A fastq file with this name already exists. Please choose another one.");
+    if (fs.existsSync("/opt/moss_data/fast5/" + output_name)) {
+        alert("A experiment name has already been used. Please choose another one.");
     } else {
         check_basecall_name = true;
         mkdirp(base_call_output, function(err) {
