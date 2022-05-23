@@ -39,12 +39,9 @@ args = parser.parse_args()
 
 def main(args):
     args = check_input_name(args)
-    print (args)
     fast5_path = concat_input(args)
-    files = os.listdir(fast5_path)
     os.system("mkdir /opt/moss_data/fastq/{}".format(args.name))
-    for item in files:
-        cmd = "/opt/moss/ont-guppy/bin/./guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(fast5_path + item, args.name, args.model)
+    cmd = "/opt/moss/ont-guppy/bin/./guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(fast5_path, args.name, args.model)
     if args.chunks != "":
         cmd += " --chunks_per_runner 75"
     if args.bk != "":
@@ -53,10 +50,8 @@ def main(args):
     os.system(cmd)
 
 def check_input_name(args):
-    print (args.input)
     if "barcode".upper() in args.input.upper():
         args.input = "/".join(args.input.split("/")[:-2])
-    print (args.input)
     files = os.listdir("/opt/moss_data/fast5/")
     if args.name in files:
         sys.exit("This experiment name has already been used. Please choose another one.")
