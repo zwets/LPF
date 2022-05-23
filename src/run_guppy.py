@@ -72,10 +72,10 @@ def base_call(args):
     os.system("mkdir /opt/moss_data/fastq/{}".format(args.name))
     for item in barcode_folder:
         os.system("mkdir /opt/moss_data/fastq/{}/{}/".format(args.name, item))
-    sys.exit("made fodlers")
     for item in files:
         cmd = "/opt/moss/ont-guppy/bin/./guppy_basecaller -i {}/{}/  -s /opt/moss_data/fastq/{}/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(
             args.input, item, args.name, item, args.model)
+        print (cmd)
         os.system(cmd)
 
 def concat_input(args):
