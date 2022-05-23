@@ -39,6 +39,8 @@ args = parser.parse_args()
 
 def main(args):
     check_input_name(args)
+    if "barcode".upper() in args.name.upper():
+        args.name = "/".join(args.name.split("/")[:-1])
     fast5_path = concat_input(args)
     files = os.listdir(fast5_path)
     os.system("mkdir /opt/moss_data/fastq/{}".format(args.name))

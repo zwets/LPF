@@ -137,7 +137,7 @@ function start_base_calling(){
     console.log(input);
     var output_name = document.getElementById('output-field').value;
 
-    var single_path = input.files.item(-1).path;
+    var single_path = input.files.item(0).path;
     var path_list = single_path.split("/");
     var path_slice= path_list.slice(1, -1);
     var input_path = "/" + path_slice.join("/") + "/";
