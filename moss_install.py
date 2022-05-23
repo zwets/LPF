@@ -37,7 +37,7 @@ def main(args):
     #Make solution for finders
     download_finder_dbs() #Check if works TBD
 
-    os.system("python3 /opt/moss/docker_install.py")
+    os.system("python3 /opt/moss/docker_images.py")
 
 
     #Create generic stored place for each initialized system. Make
