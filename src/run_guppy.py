@@ -40,7 +40,7 @@ args = parser.parse_args()
 def main(args):
     check_input_name(args)
     fast5_path = concat_input(args)
-    files = os.listdir(args.fast5_path)
+    files = os.listdir(fast5_path)
     print (files)
     sys.exit("here")
     for item in files:
