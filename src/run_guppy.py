@@ -69,7 +69,7 @@ def concat_input(args):
         sys.exit("There are no barcode folders in the pass fast5 folder you provided. Please check and make sure the content of the provided fast5 pass folder in correct.")
     os.system("mkdir /opt/moss_data/fast5/{}".format(args.name))
     for item in barcode_folder:
-        os.system("cat {}/{}/*.fastq* > /opt/moss_data/fast5/{}/{}_{}.fast5".format(args.input, item, args.name, args.name, item))
+        os.system("cat {}/{}/*.fast5* > /opt/moss_data/fast5/{}/{}_{}.fast5".format(args.input, item, args.name, args.name, item))
     return ("/opt/moss_data/fast5/{}/".format(args.name))
 
 if __name__ == '__main__':
