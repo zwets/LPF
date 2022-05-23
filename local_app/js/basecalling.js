@@ -110,6 +110,8 @@ function fetch_guppy_data(){
 
 function find_model_from_input(flowcell, kit, algorithm){
     var model = "";
+    var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"] + "/";
+
     const data = require("/opt/moss_db/" + current_moss_system + "static_files/workflow.json");
     for (var i = 0; i < data.length; i++) {
                 if (data[i].flowcell == flowcell) {
