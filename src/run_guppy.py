@@ -38,10 +38,10 @@ parser.add_argument('-c', action="store", type=str, dest='model', default="", he
 args = parser.parse_args()
 
 def main(args):
-    #check_input_name(args)
+    check_input_name(args)
     os.system("mkdir /opt/moss_data/fastq/{}".format(args.name))
-    #base_call(args)
-    concat_input(args)
+    base_call(args)
+    #concat_input(args)
 
 def check_input_name(args):
     files = os.listdir("/opt/moss_data/fast5/")
