@@ -63,6 +63,6 @@ def concat_input(args):
         sys.exit("There are no barcode folders in basecalled fastq. Either data without barcodes were given, or something went wrong during basecalling.")
     for item in barcode_folder:
         os.system("cat /opt/moss_data/fastq/{}/pass/{}/*.fastq.gz > /opt/moss_data/fastq/{}/{}_{}.fastq.gz".format(args.name, item, args.name, args.name, item))
-
+    os.system("rm -rf /opt/moss_data/fastq/{}/pass/".format(args.name))
 if __name__ == '__main__':
     main(args)
