@@ -146,9 +146,6 @@ function start_base_calling(){
         alert("A experiment name has already been used. Please choose another one.");
     } else {
         check_basecall_name = true;
-        mkdirp(base_call_output, function(err) {
-            });
-
     }
 
     if (check_basecall_name) {
