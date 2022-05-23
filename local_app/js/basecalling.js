@@ -10,9 +10,6 @@ storage.get('currentConfig', function(error, data) {
 
   var element = document.getElementById('current-config');
   element.textContent = data.db_dir;
-  var element = document.getElementById('current-exepath');
-  element.textContent = data.exepath;
-
 
 });
 
@@ -144,17 +141,13 @@ function start_base_calling(){
     var model_version = document.getElementById('model_version').value;
     var algorithm = document.getElementById('algorithm').value;
     var db_dir = document.getElementById('current-config').innerHTML;
-    var exepath = document.getElementById('current-exepath').innerHTML;
-
     var input = document.getElementById('fast5-input-field');
-    var output_dir = document.getElementById('output-field').value;
+    var output_name = document.getElementById('output-field').value;
 
     var single_path = input.files.item(0).path;
     var path_list = single_path.split("/");
     var path_slice= path_list.slice(1, -1);
     var input_path = "/" + path_slice.join("/") + "/";
-
-    var base_call_output = `${db_dir}basecall_output/${output_dir}/`;
 
 
 
@@ -169,13 +162,13 @@ function start_base_calling(){
     }
 
     if (check_basecall_name) {
-        cmd = `conda run -n base python3 ${exepath}src/basecall_and_concat.py -i ${input_path}  -d ${base_call_output} -n ${output_dir} -exepath ${exepath}`
+        cmd = `conda run -n base python3 /opt/moss/src/run_guppy.py -i ${input_path} -n ${output_name}`
 
         var model = find_model_from_input(flowcell, kit, db_dir, algorithm);
         cmd = cmd.concat(` -c ${model}`)
         console.log(cmd);
 
-        //if (fs.existsSync(output_dir)) {
+        //if (fs.existsSync(output_name)) {
         var loader = document.getElementById('loader');
         loader.style.display = 'block';
         document.getElementById('loadermessage').innerHTML = "Basecalling is running";
