@@ -1,8 +1,13 @@
 import os
 import sys
 import subprocess
+import argparse
 
-def main():
+parser = argparse.ArgumentParser(description='.')
+parser.add_argument("-light", action="store_true", default = False, dest="light", help="Does not download CGE databases.")
+args = parser.parse_args()
+
+def main(args):
     cwd = os.getcwd()
     check_anaconda()
     docker_check()
@@ -14,8 +19,9 @@ def main():
     install_apt_dependencies()
     os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
     os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
-    cmd = "git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py /opt/moss/kma/kma_index; cd ..; cd ..;"
-    os.system(cmd)
+    if not args.light:
+        cmd = "git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py /opt/moss/kma/kma_index; cd ..; cd ..;"
+        os.system(cmd)
     #Check APT dependencies
 
     # Moving repo to /usr/etc
@@ -29,6 +35,8 @@ def main():
 
     #Make solution for finders
     download_finder_dbs() #Check if works TBD
+
+    os.system("python3 /opt/moss/docker_install.py")
 
 
     #Create generic stored place for each initialized system. Make
@@ -170,4 +178,4 @@ def check_anaconda():
 
 
 if __name__ == '__main__':
-    main()
+    main(args)

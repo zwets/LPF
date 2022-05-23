@@ -49,7 +49,6 @@ args = parser.parse_args()
 kma_path = "/opt/moss/kma/kma"
 config_name = args.config_name
 
-
 check_and_add_bookmarks(config_name)
 
 kmaindex_db_path = moss.correctPathCheck(args.kmaindex_db_path)
