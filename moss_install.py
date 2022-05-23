@@ -22,16 +22,17 @@ def main(args):
     install_apt_dependencies()
     os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
     os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
-    if not args.light:
-        cmd = "git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py /opt/moss/kma/kma_index; cd ..; cd ..;"
-        os.system(cmd)
-        guppy_installer()
     #Check APT dependencies
 
     # Moving repo to /usr/etc
     if cwd != "/opt/moss":
         move_moss_repo(cwd)
     install_app()
+
+    if not args.light:
+        cmd = "cd /opt/moss; git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py /opt/moss/kma/kma_index; cd ..; cd ..;"
+        os.system(cmd)
+        guppy_installer()
 
     path_list = ["/opt/moss_db", "/opt/moss_data/", "/opt/moss_data/fast5/", "/opt/moss_data/fastq/"]
     for item in path_list:
