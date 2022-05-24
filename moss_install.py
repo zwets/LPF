@@ -52,7 +52,12 @@ def main(args):
 
     #Update the guppy-worklist on updates? or reinstalls
 
+    check_dist_build()
     return True
+
+def check_dist_build():
+    if not os.path.isdir("/opt/moss/local_app/dist/"):
+        sys.exit("A MOSS distribution was not created correctly. Installation was not completed")
 
 def download_finder_dbs():
     os.system("git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git")
