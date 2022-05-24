@@ -28,7 +28,7 @@ import pandas as pd
 from tabulate import tabulate
 from IPython.display import display, HTML
 import gzip
-from fpdf import FPDF
+from fpdf2 import FPDF
 from pandas.plotting import table
 from geopy.geocoders import Nominatim
 from subprocess import check_output, STDOUT
