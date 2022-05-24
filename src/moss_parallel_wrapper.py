@@ -58,6 +58,7 @@ def main(csv, jobs, config_name):
         cmd = "python3 /opt/moss/src/moss.py -config_name {} -metadata \"{}\" -metadata_headers \"{}\"".format(config_name, metadata_list[i], metadata_headers)
         jobslist.append(cmd)
         input = metadata_list[i].split(",")[-2]
+        print (metadata_list[i])
         sample_name = metadata_list[i].split(",")[1]
         entry_id = moss.md5(input)
         moss.sql_execute_command(
