@@ -79,9 +79,6 @@ function create_metadata_table_fastq(){
               if (t == 0) {
                 csv_string = csv_string.concat(`${table_item},`);
                 }
-              else if (t == 1) {
-                csv_string = csv_string.concat(`${table_item[0]},`);
-              }
               else {
                 csv_string = csv_string.concat(`${table_item},`);
               }
