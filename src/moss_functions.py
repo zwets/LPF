@@ -981,7 +981,7 @@ def compileReportAssembly(target_dir, ID, config_name, associated_species, resfi
     virulence_pheno, csv_data = derive_phenotype_virulence(virulence_hits, "virulencefinder_db", target_dir)
     print(csv_data)
     line_height = pdf.font_size * 3
-    col_width = pdf.epw / 4  # distribute content evenly
+    col_width = pdf.w / 4  # distribute content evenly
     for row in csv_data:
         for datum in row:
             pdf.multi_cell(col_width, line_height, datum, border=1,
@@ -1139,7 +1139,7 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
     amr_pheno, csv_data = derive_phenotype_amr(resfinder_hits, "resfinder_db", target_dir)
     print(csv_data)
     line_height = pdf.font_size * 3
-    col_width = pdf.epw / 4  # distribute content evenly
+    col_width = pdf.w / 4  # distribute content evenly
     for row in csv_data:
         for datum in row:
             pdf.multi_cell(col_width, line_height, datum, border=1,
@@ -1154,7 +1154,7 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
     virulence_pheno, csv_data = derive_phenotype_virulence(virulence_hits, "virulencefinder_db", target_dir)
     print (csv_data)
     line_height = pdf.font_size * 3
-    col_width = pdf.epw / 4  # distribute content evenly
+    col_width = pdf.w / 4  # distribute content evenly
     for row in csv_data:
         for datum in row:
             pdf.multi_cell(col_width, line_height, datum, border=1,
