@@ -8,6 +8,7 @@ parser.add_argument("-light", action="store_true", default = False, dest="light"
 args = parser.parse_args()
 
 def main(args):
+    os.system("sudo apt install npm; sudo apt install git;")
     if args.light:
         os.system("cd /opt/moss; git pull")
         cwd = os.getcwd()
