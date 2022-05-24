@@ -94,7 +94,9 @@ def install_apt_dependencies():
     apt_list = ["sudo apt update",
                 "sudo apt-get install libz-dev",
                 "sudo apt  install curl",
-                "curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -; sudo apt-get install -y nodejs"
+                #"curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -; sudo apt-get install -y nodejs"
+                "sudo apt update; sudo apt install nodejs",
+                "sudo npm install -g npm@latest",
                 "npm install mkdirp",
                 "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*"]
     print("Sudo is required for apt update")
