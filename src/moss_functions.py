@@ -28,7 +28,7 @@ import pandas as pd
 from tabulate import tabulate
 from IPython.display import display, HTML
 import gzip
-from fpdf2 import FPDF
+from fpdf import FPDF
 from pandas.plotting import table
 from geopy.geocoders import Nominatim
 from subprocess import check_output, STDOUT
@@ -967,7 +967,7 @@ def compileReportAssembly(target_dir, ID, config_name, associated_species, resfi
     amr_pheno, csv_data = derive_phenotype_amr(resfinder_hits, "resfinder_db", target_dir)
     print(csv_data)
     line_height = pdf.font_size * 3
-    col_width = pdf.epw / 4  # distribute content evenly
+    col_width = pdf.w / 4  # distribute content evenly
     for row in csv_data:
         for datum in row:
             pdf.multi_cell(col_width, line_height, datum, border=1,
