@@ -40,7 +40,7 @@ import matplotlib.pyplot as plt
 import pylab
 import dataframe_image as dfi
 
-config_name = "test1"
+config_name = "database_new"
 
 print(moss.check_sql_semaphore_value( "ipc_index_refdb", config_name))
 
