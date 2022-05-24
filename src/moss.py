@@ -36,6 +36,7 @@ parser.add_argument("-metadata_headers", action="store", dest="metadata_headers"
 args = parser.parse_args()
 
 def moss_pipeline(config_name, metadata, metadata_headers):
+    print (metadata_headers)
     config_name, metadata_dict, input, sample_name, entry_id, target_dir, ref_db, c_name = moss.moss_init(config_name, metadata, metadata_headers)
     moss.sql_execute_command("INSERT INTO sample_table(entry_id, sample_name, reference_id, amr_genes, virulence_genes, plasmids) VALUES('{}', '{}', '{}', '{}', '{}', '{}')"\
         .format(entry_id, sample_name, "", "", "", "", ""), config_name)
