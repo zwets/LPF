@@ -40,6 +40,7 @@ import dataframe_image as dfi
 parser = argparse.ArgumentParser(description='.')
 parser.add_argument("-config_name", action="store", default = False, dest="config_name", help="config_name")
 args = parser.parse_args()
+
 def local_sync(args):
     isolatedb = "/opt/moss_db/{}/moss.db".format(args.config_name)
 
@@ -48,8 +49,19 @@ def local_sync(args):
     last_sync = moss.sql_fetch_one("SELECT last_sync FROM sync_table", args.config_name)[0]
     print ("SELECT entry_id FROM status_table WHERE time_stamp>'{}'".format(last_sync))
     hits = moss.sql_fetch_all("SELECT entry_id FROM status_table WHERE time_stamp>'{}'".format(last_sync), args.config_name)
-    sys.exit(hits)
+    conn.close()
+    for item in hits:
+        fetch_data_from_id(item)
 
+def fetch_data_from_id(id):
+    isolatedb = "/opt/moss_db/{}/moss.db".format(args.config_name)
+
+    conn = sqlite3.connect(isolatedb)
+    c = conn.cursor()
+
+    isolate_object = dict()
+    hits = moss.sql_fetch_all("SELECT * FROM status_table WHERE entry_id = '{}'".format(id), args.config_name)
+    print (hits)
     conn.close()
 
 def main():
