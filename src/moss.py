@@ -104,7 +104,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
 
     related_isolates = moss.sql_fetch("SELECT consensus_name FROM sample_table WHERE reference_id = '{}'".format(reference_id), config_name)
     print (related_isolates)
-    related_isolates = related_isolates[0][0].split(",")
+    related_isolates = related_isolates[0].split(",")
     print(related_isolates)
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
