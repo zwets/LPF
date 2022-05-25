@@ -41,14 +41,11 @@ parser = argparse.ArgumentParser(description='.')
 parser.add_argument("-config_name", action="store", default = False, dest="config_name", help="config_name")
 args = parser.parse_args()
 
-class Object(dict):
-    def __init__(self):
-        pass
-    def __getattr__(self, attr):
-        return self[attr]
+class Object(object):
+    pass
 
 def local_sync(args):
-    sync_object = Object()
+    sync_dict = dict()
     isolatedb = "/opt/moss_db/{}/moss.db".format(args.config_name)
 
     conn = sqlite3.connect(isolatedb)
@@ -57,8 +54,12 @@ def local_sync(args):
     hits = moss.sql_fetch_all("SELECT entry_id FROM status_table WHERE time_stamp>'{}' AND status='Completed'".format(last_sync), args.config_name)
     conn.close()
     for item in hits:
-        sync_object.item = fetch_data_from_id(item)
-    print (sync_object)
+        sync_dict.item = fetch_data_from_id(item)
+
+    for attr in sync_dict:
+        print (atr)
+        print (vars(sync_dict.attr))
+
 def fetch_data_from_id(id):
     isolatedb = "/opt/moss_db/{}/moss.db".format(args.config_name)
 
