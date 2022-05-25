@@ -933,7 +933,7 @@ def compileReportAssembly(target_dir, ID, config_name, associated_species, resfi
     pdf.ln(20)
     pdf.set_font('Arial', '', 12)
     textstring = "ID: {} \n" \
-                 "sample_name: {} \n" \
+                 "Suggested reference: {} \n" \
                  "No reference cluster was identified. \n" \
                  "".format(ID, associated_species) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
