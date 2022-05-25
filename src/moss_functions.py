@@ -191,7 +191,7 @@ def create_directory_from_dict(dict, path):
             os.system("mkdir {}{}/{}".format(path, directory, subdirectory))
     return True
 
-def sql_fetch_(string, config_name):
+def sql_fetch(string, config_name):
     conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
     c.execute(string)
