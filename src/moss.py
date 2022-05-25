@@ -102,13 +102,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
 
     moss.sql_execute_command("UPDATE sample_table SET consensus_name = '{}.fsa' WHERE entry_id = '{}'".format(consensus_name, entry_id), config_name)
 
-    related_isolates = moss.sql_fetch("SELECT consensus_name FROM sample_table WHERE reference_id = '{}'".format(reference_id), config_name)
-    print (related_isolates[0])
-    print (related_isolates[0][0])
-    print ("list frmo tuple")
-    print (list(related_isolates[0]))
-
-    related_isolates = related_isolates[0][0].split(",")
+    related_isolates = list(moss.sql_fetch("SELECT consensus_name FROM sample_table WHERE reference_id = '{}'".format(reference_id), config_name))
     print(related_isolates)
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
