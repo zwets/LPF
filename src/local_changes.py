@@ -48,7 +48,6 @@ def local_sync(args):
     sync_dict = dict()
     last_sync = moss.sql_fetch_one("SELECT last_sync FROM sync_table", args.config_name)[0]
     hits = moss.sql_fetch_all("SELECT entry_id FROM status_table WHERE time_stamp>'{}' AND status='Completed'".format(last_sync), args.config_name)
-    conn.close()
     for item in hits:
         sync_dict[item] = fetch_data_from_id(item)
 
