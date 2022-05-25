@@ -41,8 +41,11 @@ parser = argparse.ArgumentParser(description='.')
 parser.add_argument("-config_name", action="store", default = False, dest="config_name", help="config_name")
 args = parser.parse_args()
 
-class Object(object):
-    pass
+class Object(dict):
+    def __init__(self):
+        pass
+    def __getattr__(self, attr):
+        return self[attr]
 
 def local_sync(args):
     sync_object = Object()
@@ -55,13 +58,7 @@ def local_sync(args):
     conn.close()
     for item in hits:
         sync_object.item = fetch_data_from_id(item)
-
-    # convert into JSON:
-    y = json.dumps(sync_object)
-
-    # the result is a JSON string:
-    print(y)
-
+    print (sync_object)
 def fetch_data_from_id(id):
     isolatedb = "/opt/moss_db/{}/moss.db".format(args.config_name)
 
