@@ -93,7 +93,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
 
     moss.nanopore_alignment(input, template_number, target_dir, consensus_name, config_name)
 
-    reference_id = moss.sql_fetch("SELECT entry_id FROM reference_table WHERE reference_header_text = '{}'".format(reference_header_text), config_name)
+    reference_id = moss.sql_fetch("SELECT entry_id FROM reference_table WHERE reference_header_text = '{}'".format(reference_header_text), config_name)[0][0]
 
     print ("UPDATE sample_table SET reference_id = '{}' WHERE entry_id = '{}'".format(reference_id, entry_id))
     print ("UPDATE sample_table SET reference_id = '{}' WHERE entry_id = '{}'".format(reference_id, entry_id))
