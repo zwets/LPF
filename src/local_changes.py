@@ -41,28 +41,35 @@ parser = argparse.ArgumentParser(description='.')
 parser.add_argument("-config_name", action="store", default = False, dest="config_name", help="config_name")
 args = parser.parse_args()
 
+class IsolateObject(object):
+    pass
+
 def local_sync(args):
+    sync_object = dict()
     isolatedb = "/opt/moss_db/{}/moss.db".format(args.config_name)
 
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
     last_sync = moss.sql_fetch_one("SELECT last_sync FROM sync_table", args.config_name)[0]
     print ("SELECT entry_id FROM status_table WHERE time_stamp>'{}'".format(last_sync))
-    hits = moss.sql_fetch_all("SELECT entry_id FROM status_table WHERE time_stamp>'{}'".format(last_sync), args.config_name)
+    hits = moss.sql_fetch_all("SELECT entry_id FROM status_table WHERE time_stamp>'{}' AND status='Completed'".format(last_sync), args.config_name)
     conn.close()
     for item in hits:
-        fetch_data_from_id(item)
-
+        sync_object[item] = fetch_data_from_id(item)
+    print (sync_object)
 def fetch_data_from_id(id):
     isolatedb = "/opt/moss_db/{}/moss.db".format(args.config_name)
 
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    isolate_object = dict()
-    hits = moss.sql_fetch_all("SELECT * FROM status_table WHERE entry_id = '{}'".format(id), args.config_name)
+    isolate_object = IsolateObject()
+    hits = moss.sql_fetch_all("SELECT * FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)
+    #isolate_object.sample_name = hits[1]
     print (hits)
     conn.close()
+
+    return isolate_object
 
 def main():
     local_sync(args)
