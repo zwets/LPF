@@ -51,7 +51,6 @@ def local_sync(args):
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
     last_sync = moss.sql_fetch_one("SELECT last_sync FROM sync_table", args.config_name)[0]
-    print ("SELECT entry_id FROM status_table WHERE time_stamp>'{}'".format(last_sync))
     hits = moss.sql_fetch_all("SELECT entry_id FROM status_table WHERE time_stamp>'{}' AND status='Completed'".format(last_sync), args.config_name)
     conn.close()
     for item in hits:
@@ -64,9 +63,11 @@ def fetch_data_from_id(id):
     c = conn.cursor()
 
     isolate_object = IsolateObject()
-    hits = moss.sql_fetch_all("SELECT * FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)
-    #isolate_object.sample_name = hits[1]
-    print (hits)
+    isolate_object.sample_name = moss.sql_fetch_one("SELECT sample_name FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
+    isolate_object.amr_genes = moss.sql_fetch_one("SELECT amr_genes FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
+    isolate_object.virulence_genes = moss.sql_fetch_one("SELECT virulence_genes FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
+    isolate_object.plasmids = moss.sql_fetch_one("SELECT plasmids FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
+    isolate_object.consensus_name = moss.sql_fetch_one("SELECT consensus_name FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
     conn.close()
 
     return isolate_object
