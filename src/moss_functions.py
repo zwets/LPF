@@ -195,7 +195,7 @@ def sql_fetch(string, config_name):
     conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
     c.execute(string)
-    data = c.fetch()
+    data = c.fetchone()()
     conn.close()
     return data
 
