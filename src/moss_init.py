@@ -105,7 +105,7 @@ c.execute("""CREATE TABLE IF NOT EXISTS ipc_table(ipc TEXT PRIMARY KEY, ipc_inde
 conn.commit()
 c.execute("""CREATE TABLE IF NOT EXISTS status_table(entry_id TEXT PRIMARY KEY, sample_name TEXT, status TEXT, type TEXT, current_stage TEXT, final_stage TEXT, result TEXT, time_stamp TEXT)""")
 conn.commit()
-c.execute( """CREATE TABLE IF NOT EXISTS local_sync_table(entry_id TEXT PRIMARY KEY, time_of_analysis TEXT)""")
+c.execute( """CREATE TABLE IF NOT EXISTS sync_table(last_sync TEXT, sync_round TEXT)""")
 conn.commit()
 c.execute( """CREATE TABLE IF NOT EXISTS basecalling_table(name TEXT PRIMARY KEY, status TEXT, start_time TEXT, end_time TEXT)""")
 conn.commit()
@@ -122,6 +122,13 @@ moss.init_insert_reference_table(config_name)
 jsondict = dict()
 jsondict["current_working_db"] = args.config_name
 with open("/opt/moss_db/config.json", 'w') as f_out:
+  json.dump(jsondict, f_out)
+f_out.close()
+
+# Generate config.json file
+jsondict = dict()
+jsondict["current_working_db"] = args.config_name
+with open("/opt/moss_db/{}/sync_files/local_changes.json".format(config_name), 'w') as f_out:
   json.dump(jsondict, f_out)
 f_out.close()
 

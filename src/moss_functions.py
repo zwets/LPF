@@ -44,8 +44,6 @@ import dataframe_image as dfi
 
 #Utility functions
 
-
-
 def derive_phenotype_amr(genes, database, target_dir):
     new_genes = list()
     for item in genes:
@@ -356,18 +354,18 @@ def run_assembly(entry_id, config_name, sample_name, target_dir, input, referenc
         .format("reference", entry_id)
     sql_execute_command(sql_cmd, config_name)
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("Flye Assembly", "reference", "4", "5", "Running", str(datetime.datetime.now())[0:-7], entry_id)
+        .format("Flye Assembly", "Assembly", "4", "5", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     sql_execute_command(sql_cmd, config_name)
     flye_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text, reference_id)
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("Compiling PDF report", "reference", "5", "5", "Running", str(datetime.datetime.now())[0:-7], entry_id)
+        .format("Compiling PDF report", "Assembly", "5", "5", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     sql_execute_command(sql_cmd, config_name)
 
     compileReportAssembly(target_dir, entry_id, config_name, associated_species, resfinder_hits, virulence_hits, plasmid_hits, mlst_type) #Look at the TBD
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("Assembly pipeline completed", "reference", "5", "5", "Completed", str(datetime.datetime.now())[0:-7], entry_id)
+        .format("Completed", "reference", "5", "5", "Completed", str(datetime.datetime.now())[0:-7], entry_id)
     sql_execute_command(sql_cmd, config_name)
     sys.exit("No template was found, so input was added to references.")
 
@@ -936,8 +934,8 @@ def compileReportAssembly(target_dir, ID, config_name, associated_species, resfi
     pdf.ln(20)
     pdf.set_font('Arial', '', 12)
     textstring = "ID: {} \n" \
-                 "Suggested reference: {} \n" \
-                 "No reference cluster was identified. \n" \
+                 "Suggested reference: {} \n\n" \
+                 "No related phylogeny cluster was identified. \n" \
                  "".format(ID, associated_species) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(20)
