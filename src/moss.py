@@ -95,6 +95,8 @@ def moss_pipeline(config_name, metadata, metadata_headers):
 
     reference_id = moss.sql_fetch("SELECT entry_id FROM reference_table WHERE reference_header_text = '{}'".format(reference_header_text), config_name)
 
+    print ("UPDATE sample_table SET reference_id = '{}' WHERE entry_id = '{}'".format(reference_id, entry_id))
+    print ("UPDATE sample_table SET reference_id = '{}' WHERE entry_id = '{}'".format(reference_id, entry_id))
     moss.sql_execute_command("UPDATE sample_table SET reference_id = '{}' WHERE entry_id = '{}'".format(reference_id, entry_id), config_name)
 
     cmd = "cp {}{}.fsa /opt/moss_db/{}/consensus_sequences/{}.fsa".format(target_dir, consensus_name, config_name, consensus_name)
