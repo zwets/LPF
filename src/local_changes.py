@@ -65,11 +65,11 @@ def fetch_data_from_id(id):
     c = conn.cursor()
 
     isolate_dict = Isolate()
-    isolate_dict[sample_name] = moss.sql_fetch_one("SELECT sample_name FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
-    isolate_dict[amr_genes] = moss.sql_fetch_one("SELECT amr_genes FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
-    isolate_dict[virulence_genes] = moss.sql_fetch_one("SELECT virulence_genes FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
-    isolate_dict[plasmids] = moss.sql_fetch_one("SELECT plasmids FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
-    isolate_dict[consensus_name] = moss.sql_fetch_one("SELECT consensus_name FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
+    isolate_dict['sample_name'] = moss.sql_fetch_one("SELECT sample_name FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
+    isolate_dict['amr_genes'] = moss.sql_fetch_one("SELECT amr_genes FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
+    isolate_dict['virulence_genes'] = moss.sql_fetch_one("SELECT virulence_genes FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
+    isolate_dict['plasmids'] = moss.sql_fetch_one("SELECT plasmids FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
+    isolate_dict['consensus_name'] = moss.sql_fetch_one("SELECT consensus_name FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
     conn.close()
 
     return isolate_object
