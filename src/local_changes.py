@@ -54,11 +54,11 @@ def local_sync(args):
     hits = moss.sql_fetch_all("SELECT entry_id FROM status_table WHERE time_stamp>'{}' AND status='Completed'".format(last_sync), args.config_name)
     conn.close()
     for item in hits:
-        sync_dict.item = fetch_data_from_id(item)
+        sync_dict[item] = fetch_data_from_id(item)
 
-    for attr in sync_dict:
-        print (atr)
-        print (vars(sync_dict.attr))
+    for item in sync_dict:
+        print (item)
+        print (vars(sync_dict[item]))
 
 def fetch_data_from_id(id):
     isolatedb = "/opt/moss_db/{}/moss.db".format(args.config_name)
