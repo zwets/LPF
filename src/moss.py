@@ -93,7 +93,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
 
     moss.nanopore_alignment(input, template_number, target_dir, consensus_name, config_name)
 
-    reference_id = moss.sql_fetch("SELECT entry_id FROM reference_table WHERE reference_header_text = '{}'".format(reference_header_text), config_name)[0][0]
+    reference_id = moss.sql_fetch_all("SELECT entry_id FROM reference_table WHERE reference_header_text = '{}'".format(reference_header_text), config_name)[0][0]
 
     moss.sql_execute_command("UPDATE sample_table SET reference_id = '{}' WHERE entry_id = '{}'".format(reference_id, entry_id), config_name)
 
@@ -101,7 +101,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     os.system(cmd)
 
     moss.sql_execute_command("UPDATE sample_table SET consensus_name = '{}.fsa' WHERE entry_id = '{}'".format(consensus_name, entry_id), config_name)
-    related_isolates = moss.sql_fetch("SELECT consensus_name FROM sample_table WHERE reference_id = '{}'".format(reference_id), config_name)
+    related_isolates = moss.sql_fetch_all("SELECT consensus_name FROM sample_table WHERE reference_id = '{}'".format(reference_id), config_name)
     related_isolates = [item for t in related_isolates for item in t]
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
