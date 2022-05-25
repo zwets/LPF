@@ -46,7 +46,7 @@ def local_sync(args):
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
     last_sync = moss.sql_fetch_one("SELECT last_sync FROM sync_table", args.config_name)[0]
-    print ("SELECT entry_id FROM sample_table WHERE time_stamp>{}".format(last_sync))
+    print ("SELECT entry_id FROM sample_table WHERE time_stamp>'{}'".format(last_sync))
     hits = moss.sql_fetch_all("SELECT entry_id FROM sample_table WHERE time_stamp>{}".format(last_sync), args.config_name)
     sys.exit(hits)
 
