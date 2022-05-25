@@ -783,9 +783,9 @@ def flye_assembly(entry_id, config_name, sample_name, target_dir, input, referen
             line = line.rstrip()
             sequence += line
     if reference_header_text.startswith(">Assembly"):
-        new_header_text = ">Assembly_{}_{}".format(reference_id, reference_header_text[1:].split("_")[2:])
+        new_header_text = ">{}_Assembly_{}".format(reference_id, reference_header_text[1:].split("_Assembly_")[-1])
     else:
-        new_header_text = ">Assembly_{}_{}".format(reference_id, reference_header_text[1:])
+        new_header_text = ">{}_Assembly_{}".format(reference_id, reference_header_text[1:])
     print(new_header_text, file=writefile)
     print(sequence, file=writefile)
     infile.close()
