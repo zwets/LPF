@@ -111,6 +111,8 @@ c.execute( """CREATE TABLE IF NOT EXISTS basecalling_table(name TEXT PRIMARY KEY
 conn.commit()
 dbstring = "INSERT INTO ipc_table(ipc, ipc_index_refdb, ReadRefDB, running_analyses, queued_analyses, finished_analyses) VALUES('{}' ,'{}', '{}', '{}', '{}', '{}')".format('IPC',1, 100, "", "", "")
 c.execute(dbstring)
+dbstring = "INSERT INTO sync_table(last_sync) VALUES('{}')".format(str(datetime.datetime.now())[0:-7])
+c.execute(dbstring)
 conn.commit()
 conn.close()
 #Can we add tables for genes with pointers? Better solution!
