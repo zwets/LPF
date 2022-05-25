@@ -351,14 +351,14 @@ def check_assembly_result(path):
 
     return True
 
-def run_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text, associated_species, resfinder_hits, virulence_hits, plasmid_hits, mlst_type):
+def run_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text, associated_species, resfinder_hits, virulence_hits, plasmid_hits, mlst_type, reference_id):
     sql_cmd = "UPDATE sample_table SET reference_id=\"{}\" WHERE entry_id=\"{}\"" \
         .format("reference", entry_id)
     sql_execute_command(sql_cmd, config_name)
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("Flye Assembly", "reference", "4", "5", "Running", str(datetime.datetime.now())[0:-7], entry_id)
     sql_execute_command(sql_cmd, config_name)
-    flye_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text)
+    flye_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text, reference_id)
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("Compiling PDF report", "reference", "5", "5", "Running", str(datetime.datetime.now())[0:-7], entry_id)
@@ -756,7 +756,7 @@ def ThreshholdDistanceCheck(distancematrixfile, reference, consensus_name):
                 secondentry = True
         linecount += 1
 
-def flye_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text):
+def flye_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text, reference_id):
 
     cmd = "docker run --name assembly_{} -v {}:/tmp/{} staphb/flye flye -o /tmp/assembly_results --threads 8 --nano-raw /tmp/{}".format(
         entry_id, input, input.split("/")[-1], input.split("/")[-1])
@@ -782,7 +782,10 @@ def flye_assembly(entry_id, config_name, sample_name, target_dir, input, referen
         if line[0] != ">":
             line = line.rstrip()
             sequence += line
-    new_header_text = ">Assembly_of_" + reference_header_text[1:]
+    if reference_header_text.startswith(">Assembly"):
+        new_header_text = ">Assembly_{}_{}".format(reference_id, reference_header_text[1:].split("_")[2:])
+    else:
+        new_header_text = ">Assembly_{}_{}".format(reference_id, reference_header_text[1:])
     print(new_header_text, file=writefile)
     print(sequence, file=writefile)
     infile.close()
