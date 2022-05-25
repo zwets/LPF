@@ -41,7 +41,7 @@ parser = argparse.ArgumentParser(description='.')
 parser.add_argument("-config_name", action="store", default = False, dest="config_name", help="config_name")
 args = parser.parse_args()
 
-class Object(object):
+class Isolate(dict):
     pass
 
 def local_sync(args):
@@ -56,9 +56,7 @@ def local_sync(args):
     for item in hits:
         sync_dict[item] = fetch_data_from_id(item)
 
-    for item in sync_dict:
-        print (item)
-        print (vars(sync_dict[item]))
+    print (sync_dict)
 
 def fetch_data_from_id(id):
     isolatedb = "/opt/moss_db/{}/moss.db".format(args.config_name)
@@ -66,12 +64,12 @@ def fetch_data_from_id(id):
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
-    isolate_object = Object()
-    isolate_object.sample_name = moss.sql_fetch_one("SELECT sample_name FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
-    isolate_object.amr_genes = moss.sql_fetch_one("SELECT amr_genes FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
-    isolate_object.virulence_genes = moss.sql_fetch_one("SELECT virulence_genes FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
-    isolate_object.plasmids = moss.sql_fetch_one("SELECT plasmids FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
-    isolate_object.consensus_name = moss.sql_fetch_one("SELECT consensus_name FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
+    isolate_dict = Isolate()
+    isolate_dict[sample_name] = moss.sql_fetch_one("SELECT sample_name FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
+    isolate_dict[amr_genes] = moss.sql_fetch_one("SELECT amr_genes FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
+    isolate_dict[virulence_genes] = moss.sql_fetch_one("SELECT virulence_genes FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
+    isolate_dict[plasmids] = moss.sql_fetch_one("SELECT plasmids FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
+    isolate_dict[consensus_name] = moss.sql_fetch_one("SELECT consensus_name FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
     conn.close()
 
     return isolate_object
