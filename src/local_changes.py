@@ -45,10 +45,10 @@ def local_sync(args):
 
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
-    last_sync = moss.sql_fetch("SELECT last_sync FROM sync_table", args.config_name)
-    sys.exit(last_sync[0])
-
-    c.execute("SELECT entry_id FROM sample_table WHERE time_stamp".format(semaphore))
+    last_sync = moss.sql_fetch_one("SELECT last_sync FROM sync_table", args.config_name)[0]
+    hits = moss.sql_fetch_all("SELECT entry_id FROM sample_table WHERE time_stamp>{}".format(last_sync), args.config_name)
+    sys.exit(hits)
+    c.execute("SELECT entry_id FROM sample_table WHERE time_stamp>{}".format(semaphore))
     refdata = c.fetchall()
     conn.close()
 
