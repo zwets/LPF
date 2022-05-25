@@ -288,7 +288,7 @@ def create_phylo_tree(target_dir):
     tree = Phylo.read(handle, "newick")
     matplotlib.rc('font', size=10)
     # set the size of the figure
-    fig = plt.figure(figsize=(20, 20), dpi=400)
+    fig = plt.figure(figsize=(20, 20), dpi=80)
     # alternatively
     # fig.set_size_inches(10, 20)
     axes = fig.add_subplot(1, 1, 1)
