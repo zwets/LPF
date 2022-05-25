@@ -782,7 +782,7 @@ def flye_assembly(entry_id, config_name, sample_name, target_dir, input, referen
         if line[0] != ">":
             line = line.rstrip()
             sequence += line
-    new_header_text = ">Assembly of raw reads, closest reference was : " + reference_header_text[1:]
+    new_header_text = ">Assembly_of_" + reference_header_text[1:]
     print(new_header_text, file=writefile)
     print(sequence, file=writefile)
     infile.close()
