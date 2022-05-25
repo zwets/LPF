@@ -61,7 +61,7 @@ def fetch_data_from_id(id):
     isolate_dict['plasmids'] = moss.sql_fetch_one("SELECT plasmids FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
     isolate_dict['consensus_name'] = moss.sql_fetch_one("SELECT consensus_name FROM sample_table WHERE entry_id = '{}'".format(id), args.config_name)[0]
 
-    return isolate_object
+    return isolate_dict
 
 def main():
     local_sync(args)
