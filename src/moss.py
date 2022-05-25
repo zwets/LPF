@@ -102,11 +102,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
 
     moss.sql_execute_command("UPDATE sample_table SET consensus_name = '{}.fsa' WHERE entry_id = '{}'".format(consensus_name, entry_id), config_name)
     related_isolates = moss.sql_fetch("SELECT consensus_name FROM sample_table WHERE reference_id = '{}'".format(reference_id), config_name)
-    print(related_isolates)
     related_isolates = [item for t in related_isolates for item in t]
-    print(related_isolates)
-
-    sys.exit()
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("CCphylo", sample_name, "Alignment", "5", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
