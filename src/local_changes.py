@@ -55,11 +55,12 @@ def local_sync(args):
     conn.close()
     for item in hits:
         sync_object.item = fetch_data_from_id(item)
-    dump(sync_object)
 
-def dump(obj):
-  for attr in dir(obj):
-    print("obj.%s = %r" % (attr, getattr(obj, attr)))
+    # convert into JSON:
+    y = json.dumps(sync_object)
+
+    # the result is a JSON string:
+    print(y)
 
 def fetch_data_from_id(id):
     isolatedb = "/opt/moss_db/{}/moss.db".format(args.config_name)
