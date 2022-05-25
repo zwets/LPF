@@ -205,6 +205,7 @@ def sql_fetch_all(string, config_name):
     c = conn.cursor()
     c.execute(string)
     data = c.fetchall()
+    data = [item for t in data for item in t]
     conn.close()
     return data
 
