@@ -52,9 +52,9 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     moss.moss_mkfs(config_name, entry_id)
 
     os.system("mkdir {}/finders".format(target_dir))
-    moss.kma_finders("-ont -md 5 -1t1 -cge -apm", "resfinder", target_dir, input, "/opt/moss/resfinder_db/all")
-    moss.kma_finders("-ont -md 5 -1t1 -cge -apm", "virulencefinder", target_dir, input, "/opt/moss/virulencefinder_db/all")
-    moss.kma_finders("-ont -md 5 -1t1 -cge -apm", "plasmidfinder", target_dir, input, "/opt/moss/plasmidfinder_db/all")
+    moss.kma_finders("-ont -md 5 -1t1 -cge", "resfinder", target_dir, input, "/opt/moss/resfinder_db/all")
+    moss.kma_finders("-ont -md 5 -1t1 -cge", "virulencefinder", target_dir, input, "/opt/moss/virulencefinder_db/all")
+    moss.kma_finders("-ont -md 5 -1t1 -cge", "plasmidfinder", target_dir, input, "/opt/moss/plasmidfinder_db/all")
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("KMA Mapping", sample_name, "Not Determined", "3", "10", "Running", str(datetime.datetime.now())[0:-7], entry_id)
