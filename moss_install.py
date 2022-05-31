@@ -100,7 +100,7 @@ def install_apt_dependencies():
                 "sudo apt-get install libz-dev",
                 "sudo apt  install curl",
                 #"curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -; sudo apt-get install -y nodejs"
-                "sudo apt update; sudo apt install nodejs",
+                "curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -; sudo apt-get install -y nodejs;",
                 "sudo npm install -g npm@latest",
                 "npm install mkdirp",
                 "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*"]
