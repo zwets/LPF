@@ -604,7 +604,7 @@ def check_alignment_kma_cov(file):
     return coverage
 
 def kma_mapping(target_dir,  input, config_name):
-    os.system("/opt/moss/kma/kma -i {} -o {}kma_mapping -t_db /opt/moss_db/{}/REFDB.ATG -ID 0 -nf -mem_mode -sasm -ef".format(input, target_dir, config_name))
+    os.system("/opt/moss/kma/kma -i {} -o {}kma_mapping -t_db /opt/moss_db/{}/REFDB.ATG -ID 0 -nf -mem_mode -sasm -ef -1t1".format(input, target_dir, config_name))
 
     try:
         template_number_score = 0
@@ -642,7 +642,7 @@ def nanopore_alignment(input, template_number, target_dir, consensus_name, confi
         sys.exit(result)
     else:
         sys.exit('A semaphore related issue has occured.')
-    cmd = "/opt/moss/kma/kma -i {} -o {} -t_db /opt/moss_db/{}/REFDB.ATG -mp 20 -1t1 -dense -nf -vcf -ref_fsa -ca -bcNano -Mt1 {} -t 8 -bc 0.9"\
+    cmd = "/opt/moss/kma/kma -i {} -o {} -t_db /opt/moss_db/{}/REFDB.ATG -mint3 -Mt1 {} -t 8"\
         .format(input, target_dir + consensus_name, config_name, str(template_number))
     os.system(cmd)
 
