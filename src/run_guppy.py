@@ -52,7 +52,7 @@ def base_call(args):
     barcode_list = list()
     for item in files:
         if "barcode".upper() in item.upper():
-            barcode_folder.append(item)
+            barcode_list.append(item)
     if len(barcode_list) == 0:
         cmd = "/opt/moss/ont-guppy/bin/./guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(
             args.input, args.name, args.model)
