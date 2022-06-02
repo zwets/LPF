@@ -66,6 +66,6 @@ def base_call(args):
             os.system(cmd)
     for item in barcode_list:
         os.system("cat /opt/moss_data/fastq/{}/{}/pass/*.fastq.gz > /opt/moss_data/fastq/{}/{}_{}.fastq.gz".format(args.name, item, args.name, args.name, item))
-    os.system("rm -rf /opt/moss_data/fastq/{}/pass/".format(args.name))
+        os.system("rm -rf /opt/moss_data/fastq/{}/{}/pass/".format(args.name, item,))
 if __name__ == '__main__':
     main(args)
