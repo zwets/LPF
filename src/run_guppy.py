@@ -48,18 +48,21 @@ def check_input_name(args):
         sys.exit("This experiment name has already been used. Please choose another one.")
 
 def base_call(args):
-    cmd = "/opt/moss/ont-guppy/bin/./guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(
-        args.input, args.name, args.model)
-    os.system(cmd)
-    files = os.listdir("/opt/moss_data/fastq/{}/pass/".format(args.name))
-    barcode_folder = list()
+    files = os.listdir(args.input)
+    barcode_list = list()
     for item in files:
         if "barcode".upper() in item.upper():
             barcode_folder.append(item)
-    if len(barcode_folder) == 0:
-        sys.exit("There are no barcode folders in basecalled fastq. Either data without barcodes were given, or something went wrong during basecalling.")
-    for item in barcode_folder:
-        os.system("cat /opt/moss_data/fastq/{}/pass/{}/*.fastq.gz > /opt/moss_data/fastq/{}/{}_{}.fastq.gz".format(args.name, item, args.name, args.name, item))
-    os.system("rm -rf /opt/moss_data/fastq/{}/pass/".format(args.name))
+    if len(barcode_list) == 0:
+        cmd = "/opt/moss/ont-guppy/bin/./guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(
+            args.input, args.name, args.model)
+        os.system(cmd)
+    else:
+        for item in barcode_list:
+            cmd = "/opt/moss/ont-guppy/bin/./guppy_basecaller -i {}/{}  -s /opt/moss_data/fastq/{}/{} --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(args.input, item, args.name, item, args.model)
+            os.system(cmd)
+    #for item in barcode_list:
+    #    os.system("cat /opt/moss_data/fastq/{}/{}/pass/{}/*.fastq.gz > /opt/moss_data/fastq/{}/{}_{}.fastq.gz".format(args.name, item, args.name, args.name, item))
+    #os.system("rm -rf /opt/moss_data/fastq/{}/pass/".format(args.name))
 if __name__ == '__main__':
     main(args)
