@@ -71,40 +71,6 @@ function fetch_guppy_data(){
             el.value = opt;
             select.appendChild(el);
           }
-
-    });
-
-
-
-
-    readTextFile("/opt/moss_db/" + current_moss_system + "static_files/barcodes.json", function(text){
-        var data = JSON.parse(text);
-        var items = data;
-
-        var result_barcode = [];
-
-        for (var item, i = 0; item = items[i++];) {
-          var barcode = item.barcode;
-          result_barcode.push(barcode);
-        }
-
-        const unique_barcode = [...new Set(result_barcode)];
-
-        var select = document.getElementById("demux");
-        var opt = "No multiplexing";
-        var el = document.createElement("option");
-        el.textContent = opt;
-        el.value = opt;
-        select.appendChild(el);
-        //var unames = ["Alpha", "Bravo", "Charlie", "Delta", "Echo"];
-        for (var i = 0; i < unique_barcode.length; i++) {
-            var opt = unique_barcode[i];
-            var el = document.createElement("option");
-            el.textContent = opt;
-            el.value = opt;
-            select.appendChild(el);
-          }
-
     });
 }
 
@@ -130,7 +96,6 @@ function start_base_calling(){
     var flowcell = document.getElementById('flow-cell').value;
     var kit = document.getElementById('kit').value;
     var barcoding_config_name = document.getElementById('barcoding_config_name').value;
-    var barcodes = document.getElementById('demux').value;
     var model_version = document.getElementById('model_version').value;
     var algorithm = document.getElementById('algorithm').value;
     var input = document.getElementById('fast5-input-field');
@@ -171,11 +136,6 @@ function start_base_calling(){
         if (algorithm == "_sup.cfg") {
             cmd = cmd.concat(` -chunks 75`)
         }
-
-        if (barcodes != "No multiplexing") {
-            cmd = cmd.concat(` -bk ${barcodes}`)
-            }
-
         console.log(cmd)
         exec(cmd, (error, stdout, stderr) => {
 
