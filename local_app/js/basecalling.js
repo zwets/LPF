@@ -173,7 +173,7 @@ function start_base_calling(){
         }
 
         if (barcodes != "No multiplexing") {
-            cmd = cmd.concat(` -bk ${barcodes}"`)
+            cmd = cmd.concat(` -bk ${barcodes}`)
             }
 
         console.log(cmd)
