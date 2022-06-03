@@ -33,7 +33,6 @@ def main(args):
     if not args.light:
         cmd = "cd /opt/moss; git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py /opt/moss/kma/kma_index; cd ..; cd ..;"
         os.system(cmd)
-        guppy_installer()
 
     path_list = ["/opt/moss_db", "/opt/moss_data/", "/opt/moss_data/fast5/", "/opt/moss_data/fastq/"]
     for item in path_list:
@@ -89,12 +88,6 @@ def move_shortcut_script():
     else:
         os.system("sudo mkdir ~/bin/")
         os.system("chmod a+x /opt/moss/moss; sudo mv /opt/moss/moss ~/bin/moss")
-    return True
-
-def guppy_installer():
-    os.system("wget https://mirror.oxfordnanoportal.com/software/analysis/ont-guppy_6.0.7_linux64.tar.gz --no-check-certificate")
-    os.system("tar -xvf ont-guppy_6.0.7_linux64.tar.gz")
-
     return True
 
 def install_apt_dependencies():
