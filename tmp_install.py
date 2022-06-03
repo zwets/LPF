@@ -4,7 +4,7 @@ import subprocess
 import argparse
 
 parser = argparse.ArgumentParser(description='.')
-parser.add_argument("-light", action="store_true", default = False, dest="light", help="Does not download CGE databases and GUPPY for basecalling.")
+parser.add_argument("-light", action="store_true", default = False, dest="light", help="Does not download mlst DB")
 args = parser.parse_args()
 
 def main(args):
