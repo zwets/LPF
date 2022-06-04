@@ -28,46 +28,46 @@ def main(args):
         check_dist_build()
     else:
 
-    os.system("sudo apt install npm; sudo apt install git;")
-    cwd = os.getcwd()
+        os.system("sudo apt install npm; sudo apt install git;")
+        cwd = os.getcwd()
 
-    if not os.path.exists("/opt/ont/minknow/"):
-        sys.exit("MinKNOW is not installed in /opt/ont/minknow/ . Please locate the installation here, as it should be by default.")
-    os.system("pip install -r requirements.txt")
-    install_apt_dependencies()
-    os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
-    os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
-    #Check APT dependencies
+        if not os.path.exists("/opt/ont/minknow/"):
+            sys.exit("MinKNOW is not installed in /opt/ont/minknow/ . Please locate the installation here, as it should be by default.")
+        os.system("pip install -r requirements.txt")
+        install_apt_dependencies()
+        os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
+        os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
+        #Check APT dependencies
 
-    # Moving repo to /usr/etc
-    #Check nodejs and npm!!
-    if cwd != "/opt/moss":
-        move_moss_repo(cwd)
-    install_app()
-    cmd = "cd /opt/moss; git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py /opt/moss/kma/kma_index; cd ..; cd ..;"
-    os.system(cmd)
-    guppy_installer()
-    os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*"])
+        # Moving repo to /usr/etc
+        #Check nodejs and npm!!
+        if cwd != "/opt/moss":
+            move_moss_repo(cwd)
+        install_app()
+        cmd = "cd /opt/moss; git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py /opt/moss/kma/kma_index; cd ..; cd ..;"
+        os.system(cmd)
+        guppy_installer()
+        os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*"])
 
-    path_list = ["/opt/moss_db", "/opt/moss_data/", "/opt/moss_data/fast5/", "/opt/moss_data/fastq/"]
-    for item in path_list:
-        if not os.path.exists(item):
-            os.system("sudo mkdir -m 777 {}".format(item))
+        path_list = ["/opt/moss_db", "/opt/moss_data/", "/opt/moss_data/fast5/", "/opt/moss_data/fastq/"]
+        for item in path_list:
+            if not os.path.exists(item):
+                os.system("sudo mkdir -m 777 {}".format(item))
 
-    #Make solution for finders
-    download_finder_dbs() #Check if works TBD
+        #Make solution for finders
+        download_finder_dbs() #Check if works TBD
 
-    os.system("python3 /opt/moss/docker_images.py")
+        os.system("python3 /opt/moss/docker_images.py")
 
 
-    #Create generic stored place for each initialized system. Make
-    #Install KMA and other stuff? CCphylo?
-    #create executable in bin
+        #Create generic stored place for each initialized system. Make
+        #Install KMA and other stuff? CCphylo?
+        #create executable in bin
 
-    #Update the guppy-worklist on updates? or reinstalls
+        #Update the guppy-worklist on updates? or reinstalls
 
-    check_dist_build()
-    return True
+        check_dist_build()
+        return True
 
 def check_dist_build():
     if not os.path.isdir("/opt/moss/local_app/dist/"):
