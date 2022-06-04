@@ -61,13 +61,20 @@ def base_call(args):
             args.input, args.name, args.model, args.bk)
         print(cmd)
         os.system(cmd)
+        os.system("rm -rf /opt/moss_data/fastq/{}/*.fast5".format(args.name))
+        os.system("mkdir/opt/moss_data/fastq/{}/final/".format(args.name))
+        os.system(
+            "cat /opt/moss_data/fastq/{}/*fastq.gz > /opt/moss_data/fastq/{}/final/{}_{}.fastq.gz".format(args.name,args.name,
+                                                                                                             args.name,
+                                                                                                             item))
+        os.system("rm -rf /opt/moss_data/fastq/{}/*.fastq.gz".format(args.name))
     else:
         for item in barcode_list:
             cmd = "/opt/moss/ont-guppy/bin/guppy_basecaller -i {}/{}  -s /opt/moss_data/fastq/{}/{} --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(args.input, item, args.name, item, args.model)
             print(cmd)
             os.system(cmd)
-    for item in barcode_list:
-        os.system("cat /opt/moss_data/fastq/{}/{}/pass/*.fastq.gz > /opt/moss_data/fastq/{}/{}_{}.fastq.gz".format(args.name, item, args.name, args.name, item))
-        os.system("rm -rf /opt/moss_data/fastq/{}/{}/pass/".format(args.name, item,))
+        for item in barcode_list:
+            os.system("cat /opt/moss_data/fastq/{}/{}/pass/*.fastq.gz > /opt/moss_data/fastq/{}/{}_{}.fastq.gz".format(args.name, item, args.name, args.name, item))
+            os.system("rm -rf /opt/moss_data/fastq/{}/{}/pass/".format(args.name, item))
 if __name__ == '__main__':
     main(args)
