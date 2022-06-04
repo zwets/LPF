@@ -2,9 +2,13 @@ const { exec } = require('child_process');
 const fs = require('fs')
 const storage = require('electron-json-storage');
 
-function update_moss(){
+function update_moss(argument){
     var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"] + "/";
-    var cmd = `conda run -n base python3 /opt/moss/moss_install.py -light`;
+    if (argument == 1) {
+        var cmd = `conda run -n base python3 /opt/moss/moss_install.py -git`;
+    } else if (argument == 2) {
+        var cmd = `conda run -n base python3 /opt/moss/moss_install.py -light`;
+    }
     var loader = document.getElementById('loader');
     loader.style.display = 'block';
     document.getElementById('loadermessage').innerHTML = "Updating....";
