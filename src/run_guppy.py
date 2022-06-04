@@ -57,13 +57,13 @@ def base_call(args):
             barcode_list.append(item)
     print (len(barcode_list))
     if len(barcode_list) == 0:
-        cmd = "/opt/ont/guppy/bin/guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {} --barcode_kits {}".format(
+        cmd = "/opt/moss/ont-guppy/bin/guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {} --barcode_kits {}".format(
             args.input, args.name, args.model, args.bk)
         print(cmd)
         os.system(cmd)
     else:
         for item in barcode_list:
-            cmd = "/opt/ont/guppy/bin/guppy_basecaller -i {}/{}  -s /opt/moss_data/fastq/{}/{} --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(args.input, item, args.name, item, args.model)
+            cmd = "/opt/moss/ont-guppy/bin/guppy_basecaller -i {}/{}  -s /opt/moss_data/fastq/{}/{} --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(args.input, item, args.name, item, args.model)
             print(cmd)
             os.system(cmd)
     for item in barcode_list:

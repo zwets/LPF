@@ -22,7 +22,7 @@ function update_moss(argument){
               console.error(`exec error: ${error}`);
               return;
             } else {
-                alert("Update has completed.");
+                alert("Update has completed. Please restart the MOSS app for full effect.");
                 document.getElementById('loadermessage').innerHTML = `Update has been completed.`;
                 loader.style.display = 'none';
             }
