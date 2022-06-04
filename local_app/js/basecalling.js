@@ -104,7 +104,7 @@ function start_base_calling(){
 
     var single_path = input.files.item(0).path;
     var path_list = single_path.split("/");
-    var path_slice= path_list.slice(1, -2);
+    var path_slice= path_list.slice(1, -1);
     var input_path = "/" + path_slice.join("/") + "/";
     console.log(single_path)
     console.log(input_path)
@@ -123,6 +123,7 @@ function start_base_calling(){
 
         var model = find_model_from_input(flowcell, kit, algorithm);
         cmd = cmd.concat(` -c ${model}`)
+        cmd = cmd.concat(` -bk ${kit}`)
         console.log(cmd);
 
         //if (fs.existsSync(output_name)) {

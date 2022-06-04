@@ -46,6 +46,8 @@ def check_input_name(args):
     files = os.listdir("/opt/moss_data/fast5/")
     if args.name in files:
         sys.exit("This experiment name has already been used. Please choose another one.")
+    if "barcode" in args.name:
+        args.name = "/".join(args.split("/")[0:-2]) + "/" #Assume
 
 def base_call(args):
     files = os.listdir(args.input)
@@ -55,8 +57,8 @@ def base_call(args):
             barcode_list.append(item)
     print (len(barcode_list))
     if len(barcode_list) == 0:
-        cmd = "/opt/ont/guppy/bin/guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(
-            args.input, args.name, args.model)
+        cmd = "/opt/ont/guppy/bin/guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {} --barcode_kits {}".format(
+            args.input, args.name, args.model, args.bk)
         print(cmd)
         os.system(cmd)
     else:

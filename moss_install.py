@@ -5,18 +5,32 @@ import argparse
 
 parser = argparse.ArgumentParser(description='.')
 parser.add_argument("-light", action="store_true", default = False, dest="light", help="Does not download CGE databases and GUPPY for basecalling.")
+parser.add_argument("-git", action="store_true", default = False, dest="git", help="Only pulls github pushes and builds app")
 args = parser.parse_args()
 
 def main(args):
-    os.system("sudo apt install npm; sudo apt install git;")
-    if args.light:
-        os.system("cd /opt/moss; git pull")
-        cwd = os.getcwd()
-    else:
-        cwd = os.getcwd()
     check_anaconda()
     docker_check()
     check_nvidia()
+    if args.git:
+        os.system("cd /opt/moss; git pull")
+        install_app()
+        check_dist_build()
+        return True
+    elif args.light:
+        os.system("cd /opt/moss; git pull")
+        cwd = os.getcwd()
+        os.system("pip install -r requirements.txt")
+        install_apt_dependencies()
+        os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
+        os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
+        os.system("python3 /opt/moss/docker_images.py")
+        check_dist_build()
+    else:
+
+    os.system("sudo apt install npm; sudo apt install git;")
+    cwd = os.getcwd()
+
     if not os.path.exists("/opt/ont/minknow/"):
         sys.exit("MinKNOW is not installed in /opt/ont/minknow/ . Please locate the installation here, as it should be by default.")
     os.system("pip install -r requirements.txt")
@@ -30,11 +44,10 @@ def main(args):
     if cwd != "/opt/moss":
         move_moss_repo(cwd)
     install_app()
-
-    if not args.light:
-        cmd = "cd /opt/moss; git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py /opt/moss/kma/kma_index; cd ..; cd ..;"
-        os.system(cmd)
-        guppy_installer()
+    cmd = "cd /opt/moss; git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py /opt/moss/kma/kma_index; cd ..; cd ..;"
+    os.system(cmd)
+    guppy_installer()
+    os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*"])
 
     path_list = ["/opt/moss_db", "/opt/moss_data/", "/opt/moss_data/fast5/", "/opt/moss_data/fastq/"]
     for item in path_list:
@@ -105,8 +118,7 @@ def install_apt_dependencies():
                 #"curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -; sudo apt-get install -y nodejs"
                 "curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -; sudo apt-get install -y nodejs;",
                 "sudo npm install -g npm@latest",
-                "npm install mkdirp",
-                "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*"]
+                "npm install mkdirp"]
     print("Sudo is required for apt update")
     for item in apt_list:
         os.system(item)
