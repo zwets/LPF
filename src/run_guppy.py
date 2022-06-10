@@ -58,7 +58,7 @@ def check_input_name(args):
 
 def base_call(args, data_format):
     if data_format == "fast5s":
-        cmd = "/opt/moss/ont-guppy/bin/guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {} --barcode_kits {}".format(
+        cmd = "/opt/ont/guppy/bin/guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {} --barcode_kits {}".format(
             args.input, args.name, args.model, args.bk)
         os.system(cmd)
         os.system("rm -rf /opt/moss_data/fastq/{}/*.fast5".format(args.name))
@@ -89,7 +89,7 @@ def base_call(args, data_format):
                 barcode_list.append(item)
         print (len(barcode_list))
         for item in barcode_list:
-            cmd = "/opt/moss/ont-guppy/bin/guppy_basecaller -i {}/{}  -s /opt/moss_data/fastq/{}/{} --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(args.input, item, args.name, item, args.model)
+            cmd = "/opt/ont/guppy/bin/guppy_basecaller -i {}/{}  -s /opt/moss_data/fastq/{}/{} --device \"cuda:0\" --compress_fastq --trim_barcodes -c {}".format(args.input, item, args.name, item, args.model)
             print(cmd)
             os.system(cmd)
         for item in barcode_list:
