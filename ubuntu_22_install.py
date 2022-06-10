@@ -27,11 +27,7 @@ def main(args):
         check_dist_build()
     else:
 
-        os.system("sudo apt install npm; sudo apt install git;")
         cwd = os.getcwd()
-
-        if not os.path.exists("/opt/ont/minknow/"):
-            sys.exit("MinKNOW is not installed in /opt/ont/minknow/ . Please locate the installation here, as it should be by default.")
         os.system("pip install -r requirements.txt")
         os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
         os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
@@ -45,7 +41,7 @@ def main(args):
         cmd = "cd /opt/moss; git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py /opt/moss/kma/kma_index; cd ..; cd ..;"
         os.system(cmd)
         guppy_installer()
-        os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
+        #os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
 
         path_list = ["/opt/moss_db", "/opt/moss_data/", "/opt/moss_data/fast5/", "/opt/moss_data/fastq/"]
         for item in path_list:
