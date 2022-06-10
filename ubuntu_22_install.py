@@ -24,6 +24,7 @@ def main(args):
         os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
         os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
         os.system("python3 /opt/moss/docker_images.py")
+        install_app()
         check_dist_build()
     else:
 
