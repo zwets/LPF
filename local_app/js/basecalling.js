@@ -139,6 +139,8 @@ function start_base_calling(){
         }
         console.log(cmd)
 
+        /*
+
         var exec = require('child_process').exec;
         var coffeeProcess = exec(cmd);
 
@@ -146,7 +148,9 @@ function start_base_calling(){
             console.log(data);
         });
 
-        /*
+        */
+
+
         exec(cmd, (error, stdout, stderr) => {
 
             if (error) {
@@ -162,7 +166,7 @@ function start_base_calling(){
             }
 
 
-        });*/
+        });
 
         //} else {
         //    alert("The given output directory does not exist");
