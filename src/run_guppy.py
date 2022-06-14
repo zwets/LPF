@@ -58,10 +58,14 @@ def base_call(args):
         cmd = "/opt/ont/guppy/bin/guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {} --barcode_kits {}".format(
             args.input, args.name, args.model, args.bk)
         print (cmd)
-        sys.exit(cmd)
-
         os.system(cmd)
-        sys.exit("test")
+        pop_list = os.listdir("/opt/moss_data/fastq/{}/".format(args.name))
+        dir_list = os.listdir("/opt/moss_data/fastq/{}/pass/".format(args.name))
+        print (dir_list)
+        for item in dir_list:
+            cmd = "cat /opt/moss_data/fastq/{}/pass/{}/* > /opt/moss_data/fastq/{}/{}_{}.fastq.gz".format(args.name, item, args.name, args.name, item)
+            os.system(cmd)
+        sys.exit("done")
         os.system("rm -rf /opt/moss_data/fastq/{}/*.fast5".format(args.name))
         os.system("mkdir/opt/moss_data/fastq/{}/final/".format(args.name))
         file_list = "/opt/moss_data/fastq/{}/".format(args.name)
