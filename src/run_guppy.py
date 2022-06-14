@@ -40,7 +40,7 @@ args = parser.parse_args()
 def main(args):
     check_input_name(args)
     os.system("mkdir /opt/moss_data/fastq/{}".format(args.name))
-    base_call(args, data_format)
+    base_call(args)
 
 def check_input_name(args):
     data_format = None
@@ -54,7 +54,7 @@ def check_input_name(args):
     #    data_format = "fast5s"
     #else:
     #    sys.exit("Neither a folder with barcodes folders or a folder with many fast5s were given.")
-def base_call(args, data_format):
+def base_call(args):
         cmd = "/opt/ont/guppy/bin/guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {} --barcode_kits {}".format(
             args.input, args.name, args.model, args.bk)
         print (cmd)
