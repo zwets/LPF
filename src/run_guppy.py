@@ -77,7 +77,7 @@ def base_call(args, data_format):
             for item in files:
                 if "barcode".upper() in item.upper():
                     barcode_list.append("/opt/moss_data/fastq/{}/pass".format(args.name) + item)
-        for item in barcode_list:
+        #for item in barcode_list:
          #   os.system(
          #       "cat {}/*.fastq.gz > /opt/moss_data/fastq/{}/{}_{}.fastq.gz".format(
          #           item, args.name, args.name, item.split("/")[-2]))
