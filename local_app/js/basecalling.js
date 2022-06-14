@@ -138,6 +138,7 @@ function start_base_calling(){
             cmd = cmd.concat(` -chunks 75`)
         }
         console.log(cmd)
+
         exec(cmd, (error, stdout, stderr) => {
 
             if (error) {
