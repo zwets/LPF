@@ -1,9 +1,6 @@
-//const { exec } = require('child_process');
-import exec from 'child_process';
-//const fs = require('fs')
-import fs from 'fs';
-//const storage = require('electron-json-storage');
-import storage from 'electron-json-storage';
+const { exec } = require('child_process');
+const fs = require('fs')
+const storage = require('electron-json-storage');
 
 function getfolder(id) {
     var trypath = document.getElementById(id).files[0].path;
