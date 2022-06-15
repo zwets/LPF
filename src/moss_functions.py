@@ -339,7 +339,6 @@ def init_insert_reference_table(config_name):
     for line in infile:
         line = line.rstrip()
         cmd = "/opt/moss/kma/kma seq2fasta -t_db {}/REFDB.ATG -seqs {}".format(config_name, t)
-        print (cmd)
         proc = subprocess.Popen(cmd, shell=True,
                                 stdout=subprocess.PIPE, )
         output = proc.communicate()[0].decode()
