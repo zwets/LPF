@@ -96,6 +96,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     print (reference_header_text)
     print(reference_header_text)
     print(reference_header_text)
+    print ("SELECT entry_id FROM reference_table WHERE reference_header_text = '{}'".format(reference_header_text))
     reference_id = moss.sql_fetch_one("SELECT entry_id FROM reference_table WHERE reference_header_text = '{}'".format(reference_header_text), config_name)[0]
 
     moss.sql_execute_command("UPDATE sample_table SET reference_id = '{}' WHERE entry_id = '{}'".format(reference_id, entry_id), config_name)
