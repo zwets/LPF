@@ -117,7 +117,7 @@ def moss_pipeline(config_name, metadata, metadata_headers):
     os.system(cmd)
 
     distance = moss.ThreshholdDistanceCheck("{}/phytree_output/distance_matrix".format(target_dir), reference_header_text.split()[0]+".fsa", consensus_name+".fsa")
-    if distance = None:
+    if distance == None:
         associated_species = "{} - assembly from ID: {}".format(reference_header_text, entry_id)
         moss.run_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text,
                           associated_species, resfinder_hits, virulence_hits, plasmid_hits, mlst_type, reference_id)

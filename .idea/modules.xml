@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/MicrobialOutbreakSurveillanceSystem1.iml" filepath="$PROJECT_DIR$/.idea/MicrobialOutbreakSurveillanceSystem1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../binning_algo/.idea/binning_algo.iml" filepath="$PROJECT_DIR$/../binning_algo/.idea/binning_algo.iml" />
       <module fileurl="file://$PROJECT_DIR$/../moss_mkdocs/.idea/moss_mkdocs.iml" filepath="$PROJECT_DIR$/../moss_mkdocs/.idea/moss_mkdocs.iml" />
     </modules>
   </component>

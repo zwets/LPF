@@ -5,6 +5,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="moss_mkdocs" />
+    <orderEntry type="module" module-name="binning_algo" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="format" value="PLAIN" />
