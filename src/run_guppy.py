@@ -58,5 +58,6 @@ def base_call(args):
             cmd = "cat /opt/moss_data/fastq/{}/pass/{}/* > /opt/moss_data/fastq/{}/{}_{}.fastq.gz".format(args.name, item, args.name, args.name, item)
             os.system(cmd)
         os.system("rm /opt/moss_data/fastq/{}/guppy_basecaller_log*".format(args.name))
+        os.system("rm /opt/moss_data/fastq/{}/*unclassified*".format(args.name))
 if __name__ == '__main__':
     main(args)

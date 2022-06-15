@@ -85,7 +85,6 @@ function find_model_from_input(flowcell, kit, algorithm){
                         model = data[i].barcoding_config_name;
                         model = model.concat(algorithm);
                         return model;
-                        //document.getElementById('running_model').innerHTML = model;
                     };
                 };
             }
@@ -126,7 +125,6 @@ function start_base_calling(){
         cmd = cmd.concat(` -bk ${kit}`)
         console.log(cmd);
 
-        //if (fs.existsSync(output_name)) {
         var loader = document.getElementById('loader');
         loader.style.display = 'block';
         document.getElementById('loadermessage').innerHTML = "Basecalling is running";
