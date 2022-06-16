@@ -29,8 +29,8 @@ function showFinishedAnalyses() {
 }
 
 function openPDF(id, db_dir){
-  console.log(db_dir + "analysis/" + document.getElementById(id).name + "/" + id + "_report.pdf");
-  window.open(db_dir + "analysis/" + document.getElementById(id).name + "/" + id + "_report.pdf");
+  console.log(db_dir + "analysis/" + id + "/" + id + "_report.pdf");
+  window.open(db_dir + "analysis/" + id + "/" + id + "_report.pdf");
   //return false;
 }
 
