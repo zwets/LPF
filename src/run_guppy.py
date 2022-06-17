@@ -48,8 +48,12 @@ def check_input_name(args):
         sys.exit("This experiment name has already been used. Please choose another one.")
 
 def base_call(args):
-        cmd = "/opt/ont/guppy/bin/guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes -c {} --barcode_kits {}".format(
-            args.input, args.name, args.model, args.bk)
+        cmd = "/opt/ont/guppy/bin/guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes --barcode_kits {}".format(
+            args.input, args.name, args.bk)
+        if "sup" in args.model:
+            cmd += " -c {} --chunks_per_runner 256".format(args.model)
+        else:
+            cmd += " -c {}".format(args.model)
         print (cmd)
         os.system(cmd)
         dir_list = os.listdir("/opt/moss_data/fastq/{}/pass/".format(args.name))
