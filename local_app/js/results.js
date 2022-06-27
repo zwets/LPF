@@ -2,19 +2,6 @@ const { exec } = require('child_process');
 const fs = require('fs');
 const storage = require('electron-json-storage');
 
-function readSingleFile(e) {
-    var file = e.target.files[0];
-    if (!file) {
-        return;
-    }
-    var reader = new FileReader();
-    reader.onload = function(e) {
-        var contents = e.target.result;
-        displayContents(contents);
-    };
-    reader.readAsText(file);
-}
-
 function showFinishedAnalyses() {
     var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
     var db_dir = '/opt/moss_db/' + current_moss_system + "/";

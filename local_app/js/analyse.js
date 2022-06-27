@@ -1,18 +1,5 @@
 const { exec } = require('child_process');
 const fs = require('fs')
-const storage = require('electron-json-storage');
-
-storage.get('currentConfig', function(error, data) {
-  if (error) throw error;
-
-  var element = document.getElementById('current-config');
-  element.textContent = data.db_dir;
-  var element = document.getElementById('current-exepath');
-  element.textContent = data.exepath;
-
-});
-
-
 
 function submitSingleAnalysis() {
     var input = document.getElementById('csv_file');

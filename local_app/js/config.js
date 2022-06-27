@@ -2,30 +2,6 @@ const { exec } = require('child_process');
 const fs = require('fs');
 const storage = require('electron-json-storage');
 
-storage.get('currentConfig', function(error, data) {
-  if (error) throw error;
-
-  var element = document.getElementById('current-config');
-  element.textContent = data.db_dir;
-
-});
-
-var configfile = "None";
-document.getElementById("configfile").innerHTML = configfile;
-
-function readSingleFile(e) {
-    var file = e.target.files[0];
-    if (!file) {
-        return;
-    }
-    var reader = new FileReader();
-    reader.onload = function(e) {
-        var contents = e.target.result;
-        displayContents(contents);
-    };
-    reader.readAsText(file);
-}
-
 function displayContents(contents) {
     var element = document.getElementById('file-content');
     element.textContent = contents;
@@ -47,9 +23,7 @@ function multipleInputFunction() {
 
 function submitAnalysis() {
     var element = document.getElementById('file-content').innerHTML;
-    var configobj = JSON.parse(element);
-    var init_path = configobj.db_dir;
-    console.log(init_path);
+    var config_json = require('/opt/moss_db/config.json');
 
     storage.set('currentConfig', { exepath: configobj.exepath, db_dir: configobj.db_dir }, function(error) {
         if (error) throw error;
