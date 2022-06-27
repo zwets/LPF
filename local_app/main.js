@@ -4,57 +4,6 @@ const path = require('path')
 const fs = require('fs')
 const storage = require('electron-json-storage');
 
-/*
-function reset_ipc_sql(cmd, srcpath, db_dir) {
-
-    storage.get('currentConfig', function(error, data) {
-      if (error) throw error;
-      var srcpath = data.exepath + "src/";
-
-      var cmd = `python3 ${srcpath}reset_ipc_sql.py -i "${data.db_dir}"`;
-
-      exec(cmd, (error, stdout, stderr) => {
-
-        if (error) {
-          console.error(`exec error: ${error}`);
-          return;
-        }
-
-        console.log(`stdout: ${stdout}`);
-        console.error(`stderr: ${stderr}`);
-
-        outbreakfinderstring = `python3 ${srcpath}outbreak_finder.py -db_dir ${db_dir}`
-        console.log(outbreakfinderstring);
-
-
-        exec(outbreakfinderstring, (error, stdout, stderr) => {
-
-            if (error) {
-              //If error, change accepted ui to failure, which attached message.
-              console.error(`exec error: ${error}`);
-              return;
-            }
-
-            console.log(`stdout: ${stdout}`);
-            console.error(`stderr: ${stderr}`);
-
-            alert("Analysis complete!");
-
-
-
-          });
-
-
-
-      });
-
-    });
-
-
-
-}
-*/
-
 function createWindow () {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
