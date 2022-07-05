@@ -1,0 +1,12 @@
+# THIS FILE WAS INSTALLED BY THE kcri-seqtz-deps PACKAGE
+# CHANGES WILL BE LOST when that package is upgraded
+
+# The KCRI repo
+deb [trusted=yes] http://apt.kcri.it/ jammy/
+
+# The Firefox non-snap repo (note needs key too)
+deb https://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu/ jammy main
+
+# The R Project repo (note needs key too)
+deb http://cloud.r-project.org/bin/linux/ubuntu jammy-cran40/
+
