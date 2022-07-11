@@ -1,11 +1,30 @@
-{
-  "sample_name": "free_text",
-  "sequencing_method": ["nanopore minion", "nanopore gridion"],
-  "isolation_source": ["isolate", "metagenome"],
-  "investigation_type": ["Type 1", "type 2"],
-  "collection_date": "free_text",
-  "latitude": "free_text",
-  "longitude": "free_text",
-  "city": "free_text",
-  "country": "free_text"
+{ 
+   "sample_name": "free_text",
+   "sequencing_method": ["Nanopore Minion", "Nanopore Gridion"],
+   "isolation_source": ["Isolate", "Metagenome"],
+   "scientific_name": "free_text",
+   "city":"free_text",
+   "country":"free_text",
+   "collection_date":"free_text"
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

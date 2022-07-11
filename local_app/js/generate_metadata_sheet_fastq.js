@@ -88,6 +88,7 @@ function create_metadata_table_fastq(){
         }
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
       var output_csv_file = `/opt/moss_db/${current_moss_system}/metadata_csv/${experiment_name}.csv`;
+      convertToJsonAndValidate(csv_string);
       //Here insert validation function for ENA compatability
       if (fs.existsSync(output_csv_file)) {
           // path exists
@@ -97,7 +98,7 @@ function create_metadata_table_fastq(){
                   if (err) {
                     console.error(err)
                     return
-                  }
+                }
                   alert(`The metadata csv file has been created and is stored at ${output_csv_file}`);
                   var create_button = document.createElement('button');
                   create_button.classList.add('button-7');
@@ -218,6 +219,48 @@ function generate_table_fastq(file_number) {
 }
 
 
+//code to check letters in input field (City, Country)
+function allLetters(inputText, propertyName) {
+   var letters = new RegExp("^[A-Za-z]+$");
+   if(!letters.test(inputText)) {
+     alert(propertyName+" should contain only letters");
+     return;
+   }
+}
+
+// function to convert csv to json and validate the data input
+function convertToJsonAndValidate(csv_string) {
+   var csvData = csv_string.split('\n');
+   var headers = csvData[0].replace('"','').split(',');
+   var csvToJson = [];
+   for (var i = 1; i < csvData.length-1; i++) {
+       var jsonObj = {};
+       var currentRow = csvData[i].replace('"','').split(',');
+       for( var j = 0; j < headers.length; j++) {
+          jsonObj[headers[j]]  = currentRow[j];
+       }
+       csvToJson.push(jsonObj);
+   }
+   var jsonFinal = JSON.parse(JSON.stringify(csvToJson[0]));
+   // Validate data
+   allLetters(jsonFinal.scientific_name, "Scientific Name");
+   allLetters(jsonFinal.city, "City");
+   allLetters(jsonFinal.country, "Country");
+   alert(jsonFinal.collection_date);
+   var dateReg = /^\d{4}-\d{2}-\d{2}$/;
+   if(!dateReg.test(jsonFinal.collection_date)) {
+      alert("Collection Date should be in YYYY-MM-DD format");
+      return;
+   }
+   var collDate = new Date(jsonFinal.collection_date);
+   var timeS = collDate.getTime();
+
+   if (typeof timeS !== 'number' || Number.isNaN(timeS)) {
+      alert("Collection Date should be in YYYY-MM-DD format");
+   }
+}
+
+
 
 function readTextFile(file, callback) {
     var rawFile = new XMLHttpRequest();
@@ -230,3 +273,4 @@ function readTextFile(file, callback) {
     }
     rawFile.send(null);
 }
+
