@@ -228,6 +228,17 @@ function allLetters(inputText, propertyName) {
    }
 }
 
+
+//code to check numericals in input field (Patient's Age)
+function allnumeric(inputText, PropertyName) {
+    var numbers = new RegExp("/^[0-9]+$/");
+    if(!numeric.test(inputText)) {
+       alert(propertyName+" should contain only numbers");
+       return;
+    }
+}
+
+
 // function to convert csv to json and validate the data input
 function convertToJsonAndValidate(csv_string) {
    var csvData = csv_string.split('\n');
@@ -243,9 +254,9 @@ function convertToJsonAndValidate(csv_string) {
    }
    var jsonFinal = JSON.parse(JSON.stringify(csvToJson[0]));
    // Validate data
-   allLetters(jsonFinal.scientific_name, "Scientific Name");
    allLetters(jsonFinal.city, "City");
    allLetters(jsonFinal.country, "Country");
+   allnumeric(jsonFinal.patientsAge, "Patient's Age");
    alert(jsonFinal.collection_date);
    var dateReg = /^\d{4}-\d{2}-\d{2}$/;
    if(!dateReg.test(jsonFinal.collection_date)) {
