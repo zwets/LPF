@@ -1,15 +1,15 @@
 { 
-   "Sample Name": "free_text",
-   "Type of Sample": ["Soil", "Seawater", "Feces"],
-   "Sequencing Method": ["Nanopore Minion", "Nanopore Gridion"],
-   "Isolation Source": "Isolate",
-   "Collection Date": "free_text",
-   "Experimental Condition": ["Control State", "Diseased state"],
-   "Type of Infection": ["Skin Infections", "Respiratory Infections", "FoodBorne Bacterial Infections", "Urinary Tract infections", "Sexually Transmitted Infections", "Other"],
-   "Patient's Age": "free_text",
-   "Patient's Gender": ["Male", "Female", "Unspecified"],
-   "City": "free_text",
-   "Country": "free_text"
+   "sample_name": "free_text",
+   "type_of_sample": ["Soil", "Seawater", "Feces"],
+   "sequencing_method": ["Nanopore Minion", "Nanopore Gridion"],
+   "isolation_source": ["Isolate"],
+   "experimental_condition": ["Control State", "Diseased state"],
+   "type_of_infection": ["Skin Infections", "Respiratory Infections", "FoodBorne Bacterial Infections", "Urinary Tract infections", "Sexually Transmitted Infections", "Other"],
+   "patient_age": "free_text",
+   "patient_gender": ["Male", "Female", "Unspecified"],
+   "city": "free_text",
+   "country": "free_text",
+   "collection_date": "free_text"
 }
 
 

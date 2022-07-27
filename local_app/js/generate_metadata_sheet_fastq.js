@@ -98,7 +98,7 @@ function create_metadata_table_fastq(){
                   if (err) {
                     console.error(err)
                     return
-                }
+                  }
                   alert(`The metadata csv file has been created and is stored at ${output_csv_file}`);
                   var create_button = document.createElement('button');
                   create_button.classList.add('button-7');
@@ -218,8 +218,7 @@ function generate_table_fastq(file_number) {
     return table
 }
 
-
-//code to check letters in input field (City, Country)
+//code to check letters in input field (city, country)
 function allLetters(inputText, propertyName) {
    var letters = new RegExp("^[A-Za-z]+$");
    if(!letters.test(inputText)) {
@@ -229,9 +228,9 @@ function allLetters(inputText, propertyName) {
 }
 
 
-//code to check numericals in input field (Patient's Age)
-function allnumeric(inputText, PropertyName) {
-    var numbers = new RegExp("/^[0-9]+$/");
+//code to check numericals in input field (patient_age)
+function allNumeric(inputText, propertyName) {
+    var numeric = new RegExp("^[0-9]+$");
     if(!numeric.test(inputText)) {
        alert(propertyName+" should contain only numbers");
        return;
@@ -254,10 +253,9 @@ function convertToJsonAndValidate(csv_string) {
    }
    var jsonFinal = JSON.parse(JSON.stringify(csvToJson[0]));
    // Validate data
-   allLetters(jsonFinal.city, "City");
-   allLetters(jsonFinal.country, "Country");
-   allnumeric(jsonFinal.patientsAge, "Patient's Age");
-   alert(jsonFinal.collection_date);
+   allLetters(jsonFinal.city, "city");
+   allLetters(jsonFinal.country, "country");
+   allNumeric(jsonFinal.patient_age, "patient_age");
    var dateReg = /^\d{4}-\d{2}-\d{2}$/;
    if(!dateReg.test(jsonFinal.collection_date)) {
       alert("Collection Date should be in YYYY-MM-DD format");
@@ -270,8 +268,6 @@ function convertToJsonAndValidate(csv_string) {
       alert("Collection Date should be in YYYY-MM-DD format");
    }
 }
-
-
 
 function readTextFile(file, callback) {
     var rawFile = new XMLHttpRequest();
