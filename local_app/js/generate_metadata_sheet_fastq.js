@@ -88,7 +88,11 @@ function create_metadata_table_fastq(){
         }
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
       var output_csv_file = `/opt/moss_db/${current_moss_system}/metadata_csv/${experiment_name}.csv`;
-      convertToJsonAndValidate(csv_string);
+      var errorMessage = convertToJsonAndValidate(csv_string);
+      if (errorMessage != "") {
+      console.error(errorMessage);
+      return;
+      }
       //Here insert validation function for ENA compatability
       if (fs.existsSync(output_csv_file)) {
           // path exists
@@ -219,30 +223,34 @@ function generate_table_fastq(file_number) {
 }
 
 //code to check letters in input field (city, country)
-function allLetters(inputText, propertyName) {
+function allLetters(inputText, propertyName, errors) {
    var letters = new RegExp("^[A-Za-z]+$");
    if(!letters.test(inputText)) {
-     alert(propertyName+" should contain only letters");
-     return;
+   var message = new String(propertyName+" should contain only letters");
+     alert(message);
+     errors = errors + message;
    }
+   return errors;
 }
 
 
 //code to check numericals in input field (patient_age)
-function allNumeric(inputText, propertyName) {
+function allNumeric(inputText, propertyName, errors) {
     var numeric = new RegExp("^[0-9]+$");
     if(!numeric.test(inputText)) {
-       alert(propertyName+" should contain only numbers");
-       return;
+    var message = new String(propertyName+" should contain only numbers");
+       alert(message);
+       errors = errors + message;
     }
+    return errors;
 }
-
 
 // function to convert csv to json and validate the data input
 function convertToJsonAndValidate(csv_string) {
    var csvData = csv_string.split('\n');
    var headers = csvData[0].replace('"','').split(',');
    var csvToJson = [];
+   var errors = new String("");
    for (var i = 1; i < csvData.length-1; i++) {
        var jsonObj = {};
        var currentRow = csvData[i].replace('"','').split(',');
@@ -253,13 +261,13 @@ function convertToJsonAndValidate(csv_string) {
    }
    var jsonFinal = JSON.parse(JSON.stringify(csvToJson[0]));
    // Validate data
-   allLetters(jsonFinal.city, "city");
-   allLetters(jsonFinal.country, "country");
-   allNumeric(jsonFinal.patient_age, "patient_age");
+   allLetters(jsonFinal.city, "city", errors);
+   allLetters(jsonFinal.country, "country", errors);
+   allNumeric(jsonFinal.patient_age, "patient_age", errors);
    var dateReg = /^\d{4}-\d{2}-\d{2}$/;
    if(!dateReg.test(jsonFinal.collection_date)) {
       alert("Collection Date should be in YYYY-MM-DD format");
-      return;
+      return errors;
    }
    var collDate = new Date(jsonFinal.collection_date);
    var timeS = collDate.getTime();
@@ -267,6 +275,7 @@ function convertToJsonAndValidate(csv_string) {
    if (typeof timeS !== 'number' || Number.isNaN(timeS)) {
       alert("Collection Date should be in YYYY-MM-DD format");
    }
+   return errors;
 }
 
 function readTextFile(file, callback) {
