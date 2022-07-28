@@ -22,4 +22,4 @@ jobs:
         python src/lint.py --path ./src
     - name: Run Pylint moss directory
       run: |
-        pylint **/*.py
+        pylint **/*.py --fail_under 8
