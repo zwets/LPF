@@ -24,4 +24,6 @@ jobs:
           sudo apt-get install libz-dev
           git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..;
           git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;
-     # - name: Run Tests
+      - name: Run Tests
+        run: |
+          find . -name '*.py' -exec pylint {} \;
