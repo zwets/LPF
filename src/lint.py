@@ -23,9 +23,11 @@ logging.info('PyLint Starting | '
              'Threshold: {} '.format(path, threshold))
 
 results = Run([path], do_exit=False)
-"""
+
 
 final_score = results.linter.stats['global_note']
+
+logging.info('FINAL SCORE: {} '.format(final_score))
 
 
 if final_score < threshold:
@@ -45,5 +47,3 @@ else:
     logging.info(message)
 
     exit(0)
-
-"""
