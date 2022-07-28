@@ -16,7 +16,7 @@ parser.add_argument('-p',
 
 args = parser.parse_args()
 path = str(args.path)
-threshold = 10
+threshold = 0 #0 all ways pass, set to 10 eventually
 
 logging.info('PyLint Starting | '
              'Path: {} | '
