@@ -24,9 +24,9 @@ jobs:
           sudo apt-get install libz-dev
           git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..;
           git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;
-      - name: Run Pylint src directory
+      - name: Run Pylint
         run: |
-          python src/lint.py --path ./src
-      - name: Run Pylint moss directory
+          find . -type f -name "*.py" | xargs pylint --fail-under 1
+      - name: Unit Tests
         run: |
-          python src/lint.py --path .
+          nose2
