@@ -19,4 +19,4 @@ jobs:
         pip install pylint
     - name: Run Pylint
       run: |
-        pylint **/*.py --fail-under 1
+        find . -name '*.py' -exec pylint {} --fail-under 1\;
