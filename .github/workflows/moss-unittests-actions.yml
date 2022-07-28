@@ -26,4 +26,4 @@ jobs:
           git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;
       - name: Run Tests
         run: |
-          find . -name '*.py' -exec pylint {} \;
+          find . -name '*.py' -exec pylint --fail-under=10 {} \;
