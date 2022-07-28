@@ -20,6 +20,6 @@ jobs:
     - name: Run Pylint src directory
       run: |
         python src/lint.py --path ./src
-    - name: Run Pylint moss directory
-      run: |
-        pylint **/*.py --fail_under 1
+    #- name: Run Pylint moss directory
+    #  run: |
+    #    pylint **/*.py
