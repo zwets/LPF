@@ -2,7 +2,6 @@ import argparse
 import logging
 from pylint.lint import Run
 
-
 logging.getLogger().setLevel(logging.INFO)
 
 parser = argparse.ArgumentParser(prog="LINT")
@@ -15,17 +14,9 @@ parser.add_argument('-p',
                     default='./src',
                     type=str)
 
-parser.add_argument('-t',
-                    '--threshold',
-                    help='score threshold to fail pylint runner | '
-                         'Default: %(default)s | '
-                         'Type: %(type)s ',
-                    default=7,
-                    type=float)
-
 args = parser.parse_args()
 path = str(args.path)
-threshold = float(args.threshold)
+threshold = 10
 
 logging.info('PyLint Starting | '
              'Path: {} | '
