@@ -14,16 +14,16 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: 3.8
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          python3 docker_images.py
-      - name: Install KMA and CCphylo
-        run: |
-          sudo apt-get install libz-dev
-          git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..;
-          git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;
+      #- name: Install dependencies
+      #  run: |
+      #    python -m pip install --upgrade pip
+      #    pip install -r requirements.txt
+      #    python3 docker_images.py
+      #- name: Install KMA and CCphylo
+      #  run: |
+      #    sudo apt-get install libz-dev
+      #    git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..;
+      #    git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;
       - name: Run Tests
         run: |
           find . -name '*.py' -exec pylint --fail-under=10 {} \;
