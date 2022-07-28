@@ -19,4 +19,4 @@ jobs:
         pip install pylint
     - name: Run Pylint
       run: |
-        pylint **/*.py --fail_under 1
+        pylint **/*.py --fail-under 1
