@@ -1,33 +1,10 @@
-#!/usr/bin/env python3
-
-# Copyright (c) 2019, Malte Hallgren Technical University of Denmark
-# All rights reserved.
-#
-
-#Import Libraries
+"""
+Built in guppy runner for moss client
+"""
 
 import sys
 import os
 import argparse
-import operator
-import random
-import subprocess
-import time
-import gc
-import numpy as np
-import array
-from optparse import OptionParser
-from operator import itemgetter
-import re
-import json
-import sqlite3
-import moss_functions as moss
-import json
-from joblib import Parallel, delayed
-#Use Argparse to correctly open the inputfiles
-
-# create the parser for the "surveillance" command
-
 
 parser = argparse.ArgumentParser(description='.')
 parser.add_argument('-i', action="store", type=str, dest='input', default="", help='input')
@@ -37,31 +14,41 @@ parser.add_argument('-chunks', action="store", type=str, dest='chunks', default=
 parser.add_argument('-c', action="store", type=str, dest='model', default="", help='model')
 args = parser.parse_args()
 
-def main(args):
-    check_input_name(args)
-    os.system("mkdir /opt/moss_data/fastq/{}".format(args.name))
-    base_call(args)
+def main(arguments):
+    """
+    Main call
+    """
+    check_input_name(arguments)
+    os.system("mkdir /opt/moss_data/fastq/{}".format(arguments.name))
+    base_call(arguments)
 
-def check_input_name(args):
+def check_input_name(arguments):
+    """
+    Checks if experiment name is used
+    """
     files = os.listdir("/opt/moss_data/fast5/")
-    if args.name in files:
+    if arguments.name in files:
         sys.exit("This experiment name has already been used. Please choose another one.")
 
-def base_call(args):
-        cmd = "/opt/ont/guppy/bin/guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/ --device \"cuda:0\" --compress_fastq --trim_barcodes --barcode_kits {}".format(
-            args.input, args.name, args.bk)
-        if "sup" in args.model:
-            cmd += " -c {} --chunks_per_runner 256".format(args.model)
-        else:
-            cmd += " -c {}".format(args.model)
-        print (cmd)
+def base_call(arguments):
+    """
+    Run Guppy
+    """
+    cmd = "/opt/ont/guppy/bin/guppy_basecaller -i {}  -s /opt/moss_data/fastq/{}/" \
+          " --device \"cuda:0\" --compress_fastq --trim_barcodes --barcode_kits {}".format(
+        arguments.input, arguments.name, arguments.bk)
+    if "sup" in arguments.model:
+        cmd += " -c {} --chunks_per_runner 256".format(arguments.model)
+    else:
+        cmd += " -c {}".format(arguments.model)
+    os.system(cmd)
+    dir_list = os.listdir("/opt/moss_data/fastq/{}/pass/".format(arguments.name))
+    for item in dir_list:
+        cmd = "cat /opt/moss_data/fastq/{0}/pass/{1}/* > /opt/moss_data/fastq/{0}/{0}_{1}.fastq.gz"\
+            .format(arguments.name, item)
         os.system(cmd)
-        dir_list = os.listdir("/opt/moss_data/fastq/{}/pass/".format(args.name))
-        print (dir_list)
-        for item in dir_list:
-            cmd = "cat /opt/moss_data/fastq/{}/pass/{}/* > /opt/moss_data/fastq/{}/{}_{}.fastq.gz".format(args.name, item, args.name, args.name, item)
-            os.system(cmd)
-        os.system("rm /opt/moss_data/fastq/{}/guppy_basecaller_log*".format(args.name))
-        os.system("rm /opt/moss_data/fastq/{}/*unclassified*".format(args.name))
+    os.system("rm /opt/moss_data/fastq/{}/guppy_basecaller_log*".format(arguments.name))
+    os.system("rm /opt/moss_data/fastq/{}/*unclassified*".format(arguments.name))
+
 if __name__ == '__main__':
     main(args)
