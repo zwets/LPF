@@ -22,4 +22,4 @@ jobs:
         python src/lint.py --path ./src
     - name: Run Pylint moss directory
       run: |
-        python src/lint.py --path .
+        pylint **/*.py
