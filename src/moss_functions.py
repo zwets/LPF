@@ -1,50 +1,27 @@
-# Copyright (c) 2019, Malte Bjørn Hallgren Technical University of Denmark
-# All rights reserved.
-#
-
-#Import Libraries
+"""
+Shared functions used by the MOSS back-end
+"""
 import sys
 import os
-import argparse
-import operator
 import time
 import geocoder
-import gc
-import numpy as np
-import array
 import subprocess
-import threading
-from optparse import OptionParser
-from operator import itemgetter
-import re
-import json
 import sqlite3
 import json
 import datetime
 import hashlib
-import gzip
-
 import pandas as pd
 from tabulate import tabulate
-from IPython.display import display, HTML
 import gzip
 from fpdf import FPDF
-from pandas.plotting import table
 from geopy.geocoders import Nominatim
-from subprocess import check_output, STDOUT
-
-import moss_sql as moss_sql
 import matplotlib
 import matplotlib.pyplot as plt
 from Bio import Phylo
 from io import StringIO
-import pylab
 import dataframe_image as dfi
 
-
-#Utility functions
-
-def derive_phenotype_amr(genes, database, target_dir):
+def derive_phenotype_amr(genes, database):
     new_genes = list()
     for item in genes:
         new_genes.append(item.split("_")[0])
@@ -63,7 +40,6 @@ def derive_phenotype_amr(genes, database, target_dir):
     csv_data.append(("Resistance", "Genes"))
     for item in phenotype:
         csv_data.append((item, ", ".join(phenotype[item])))
-    print(csv_data)
     return phenotype, csv_data
 
 def derive_phenotype_virulence(genes, database, target_dir):
@@ -88,7 +64,6 @@ def derive_phenotype_virulence(genes, database, target_dir):
         csv_data.append((item, ", ".join(phenotype[item])))
     print (csv_data)
     return phenotype, csv_data
-
 
 def push_meta_data_to_sql(metadata_dict, entry_id, config_name):
     sql_cmd = "INSERT INTO metadata_table(entry_id, sample_name, sequencing_method, isolation_source, investigation_type, \
@@ -120,8 +95,6 @@ def parse_mlst_result(filename):
     except:
         return "Unknown"
 
-
-
 def parse_kma_res(filename):
     item_list = list()
     infile = open(filename, 'r')
@@ -133,7 +106,6 @@ def parse_kma_res(filename):
 
 def kma_finders(arguments, outputname, target_dir, input, database):
     os.system("/opt/moss/kma/kma -i {} -o {}/finders/{} -t_db {} {}".format(input, target_dir, outputname, database, arguments))
-
 
 
 def derive_finalized_filenames(input_dir):
@@ -199,7 +171,6 @@ def sql_fetch_one(string, config_name):
     conn.close()
     return data
 
-
 def sql_fetch_all(string, config_name):
     conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
     c = conn.cursor()
@@ -255,7 +226,6 @@ def moss_init(config_name, metadata, metadata_headers):
     push_meta_data_to_sql(metadata_dict, entry_id, config_name)
 
     return config_name, metadata_dict, input, sample_name, entry_id, target_dir, ref_db, c_name
-
 
 def get_kma_template_number(reference_header_text, config_name):
     infile = open("/opt/moss_db/{}/REFDB.ATG.name".format(config_name), 'r')
@@ -394,7 +364,6 @@ def update_pip_dependencies():
         cmd = "pip install --upgrade {}".format(item)
         os.system(cmd)
 
-
 def update_moss_dependencies(laptop, update_list, force):
     if force:
         if laptop:
@@ -456,7 +425,6 @@ def update_moss_dependencies(laptop, update_list, force):
                 print ("Please download conda manually for a full installation!")
     update_pip_dependencies()
 
-
 def varify_tool(cmd, expected, index_start, index_end):
     proc = subprocess.Popen(cmd, shell=True,
                             stdout=subprocess.PIPE, )
@@ -489,9 +457,6 @@ def varify_all_dependencies(laptop):
         update_list.append("conda")
     return update_list
 
-
-
-
 def run_mlst(input, target_dir, reference_header_text):
 
     specie = reference_header_text.split()[1].lower() + " " + reference_header_text.split()[2].lower() #Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
@@ -518,9 +483,6 @@ def run_mlst(input, target_dir, reference_header_text):
         print ("no mlst")
         return False
 
-
-
-
 def sql_string_metadata(metadict):
     entries = ""
     values = ""
@@ -530,8 +492,6 @@ def sql_string_metadata(metadict):
     entries = entries[:-1]
     values = values[:-1]
     return entries.replace("'", "''"), values
-
-
 
 def prod_metadata_dict(metadata, metadata_headers):
     metadict = dict()
@@ -546,15 +506,6 @@ def prod_metadata_dict(metadata, metadata_headers):
     for i in range(len(metadata_headers)):
         metadict[metadata_headers[i]] = metadata[i]
     return metadict
-
-
-#def check_shm_kma("/opt/moss/kma/kma", kma_database_path, cmd):
-#    try: #Check if KMA db in shm
-#        cmd_stdout = check_output(cmd, stderr=STDOUT, shell=True).decode()
-#    except Exception as e:
-#        os.system("{}_shm -t_db {}".format("/opt/moss/kma/kma", kma_database_path)) #Loads DB
-#        os.system(cmd)
-#        return True
 
 def correctPathCheck(pathName):
     if pathName == "":
@@ -576,7 +527,6 @@ def calc_coordinates_from_location(city, country):
         longitude = ""
     return latitude, longitude
 
-
 def check_coordinates(coordinates):
     try:
         coordinates = geocoder.ip('me').latlng
@@ -586,7 +536,6 @@ def check_coordinates(coordinates):
         coordinates = ""
         location = ""
     return coordinates, location
-
 
 def check_alignment_kma_cov(file):
     infile = open(file, 'r')
@@ -822,7 +771,6 @@ def flye_assembly(entry_id, config_name, sample_name, target_dir, input, referen
     conn.commit()
     conn.close()
 
-
 def uniqueNameCheck(input, config_name):
     sample_name = input.split("/")[-1]
 
@@ -911,9 +859,6 @@ def isolate_file_name(config_name, entry_id):
 
     return element
 
-
-
-
 def run_bandage(target_dir, jobid):
     #TBD run bandage in assembly func
     cmd = "docker run --name bandage{} -v {}/assembly_results/:/data/assembly_results/ nanozoo/bandage Bandage image /data/assembly_results/assembly_graph.gfa contigs.jpg".format(
@@ -930,7 +875,6 @@ def run_bandage(target_dir, jobid):
 
     cmd = "docker container rm {}".format(id)
     os.system(cmd)
-
 
 def compileReportAssembly(target_dir, ID, config_name, associated_species, resfinder_hits, virulence_hits, plasmid_hits, mlst_type):
     entry_id = ID
@@ -975,7 +919,7 @@ def compileReportAssembly(target_dir, ID, config_name, associated_species, resfi
 
     pdf.cell(85, 5, "Antimicrobial Genes Found:", 0, 1, 'L')
 
-    amr_pheno, csv_data = derive_phenotype_amr(resfinder_hits, "resfinder_db", target_dir)
+    amr_pheno, csv_data = derive_phenotype_amr(resfinder_hits, "resfinder_db")
     print(csv_data)
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
@@ -1012,7 +956,6 @@ def compileReportAssembly(target_dir, ID, config_name, associated_species, resfi
     pdf.set_font('Arial', '', 12)
 
     pdf.output(target_dir + filename, 'F')
-
 
 def retrieve_cge_counts(target_dir, ID, config_name, image_location, reference_header_text):
     isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
@@ -1073,8 +1016,6 @@ def retrieve_cge_counts(target_dir, ID, config_name, image_location, reference_h
 
     return plasmids_isolate, virulencegenes_isolate, amrgenes_isolate, plasmids_reference, virulencegenes_reference, amrgenes_reference
 
-
-
 def mlst_sequence_type(target_dir):
     try:
         with open(target_dir + "mlstresults/data.json") as json_file:
@@ -1083,8 +1024,6 @@ def mlst_sequence_type(target_dir):
         return sequence_type
     except:
         return "No MLST Found"
-
-
 
 def compileReportAlignment(target_dir, entry_id, config_name, reference_header_text, related_isolates, resfinder_hits, virulence_hits, plasmid_hits, mlst_type, sample_name):
     pdf = FPDF()  # A4 (210 by 297 mm)
@@ -1147,7 +1086,7 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
 
     pdf.cell(85, 5, "Antimicrobial Genes Found:", 0, 1, 'L')
 
-    amr_pheno, csv_data = derive_phenotype_amr(resfinder_hits, "resfinder_db", target_dir)
+    amr_pheno, csv_data = derive_phenotype_amr(resfinder_hits, "resfinder_db")
     print(csv_data)
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
@@ -1202,7 +1141,6 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
     pdf.image("{}/phytree_output/tree.png".format(target_dir), x=10, y=55, w=pdf.w / 1.5, h=pdf.h / 1.75)
 
     pdf.output(target_dir + filename, 'F')
-
 
 def resfinderPage(tabfile, pdf, target_dir):
     infile = open(tabfile, 'r')
@@ -1260,7 +1198,6 @@ def virulencePage(jsoninput, pdf, target_dir):
                 pdf.write(5, f"{data['virulencefinder']['results'][species][hit]}")
                 pdf.ln(10)
 
-
 def plasmid_data_for_report(jsoninput, target_dir):
     if os.path.isfile(jsoninput):
         with open(jsoninput) as json_file:
@@ -1301,8 +1238,6 @@ def virulence_data_for_report(jsoninput, target_dir):
         virulence_list = []
 
     return count1, virulence_list
-
-
 
 def plasmidPage(jsoninput, pdf, target_dir):
     pdf.set_font('Arial', 'B', 24)
@@ -1347,11 +1282,3 @@ def create_title(pdf, id, string):
   pdf.write(5, f"{string}")
   pdf.ln(10)
   pdf.set_text_color(0, 0, 0)
-
-
-
-
-
-
-
-
