@@ -30,6 +30,7 @@ def main(args):
         install_app()
         check_dist_build()
     else:
+        print ('here')
         cwd = os.getcwd()
         copy_install_files()
         os.system('sudo apt install kcri-seqtz-deps')
