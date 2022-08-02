@@ -33,7 +33,6 @@ def main(args):
         install_app()
         check_dist_build()
     else:
-        print ('here')
         cwd = os.getcwd()
         os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
         os.system("pip install -r requirements.txt")
@@ -53,14 +52,14 @@ def main(args):
         return True
 
 def copy_install_files():
-    os.system("cp install_files/kcri-seqtz.list /etc/apt/sources.list.d/.")
-    os.system("cp install_files/nanoporetech.sources.list /etc/apt/sources.list.d/.")
-    os.system("cp install_files/nodesource.list /etc/apt/sources.list.d/.")
-    os.system("cp install_files/cran_ubuntu_key.asc /etc/apt/trusted.gpg.d/.")
-    os.system("cp install_files/mozillateam-ubuntu-ppa.gpg /etc/apt/trusted.gpg.d/.")
-    os.system("cp install_files/nodesource.gpg /etc/apt/trusted.gpg.d/.")
-    os.system("cp install_files/ont-repo.asc /etc/apt/trusted.gpg.d/.")
-    os.system("cp install_files/mozilla-ppa /etc/apt/preferences.d/.")
+    os.system("sudo cp install_files/kcri-seqtz.list /etc/apt/sources.list.d/.")
+    os.system("sudo cp install_files/nanoporetech.sources.list /etc/apt/sources.list.d/.")
+    os.system("sudo cp install_files/nodesource.list /etc/apt/sources.list.d/.")
+    os.system("sudo cp install_files/cran_ubuntu_key.asc /etc/apt/trusted.gpg.d/.")
+    os.system("sudo cp install_files/mozillateam-ubuntu-ppa.gpg /etc/apt/trusted.gpg.d/.")
+    os.system("sudo cp install_files/nodesource.gpg /etc/apt/trusted.gpg.d/.")
+    os.system("sudo cp install_files/ont-repo.asc /etc/apt/trusted.gpg.d/.")
+    os.system("sudo cp install_files/mozilla-ppa /etc/apt/preferences.d/.")
 
 
 
