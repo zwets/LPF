@@ -56,6 +56,7 @@ def validate_input(input_dict):
     if not input_dict['input_path'].endswith('.fastq.gz'):
         sys.exit('Input file is not a fastq.gz file. Only gzipped files are accepted.')
     validate(input_dict['collection_date'])
+    print ('Validation complete')
     return True
 
 def parse_finders(input_dict):
@@ -383,7 +384,7 @@ def moss_init(input_dict):
     input_dict['target_dir'] = "{}/analysis/{}/".format(input_dict['config_path'], input_dict['entry_id'])
 
     check_unique_entry_id(input_dict['entry_id'], input_dict['moss_db'])
-
+    print ('input loaded')
     return input_dict
 
 def get_kma_template_number(input_dict):
