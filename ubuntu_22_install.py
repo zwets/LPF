@@ -9,6 +9,9 @@ parser.add_argument("-git", action="store_true", default = False, dest="git", he
 args = parser.parse_args()
 
 def main(args):
+    copy_install_files()
+    os.system('sudo apt install kcri-seqtz-deps')
+    sys.exit()
     check_anaconda()
     docker_check()
     check_nvidia()
@@ -32,9 +35,6 @@ def main(args):
     else:
         print ('here')
         cwd = os.getcwd()
-        copy_install_files()
-        os.system('sudo apt install kcri-seqtz-deps')
-        sys.exit()
         os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
         os.system("pip install -r requirements.txt")
         os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
