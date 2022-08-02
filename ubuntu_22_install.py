@@ -34,7 +34,7 @@ def main(args):
         copy_install_files()
         os.system('sudo apt update && apt upgrade')
         os.system('sudo apt install kcri-seqtz-deps')
-        os.system('sudo groupadd docker; sudo usermod -aG docker $USER; newgrp docker;')
+        #os.system('sudo groupadd docker; sudo usermod -aG docker $USER; newgrp docker;')
         os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
         os.system("pip install -r requirements.txt")
         os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
