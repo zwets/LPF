@@ -468,12 +468,12 @@ def init_insert_reference_table(config_path):
         proc = subprocess.Popen(cmd, shell=True,
                                 stdout=subprocess.PIPE, )
         output = proc.communicate()[0].decode()
-        input_dict['reference_header_text'] = output.split("\n")[0][1:]
+        reference_header_text = output.split("\n")[0][1:]
         sequence = output.split("\n")[1]
         entry_id = md5(sequence)
         #TMP SOLUTION TO AVOID ENTRYCLASHES:
         if entry_id not in ids:
-            dbstring = "INSERT INTO reference_table(entry_id, input_dict['reference_header_text']) VALUES('{}', '{}')".format(entry_id, input_dict['reference_header_text'].replace("'", "''"))
+            dbstring = "INSERT INTO reference_table(entry_id, input_dict['reference_header_text']) VALUES('{}', '{}')".format(entry_id, reference_header_text.replace("'", "''"))
             ids.append(entry_id)
             c.execute(dbstring)
 
