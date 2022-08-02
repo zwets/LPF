@@ -473,7 +473,7 @@ def init_insert_reference_table(config_path):
         entry_id = md5(sequence)
         #TMP SOLUTION TO AVOID ENTRYCLASHES:
         if entry_id not in ids:
-            dbstring = "INSERT INTO reference_table(entry_id, input_dict['reference_header_text']) VALUES('{}', '{}')".format(entry_id, reference_header_text.replace("'", "''"))
+            dbstring = "INSERT INTO reference_table(entry_id, reference_header_text) VALUES('{}', '{}')".format(entry_id, reference_header_text.replace("'", "''"))
             ids.append(entry_id)
             c.execute(dbstring)
 
