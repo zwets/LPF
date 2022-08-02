@@ -1,23 +1,12 @@
-# Copyright (c) 2019, Malte Hallgren Technical University of Denmark
-# All rights reserved.
-#
-
-#Import Libraries
+"""
+Script for initializing a MOSS database system from a KMA-indexed reference database.
+"""
 
 import sys
 import os
 import argparse
-import operator
-import time
-import gc
-import numpy as np
-import array
-import subprocess
-from optparse import OptionParser
-from operator import itemgetter
 import moss_functions as moss
 import datetime
-import re
 import json
 import sqlite3
 from pathlib import Path
@@ -102,16 +91,12 @@ c.execute("""CREATE TABLE IF NOT EXISTS reference_table(entry_id TEXT PRIMARY KE
 conn.commit()
 c.execute("""CREATE TABLE IF NOT EXISTS metadata_table(entry_id TEXT PRIMARY KEY, {})""".format(metadata_string))
 conn.commit()
-c.execute("""CREATE TABLE IF NOT EXISTS ipc_table(ipc TEXT PRIMARY KEY, ipc_index_refdb TEXT, IsolateJSON TEXT, ReferenceJSON TEXT, ReadRefDB TEXT, running_analyses TEXT, queued_analyses TEXT, finished_analyses TEXT)""")
-conn.commit()
 c.execute("""CREATE TABLE IF NOT EXISTS status_table(entry_id TEXT PRIMARY KEY, sample_name TEXT, status TEXT, type TEXT, current_stage TEXT, final_stage TEXT, result TEXT, time_stamp TEXT)""")
 conn.commit()
 c.execute( """CREATE TABLE IF NOT EXISTS sync_table(last_sync TEXT, sync_round TEXT)""")
 conn.commit()
 c.execute( """CREATE TABLE IF NOT EXISTS basecalling_table(name TEXT PRIMARY KEY, status TEXT, start_time TEXT, end_time TEXT)""")
 conn.commit()
-dbstring = "INSERT INTO ipc_table(ipc, ipc_index_refdb, ReadRefDB, running_analyses, queued_analyses, finished_analyses) VALUES('{}' ,'{}', '{}', '{}', '{}', '{}')".format('IPC',1, 100, "", "", "")
-c.execute(dbstring)
 dbstring = "INSERT INTO sync_table(last_sync) VALUES('{}')".format(str(datetime.datetime.now())[0:-7])
 c.execute(dbstring)
 conn.commit()

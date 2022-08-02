@@ -36,7 +36,7 @@ args = parser.parse_args()
 config_name = moss.correctPathCheck(args.config_name)
 exepath = moss.correctPathCheck(args.exepath)
 
-"/opt/moss/kma/kma" = exepath + "kma/kma"
+##"/opt/moss/kma/kma" = exepath + "kma/kma"
 
 
 clusternumber = moss.databaseOverClustering(config_name, args.dbname, "/opt/moss/kma/kma", config_name + "clusterreport")
