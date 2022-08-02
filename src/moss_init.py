@@ -54,7 +54,10 @@ else:
 config_name = "/opt/moss_db/{}/".format(config_name)
 
 print ("cloning reference DB, if you are using a big reference DB, this might take a while")
-os.system("cp {}*.ATG* {}.".format(kmaindex_db_path, config_name))
+os.system("cp {}*.ATG.comp.b {}REFDB.ATG.comp.b".format(kmaindex_db_path, config_name))
+os.system("cp {}*.ATG.length.b {}REFDB.ATG.length.b".format(kmaindex_db_path, config_name))
+os.system("cp {}*.ATG.seq.b {}REFDB.ATG.seq.b".format(kmaindex_db_path, config_name))
+os.system("cp {}*.ATG.name {}REFDB.ATG.name".format(kmaindex_db_path, config_name))
 print ("cloning reference DB complete")
 
 directory_structure = {
