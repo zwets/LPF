@@ -1,7 +1,7 @@
 {
-  "name": "electron-quick-start",
-  "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "name": "moss",
+  "version": "1.1.0",
+  "description": "Microbial Outbreak Surveillance System",
   "main": "main.js",
   "scripts": {
     "dev": "npm run development",
