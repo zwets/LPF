@@ -10,6 +10,7 @@ args = parser.parse_args()
 
 def main(args):
     copy_install_files()
+    os.system('sudo apt update && apt upgrade')
     os.system('sudo apt install kcri-seqtz-deps')
     sys.exit()
     check_anaconda()
