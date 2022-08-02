@@ -43,5 +43,4 @@
     "update-electron-app": "^2.0.1"
   },
   "postinstall": "electron-builder install-app-deps"
-  }
 }
