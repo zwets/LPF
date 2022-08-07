@@ -3,7 +3,7 @@ on:
   pull_request
 jobs:
   tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - name: Set up node14
@@ -27,6 +27,6 @@ jobs:
       - name: Run Pylint
         run: |
           find . -type f -name "*.py" | xargs pylint --fail-under 1
-      - name: Unit Tests
+      - name: Nosetests
         run: |
-          nose2
+          nosetests
