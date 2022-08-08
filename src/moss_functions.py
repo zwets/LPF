@@ -128,10 +128,7 @@ def moss_run(input_dict):
 
     nanopore_alignment(input_dict)
 
-    print ("HERE")
-    print (input_dict)
-
-    input_dict['reference_id'] = sql_fetch_one("SELECT entry_id FROM reference_table WHERE input_dict['reference_header_text'] = '{}'"
+    input_dict['reference_id'] = sql_fetch_one("SELECT entry_id FROM reference_table WHERE reference_header_text = '{}'"
                                  .format(input_dict['reference_header_text']), input_dict['config_path'])[0]
 
     sql_execute_command("UPDATE sample_table SET reference_id = '{}' WHERE entry_id = '{}'"
@@ -142,9 +139,9 @@ def moss_run(input_dict):
     os.system(cmd)
 
     sql_execute_command(
-        "UPDATE sample_table SET input_dict['consensus_name'] = '{}' WHERE entry_id = '{}'"
+        "UPDATE sample_table SET consensus_name = '{}' WHERE entry_id = '{}'"
             .format(input_dict['consensus_name'], input_dict['entry_id']), input_dict['moss_db'])
-    input_dict['isolate_list'] = sql_fetch_all("SELECT input_dict['consensus_name'] FROM sample_table WHERE reference_id = '{}'"
+    input_dict['isolate_list'] = sql_fetch_all("SELECT consensus_name FROM sample_table WHERE reference_id = '{}'"
             .format(input_dict['reference_id']), input_dict['config_path'])
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\"," \
