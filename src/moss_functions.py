@@ -446,16 +446,6 @@ def plot_tree(treedata, output_file):
 
     return
 
-def moss_shortcut_init():
-    outfile = open('/opt/moss/src/moss', 'w')
-    print ("#!/usr/bin/env bash", file = outfile)
-    print ("echo \'HELLO THERE\'", file = outfile)
-    outfile.close()
-    cmd = "mv /opt/moss/src/moss ~/bin/."
-    os.system(cmd)
-    cmd = "chmod a+x ~/bin/moss"
-    os.system(cmd)
-
 def init_insert_reference_table(config_path):
     infile = open(config_path + "REFDB.ATG.name", 'r')
     t = 1
