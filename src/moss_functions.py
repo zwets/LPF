@@ -777,17 +777,15 @@ def ThreshholdDistanceCheck(distancematrixfile, input_dict):
     infile = open(distancematrixfile, 'r')
     linecount = 0
     secondentry = False
-    print (input_dict['input_file'])
-    print (input_dict['consensus_name'])
     for line in infile:
         line = line.rstrip()
         line = line.split("\t")
         if secondentry == True:
-            if line[0] == input_dict['consensus_name'] or line[0] == input_dict['input_file']:
+            if line[0] == input_dict['consensus_name'] or line[0] == input_dict['header_name']:
                 distance = line[linecount-1]
                 return float(distance)
         if secondentry == False:
-            if line[0] == input_dict['consensus_name'] or line[0] == input_dict['input_file']:
+            if line[0] == input_dict['consensus_name'] or line[0] == input_dict['header_name']:
                 index = linecount
                 secondentry = True
         linecount += 1
