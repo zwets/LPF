@@ -347,7 +347,7 @@ def create_directory_from_dict(dict, path):
     return True
 
 def sql_fetch_one(string, config_path):
-    conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_path))
+    conn = sqlite3.connect("{}/moss.db".format(config_path))
     c = conn.cursor()
     c.execute(string)
     data = c.fetchone()
@@ -355,7 +355,7 @@ def sql_fetch_one(string, config_path):
     return data
 
 def sql_fetch_all(string, config_path):
-    conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_path))
+    conn = sqlite3.connect("{}/moss.db".format(config_path))
     c = conn.cursor()
     c.execute(string)
     data = c.fetchall()
@@ -850,7 +850,7 @@ def check_unique_entry_id(entry_id, moss_db):
 def findTemplateNumber(config_path, name):
     if name == None:
         return ""
-    infile = open("/opt/moss_db/{}/REFDB.ATG.name".format(config_path), 'r')
+    infile = open("{}/REFDB.ATG.name".format(config_path), 'r')
     t = 1
     for line in infile:
         if line.rstrip() == name:
@@ -877,7 +877,7 @@ def run_quast(target_dir, jobid):
     os.system(cmd)
 
 def isolate_file_name(config_path, entry_id):
-    isolatedb = "/opt/moss_db/{}/moss.db".format(config_path)
+    isolatedb = "{}/moss.db".format(config_path)
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
