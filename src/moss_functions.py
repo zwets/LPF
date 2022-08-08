@@ -1000,6 +1000,7 @@ def compileReportAlignment(input_dict):
 
     filename = "{}_report.pdf".format(input_dict['entry_id']) #ADD idd
     clusterSize = len(input_dict['isolate_list'])
+    print ("t_1")
 
     ''' First Page '''
     pdf.add_page()
@@ -1008,6 +1009,8 @@ def compileReportAlignment(input_dict):
     pdf.ln(5)
     file_name = isolate_file_name(input_dict['config_path'], input_dict['entry_id'])
     pdf.set_font('Arial', '', 12)
+    print ("t_2")
+
     textstring = "ID: {} \n" \
                  "sample_name: {} \n" \
                  "Identified reference: {} \n" \
@@ -1021,6 +1024,8 @@ def compileReportAlignment(input_dict):
     pdf.set_xy(x=10, y=60)
     pdf.cell(85, 5, "Sample information: ", 0, 1, 'L')
     pdf.set_text_color(0, 0, 0)
+    print ("t_3")
+
     pdf.set_font('Arial', '', 10)
     textstring = "Copenhagen, Denmark \n" \
                  "Time of sampling: 2019-06-11 18:03:00. \n" \
@@ -1030,6 +1035,8 @@ def compileReportAlignment(input_dict):
     pdf.ln(5)
     pdf.set_text_color(51, 153, 255)
     pdf.set_font('Arial', '', 12)
+    print ("t_4")
+
     pdf.cell(85, 5, "CGE results: ", 0, 1, 'L')
 
     textstring = "AMR genes in this sample: {}. \n" \
@@ -1043,6 +1050,8 @@ def compileReportAlignment(input_dict):
     pdf.ln(5)
 
     pdf.set_xy(x=105, y=65)
+    print ("t_5")
+
 
     ''' Second Page '''
     pdf.add_page()
