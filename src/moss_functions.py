@@ -134,7 +134,7 @@ def moss_run(input_dict):
     sql_execute_command("UPDATE sample_table SET reference_id = '{}' WHERE entry_id = '{}'"
                         .format(input_dict['reference_id'], input_dict['entry_id']), input_dict['moss_db'])
 
-    cmd = "cp {0}{1} /opt/moss_db/{2}/consensus_sequences/{1}"\
+    cmd = "cp {0}{1} {2}/consensus_sequences/{1}"\
         .format(input_dict['target_dir'], input_dict['consensus_name'], input_dict['config_path'])
     os.system(cmd)
 
