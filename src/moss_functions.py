@@ -1000,17 +1000,14 @@ def compileReportAlignment(input_dict):
 
     filename = "{}_report.pdf".format(input_dict['entry_id']) #ADD idd
     clusterSize = len(input_dict['isolate_list'])
-    print ("t_1")
 
     ''' First Page '''
     pdf.add_page()
     pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
-    print ("t_2")
 
     create_title(pdf, input_dict['entry_id'], "MOSS analytical report")
     pdf.ln(5)
     pdf.set_font('Arial', '', 12)
-    print ("t_3")
 
     textstring = "ID: {} \n" \
                  "sample_name: {} \n" \
@@ -1063,7 +1060,6 @@ def compileReportAlignment(input_dict):
     amr_pheno, csv_data = derive_phenotype_amr(input_dict['resfinder_hits'], "resfinder_db")
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
-    print (csv_data)
     for row in csv_data:
         for datum in row:
             pdf.multi_cell(col_width, line_height, datum, border=1,
@@ -1075,7 +1071,6 @@ def compileReportAlignment(input_dict):
     pdf.cell(85, 5, "Virulence Genes Found: ", 0, 1, 'L')
 
     virulence_pheno, csv_data = derive_phenotype_virulence(input_dict['virulence_hits'], "virulencefinder_db", input_dict['target_dir'])
-    print (csv_data)
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
     for row in csv_data:
