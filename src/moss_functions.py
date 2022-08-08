@@ -159,12 +159,13 @@ def moss_run(input_dict):
 
     distance = ThreshholdDistanceCheck("{}/phytree_output/distance_matrix"
                                        .format(input_dict['target_dir']), input_dict)
+    print (distance)
     if distance == None:
         associated_species = "{} - assembly from ID: {}".format(input_dict['reference_header_text'], input_dict['entry_id'])
         run_assembly(input_dict)
     elif distance > 300:  # SNP distance
         associated_species = "{} - assembly from ID: {}".format(input_dict['reference_header_text'],
-                                                                input_dict['entry_id'])
+                                                          input_dict['entry_id'])
         run_assembly(input_dict)
     print ("here")
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\"," \
@@ -788,6 +789,7 @@ def ThreshholdDistanceCheck(distancematrixfile, input_dict):
                 index = linecount
                 secondentry = True
         linecount += 1
+    return None
 
 def flye_assembly(input_dict):
 
