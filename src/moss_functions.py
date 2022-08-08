@@ -111,7 +111,6 @@ def moss_run(input_dict):
     sql_execute_command(sql_cmd, input_dict['moss_db'])
 
     input_dict = kma_mapping(input_dict)
-    print ("I MADE IT PAST MAPPING")
 
     associated_species = "{} - assembly from ID: {}".format(input_dict['reference_header_text'], input_dict['entry_id'])
 
@@ -740,7 +739,7 @@ def kma_mapping(input_dict):
         return input_dict
 
 def nanopore_alignment(input_dict):
-    cmd = "/opt/moss/kma/kma -i {} -o {}{} -t_db /REFDB.ATG -mint3 -Mt1 {} -t 8"\
+    cmd = "/opt/moss/kma/kma -i {} -o {}{} -t_db {}/REFDB.ATG -mint3 -Mt1 {} -t 8"\
         .format(input_dict['input_path'], input_dict['target_dir'], input_dict['consensus_name'][:-4],
                 input_dict['config_path'], str(input_dict['template_number']))
     os.system(cmd)
