@@ -719,7 +719,7 @@ def kma_mapping(input_dict):
                 line = line.split("\t")
                 if line[0][0] != "#":
                     if float(line[1]) > template_score:
-                        template_score = line[1]
+                        template_score = float(line[1])
                         input_dict['reference_header_text'] = line[0]
         template_number = findTemplateNumber(input_dict['config_path'], input_dict['reference_header_text'])
         input_dict['template_number'] = template_number
