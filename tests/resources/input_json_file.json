@@ -1,6 +1,6 @@
 {
   "input_file": "file.fastq.gz",
-  "input_path": "/opt/moss_data/test_dir/file.fastq.gz",
+  "input_path": "/opt/moss_data/file.fastq.gz",
   "sequencing_method": "nanopore minion",
   "isolation_source": "isolate",
   "investigation_type": "type1",
