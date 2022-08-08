@@ -409,7 +409,7 @@ def make_phytree_output_folder(input_dict):
         os.system(cmd)
 
     input_dict['header_name'] = input_dict['reference_header_text'].split()[0] + '.fsa'
-    cmd = "/opt/moss/kma/kma seq2fasta -t_db {}} -seqs {} > {}/phytree_output/{}"\
+    cmd = "/opt/moss/kma/kma seq2fasta -t_db {} -seqs {} > {}/phytree_output/{}"\
         .format(input_dict['ref_db'], input_dict['template_number'], input_dict['target_dir'], input_dict['header_name'])
     os.system(cmd)
 
