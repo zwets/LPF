@@ -111,6 +111,7 @@ def moss_run(input_dict):
     sql_execute_command(sql_cmd, input_dict['moss_db'])
 
     input_dict = kma_mapping(input_dict)
+    print ("I MADE IT PAST MAPPING")
 
     associated_species = "{} - assembly from ID: {}".format(input_dict['reference_header_text'], input_dict['entry_id'])
 
