@@ -128,6 +128,9 @@ def moss_run(input_dict):
 
     nanopore_alignment(input_dict)
 
+    print ("HERE")
+    print (input_dict)
+
     input_dict['reference_id'] = sql_fetch_one("SELECT entry_id FROM reference_table WHERE input_dict['reference_header_text'] = '{}'"
                                  .format(input_dict['reference_header_text']), input_dict['config_path'])[0]
 
