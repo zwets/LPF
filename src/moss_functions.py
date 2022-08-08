@@ -1058,6 +1058,7 @@ def compileReportAlignment(input_dict):
     amr_pheno, csv_data = derive_phenotype_amr(input_dict['resfinder_hits'], "resfinder_db")
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
+    print (csv_data)
     for row in csv_data:
         for datum in row:
             pdf.multi_cell(col_width, line_height, datum, border=1,
