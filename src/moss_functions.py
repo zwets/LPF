@@ -777,6 +777,8 @@ def ThreshholdDistanceCheck(distancematrixfile, input_dict):
     infile = open(distancematrixfile, 'r')
     linecount = 0
     secondentry = False
+    print (input_dict['input_file'])
+    print (input_dict['consensus_name'])
     for line in infile:
         line = line.rstrip()
         line = line.split("\t")
