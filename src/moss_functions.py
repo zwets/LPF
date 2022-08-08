@@ -707,7 +707,7 @@ def check_alignment_kma_cov(file):
     return coverage
 
 def kma_mapping(input_dict):
-    os.system("/opt/moss/kma/kma -i {} -o {}kma_mapping -t_db /opt/moss_db/{}/REFDB.ATG"
+    os.system("/opt/moss/kma/kma -i {} -o {}kma_mapping -t_db {}/REFDB.ATG"
               " -ID 0 -nf -mem_mode -sasm -ef -1t1".format(input_dict['input_path'], input_dict['target_dir'], input_dict['config_path']))
     num_lines = sum(1 for line in open("{}kma_mapping.res".format(input_dict['target_dir']))) #1 line is empty, more have hits.
     if num_lines > 1:
