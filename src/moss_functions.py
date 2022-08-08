@@ -166,7 +166,7 @@ def moss_run(input_dict):
         associated_species = "{} - assembly from ID: {}".format(input_dict['reference_header_text'],
                                                                 input_dict['entry_id'])
         run_assembly(input_dict)
-
+    print ("here")
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\"," \
               " result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("Distance Matrix", input_dict['sample_name'], "Alignment", "6", "10", "Running", str(datetime.datetime.now())[0:-7],
