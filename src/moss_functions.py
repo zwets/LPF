@@ -1005,11 +1005,12 @@ def compileReportAlignment(input_dict):
     ''' First Page '''
     pdf.add_page()
     pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
+    print ("t_2")
+
     create_title(pdf, input_dict['entry_id'], "MOSS analytical report")
     pdf.ln(5)
-    file_name = isolate_file_name(input_dict['config_path'], input_dict['entry_id'])
     pdf.set_font('Arial', '', 12)
-    print ("t_2")
+    print ("t_3")
 
     textstring = "ID: {} \n" \
                  "sample_name: {} \n" \
@@ -1024,7 +1025,6 @@ def compileReportAlignment(input_dict):
     pdf.set_xy(x=10, y=60)
     pdf.cell(85, 5, "Sample information: ", 0, 1, 'L')
     pdf.set_text_color(0, 0, 0)
-    print ("t_3")
 
     pdf.set_font('Arial', '', 10)
     textstring = "Copenhagen, Denmark \n" \
@@ -1035,8 +1035,6 @@ def compileReportAlignment(input_dict):
     pdf.ln(5)
     pdf.set_text_color(51, 153, 255)
     pdf.set_font('Arial', '', 12)
-    print ("t_4")
-
     pdf.cell(85, 5, "CGE results: ", 0, 1, 'L')
 
     textstring = "AMR genes in this sample: {}. \n" \
@@ -1050,8 +1048,6 @@ def compileReportAlignment(input_dict):
     pdf.ln(5)
 
     pdf.set_xy(x=105, y=65)
-    print ("t_5")
-
 
     ''' Second Page '''
     pdf.add_page()
