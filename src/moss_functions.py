@@ -739,7 +739,7 @@ def kma_mapping(input_dict):
         return input_dict
 
 def nanopore_alignment(input_dict):
-    cmd = "/opt/moss/kma/kma -i {} -o {}{} -t_db /opt/moss_db/{}/REFDB.ATG -mint3 -Mt1 {} -t 8"\
+    cmd = "/opt/moss/kma/kma -i {} -o {}{} -t_db /REFDB.ATG -mint3 -Mt1 {} -t 8"\
         .format(input_dict['input_path'], input_dict['target_dir'], input_dict['consensus_name'][:-4],
                 input_dict['config_path'], str(input_dict['template_number']))
     os.system(cmd)
