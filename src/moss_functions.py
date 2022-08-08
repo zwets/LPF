@@ -710,6 +710,7 @@ def kma_mapping(input_dict):
     os.system("/opt/moss/kma/kma -i {} -o {}kma_mapping -t_db {}/REFDB.ATG"
               " -ID 0 -nf -mem_mode -sasm -ef -1t1".format(input_dict['input_path'], input_dict['target_dir'], input_dict['config_path']))
     num_lines = sum(1 for line in open("{}kma_mapping.res".format(input_dict['target_dir']))) #1 line is empty, more have hits.
+    template_score = 0
     if num_lines > 1:
         input_dict['reference_header_text'] = None
         with open("{}kma_mapping.res".format(input_dict['target_dir'])) as infile:
@@ -717,7 +718,8 @@ def kma_mapping(input_dict):
                 line = line.rstrip()
                 line = line.split("\t")
                 if line[0][0] != "#":
-                    if float(line[1]) > template_number_score:
+                    if float(line[1]) > template_score:
+                        template_score = line[1]
                         input_dict['reference_header_text'] = line[0]
         template_number = findTemplateNumber(input_dict['config_path'], input_dict['reference_header_text'])
         input_dict['template_number'] = template_number
