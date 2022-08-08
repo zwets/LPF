@@ -1,6 +1,6 @@
 {
-  "input_file": "500_reads.fastq.gz",
-  "input_path": "/opt/moss/tests/resources/data_for_tests/500_reads.fastq.gz",
+  "input_file": "alignment_input.fastq.gz",
+  "input_path": "/opt/moss/tests/resources/data_for_tests/alignment_input.fastq.gz",
   "sequencing_method": "nanopore minion",
   "isolation_source": "isolate",
   "investigation_type": "type1",
