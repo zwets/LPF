@@ -188,14 +188,14 @@ def moss_run(input_dict):
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("Database updating", input_dict['sample_name'], "Alignment", "8", "10", "Running", str(datetime.datetime.now())[0:-7],
                 input_dict['entry_id'])
-    moss.sql_execute_command(sql_cmd, input_dict['moss_db'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("Compiling PDF", input_dict['sample_name'], "Alignment", "9", "10", "Running", str(datetime.datetime.now())[0:-7],
                 input_dict['entry_id'])
     sql_execute_command(sql_cmd, input_dict['moss_db'])
 
-    moss.compileReportAlignment(input_dict)
+    compileReportAlignment(input_dict)
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("Completed", input_dict['sample_name'], "Alignment", "10", "10", "Completed", str(datetime.datetime.now())[0:-7],
@@ -777,8 +777,6 @@ def ThreshholdDistanceCheck(distancematrixfile, input_dict):
     infile = open(distancematrixfile, 'r')
     linecount = 0
     secondentry = False
-    print (input_dict['header_name'])
-    print (input_dict['consensus_name'])
     for line in infile:
         line = line.rstrip()
         line = line.split("\t")
