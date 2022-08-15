@@ -480,19 +480,19 @@ def run_assembly(input_dict):
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\"," \
               " result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("Flye Assembly", "Assembly", "4", "5", "Running", str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
-    sql_execute_command(sql_cmd,  input_dict['config_path'])
+    sql_execute_command(sql_cmd,  input_dict['moss_db'])
     flye_assembly(input_dict)
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\"," \
               " result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("Compiling PDF report", "Assembly", "5", "5", "Running", str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
-    sql_execute_command(sql_cmd,  input_dict['config_path'])
+    sql_execute_command(sql_cmd,  input_dict['moss_db'])
 
     compileReportAssembly(input_dict)
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("Completed", "reference", "5", "5", "Completed", str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
-    sql_execute_command(sql_cmd,  input_dict['config_path'])
+    sql_execute_command(sql_cmd,  input_dict['moss_db'])
     sys.exit("No template was found, so input was added to references.")
 
 def init_moss_variables(config_path, ):
@@ -795,7 +795,6 @@ def flye_assembly(input_dict):
 
     cmd = "docker cp {}:/tmp/assembly_results {}.".format(id, input_dict['target_dir'])
     os.system(cmd)
-
     cmd = "docker container rm {}".format(id)
     os.system(cmd)
 
