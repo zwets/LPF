@@ -782,7 +782,7 @@ def ThreshholdDistanceCheck(distancematrixfile, input_dict):
     return None
 
 def flye_assembly(input_dict):
-
+    print ("Made it to flye")
     cmd = "docker run --name assembly_{0} -v {1}:/tmp/{2} staphb/flye flye -o /tmp/assembly_results" \
           " --threads 8 --nano-raw /tmp/{2}"\
         .format(input_dict['entry_id'], input_dict['input_path'], input_dict['entry_id'])
