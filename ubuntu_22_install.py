@@ -16,8 +16,6 @@ def main(args):
         #os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
         #os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
         #os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;")
-        if cwd != "/opt/moss":
-            move_moss_repo(cwd)
         #download_finder_dbs()
 
         install_app()
@@ -25,9 +23,10 @@ def main(args):
         for item in path_list:
             if not os.path.exists(item):
                 os.system("sudo mkdir -m 777 {}".format(item))
-        #os.system("python3 /opt/moss/docker_images.py")
+        #os.system("python3 docker_images.py")
         check_dist_build()
-        os.system('cd {}'.format(cwd))
+        if cwd != "/opt/moss":
+            move_moss_repo(cwd)
         return True
     else:
         #check_anaconda()
@@ -92,7 +91,7 @@ def move_moss_repo(cwd):
         os.system("sudo rm -rf /opt/moss")
         os.system("sudo mv {} /opt/moss".format(cwd))
     else:
-        os.system("sudo mv {} /opt/moss".format(cwd))
+        os.system("sudo cp -r {} /opt/moss".format(cwd))
     return True
 
 def move_shortcut_script():
