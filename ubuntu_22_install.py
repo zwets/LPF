@@ -42,8 +42,6 @@ def main(args):
         os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
         os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
         os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;")
-        if cwd != "/opt/moss":
-            move_moss_repo(cwd)
         install_app()
         path_list = ["/opt/moss_db", "/opt/moss_data/", "/opt/moss_data/fast5/", "/opt/moss_data/fastq/"]
         for item in path_list:
@@ -52,6 +50,8 @@ def main(args):
         download_finder_dbs()
         os.system("python3 /opt/moss/docker_images.py")
         check_dist_build()
+        if cwd != "/opt/moss":
+            move_moss_repo(cwd)
         return True
 
 def copy_install_files():
@@ -68,7 +68,7 @@ def copy_install_files():
 
 
 def check_dist_build():
-    if not os.path.isfile("/opt/moss/local_app/dist/linux-unpacked/moss"):
+    if not os.path.isfile("local_app/dist/linux-unpacked/moss"):
         sys.exit("A MOSS distribution was not created correctly. Installation was not completed")
     else:
         print ("The installation was completed")
