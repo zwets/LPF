@@ -2,9 +2,9 @@ from unittest import TestCase
 import src.moss_functions as moss
 import json
 
-class TestMd5(TestCase):
-    def test_expected_hash(self):
-        self.assertEqual(moss.md5('test'), '098f6bcd4621d373cade4e832627b4f6')
+#class TestMd5(TestCase):
+#    def test_expected_hash(self):
+#        self.assertEqual(moss.md5('test'), '098f6bcd4621d373cade4e832627b4f6')
 
 class TestValidateInput(TestCase):
     def setUp(self):
