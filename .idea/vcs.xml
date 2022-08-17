@@ -17,6 +17,7 @@
     <mapping directory="$PROJECT_DIR$/resfinder/cge/kma" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/resfinder/db_pointfinder" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/resfinder/db_resfinder" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/tests/resources/data_for_tests/database/kma" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/virulencefinder" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/virulencefinder/virulencefinder_db" vcs="Git" />
   </component>
