@@ -2,54 +2,31 @@ from unittest import TestCase
 import src.moss_functions as moss
 import json
 
-#class TestMd5(TestCase):
-#    def test_expected_hash(self):
-#        self.assertEqual(moss.md5('test'), '098f6bcd4621d373cade4e832627b4f6')
+class TestValidateDateText(TestCase):
+    def setUp(self):
+        self.hp_date_time = '1996-06-01'
+        self.sp_date_time = '01-06-1996'
+
+    def test_hp_date_time(self):
+        self.assertEqual(None, moss.validate_date_text(self.hp_date_time))
+
+    def test_sp_date_time(self):
+        self.assertRaises(ValueError, moss.validate_date_text, self.sp_date_time)
+
 
 class TestValidateInput(TestCase):
     def setUp(self):
-        with open('tests/resources/input_json_file.json') as json_file:
+        with open('tests/resources/data_for_tests/json/assembly_test.json') as json_file:
             self.test_json = json.load(json_file)
 
-    def test_bad_path_input_path(self):
+    def test_sp_input_path(self):
         self.test_json['input_path'] = '/opt/moss_data/test_dir/file.fastq.gzsadgasd'
-        with self.assertRaises(SystemExit) as cm:
-            moss.validate_input(self.test_json)
-        self.assertEqual(cm.exception.code, 'Input file is not a fastq.gz file. Only gzipped files are accepted.')
+        self.assertRaises(SystemExit, moss.validate_input, self.test_json)
 
-    def test_happy_path_input_path(self):
-        self.assertEqual(moss.validate_input(self.test_json), True)
+    def test_hp_all(self):
+        self.assertEqual(None, moss.validate_input(self.test_json))
 
     def test_bad_path_collection_date(self):
         self.test_json['collection_date'] = '07/12/1984'
         with self.assertRaises(ValueError):
             moss.validate_input(self.test_json)
-
-    def test_happy_path_collection_date(self):
-        self.assertEqual(moss.validate_input(self.test_json), True)
-
-class TestKmaFinders(TestCase):
-    """
-    Test KMA CGE Finders
-    """
-    #kma_finders("-ont -md 5", "resfinder", input_dict, "/opt/moss/resfinder_db/all")
-    def setUp(self):
-        with open('tests/resources/input_json_file.json') as json_file:
-            self.test_json = json.load(json_file)
-
-    def test_bad_path_input_path(self):
-        self.test_json['input_path'] = '/opt/moss_data/test_dir/file.fastq.gzsadgasd' #Wrong ending
-        with self.assertRaises(SystemExit) as cm:
-            moss.validate_input(self.test_json)
-        self.assertEqual(cm.exception.code, 'Input file is not a fastq.gz file. Only gzipped files are accepted.')
-
-    def test_happy_path_input_path(self):
-        self.assertEqual(moss.validate_input(self.test_json), True)
-
-    def test_bad_path_collection_date(self):
-        self.test_json['collection_date'] = '07/12/1984'
-        with self.assertRaises(ValueError):
-            moss.validate_input(self.test_json)
-
-    def test_happy_path_collection_date(self):
-        self.assertEqual(moss.validate_input(self.test_json), True)

@@ -19,20 +19,20 @@ from Bio import Phylo
 from io import StringIO
 import dataframe_image as dfi
 
-def clean_sql_for_moss_run(input_dict):
-    pass
+# def clean_sql_for_moss_run(input_dict):
+#     pass
+#
+# def update_sql_database():
+#     pass
+#
+# def evaluate_moss_run():
+#     pass
 
-def update_sql_database():
-    pass
-
-def evaluate_moss_run():
-    pass
-
-def validate(date_text):
+def validate_date_text(date_text):
     try:
         datetime.datetime.strptime(date_text, '%Y-%m-%d')
     except ValueError:
-        raise ValueError("Incorrect data format, should be YYYY-MM-DD")
+        raise ValueError("Incorrect data format, should be YYYY-MM-DD.")
 
 
 def validate_input(input_dict):
@@ -53,11 +53,14 @@ def validate_input(input_dict):
       "config_path": "/opt/moss_db/test/"
     }
     """
+    if not input_dict['input_file'] in input_dict['input_path']:
+        raise SystemExit('Input file does not match the input path.')
     if not input_dict['input_path'].endswith('.fastq.gz'):
-        sys.exit('Input file is not a fastq.gz file. Only gzipped files are accepted.')
-    validate(input_dict['collection_date'])
+        raise SystemExit('Input is not a fastq.gz file. Only this format is supported.')
+    if not input_dict['config_path'].startswith('/opt/moss_db'):
+        raise SystemExit('An unvalid config_path was given.')
+    validate_date_text(input_dict['collection_date'])
     print ('Validation complete')
-    return True
 
 def parse_finders(input_dict):
     input_dict['resfinder_hits'] = parse_kma_res("{}/finders/resfinder.res".format(input_dict['target_dir']))
