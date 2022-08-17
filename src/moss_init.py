@@ -13,19 +13,19 @@ from pathlib import Path
 
 def check_and_add_bookmarks(config_name):
     home = str(Path.home())
+    if os.path.exists("{}/.config/gtk-3.0/bookmarks".format(home)):
+        with open("{}/.config/gtk-3.0/bookmarks".format(home)) as fd:
+            data = fd.readlines()
+        new_bookmark_list = list()
+        for item in data:
+            if "moss" not in item:
+                new_bookmark_list.append(item.rstrip())
+        new_bookmark_list.append("file:///opt/moss_data")
+        new_bookmark_list.append("file:///opt/moss_db/{}/metadata_csv".format(config_name))
 
-    with open("{}/.config/gtk-3.0/bookmarks".format(home)) as fd:
-        data = fd.readlines()
-    new_bookmark_list = list()
-    for item in data:
-        if "moss" not in item:
-            new_bookmark_list.append(item.rstrip())
-    new_bookmark_list.append("file:///opt/moss_data")
-    new_bookmark_list.append("file:///opt/moss_db/{}/metadata_csv".format(config_name))
-
-    with open("{}/.config/gtk-3.0/bookmarks".format(home), 'w') as fd:
-        for item in new_bookmark_list:
-            fd.write(item + '\n')
+        with open("{}/.config/gtk-3.0/bookmarks".format(home), 'w') as fd:
+            for item in new_bookmark_list:
+                fd.write(item + '\n')
 
 
 parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
