@@ -9,9 +9,9 @@ parser.add_argument("-git", action="store_true", default = False, dest="git", he
 args = parser.parse_args()
 
 def main(args):
-    check_anaconda()
-    docker_check()
-    check_nvidia()
+    #check_anaconda()
+    #docker_check()
+    #check_nvidia()
     if args.git:
         os.system("cd /opt/moss; git pull")
         install_app()
@@ -32,11 +32,14 @@ def main(args):
     else:
         cwd = os.getcwd()
         copy_install_files()
+        os.system('sudo apt update && apt upgrade')
+        os.system('sudo apt install kcri-seqtz-deps')
+        #os.system('sudo groupadd docker; sudo usermod -aG docker $USER; newgrp docker;')
         os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
         os.system("pip install -r requirements.txt")
         os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
         os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
-        os.system("cd /opt/moss; git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py /opt/moss/kma/kma_index; cd ..; cd ..;")
+        os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;")
         if cwd != "/opt/moss":
             move_moss_repo(cwd)
         install_app()
@@ -50,14 +53,14 @@ def main(args):
         return True
 
 def copy_install_files():
-    os.system("cp install_files/kcri-seqtz.list /etc/apt/sources.list.d/.")
-    os.system("cp install_files/nanoporetech.sources.list /etc/apt/sources.list.d/.")
-    os.system("cp install_files/nodesource.list /etc/apt/sources.list.d/.")
-    os.system("cp install_files/cran_ubuntu_key.asc /etc/apt/trusted.gpg.d/.")
-    os.system("cp install_files/mozillateam-ubuntu-ppa.gpg /etc/apt/trusted.gpg.d/.")
-    os.system("cp install_files/nodesource.gpg /etc/apt/trusted.gpg.d/.")
-    os.system("cp install_files/ont-repo.asc /etc/apt/trusted.gpg.d/.")
-    os.system("cp install_files/mozilla-ppa /etc/apt/preferences.d/.")
+    os.system("sudo cp install_files/kcri-seqtz.list /etc/apt/sources.list.d/.")
+    os.system("sudo cp install_files/nanoporetech.sources.list /etc/apt/sources.list.d/.")
+    os.system("sudo cp install_files/nodesource.list /etc/apt/sources.list.d/.")
+    os.system("sudo cp install_files/cran_ubuntu_key.asc /etc/apt/trusted.gpg.d/.")
+    os.system("sudo cp install_files/mozillateam-ubuntu-ppa.gpg /etc/apt/trusted.gpg.d/.")
+    os.system("sudo cp install_files/nodesource.gpg /etc/apt/trusted.gpg.d/.")
+    os.system("sudo cp install_files/ont-repo.asc /etc/apt/trusted.gpg.d/.")
+    os.system("sudo cp install_files/mozilla-ppa /etc/apt/preferences.d/.")
 
 
 

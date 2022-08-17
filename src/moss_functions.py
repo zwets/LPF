@@ -3,7 +3,6 @@ Shared functions used by the MOSS back-end
 """
 import sys
 import os
-import time
 import geocoder
 import subprocess
 import sqlite3
@@ -12,7 +11,6 @@ import datetime
 import hashlib
 import pandas as pd
 from tabulate import tabulate
-import gzip
 from fpdf import FPDF
 from geopy.geocoders import Nominatim
 import matplotlib
@@ -20,6 +18,192 @@ import matplotlib.pyplot as plt
 from Bio import Phylo
 from io import StringIO
 import dataframe_image as dfi
+
+def clean_sql_for_moss_run(input_dict):
+    pass
+
+def update_sql_database():
+    pass
+
+def evaluate_moss_run():
+    pass
+
+def validate(date_text):
+    try:
+        datetime.datetime.strptime(date_text, '%Y-%m-%d')
+    except ValueError:
+        raise ValueError("Incorrect data format, should be YYYY-MM-DD")
+
+
+def validate_input(input_dict):
+    """
+    {
+      "input_file": "file.fastq.gz",
+      "input_path": "/opt/moss_data/test_dir/file.fastq.gz",
+      "sequencing_method": "nanopore minion",
+      "isolation_source": "isolate",
+      "investigation_type": "type1",
+      "collection_date": "1999-01-19",
+      "city": "Copenhagen",
+      "country": "Denmark",
+      "patient_gender": "",
+      "patient_age": "",
+      "type_of_infection": "",
+      "experimental_condition": "",
+      "config_path": "/opt/moss_db/test/"
+    }
+    """
+    if not input_dict['input_path'].endswith('.fastq.gz'):
+        sys.exit('Input file is not a fastq.gz file. Only gzipped files are accepted.')
+    validate(input_dict['collection_date'])
+    print ('Validation complete')
+    return True
+
+def parse_finders(input_dict):
+    input_dict['resfinder_hits'] = parse_kma_res("{}/finders/resfinder.res".format(input_dict['target_dir']))
+    input_dict['virulence_hits'] = parse_kma_res("{}/finders/virulencefinder.res".format(input_dict['target_dir']))
+    input_dict['plasmid_hits'] = parse_kma_res("{}/finders/plasmidfinder.res".format(input_dict['target_dir']))
+    input_dict['mlst_type'] = parse_mlst_result("{}/mlstresults/data.json".format(input_dict['target_dir']))
+    return input_dict
+
+def moss_run(input_dict):
+    """
+    input_dict = {
+        'sample_name': 'file',
+        'sequencing_method': 'nanopore minion',
+        'isolation_source': 'isolate',
+        'investigation_type': 'type1',
+        'collection_date': '06-21-1998',
+        'input_path': '',
+        'city': 'Copenhagen',
+        'country': 'Denmark',
+        'patient_gender': '',
+        'patient_age': '',
+        'type_of_infection': '',
+        'experimental_condition': '',
+        'config_path': '',
+        'entry_id': '',
+        'moss_db: '',
+        'ref_db': '',
+        'target_dir': ''
+    }
+    """
+
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\"," \
+              " type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\"," \
+              " time_stamp=\"{}\" WHERE entry_id=\"{}\""\
+        .format("CGE finders", input_dict['sample_name'], "Not Determined", "2", "10", "Running",
+                str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
+
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+    moss_mkfs(input_dict['config_path'], input_dict['entry_id'])
+
+    kma_finders("-ont -md 5", "resfinder", input_dict, "/opt/moss/resfinder_db/all")
+    kma_finders("-ont -md 5", "virulencefinder", input_dict, "/opt/moss/virulencefinder_db/all")
+    kma_finders("-ont -md 5", "plasmidfinder", input_dict, "/opt/moss/plasmidfinder_db/all")
+
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\"," \
+              " current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\"" \
+              " WHERE entry_id=\"{}\"" \
+        .format("KMA Mapping", input_dict['sample_name'], "Not Determined", "3", "10", "Running",
+                str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+    input_dict = kma_mapping(input_dict)
+
+    associated_species = "{} - assembly from ID: {}".format(input_dict['reference_header_text'], input_dict['entry_id'])
+
+    run_mlst(input_dict)
+
+    input_dict = parse_finders(input_dict)
+
+    if input_dict['template_number'] == None:  # None == no template found
+        run_assembly(input_dict)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\"," \
+              " final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("IPC check", input_dict['sample_name'], "Alignment", "4", "10", "Running", str(datetime.datetime.now())[0:-7],
+                input_dict['entry_id'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+    nanopore_alignment(input_dict)
+
+    input_dict['reference_id'] = sql_fetch_one("SELECT entry_id FROM reference_table WHERE reference_header_text = '{}'"
+                                 .format(input_dict['reference_header_text']), input_dict['config_path'])[0]
+
+    sql_execute_command("UPDATE sample_table SET reference_id = '{}' WHERE entry_id = '{}'"
+                        .format(input_dict['reference_id'], input_dict['entry_id']), input_dict['moss_db'])
+
+    cmd = "cp {0}{1} {2}/consensus_sequences/{1}"\
+        .format(input_dict['target_dir'], input_dict['consensus_name'], input_dict['config_path'])
+    os.system(cmd)
+
+    sql_execute_command(
+        "UPDATE sample_table SET consensus_name = '{}' WHERE entry_id = '{}'"
+            .format(input_dict['consensus_name'], input_dict['entry_id']), input_dict['moss_db'])
+    input_dict['isolate_list'] = sql_fetch_all("SELECT consensus_name FROM sample_table WHERE reference_id = '{}'"
+            .format(input_dict['reference_id']), input_dict['config_path'])
+
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\"," \
+              " final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("CCphylo", input_dict['sample_name'], "Alignment", "5", "10", "Running",
+                str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+    input_dict = make_phytree_output_folder(input_dict)
+
+    cmd = "/opt/moss/ccphylo/ccphylo dist --input {0}/phytree_output/* --reference \"{1}\" --min_cov 0.01" \
+          " --normalization_weight 0 --output {0}/phytree_output/distance_matrix"\
+        .format(input_dict['target_dir'], input_dict['reference_header_text'])
+    os.system(cmd)
+
+    distance = ThreshholdDistanceCheck("{}/phytree_output/distance_matrix"
+                                       .format(input_dict['target_dir']), input_dict)
+    print (distance)
+    if distance == None:
+        print ("NONE HERE") #Work cataches
+        associated_species = "{} - assembly from ID: {}".format(input_dict['reference_header_text'], input_dict['entry_id'])
+        run_assembly(input_dict)
+    elif distance > 300:  # SNP distance
+        associated_species = "{} - assembly from ID: {}".format(input_dict['reference_header_text'],
+                                                          input_dict['entry_id'])
+        run_assembly(input_dict)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\"," \
+              " result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Distance Matrix", input_dict['sample_name'], "Alignment", "6", "10", "Running", str(datetime.datetime.now())[0:-7],
+                input_dict['entry_id'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+    os.system("/opt/moss/ccphylo/ccphylo tree --input {0}/phytree_output/distance_matrix --output {0}/phytree_output/tree.newick"\
+        .format(input_dict['target_dir']))
+
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\"," \
+              " result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Phylo Tree imaging", input_dict['sample_name'], "Alignment", "7", "10", "Running",
+                str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+    input_dict = create_phylo_tree(input_dict)
+
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Database updating", input_dict['sample_name'], "Alignment", "8", "10", "Running", str(datetime.datetime.now())[0:-7],
+                input_dict['entry_id'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Compiling PDF", input_dict['sample_name'], "Alignment", "9", "10", "Running", str(datetime.datetime.now())[0:-7],
+                input_dict['entry_id'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+    compileReportAlignment(input_dict)
+
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Completed", input_dict['sample_name'], "Alignment", "10", "10", "Completed", str(datetime.datetime.now())[0:-7],
+                input_dict['entry_id'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+
+    #    input_dict = push_finders_data_sql(input_dict) INSERT AFTER
 
 def derive_phenotype_amr(genes, database):
     new_genes = list()
@@ -65,15 +249,15 @@ def derive_phenotype_virulence(genes, database, target_dir):
     print (csv_data)
     return phenotype, csv_data
 
-def push_meta_data_to_sql(metadata_dict, entry_id, config_name):
+def push_meta_data_to_sql(metadata_dict, entry_id, config_path):
     sql_cmd = "INSERT INTO metadata_table(entry_id, sample_name, sequencing_method, isolation_source, investigation_type, \
     collection_date, latitude, longitude, city, country) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"\
         .format(entry_id, metadata_dict["sample_name"], metadata_dict["sequencing_method"], metadata_dict["isolation_source"], \
                 metadata_dict["investigation_type"], metadata_dict["collection_date"], metadata_dict["latitude"], \
                 metadata_dict["longitude"], metadata_dict["city"], metadata_dict["country"])
-    sql_execute_command(sql_cmd, config_name)
+    sql_execute_command(sql_cmd,  input_dict['config_path'])
 
-def push_finders_data_sql(target_dir, config_name, entry_id):
+def push_finders_data_sql(target_dir, config_path, entry_id):
     resfinder_hits = parse_kma_res("{}/finders/resfinder.res".format(target_dir))
     virulence_hits = parse_kma_res("{}/finders/virulencefinder.res".format(target_dir))
     plasmid_hits = parse_kma_res("{}/finders/plasmidfinder.res".format(target_dir))
@@ -82,7 +266,7 @@ def push_finders_data_sql(target_dir, config_name, entry_id):
     sql_cmd = "UPDATE sample_table SET amr_genes=\"{}\", virulence_genes=\"{}\", plasmids=\"{}\", mlst=\"{}\" WHERE entry_id=\"{}\"" \
         .format(",".join(resfinder_hits).replace("'", "''"), ",".join(virulence_hits).replace("'", "''"), \
                 ",".join(plasmid_hits).replace("'", "''"), mlst_type, entry_id)
-    sql_execute_command(sql_cmd, config_name)
+    sql_execute_command(sql_cmd,  input_dict['config_path'])
 
     return resfinder_hits, virulence_hits, plasmid_hits, mlst_type
 
@@ -104,8 +288,8 @@ def parse_kma_res(filename):
             item_list.append(line[0])
     return item_list
 
-def kma_finders(arguments, outputname, target_dir, input, database):
-    os.system("/opt/moss/kma/kma -i {} -o {}/finders/{} -t_db {} {}".format(input, target_dir, outputname, database, arguments))
+def kma_finders(arguments, output_name, input_dict, database):
+    os.system("/opt/moss/kma/kma -i {} -o {}/finders/{} -t_db {} {}".format(input_dict['input_path'], input_dict['target_dir'], output_name, database, arguments))
 
 
 def derive_finalized_filenames(input_dir):
@@ -163,16 +347,16 @@ def create_directory_from_dict(dict, path):
             os.system("mkdir {}{}/{}".format(path, directory, subdirectory))
     return True
 
-def sql_fetch_one(string, config_name):
-    conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
+def sql_fetch_one(string, config_path):
+    conn = sqlite3.connect("{}/moss.db".format(config_path))
     c = conn.cursor()
     c.execute(string)
     data = c.fetchone()
     conn.close()
     return data
 
-def sql_fetch_all(string, config_name):
-    conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
+def sql_fetch_all(string, config_path):
+    conn = sqlite3.connect("{}/moss.db".format(config_path))
     c = conn.cursor()
     c.execute(string)
     data = c.fetchall()
@@ -180,100 +364,73 @@ def sql_fetch_all(string, config_name):
     conn.close()
     return data
 
-def sql_execute_command(command, config_name):
-    conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
+def sql_execute_command(command, moss_db):
+    conn = sqlite3.connect(moss_db)
     c = conn.cursor()
     c.execute(command)
     conn.commit()
     conn.close()
 
-def moss_mkfs(config_name, entry_id):
-    target_dir = "/opt/moss_db/{}/analysis/{}/".format(config_name, entry_id)
+def moss_mkfs(config_path, entry_id):
+    target_dir = "{}/analysis/{}/".format(config_path, entry_id)
     os.system("mkdir {}".format(target_dir))
+    os.system("mkdir {}/finders".format(target_dir))
 
-def moss_init(config_name, metadata, metadata_headers):
-    metadata_dict = prod_metadata_dict(metadata, metadata_headers)
-    print (metadata_dict)
-    if metadata_dict['ont_type'] == "fast5":
-        #TBD
-        input = "{}/barcode{}/{}.fastq.gz".format(metadata_dict['file_location'], metadata_dict['barcode_number'])
-    else:
-        input = metadata_dict['file_location']
 
-    if metadata_dict['latitude'] == '' or metadata_dict['longitude'] == '':
-        latitude, longitude = calc_coordinates_from_location(metadata_dict['city'], metadata_dict['country'])
-        metadata_dict['latitude'] = latitude
-        metadata_dict['longitude'] = longitude
+def moss_init(input_dict):
+    input_dict['entry_id'] = md5_from_fname(input_dict['input_path'])
+    input_dict['sample_name'] = input_dict['input_path'].split("/")[-1][0:-9]
+    input_dict['moss_db'] = "{}/moss.db".format(input_dict['config_path'])
+    input_dict['ref_db'] = "{}/REFDB.ATG".format(input_dict['config_path'])
+    input_dict['target_dir'] = "{}/analysis/{}/".format(input_dict['config_path'], input_dict['entry_id'])
 
-    if input.endswith("fastq.gz"):
-        sample_name = input.split("/")[-1][0:-9]
-    elif input.endswich("fastq"):
-        sample_name = input.split("/")[-1][0:-6]
-    else:
-        sys.exit("input is not a fastQ file.")
-    entry_id = md5(input)
+    check_unique_entry_id(input_dict['entry_id'], input_dict['moss_db'])
+    print ('input loaded')
+    return input_dict
 
-    uniqueNameCheck(input, config_name)
+def get_kma_template_number(input_dict):
+    with open('{}/REFDB.ATG.name'.format(input_dict['config_path']), 'r') as infile:
+        t = 1
+        number = 0
+        for line in infile:
+            if input_dict['reference_header_text'] in line:
+                infile.close()
+                return t
+            t += 1
+        infile.close()
+        return t
 
-    if input.split("/")[-1][-2:] == "gz":
-        c_name = input.split("/")[-1][:-2]
-    else:
-        c_name = input.split("/")[-1][:10]
-
-    ref_db = "/opt/moss_db/{}/REFDB.ATG".format(config_name)
-    target_dir = "/opt/moss_db/{}/analysis/{}/".format(config_name, entry_id)
-
-    push_meta_data_to_sql(metadata_dict, entry_id, config_name)
-
-    return config_name, metadata_dict, input, sample_name, entry_id, target_dir, ref_db, c_name
-
-def get_kma_template_number(reference_header_text, config_name):
-    infile = open("/opt/moss_db/{}/REFDB.ATG.name".format(config_name), 'r')
-    t = 1
-    number = 0
-    for line in infile:
-        if reference_header_text in line:
-            infile.close()
-            return t
-        t += 1
-    infile.close()
-    return t
-
-def make_phytree_output_folder(config_name, target_dir, isolate_list, reference_header_text):
-    cmd = "mkdir {}/phytree_output".format(target_dir)
+def make_phytree_output_folder(input_dict):
+    cmd = "mkdir {}/phytree_output".format(input_dict['target_dir'])
     os.system(cmd)
 
-    for item in isolate_list:
-        path = "/opt/moss_db/{}/consensus_sequences/{}".format(config_name, item)
-        cmd = "cp {} {}/phytree_output/.".format(path, target_dir)
+    for item in input_dict['isolate_list']: #Can we put this into an sql table too?
+        path = "{}/consensus_sequences/{}".format(input_dict['config_path'], item)
+        cmd = "cp {} {}/phytree_output/.".format(path, input_dict['target_dir'])
         os.system(cmd)
 
-    number = get_kma_template_number(reference_header_text, config_name)
-    header_name = reference_header_text.split()[0]
-    cmd = "/opt/moss/kma/kma seq2fasta -t_db /opt/moss_db/{}/REFDB.ATG -seqs {} > {}/phytree_output/{}.fsa".format(config_name, number, target_dir, header_name)
+    input_dict['header_name'] = input_dict['reference_header_text'].split()[0] + '.fsa'
+    cmd = "/opt/moss/kma/kma seq2fasta -t_db {} -seqs {} > {}/phytree_output/{}"\
+        .format(input_dict['ref_db'], input_dict['template_number'], input_dict['target_dir'], input_dict['header_name'])
     os.system(cmd)
 
-    cmd = "cp {}*_consensus.fsa {}phytree_output/.".format(target_dir, target_dir)
+    cmd = "cp {0}*_consensus.fsa {0}phytree_output/.".format(input_dict['target_dir'])
     os.system(cmd)
 
-def create_phylo_tree(target_dir):
-    with open ("{}phytree_output/tree.newick".format(target_dir)) as fd:
+    return input_dict
+
+def create_phylo_tree(input_dict):
+    with open ("{}phytree_output/tree.newick".format(input_dict['target_dir'])) as fd:
         data = fd.read()
-    print (data)
-    print(data)
-    print(data)
-    handle = StringIO(data)  # parse the newick string
+    handle = StringIO(data)
     tree = Phylo.read(handle, "newick")
     matplotlib.rc('font', size=20)
-    # set the size of the figure
     fig = plt.figure(figsize=(20, 20), dpi=80)
-    # alternatively
-    # fig.set_size_inches(10, 20)
     axes = fig.add_subplot(1, 1, 1)
     Phylo.draw(tree, axes=axes, do_show=False)
-    plt.savefig("{}/phytree_output/tree.png".format(target_dir), dpi=100)
-
-    return "{}/phytree_output/tree.png".format(target_dir)
+    plt.savefig("{}/phytree_output/tree.png".format(input_dict['target_dir']), dpi=100)
+    input_dict['phytree_path'] = "{}/phytree_output/tree.png".format(input_dict['target_dir'])
+    return input_dict
 
 def plot_tree(treedata, output_file):
     handle = StringIO(treedata)  # parse the newick string
@@ -289,32 +446,24 @@ def plot_tree(treedata, output_file):
 
     return
 
-def moss_shortcut_init():
-    outfile = open('/opt/moss/src/moss', 'w')
-    print ("#!/usr/bin/env bash", file = outfile)
-    print ("echo \'HELLO THERE\'", file = outfile)
-    outfile.close()
-    cmd = "mv /opt/moss/src/moss ~/bin/."
-    os.system(cmd)
-    cmd = "chmod a+x ~/bin/moss"
-    os.system(cmd)
-
-def init_insert_reference_table(config_name):
-    infile = open(config_name + "REFDB.ATG.name", 'r')
+def init_insert_reference_table(config_path):
+    #FIX ENTRY ID
+    #Add consensus md5 and reads md5
+    infile = open(config_path + "REFDB.ATG.name", 'r')
     t = 1
-    conn = sqlite3.connect(config_name + 'moss.db')
+    conn = sqlite3.connect(config_path + 'moss.db')
     c = conn.cursor()
     ids = list()
 
     for line in infile:
         line = line.rstrip()
-        cmd = "/opt/moss/kma/kma seq2fasta -t_db {}/REFDB.ATG -seqs {}".format(config_name, t)
+        cmd = "/opt/moss/kma/kma seq2fasta -t_db {}/REFDB.ATG -seqs {}".format(config_path, t)
         proc = subprocess.Popen(cmd, shell=True,
                                 stdout=subprocess.PIPE, )
         output = proc.communicate()[0].decode()
         reference_header_text = output.split("\n")[0][1:]
         sequence = output.split("\n")[1]
-        entry_id = md5(sequence)
+        entry_id = md5_(sequence)
         #TMP SOLUTION TO AVOID ENTRYCLASHES:
         if entry_id not in ids:
             dbstring = "INSERT INTO reference_table(entry_id, reference_header_text) VALUES('{}', '{}')".format(entry_id, reference_header_text.replace("'", "''"))
@@ -329,29 +478,28 @@ def check_assembly_result(path):
 
     return True
 
-def run_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text, associated_species, resfinder_hits, virulence_hits, plasmid_hits, mlst_type, reference_id):
-    sql_cmd = "UPDATE sample_table SET reference_id=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("reference", entry_id)
-    sql_execute_command(sql_cmd, config_name)
-    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("Flye Assembly", "Assembly", "4", "5", "Running", str(datetime.datetime.now())[0:-7], entry_id)
-    sql_execute_command(sql_cmd, config_name)
-    flye_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text, reference_id)
+def run_assembly(input_dict):
+    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\"," \
+              " result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Flye Assembly", "Assembly", "4", "5", "Running", str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
+    sql_execute_command(sql_cmd,  input_dict['moss_db'])
+    flye_assembly(input_dict)
+
+    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\"," \
+              " result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Compiling PDF report", "Assembly", "5", "5", "Running", str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
+    sql_execute_command(sql_cmd,  input_dict['moss_db'])
+
+    compileReportAssembly(input_dict)
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("Compiling PDF report", "Assembly", "5", "5", "Running", str(datetime.datetime.now())[0:-7], entry_id)
-    sql_execute_command(sql_cmd, config_name)
-
-    compileReportAssembly(target_dir, entry_id, config_name, associated_species, resfinder_hits, virulence_hits, plasmid_hits, mlst_type) #Look at the TBD
-
-    sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("Completed", "reference", "5", "5", "Completed", str(datetime.datetime.now())[0:-7], entry_id)
-    sql_execute_command(sql_cmd, config_name)
+        .format("Completed", "reference", "5", "5", "Completed", str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
+    sql_execute_command(sql_cmd,  input_dict['moss_db'])
     sys.exit("No template was found, so input was added to references.")
 
-def init_moss_variables(config_name, ):
-    referenceSyncFile = config_name + "syncFiles/referenceSync.json"
-    isolateSyncFile = config_name + "syncFiles/isolateSync.json"
+def init_moss_variables(config_path, ):
+    referenceSyncFile = config_path + "syncFiles/referenceSync.json"
+    isolateSyncFile = config_path + "syncFiles/isolateSync.json"
     return "/opt/moss/kma/kma"
 
 def update_pip_dependencies():
@@ -457,31 +605,30 @@ def varify_all_dependencies(laptop):
         update_list.append("conda")
     return update_list
 
-def run_mlst(input, target_dir, reference_header_text):
+def run_mlst(input_dict):
 
-    specie = reference_header_text.split()[1].lower() + " " + reference_header_text.split()[2].lower() #Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
+    specie = input_dict['reference_header_text'].split()[1].lower() + " " + input_dict['reference_header_text'].split()[2].lower() #Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
 
     mlst_dict = dict()
-    infile = open("/opt/moss/mlst/mlst_db/config", 'r')
-    for line in infile:
-        if line[0] != "#":
-            line = line.split("\t")
-            mlst_dict[line[1].lower()] = line[0]
-    infile.close()
+
+    with open("/opt/moss/mlst/mlst_db/config", 'r') as infile:
+        for line in infile:
+            if line[0] != "#":
+                line = line.split("\t")
+                mlst_dict[line[1].lower()] = line[0]
 
     if specie == "escherichia coli":
         mlst_dict['escherichia coli'] = 'ecoli'
 
 
     if specie in mlst_dict:
-        cmd = "mkdir {}/mlstresults".format(target_dir)
+        cmd = "mkdir {}/mlstresults".format(input_dict['target_dir'])
         os.system(cmd)
-        cmd = "python3 /opt/moss/mlst/mlst.py -i {} -o {}mlstresults -mp /opt/moss/kma/kma -p /opt/moss/mlst/mlst_db/ -s {} -nano".format(input, target_dir, mlst_dict[specie])
+        cmd = "python3 /opt/moss/mlst/mlst.py -i {} -o {}mlstresults" \
+              " -mp /opt/moss/kma/kma -p /opt/moss/mlst/mlst_db/ -s {} -nano"\
+            .format(input_dict['input_path'], input_dict['target_dir'], mlst_dict[specie])
         os.system(cmd)
-        return True
-    else:
-        print ("no mlst")
-        return False
+        input_dict['mlst'] = specie
 
 def sql_string_metadata(metadict):
     entries = ""
@@ -552,47 +699,42 @@ def check_alignment_kma_cov(file):
 
     return coverage
 
-def kma_mapping(target_dir,  input, config_name):
-    os.system("/opt/moss/kma/kma -i {} -o {}kma_mapping -t_db /opt/moss_db/{}/REFDB.ATG -ID 0 -nf -mem_mode -sasm -ef -1t1".format(input, target_dir, config_name))
-
-    try:
-        template_number_score = 0
-        reference_header_text = None
-        infile = open("{}kma_mapping.res".format(target_dir), 'r')
-        for line in infile:
-            line = line.rstrip()
-            line = line.split("\t")
-            if line[0][0] != "#":
-                if float(line[1]) > template_number_score:
-                    template_number_score = float(line[1])
-                    reference_header_text = line[0]
-        template_number = findTemplateNumber(config_name, reference_header_text)
-        if template_number_score == 0:
-            return (0, 1, "", template_number) #template_search_result = 0 (index 1) its a hit. Here its not.
+def kma_mapping(input_dict):
+    os.system("/opt/moss/kma/kma -i {} -o {}kma_mapping -t_db {}/REFDB.ATG"
+              " -ID 0 -nf -mem_mode -sasm -ef -1t1".format(input_dict['input_path'], input_dict['target_dir'], input_dict['config_path']))
+    num_lines = sum(1 for line in open("{}kma_mapping.res".format(input_dict['target_dir']))) #1 line is empty, more have hits.
+    template_score = 0
+    if num_lines > 1:
+        input_dict['reference_header_text'] = None
+        with open("{}kma_mapping.res".format(input_dict['target_dir'])) as infile:
+            for line in infile:
+                line = line.rstrip()
+                line = line.split("\t")
+                if line[0][0] != "#":
+                    if float(line[1]) > template_score:
+                        template_score = float(line[1])
+                        input_dict['reference_header_text'] = line[0]
+        template_number = findTemplateNumber(input_dict['config_path'], input_dict['reference_header_text'])
+        input_dict['template_number'] = template_number
+        input_dict['reference_header_text'] = input_dict['reference_header_text']
+        if " " in input_dict['reference_header_text']:
+            input_dict['accesion'] = input_dict['reference_header_text'].split(" ")[0]
         else:
-            return (template_number_score, 0, reference_header_text, template_number)
-    #If no match are found, the sample will be defined as a new reference.
-    except IndexError as error:
-        print(
-            "None of the given templates matches any of the entries in given ref_kma_database. The input reads will now be assembled and added to the reference ref_kma_database as a new reference. After this the program will be stopped, and thus no distance matrix based analysis will be carried out.")
+            input_dict['accesion'] = input_dict['reference_header_text']
+        input_dict['consensus_name'] = "{}_{}_consensus.fsa".format(input_dict['sample_name'], input_dict['accesion'])
 
-        # Perform assembly based on input
-        template_search_result = False
-        print("FoundnoTemplate")
-        return (0, 1, "", "") #template_search_result = 0 means no result found
-    ###
-
-def nanopore_alignment(input, template_number, target_dir, consensus_name, config_name):
-    result, action = acquire_semaphore("ipc_index_refdb", config_name, 1, 7200)
-    if result == 'acquired' and action == False:
-        release_semaphore("ipc_index_refdb", config_name)
-    elif result != 'acquired' and action == True:
-        result += " : ipc_index_refdb, didn't map due to running assembly"
-        sys.exit(result)
+        return input_dict
     else:
-        sys.exit('A semaphore related issue has occured.')
-    cmd = "/opt/moss/kma/kma -i {} -o {} -t_db /opt/moss_db/{}/REFDB.ATG -mint3 -Mt1 {} -t 8"\
-        .format(input, target_dir + consensus_name, config_name, str(template_number))
+        print("None of the given templates matches any of the entries in given ref_kma_database."
+              " The input reads will now be assembled and added to the reference ref_kma_database as a new reference.")
+        input_dict['template_number'] = None
+        input_dict['reference_header_text'] = None
+        return input_dict
+
+def nanopore_alignment(input_dict):
+    cmd = "/opt/moss/kma/kma -i {} -o {}{} -t_db {}/REFDB.ATG -mint3 -Mt1 {} -t 8"\
+        .format(input_dict['input_path'], input_dict['target_dir'], input_dict['consensus_name'][:-4],
+                input_dict['config_path'], str(input_dict['template_number']))
     os.system(cmd)
 
 def concatenateDraftGenome(input_file):
@@ -619,84 +761,18 @@ def concatenateDraftGenome(input_file):
         writefile.close()
     return id, new_name
 
-def md5(sequence):
+def md5_from_fname(fname):
+    hash_md5 = hashlib.md5()
+    with open(fname, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
+
+def md5_from_sequence(sequence):
     hash_md5 = hashlib.md5(sequence.encode())
     return hash_md5.hexdigest()
 
-def claim_semaphore(semaphore, config_name, value):
-    isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
-
-    conn = sqlite3.connect(isolatedb)
-    c = conn.cursor()
-    dbstring = "UPDATE ipc_table SET {} = '{}' WHERE ipc = '{}'".format(semaphore, int(value)-1, 'IPC')
-    c.execute(dbstring)
-    conn.commit()
-    conn.close()
-
-def acquire_semaphore(semaphore, config_name, expected, time_limit):
-
-    running_time = 0
-    result = ""
-    action = False
-    semaphore_status = False
-    value = check_sql_semaphore_value(semaphore, config_name)
-    print ("Semapore value : " + str(value))
-    if value != expected:
-        while value != expected:
-            print (running_time)
-            time.sleep(10)
-            running_time += 10
-            value = check_sql_semaphore_value(semaphore, config_name)
-            if running_time >= time_limit:
-                result = "Running time exceeded the 7200, a semaphore is likely jammed"
-                action = True
-                break
-        claim_semaphore(semaphore, config_name, value)
-        result = "acquired"
-    else:
-        claim_semaphore(semaphore, config_name, value)
-        result = "acquired"
-
-    return result, action
-
-def reset_semaphore(semaphore, config_name):
-    isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
-
-    conn = sqlite3.connect(isolatedb)
-    c = conn.cursor()
-    dbstring = "UPDATE ipc_table SET {} = '{}'".format(semaphore, 1)
-    c.execute(dbstring)
-    conn.commit()
-    conn.close()
-
-def release_semaphore(semaphore, config_name):
-
-    value = check_sql_semaphore_value(semaphore, config_name)
-    if value > 1:
-        sys.exit("Semaphores are jammed. Contact Author, this is an unexpected issue.")
-
-    isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
-
-    conn = sqlite3.connect(isolatedb)
-    c = conn.cursor()
-    dbstring = "UPDATE ipc_table SET {} = '{}'".format(semaphore, int(value) + 1)
-    c.execute(dbstring)
-    conn.commit()
-    conn.close()
-
-def check_sql_semaphore_value(semaphore, config_name):
-    isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
-
-    conn = sqlite3.connect(isolatedb)
-    c = conn.cursor()
-
-    c.execute("SELECT {} FROM ipc_table".format(semaphore))
-    refdata = c.fetchall()
-    conn.close()
-
-    return int(refdata[0][0])
-
-def ThreshholdDistanceCheck(distancematrixfile, reference, consensus_name):
+def ThreshholdDistanceCheck(distancematrixfile, input_dict):
     infile = open(distancematrixfile, 'r')
     linecount = 0
     secondentry = False
@@ -704,114 +780,77 @@ def ThreshholdDistanceCheck(distancematrixfile, reference, consensus_name):
         line = line.rstrip()
         line = line.split("\t")
         if secondentry == True:
-            if line[0] == reference or line[0] == consensus_name:
+            if line[0] == input_dict['consensus_name'] or line[0] == input_dict['header_name']:
                 distance = line[linecount-1]
                 return float(distance)
         if secondentry == False:
-            if line[0] == reference or line[0] == consensus_name:
+            if line[0] == input_dict['consensus_name'] or line[0] == input_dict['header_name']:
                 index = linecount
                 secondentry = True
         linecount += 1
+    return None
 
-def flye_assembly(entry_id, config_name, sample_name, target_dir, input, reference_header_text, reference_id):
-
-    cmd = "docker run --name assembly_{} -v {}:/tmp/{} staphb/flye flye -o /tmp/assembly_results --threads 8 --nano-raw /tmp/{}".format(
-        entry_id, input, input.split("/")[-1], input.split("/")[-1])
+def flye_assembly(input_dict):
+    print ("Made it to flye")
+    cmd = "docker run --name assembly_{0} -v {1}:/tmp/{2} staphb/flye flye -o /tmp/assembly_results" \
+          " --threads 8 --nano-raw /tmp/{2}"\
+        .format(input_dict['entry_id'], input_dict['input_path'], input_dict['input_file'])
     os.system(cmd)
 
-    proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_", entry_id), shell=True,
+    proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_", input_dict['entry_id']), shell=True,
                             stdout=subprocess.PIPE, )
     output = proc.communicate()[0]
     id = output.decode().rstrip()
 
-    cmd = "docker cp {}:/tmp/assembly_results {}.".format(id, target_dir)
+    cmd = "docker cp {}:/tmp/assembly_results {}.".format(id, input_dict['target_dir'])
     os.system(cmd)
-
     cmd = "docker container rm {}".format(id)
     os.system(cmd)
 
     # Concatenate contigs
-    infile = open("{}assembly_results/assembly.fasta".format(target_dir), 'r')
-    writefile = open("{}{}_assembly.fasta".format(target_dir, sample_name),
-                     'w')  # Adds all contigs to one sequence, thus creating a draft genome.
-    sequence = ""
-    for line in infile:
-        if line[0] != ">":
-            line = line.rstrip()
-            sequence += line
-    if reference_header_text.startswith(">Assembly"):
-        new_header_text = ">{}_Assembly_{}".format(reference_id, reference_header_text[1:].split("_Assembly_")[-1])
-    else:
-        new_header_text = ">{}_Assembly_{}".format(reference_id, reference_header_text[1:])
-    print(new_header_text, file=writefile)
-    print(sequence, file=writefile)
-    infile.close()
-    writefile.close()
+    with open("{}assembly_results/assembly.fasta".format(input_dict['target_dir']), 'r') as infile:
+        with open("{}{}_assembly.fasta".format(input_dict['target_dir'], input_dict['sample_name']), 'w') as outfile:
+            sequence = ""
+            for line in infile:
+                if line[0] != ">":
+                    line = line.rstrip()
+                    sequence += line
 
-    # Assembly complete
+            if input_dict['reference_header_text'].startswith(">Assembly"):
+                new_header_text = ">{}_Assembly_{}".format(input_dict['reference_id'], input_dict['reference_header_text'][1:]
+                                                           .split("_Assembly_")[-1])
+            else:
+                new_header_text = ">{}_Assembly_{}".format(input_dict['reference_id'], input_dict['reference_header_text'][1:])
+            print(new_header_text, file=outfile)
+            print(sequence, file=outfile)
 
-    result, action = acquire_semaphore("ipc_index_refdb", config_name, 1, 7200)
-    if result == 'acquired' and action == False:
-        cmd = "{} index -t_db {} -i {}{}_assembly.fasta".format("/opt/moss/kma/kma", "/opt/moss_db/{}/REFDB.ATG".format(config_name), target_dir,
-                                                                 sample_name)  # add assembly to references
+    os.system("/opt/moss/kma/kma index -t_db {} -i {}{}_assembly.fasta"\
+        .format(input_dict['ref_db'], input_dict['target_dir'], input_dict['sample_name']))
 
-        os.system(cmd)
+    #c = conn.cursor()
+    #dbstring = "INSERT INTO reference_table(entry_id, input_dict['reference_header_text']) VALUES('{}', '{}')".format(entry_id, new_header_text[1:])
+    #c.execute(dbstring)
+    #conn.commit()
+    #conn.close()
 
-        release_semaphore("ipc_index_refdb", config_name)
+def check_unique_entry_id(entry_id, moss_db):
 
-    elif result != 'acquired' and action == True:
-        result += " : ipc_index_refdb"
-        sys.exit(result)
-    else:
-        sys.exit('A semaphore related issue has occured.')
-    conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
-    c = conn.cursor()
-    dbstring = "INSERT INTO reference_table(entry_id, reference_header_text) VALUES('{}', '{}')".format(entry_id, new_header_text[1:])
-    c.execute(dbstring)
-    conn.commit()
-    conn.close()
-
-def uniqueNameCheck(input, config_name):
-    sample_name = input.split("/")[-1]
-
-    if input[-3:] == ".gz":
-        infile = gzip.open(input, 'rb')
-        first_line = infile.readline().rstrip().decode("utf8")
-    else:
-        infile = open(input, 'r')
-        first_line = infile.readline().rstrip()
-
-    header = first_line[1:]
-    if first_line[0] == ">": #Reference
-        print (header)
-        if " " in header:
-            accession = header.split(" ")[0]
-        else:
-            accession = header
-    else:
-        accession = input.split("/")[-1]
-
-    conn = sqlite3.connect("/opt/moss_db/{}/moss.db".format(config_name))
+    conn = sqlite3.connect(moss_db)
     c = conn.cursor()
 
-    c.execute("SELECT * FROM sample_table WHERE sample_name = '{}'".format(sample_name))
+    c.execute("SELECT * FROM sample_table WHERE entry_id = '{}'".format(entry_id))
     refdata = c.fetchall()
 
     if refdata != []:
-        sys.exit("An isolate sample has the same filename as your input. Please change your input file's name.")
-
-    c.execute("SELECT * FROM reference_table WHERE reference_header_text = '{}'".format(header))
-    refdata = c.fetchall()
-
-    if refdata != []:
-        sys.exit("An reference sample has the same filename or header string as your input. Please change your input file's name.")
+        sys.exit('An isolate sample has the same filename as your input.'
+                 ' Your input is likely a duplicate which has already been analyzed.')
 
     conn.close()
 
-def findTemplateNumber(config_name, name):
+def findTemplateNumber(config_path, name):
     if name == None:
         return ""
-    infile = open("/opt/moss_db/{}/REFDB.ATG.name".format(config_name), 'r')
+    infile = open("{}/REFDB.ATG.name".format(config_path), 'r')
     t = 1
     for line in infile:
         if line.rstrip() == name:
@@ -837,18 +876,8 @@ def run_quast(target_dir, jobid):
     cmd = "docker container rm {}".format(id)
     os.system(cmd)
 
-def lastClusterAddition(config_name, reference_header_text):
-    isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
-    conn = sqlite3.connect(isolatedb)
-    c = conn.cursor()
-
-    c.execute("SELECT entry_id, analysistimestamp FROM sample_table WHERE reference_header_text = '{}' ORDER BY analysistimestamp DESC".format(reference_header_text)) #Dårlig løsning, ikke skalerbar til >5M isolates
-    refdata = c.fetchall()
-    conn.close()
-    return refdata
-
-def isolate_file_name(config_name, entry_id):
-    isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
+def isolate_file_name(config_path, entry_id):
+    isolatedb = "{}/moss.db".format(config_path)
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
@@ -876,42 +905,40 @@ def run_bandage(target_dir, jobid):
     cmd = "docker container rm {}".format(id)
     os.system(cmd)
 
-def compileReportAssembly(target_dir, ID, config_name, associated_species, resfinder_hits, virulence_hits, plasmid_hits, mlst_type):
-    entry_id = ID
+def compileReportAssembly(input_dict):
     pdf = FPDF()  # A4 (210 by 297 mm)
-    filename = "{}_report.pdf".format(ID)  # ADD idd
+    filename = "{}_report.pdf".format(input_dict['entry_id'])
 
     ''' First Page '''
     pdf.add_page()
     pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
-    create_title(pdf, ID, "MOSS analytical report")
+    create_title(pdf, input_dict['entry_id'], "MOSS analytical report")
     pdf.ln(20)
     pdf.set_font('Arial', '', 12)
     textstring = "ID: {} \n" \
                  "Suggested reference: {} \n\n" \
                  "No related phylogeny cluster was identified. \n" \
-                 "".format(ID, associated_species) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
+                 "".format(input_dict['entry_id'], input_dict['associated_species']) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(20)
 
-    run_quast(target_dir, ID)
+    run_quast(input_dict['target_dir'], input_dict['entry_id'])
 
-    df = pd.read_csv(target_dir + "quast_output/report.tsv", sep='\t')
-    print(df)
+    df = pd.read_csv(input_dict['target_dir'] + "quast_output/report.tsv", sep='\t')
 
     df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
-    dfi.export(df_styled, target_dir + "quast_table.png")
-    pdf.image("{}quast_table.png".format(target_dir), x=10, y=90, w=pdf.w / 2.5, h=pdf.h / 2.7)
-    run_bandage(target_dir, ID)
+    dfi.export(df_styled, input_dict['target_dir'] + "quast_table.png")
+    pdf.image("{}quast_table.png".format(input_dict['target_dir']), x=10, y=90, w=pdf.w / 2.5, h=pdf.h / 2.7)
+    run_bandage(input_dict['target_dir'], ID)
     pdf.set_xy(x=10, y=58)
     pdf.set_font('Arial', '', 14)
     pdf.set_text_color(51, 153, 255)
-    pdf.image("{}contigs.jpg".format(target_dir), x=115, y=90, w=pdf.w / 2.5, h=pdf.h / 2.7)
+    pdf.image("{}contigs.jpg".format(input_dict['target_dir']), x=115, y=90, w=pdf.w / 2.5, h=pdf.h / 2.7)
 
     ''' Second Page '''
     pdf.add_page()
     pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
-    create_title(pdf, entry_id, "CGE Finder results")
+    create_title(pdf, input_dict['entry_id'], "CGE Finder results")
 
     pdf.set_font('Arial', '', 10)
 
@@ -919,8 +946,8 @@ def compileReportAssembly(target_dir, ID, config_name, associated_species, resfi
 
     pdf.cell(85, 5, "Antimicrobial Genes Found:", 0, 1, 'L')
 
-    amr_pheno, csv_data = derive_phenotype_amr(resfinder_hits, "resfinder_db")
-    print(csv_data)
+    amr_pheno, csv_data = derive_phenotype_amr(input_dict['resfinder_hits'], "resfinder_db")
+
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
     for row in csv_data:
@@ -933,8 +960,8 @@ def compileReportAssembly(target_dir, ID, config_name, associated_species, resfi
 
     pdf.cell(85, 5, "Virulence Genes Found: ", 0, 1, 'L')
 
-    virulence_pheno, csv_data = derive_phenotype_virulence(virulence_hits, "virulencefinder_db", target_dir)
-    print(csv_data)
+    virulence_pheno, csv_data = derive_phenotype_virulence(input_dict['virulence_hits'],
+                                                           "virulencefinder_db", input_dict['target_dir'])
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
     for row in csv_data:
@@ -949,72 +976,13 @@ def compileReportAssembly(target_dir, ID, config_name, associated_species, resfi
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('Arial', '', 10)
     textstring = ""
-    for item in plasmid_hits:
+    for item in input_dict['plasmid_hits']:
         textstring += "* {}\n".format(item)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
 
     pdf.set_font('Arial', '', 12)
 
-    pdf.output(target_dir + filename, 'F')
-
-def retrieve_cge_counts(target_dir, ID, config_name, image_location, reference_header_text):
-    isolatedb = "/opt/moss_db/{}/moss.db".format(config_name)
-    conn = sqlite3.connect(isolatedb)
-    c = conn.cursor()
-
-    c.execute("SELECT plasmids FROM sample_table WHERE entry_id = '{}'".format(ID))
-    refdata = c.fetchall()
-
-    if refdata[0][0] == None:
-        plasmids_isolate = []
-    else:
-        plasmids_isolate = refdata[0][0].split(",")
-
-    c.execute("SELECT virulencegenes FROM sample_table WHERE entry_id = '{}'".format(ID))
-    refdata = c.fetchall()
-
-    if refdata[0][0] == None:
-        virulencegenes_isolate = []
-    else:
-        virulencegenes_isolate = refdata[0][0].split(",")
-
-    c.execute("SELECT amrgenes FROM sample_table WHERE entry_id = '{}'".format(ID))
-    refdata = c.fetchall()
-
-    if refdata[0][0] == None:
-        amrgenes_isolate = []
-    else:
-        amrgenes_isolate = refdata[0][0].split(",")
-
-    c.execute("SELECT plasmids FROM reference_table WHERE reference_header_text = '{}'".format(reference_header_text))
-    refdata = c.fetchall()
-
-    if refdata[0][0] == None:
-        plasmids_reference = []
-    else:
-        plasmids_reference = refdata[0][0].split(",")
-
-    c.execute("SELECT virulencegenes FROM reference_table WHERE reference_header_text = '{}'".format(reference_header_text))
-    refdata = c.fetchall()
-
-    if refdata[0][0] == None:
-        virulencegenes_reference = []
-    else:
-        virulencegenes_reference = refdata[0][0].split(",")
-
-    c.execute("SELECT amrgenes FROM reference_table WHERE reference_header_text = '{}'".format(reference_header_text))
-    refdata = c.fetchall()
-
-    if refdata[0][0] == None:
-        amrgenes_reference = []
-    else:
-        amrgenes_reference = refdata[0][0].split(",")
-
-    conn.close()
-
-
-
-    return plasmids_isolate, virulencegenes_isolate, amrgenes_isolate, plasmids_reference, virulencegenes_reference, amrgenes_reference
+    pdf.output(input_dict['target_dir'] + filename, 'F')
 
 def mlst_sequence_type(target_dir):
     try:
@@ -1025,33 +993,34 @@ def mlst_sequence_type(target_dir):
     except:
         return "No MLST Found"
 
-def compileReportAlignment(target_dir, entry_id, config_name, reference_header_text, related_isolates, resfinder_hits, virulence_hits, plasmid_hits, mlst_type, sample_name):
+def compileReportAlignment(input_dict):
     pdf = FPDF()  # A4 (210 by 297 mm)
 
-    filename = "{}_report.pdf".format(entry_id) #ADD idd
-    clusterSize = len(related_isolates)
+    filename = "{}_report.pdf".format(input_dict['entry_id']) #ADD idd
+    clusterSize = len(input_dict['isolate_list'])
 
     ''' First Page '''
     pdf.add_page()
     pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
-    create_title(pdf, entry_id, "MOSS analytical report")
+
+    create_title(pdf, input_dict['entry_id'], "MOSS analytical report")
     pdf.ln(5)
-    file_name = isolate_file_name(config_name, entry_id)
     pdf.set_font('Arial', '', 12)
+
     textstring = "ID: {} \n" \
                  "sample_name: {} \n" \
                  "Identified reference: {} \n" \
-                 "".format(entry_id, sample_name, reference_header_text)
+                 "".format(input_dict['entry_id'], input_dict['sample_name'], input_dict['reference_header_text'])
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(10)
     pdf.set_font('Arial', '', 10)
-    #Cell here
 
     pdf.set_font('Arial', '', 12)
     pdf.set_text_color(51, 153, 255)
     pdf.set_xy(x=10, y=60)
     pdf.cell(85, 5, "Sample information: ", 0, 1, 'L')
     pdf.set_text_color(0, 0, 0)
+
     pdf.set_font('Arial', '', 10)
     textstring = "Copenhagen, Denmark \n" \
                  "Time of sampling: 2019-06-11 18:03:00. \n" \
@@ -1067,7 +1036,7 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
                  "Plasmids in this sample: {}. \n" \
                  "Virulence genes in this sample: {}. \n" \
                  "MLST: ST{}. \n" \
-                 "".format(len(resfinder_hits), len(plasmid_hits), len(virulence_hits), mlst_type)
+                 "".format(len(input_dict['resfinder_hits']), len(input_dict['plasmid_hits']), len(input_dict['virulence_hits']), input_dict['mlst_type'])
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('Arial', '', 10)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
@@ -1078,7 +1047,7 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
     ''' Second Page '''
     pdf.add_page()
     pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
-    create_title(pdf, entry_id, "CGE Finder results")
+    create_title(pdf, input_dict['entry_id'], "CGE Finder results")
 
     pdf.set_font('Arial', '', 10)
 
@@ -1086,8 +1055,7 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
 
     pdf.cell(85, 5, "Antimicrobial Genes Found:", 0, 1, 'L')
 
-    amr_pheno, csv_data = derive_phenotype_amr(resfinder_hits, "resfinder_db")
-    print(csv_data)
+    amr_pheno, csv_data = derive_phenotype_amr(input_dict['resfinder_hits'], "resfinder_db")
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
     for row in csv_data:
@@ -1096,13 +1064,11 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
                            new_x="RIGHT", new_y="TOP", max_line_height=pdf.font_size)
         pdf.ln(line_height)
 
-
     pdf.ln(10)
 
     pdf.cell(85, 5, "Virulence Genes Found: ", 0, 1, 'L')
 
-    virulence_pheno, csv_data = derive_phenotype_virulence(virulence_hits, "virulencefinder_db", target_dir)
-    print (csv_data)
+    virulence_pheno, csv_data = derive_phenotype_virulence(input_dict['virulence_hits'], "virulencefinder_db", input_dict['target_dir'])
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
     for row in csv_data:
@@ -1117,30 +1083,28 @@ def compileReportAlignment(target_dir, entry_id, config_name, reference_header_t
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('Arial', '', 10)
     textstring = ""
-    for item in plasmid_hits:
+    for item in input_dict['plasmid_hits']:
         textstring += "* {}\n".format(item)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
-
-
 
     pdf.set_font('Arial', '', 12)
 
     ''' Third Page '''
     pdf.add_page()
     pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
-    create_title(pdf, entry_id, "Cluster phylogeny:")
+    create_title(pdf, input_dict['entry_id'], "Cluster phylogeny:")
 
     pdf.set_font('Arial', '', 10)
 
     pdf.ln(10)
 
-    pdf.cell(85, 5, "Phylo tree for cluser {}: ".format(reference_header_text.split("\t")[0]), 0, 1, 'L')
+    pdf.cell(85, 5, "Phylo tree for cluser {}: ".format(input_dict['reference_header_text'].split("\t")[0]), 0, 1, 'L')
 
-    create_phylo_tree(target_dir)
+    input_dict = create_phylo_tree(input_dict)
 
-    pdf.image("{}/phytree_output/tree.png".format(target_dir), x=10, y=55, w=pdf.w / 1.5, h=pdf.h / 1.75)
+    pdf.image("{}/phytree_output/tree.png".format(input_dict['target_dir']), x=10, y=55, w=pdf.w / 1.5, h=pdf.h / 1.75)
 
-    pdf.output(target_dir + filename, 'F')
+    pdf.output(input_dict['target_dir'] + filename, 'F')
 
 def resfinderPage(tabfile, pdf, target_dir):
     infile = open(tabfile, 'r')

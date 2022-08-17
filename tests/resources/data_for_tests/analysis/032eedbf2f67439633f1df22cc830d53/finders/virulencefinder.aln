@@ -1,0 +1,462 @@
+# gad:31:CP002967
+template: 	ATGGATAAGAAGCAAGTAACGGATTTAAGGTCGGAACTACTCGATTCACGTTTTGGTGCG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	atggataagaagcaagtaacggatttaaggtcggaactactcgattcacgttttggtgcg
+
+template: 	AAGTCTATTTCCACTATCGCAGAATCAAAACGTTTTCCGCTGCACGAAATGCGCGACGAT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	aagtctatttccactatcgcagaatcaaaacgttttccgctgcacgaaatgcgcgacgat
+
+template: 	GTCGCATTCCAGATTATCAATGACGAATTATATCTTGATGGCAACGCTCGTCAGAACCTG
+          	||||||||||||||||||||||||||||||||||||||||||||_|||||||||||||||
+query:    	gtcgcattccagattatcaatgacgaattatatcttgatggcaatgctcgtcagaacctg
+
+template: 	GCCACTTTCTGCCAGACCTGGGACGACGAAAATGTCCACAAATTGATGGATTTATCCATT
+          	|||||||||||||||||||||||||||||_|||||||||||_||||||||||||||||||
+query:    	gccactttctgccagacctgggacgacgacaatgtccacaagttgatggatttatccatt
+
+template: 	AACAAAAACTGGATCGACAAAGAAGAATATCCGCAATCCGCAGCCATCGACCTGCGTTGC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	aacaaaaactggatcgacaaagaagaatatccgcaatccgcagccatcgacctgcgttgc
+
+template: 	GTAAATATGGTTGCCGATCTGTGGCATGCGCCTGCGCCGAAAAATGGTCAGGCCGTTGGC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gtaaatatggttgccgatctgtggcatgcgcctgcgccgaaaaatggtcaggccgttggc
+
+template: 	ACCAACACCATTGGTTCTTCCGAGGCCTGTATGCTCGGCGGGATGGCGATGAAATGGCGT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	accaacaccattggttcttccgaggcctgtatgctcggcgggatggcgatgaaatggcgt
+
+template: 	TGGCGCAAGCGTATGGAAGCTGCAGGCAAACCAACGGATAAACCAAACCTGGTGTGCGGT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	tggcgcaagcgtatggaagctgcaggcaaaccaacggataaaccaaacctggtgtgcggt
+
+template: 	CCGGTACAAATCTGCTGGCATAAATTCGCCCGCTACTGGGATGTGGAGCTGCGTGAGATC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	ccggtacaaatctgctggcataaattcgcccgctactgggatgtggagctgcgtgagatc
+
+template: 	CCTATGCGCCCCGGTCAGTTGTTTATGGACCCGAAACGCATGATTGAAGCCTGTGACGAA
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	cctatgcgccccggtcagttgtttatggacccgaaacgcatgattgaagcctgtgacgaa
+
+template: 	AACACCATCGGCGTGGTGCCGACTTTCGGCGTGACCTACACCGGTAACTATGAGTTCCCA
+          	|||||||||||||||||||||||||||||||||||||||||_||||||||||||||||||
+query:    	aacaccatcggcgtggtgccgactttcggcgtgacctacactggtaactatgagttccca
+
+template: 	CAACCGCTGCACGATGCGCTGGATAAATTCCAGGCCGACACCGGTATCGACATCGACATG
+          	||||||||||||||||||||||||||||||||||||||_|||||||||||||||||||||
+query:    	caaccgctgcacgatgcgctggataaattccaggccgataccggtatcgacatcgacatg
+
+template: 	CACATCGACGCTGCCAGCGGTGGCTTCCTGGCACCGTTCGTCGCCCCGGATATCGTCTGG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	cacatcgacgctgccagcggtggcttcctggcaccgttcgtcgccccggatatcgtctgg
+
+template: 	GACTTCCGCCTGCCGCGTGTGAAATCGATCAGTGCTTCAGGCCATAAATTCGGTCTGGCT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gacttccgcctgccgcgtgtgaaatcgatcagtgcttcaggccataaattcggtctggct
+
+template: 	CCGCTGGGCTGCGGCTGGGTTATCTGGCGTGACGAAGAAGCGCTGCCGCAGGAACTGGTG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	ccgctgggctgcggctgggttatctggcgtgacgaagaagcgctgccgcaggaactggtg
+
+template: 	TTCAACGTTGACTACCTGGGTGGTCAAATTGGTACTTTTGCCATCAACTTCTCCCGCCCG
+          	||||||||||||||||||||||||||||||||||||||_|||||||||||||||||||||
+query:    	ttcaacgttgactacctgggtggtcaaattggtactttcgccatcaacttctcccgcccg
+
+template: 	GCGGGTCAGGTAATTGCACAGTACTATGAATTCCTGCGCCTCGGTCGTGAAGGCTATACC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||_|||
+query:    	gcgggtcaggtaattgcacagtactatgaattcctgcgcctcggtcgtgaaggctacacc
+
+template: 	AAAGTACAGAACGCCTCTTACCAGGTTGCCGCTTATCTGGCGGATGAAATCGCCAAACTG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	aaagtacagaacgcctcttaccaggttgccgcttatctggcggatgaaatcgccaaactg
+
+template: 	GGGCCGTATGAGTTCATCTGTACGGGTCGCCCGGACGAAGGCATCCCGGCGGTTTGCTTC
+          	||||||||||||||||||||||||||||||||||||||||||||_|||||||||||||||
+query:    	gggccgtatgagttcatctgtacgggtcgcccggacgaaggcattccggcggtttgcttc
+
+template: 	AAACTGAAAGATGGTGAAGATCCGGGATACACCCTGTACGACCTCTCTGAACGTCTGCGT
+          	|||||_||||||||||||||||||||||||||||||||_|||||||||||||||||||||
+query:    	aaactcaaagatggtgaagatccgggatacaccctgtatgacctctctgaacgtctgcgt
+
+template: 	CTGCGCGGCTGGCAGGTTCCGGCCTTCACTCTCGGCGGTGAAGCCACCGACATCGTGGTG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	ctgcgcggctggcaggttccggccttcactctcggcggtgaagccaccgacatcgtggtg
+
+template: 	ATGCGCATTATGTGTCGTCGCGGCTTCGAAATGGACTTTGCTGAACTGTTGCTGGAAGAC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	atgcgcattatgtgtcgtcgcggcttcgaaatggactttgctgaactgttgctggaagac
+
+template: 	TACAAAGCCTCCCTGAAATATCTCAGCGATCACCCGAAACTGCAGGGTATTGCCCAGCAG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	tacaaagcctccctgaaatatctcagcgatcacccgaaactgcagggtattgcccagcag
+
+template: 	AACAGCTTTAAACATACCTGA
+          	|||||||||||||||||||||
+query:    	aacagctttaaacatacctga
+
+# lpfA:5:AY646923
+template: 	ATGAAGCGTAATATTATAGGCGGTGCATTCACTCTGGCATCTCTAATGCTGGCCGGGCAT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	atgaagcgtaatattataggcggtgcattcactctggcatctctaatgctggccgggcat
+
+template: 	GCACTGGCAGAAGATGGTGTTGTTCACTTCGTCGGTGAAATTGTCGACACTACTTGTGAA
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gcactggcagaagatggtgttgttcacttcgtcggtgaaattgtcgacactacttgtgaa
+
+template: 	GTTACCTCCGATACAGCCGATCAAATTGTCCCACTGGGTAAAGTCAGTAAAAATGCATTT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gttacctccgatacagccgatcaaattgtcccactgggtaaagtcagtaaaaatgcattt
+
+template: 	TCAGGTGTAGGTAGTCTGGCGTCGCCACAGAAGTTCAGTATTAAACTTGAAAATTGCCCG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	tcaggtgtaggtagtctggcgtcgccacagaagttcagtattaaacttgaaaattgcccg
+
+template: 	GCAACGTACACTCAAGCAGCCGTTCGTTTTGATGGTACAGAAGCGCCTGGCGGCGACGGC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gcaacgtacactcaagcagccgttcgttttgatggtacagaagcgcctggcggcgacggc
+
+template: 	GACCTGAAAGTGGGTACGCCGCTTACAGCAGGCAACCCTGGTGATTTTACCGGTACAGGA
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gacctgaaagtgggtacgccgcttacagcaggcaaccctggtgattttaccggtacagga
+
+template: 	CAAGCGATTGCGGCAACCGGCGTTGGTATTCGTATTTTTAACCAGTCCGATAATTCGCAG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	caagcgattgcggcaaccggcgttggtattcgtatttttaaccagtccgataattcgcag
+
+template: 	GTTAAACTTTATAACGACTCTGCTTATACCGCTATCGATGCTGAAGGCAAGGCTGAAATG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gttaaactttataacgactctgcttataccgctatcgatgctgaaggcaaggctgaaatg
+
+template: 	AAGTTTATTGCACGCTATGTGGCAACCAATGCGACCGTAACGGCTGGTACGGCGAACGCT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	aagtttattgcacgctatgtggcaaccaatgcgaccgtaacggctggtacggcgaacgct
+
+template: 	GATTCACAATTTACTGTCGAATATAAGAAATAA
+          	|||||||||||||||||||||||||||||||||
+query:    	gattcacaatttactgtcgaatataagaaataa
+
+# hra:1:CP006636
+template: 	ATGAGCAACCCCATTTATCGTTCGGGGAAAGTGATAGCGGAGATGATTGAAATGAATAAG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	atgagcaaccccatttatcgttcggggaaagtgatagcggagatgattgaaatgaataag
+
+template: 	GTTATTGCGGTTTCAGCGCTTGCCATGGCAGGCATGTTTTCGACCCAGGCTCTGGCTGAT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gttattgcggtttcagcgcttgccatggcaggcatgttttcgacccaggctctggctgat
+
+template: 	GAAAGCAAAACAGGCTTTTATGTGACCGGTAAAGCAGGTGCTTCTGTTATGTCACTTGCA
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gaaagcaaaacaggcttttatgtgaccggtaaagcaggtgcttctgttatgtcacttgca
+
+template: 	GACCAGCGTTTCCTGTCGGGGGATGGAGAGGAAACATCAAAATATAAAGGCGGTGATGGC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gaccagcgtttcctgtcgggggatggagaggaaacatcaaaatataaaggcggtgatggc
+
+template: 	CATGATACGGTATTCAGTGGCGGTATCGCGGCCGGTTATGATTTTTACCCGCAGTTCAGT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	catgatacggtattcagtggcggtatcgcggccggttatgatttttacccgcagttcagt
+
+template: 	ATTCCGGTTCGTACGGAACTGGAGTTTTACGCTCGTGGAAAAGCTGATTCGAAGTATAAC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	attccggttcgtacggaactggagttttacgctcgtggaaaagctgattcgaagtataac
+
+template: 	GTAGATAAAGACAGCTGGTCAGGCGGTTACTGGCGTGATGACCTGAAGAATGAGGTGTCA
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gtagataaagacagctggtcaggcggttactggcgtgatgacctgaagaatgaggtgtca
+
+template: 	GTCAACACACTGATGCTGAATGCGTACTATGACTTCCGGAATGACAGTGCATTCACACCA
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gtcaacacactgatgctgaatgcgtactatgacttccggaatgacagtgcattcacacca
+
+template: 	TGGGTATCTGCAGGGATTGGCTACGCCAGAATTCACCAGAAAACAACCGGTATCAGTACC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	tgggtatctgcagggattggctacgccagaattcaccagaaaacaaccggtatcagtacc
+
+template: 	TGGGATTATGGGTACGGAAGCAGTGGTCGCGAATCGTTGTCACGTTCAGGCTCTGCTGAC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	tgggattatgggtacggaagcagtggtcgcgaatcgttgtcacgttcaggctctgctgac
+
+template: 	AACTTCGCATGGAGCCTTGGCGCGGGTGTCCGCTATGACGTAACCCCGGATATCGCTCTG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	aacttcgcatggagccttggcgcgggtgtccgctatgacgtaaccccggatatcgctctg
+
+template: 	GACCTCAGCTATCGCTATCTTGATGCAGGTGATAGCAGTGTGAGTTACAAGGACGAGTGG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gacctcagctatcgctatcttgatgcaggtgatagcagtgtgagttacaaggacgagtgg
+
+template: 	GGCGATAAATATAAGTCAGAAGTTGATGTTAAAAGTCATGACATCCTGCTTGGTGTGACT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	ggcgataaatataagtcagaagttgatgttaaaagtcatgacatcctgcttggtgtgact
+
+template: 	TATAACTTCTGA
+          	||||||||||||
+query:    	tataacttctga
+
+# iutA:10:CXZO01000056
+template: 	ATGATGATAAGCAAAAAGTATACGCTTTGGGCTCTCAACCCACTGCTTCTTACCATGATG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	atgatgataagcaaaaagtatacgctttgggctctcaacccactgcttcttaccatgatg
+
+template: 	GCGCCAGCAGTCGCTCAACAAACCGATGATGAAACGTTCGTGGTGTCTGCCAACCGCAGC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gcgccagcagtcgctcaacaaaccgatgatgaaacgttcgtggtgtctgccaaccgcagc
+
+template: 	AATCGCACCGTAGCGGAGATGGCGCAAACCACCTGGGTTATCGAAAACGCCGAACTGGAA
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	aatcgcaccgtagcggagatggcgcaaaccacctgggttatcgaaaacgccgaactggaa
+
+template: 	CAGCAGATTCAGGGCGGCAAAGAGCTTAAAGACGCACTGGCTCAGCTGATCCCTGGCCTT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	cagcagattcagggcggcaaagagcttaaagacgcactggctcagctgatccctggcctt
+
+template: 	GACGTCAGCAGCCGGAGCCGCACCAACTACGGTATGAATGTGCGTGGCCGCCCGCTGGTC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gacgtcagcagccggagccgcaccaactacggtatgaatgtgcgtggccgcccgctggtc
+
+template: 	GTGCTGGTTGACGGCGTGCGTCTCAACTCTTCACGTACCGACAGCCGACAACTGGACTCT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gtgctggttgacggcgtgcgtctcaactcttcacgtaccgacagccgacaactggactct
+
+template: 	ATAGATCCTTTTAATATCGACCATATTGAAGTGATCTCCGGTGCGACGTCCCTGTACGGC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	atagatccttttaatatcgaccatattgaagtgatctccggtgcgacgtccctgtacggc
+
+template: 	GGCGGCAGTACCGGTGGCCTGATCAACATCGTGACCAAAAAAGGCCAGCCGGAAACCATG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	ggcggcagtaccggtggcctgatcaacatcgtgaccaaaaaaggccagccggaaaccatg
+
+template: 	ATGGAGTTTGAGGCTGGCACCAAAAGTGGCTTTAGCAGCAGTAAAGATCACGATGAACGC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	atggagtttgaggctggcaccaaaagtggctttagcagcagtaaagatcacgatgaacgc
+
+template: 	ATTGCCGGAGCTGTCTCCGGCGGAAATGAGCATATCTCCGGACGTCTTTCCGTGGCATAT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	attgccggagctgtctccggcggaaatgagcatatctccggacgtctttccgtggcatat
+
+template: 	CAGAAATTTGGCGGCTGGTTTGACGGTAACGGCGATGCCACCTTGCTTGATAACACCCAG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	cagaaatttggcggctggtttgacggtaacggcgatgccaccttgcttgataacacccag
+
+template: 	ACCGGCCTGCAGTACTCCGATCGGCTGGACATCATGGGAACTGGTACGCTGAACATCGAT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	accggcctgcagtactccgatcggctggacatcatgggaactggtacgctgaacatcgat
+
+template: 	GAATCCCGGCAGCTTCAGTTGATCACACAGTACTATAAAAGCCAGGGCGACGACGATTAC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gaatcccggcagcttcagttgatcacacagtactataaaagccagggcgacgacgattac
+
+template: 	GGGCTTAATCTCGGGAAAGGCTTCTCTGCCATCAGAGGGACCAGCACGCCATTCGTCAGT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gggcttaatctcgggaaaggcttctctgccatcagagggaccagcacgccattcgtcagt
+
+template: 	AACGGGCTGAATTCCGACCGTATTCCCGGCACTGAGCGGCATTTGATCAGCCTGCAGTAC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	aacgggctgaattccgaccgtattcccggcactgagcggcatttgatcagcctgcagtac
+
+template: 	TCTGACAGCGCTTTTCTGGGACAGGAGCTGGTCGGTCAGGTTTACTACCGCGATGAGTCG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	tctgacagcgcttttctgggacaggagctggtcggtcaggtttactaccgcgatgagtcg
+
+template: 	TTGCGATTCTACCCGTTCCCGACGGTAAATGCGAACAAACAGGTGACGGCTTTCTCTTCG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	ttgcgattctacccgttcccgacggtaaatgcgaacaaacaggtgacggctttctcttcg
+
+template: 	TCACAGCAGGACACCGACCAGTACGGCATGAAACTGACTCTGAACAGCAAACCGATGGAC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	tcacagcaggacaccgaccagtacggcatgaaactgactctgaacagcaaaccgatggac
+
+template: 	GGCTGGCAAATCACCTGGGGGCTGGATGCTGATCATGAGCGCTTTACCTCCAACCAGATG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	ggctggcaaatcacctgggggctggatgctgatcatgagcgctttacctccaaccagatg
+
+template: 	TTCTTCGACCTGGCTCAGGCAAGCGCTTCCGGAGGGCTGAACAACAAGAAGATTTACACC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	ttcttcgacctggctcaggcaagcgcttccggagggctgaacaacaagaagatttacacc
+
+template: 	ACCGGGCGCTATCCGTCGTATGACATCACCAACCTGGCGGCCTTCCTGCAATCAGGCTAT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	accgggcgctatccgtcgtatgacatcaccaacctggcggccttcctgcaatcaggctat
+
+template: 	GACATCAATAATCTCTTTACCCTCAACGGTGGCGTACGCTATCAGTACACTGAAAACAAG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gacatcaataatctctttaccctcaacggtggcgtacgctatcagtacactgaaaacaag
+
+template: 	ATTGATGATTTCATCGGCTACGCGCAGCAACGGCAGATTGCCGCCGGGAAGGCTACATCC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	attgatgatttcatcggctacgcgcagcaacggcagattgccgccgggaaggctacatcc
+
+template: 	GCCGACGCCATTCCTGGCGGCTCAGTCGATTACGACAACTTCCTGTTCAACGCCGGTCTG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gccgacgccattcctggcggctcagtcgattacgacaacttcctgttcaacgccggtctg
+
+template: 	CTGATGCACATCACCGAACGCCAGCAGGCATGGCTCAACTTCTCCCAGGGCGTGGAGCTG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	ctgatgcacatcaccgaacgccagcaggcatggctcaacttctcccagggcgtggagctg
+
+template: 	CCGGACCCGGGTAAATACTATGGTCGCGGCATCTATGGTGCTGCAGTGAACGGCCATCTT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	ccggacccgggtaaatactatggtcgcggcatctatggtgctgcagtgaacggccatctt
+
+template: 	CCTCTAACAAAGAGTGTGAACGTCAGCGACAGCAAGCTGGAAGGCGTGAAAGTCGATTCT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	cctctaacaaagagtgtgaacgtcagcgacagcaagctggaaggcgtgaaagtcgattct
+
+template: 	TATGAGCTGGGCTGGCGCTTTACTGGCAATAATCTGCGTACCCAAATCGCGGCCTACTAT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	tatgagctgggctggcgctttactggcaataatctgcgtacccaaatcgcggcctactat
+
+template: 	TCGATTTCTGATAAGAGCGTGGTGGCGAATAAAGATCTGACCATCAGCGTGGTGGACGAC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	tcgatttctgataagagcgtggtggcgaataaagatctgaccatcagcgtggtggacgac
+
+template: 	AAACGCCGTATTTACGGCGTGGAAGGTGCGGTGGACTACCTGATTCCTGATACTGACTGG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	aaacgccgtatttacggcgtggaaggtgcggtggactacctgattcctgatactgactgg
+
+template: 	AGTACCGGAGTGAACTTCAACGTGCTGAAAACTGAGTCGAAAGTGAACGGTACCTGGCAG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	agtaccggagtgaacttcaacgtgctgaaaactgagtcgaaagtgaacggtacctggcag
+
+template: 	AAATACGATGTGAAGACAGCAAGCCCATCAAAAGCGACAGCCTACATTGGCTGGGCACCG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	aaatacgatgtgaagacagcaagcccatcaaaagcgacagcctacattggctgggcaccg
+
+template: 	GACCCGTGGAGTCTGCGCGTGCAGAGCACCACCTCCTTTGACGTGAGCGACGCGCAGGGC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gacccgtggagtctgcgcgtgcagagcaccacctcctttgacgtgagcgacgcgcagggc
+
+template: 	TACAAGGTCGATGGCTATACCACCGTGGATCTGCTCGGCAGTTATCAGCTTCCGGTGGGT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	tacaaggtcgatggctataccaccgtggatctgctcggcagttatcagcttccggtgggt
+
+template: 	ACACTCAGCTTCAGCATTGAAAACCTCTTCGACCGTGACTACACCACTGTCTGGGGGCAG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	acactcagcttcagcattgaaaacctcttcgaccgtgactacaccactgtctgggggcag
+
+template: 	CGTGCACCACTGTACTACAGCCCGGGTTACGGCCCAGCGTCACTGTACGACTACAAAGGC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	cgtgcaccactgtactacagcccgggttacggcccagcgtcactgtacgactacaaaggc
+
+template: 	AGGGGCCGAACCTTTGGTCTGAACTACTCTGTGCTGTTCTGA
+          	||||||||||||||||||||||||||||||||||||||||||
+query:    	aggggccgaacctttggtctgaactactctgtgctgttctga
+
+# terC:23:MG591698
+template: 	ATGAATACTGTCGGCACGCCGTTGCTATGGGGCGGATTCGCTGTTGTTGTCGCCATTATG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	ATGAATACtGTCGGCACGCCGTTGCTatGGGGCGGATTCGcTGTTGTTGTCGCCATTATG
+
+template: 	CTGGCTATCGACCTGTTGTTGCAGGGGCGTCGTGGGGCACATGCCATGACCATGAAACAG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	CTGGCTATCGACCTGTTGTTGCAGGGGCGTCGtGGggCACATGCCATGACcAtGAAACAG
+
+template: 	GCTGCGGCCTGGTCGCTGGTCTGGGTGACGCTGTCGTTACTGTTTAACGCCGCTTTCTGG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	GCTGCGGCCTGGTCGcTGGTCTgGGTGACGCTGTCGTTACTGTTTAACGCCGCTTtCTGG
+
+template: 	TGGTATCTGGTGCAAACCGAAGGTCGCGCCGTTGCCGATCCACAGGCACTGGCCTTTCTC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	TGGTATCTGGTGCAAACCGAAggTCGCGCcGTTGCCGATCCACAGGCACTGGCCTTTCtc
+
+template: 	ACAGGTTATCTGATTGAGAAATCGCTGGCGGTCGATAACGTCTTTGTCTGGCTGATGTTG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	ACAGGTTATCTGATTGAGAAATCGCTGGCGGTCGATAACGTCTTTGTCTGGCTGATGTTG
+
+template: 	TTCAGCTATTTCTCTGTTCCGGCGGCATTACAACGCCGCGTGCTGGTGTATGGCGTGCTC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	TTCAGCTATTTCTcTGTTCcGGCGGCATTACAACGCCGCGTGCTGGTGTATGGCGTGCTC
+
+template: 	GGGGCGATTGTTCTGCGTACCATCATGATCTTCACTGGCAGCTGGCTAATTTCGCAGTTC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	GGGGCGATTGTTCTGCGTACCATCATGATCTTCACTGGCAGCTGGCTAATTTCGCAGTtC
+
+template: 	GACTGGATCCTGTATATCTTCGGTGCCTTCCTGCTGTTTACCGGCGTGAAGATGGCGCTC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	GACTGgATCCtGTATATCTTCGGTGCCTTCCTGCTGTTTACCGGCGTGAAGATGGCGCTC
+
+template: 	GCCCATGAAGATGAATCAGGCATTGGCGACAAGCCGCTGGTGCGCTGGCTACGCGGTCAT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	GCCCATGAAGATGAATCAGGCATTGGCGACAAGCcGCTGGTGcGCTGGCTACGCGGTCAT
+
+template: 	TTGCGCATGACCGACACCATCGACAACGAGCATTTCTTTGTGCGTAAGAATGGATTGCTG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	TTGCGCATGACCGACACCATCGACAACGAGCATTTCTTTGTGCGTAAGAATGGATTGcTG
+
+template: 	TACGCCACACCGCTGATGCTGGTACTGATTCTGGTGGAATTGAGCGACGTGATTTTCGCC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	TACGCCACACCGCTGATGCTGGTACTGATTCTGGTGGAATTGAGCGACGTGATTTTCGCC
+
+template: 	GTGGATAGCATTCCGGCTATCTTCGCCGTGACCACTGACCCGTTCATTGTGCTGACCTCA
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	GTGGATAGCATTCCGGCTATCTTCGCCGTGACCACTGACCCGTTCATTGTGCTGACCTCA
+
+template: 	AACCTGTTTGCGATCCTCGGCCTGCGTGCGATGTATTTCCTGCTGGCGGGCGTAGCAGAG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	AACCTGTTTGCGATCCTCGGCCTGCGTGCGATGTATTTCCTGCTGGCGGGCGTAGCAGAG
+
+template: 	CGTTTCTCGATGCTCAAATATGGCCTGGCGGTGATCCTGGTGTTTATCGGTATCAAGATG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	CGTTTCTCGATGCTCAAATATGGCCTGGCGGTGATCCtGGTGTTTATCGGTATCAAGATG
+
+template: 	CTGATTGTCGACTTCTACCATATTCCAATCGCCGTCTCGCTGGGCGTGGTGTTTGGCATT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	cTGATTGTCGACTTCTACCATATTCCAAtCGCCGTCTCGCTGGGCGTGGTGTTTGGCATT
+
+template: 	CTGGTGATGACGTTTATTATCAACGCCTGGGTGAATTATCGGCATGATAAGCAGCGGGGT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	CTGGTGATGACGTTTATTATCAACGCCTGGgTGAATTATCGGCATGATAAGCAGCGGGgT
+
+template: 	GGATAA
+          	||||||
+query:    	GGATAA
+
+# terC:5:CP007491
+template: 	ATGTTATTTGCATGGATAACCGATCCTAACGCCTGGCTTGCGCTCGGTACGCTGACGCTG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	atgttatttgcatggataaccgatcctaacgcctggcttgcgctcggtacgctgacgctg
+
+template: 	CTGGAGATCGTTCTTGGGATCGACAATATTATTTTCCTTTCTCTGGTGGTGGCAAAGCTT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	ctggagatcgttcttgggatcgacaatattattttcctttctctggtggtggcaaagctt
+
+template: 	CCCACAGCACAACGTGCTCATGCGCGCCGTCTGGGGTTGGCGGGAGCCATGGTTATGCGT
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	cccacagcacaacgtgctcatgcgcgccgtctggggttggcgggagccatggttatgcgt
+
+template: 	CTGGCGCTGCTGGCATCAATCGCCTGGGTTACGCGCCTGACAAATCCGCTTTTTACAATA
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	ctggcgctgctggcatcaatcgcctgggttacgcgcctgacaaatccgctttttacaata
+
+template: 	TTCAGTCAGGAAATTTCTGCCCGTGATTTGATTCTGCTTCTGGGTGGCTTGTTCCTTATC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	ttcagtcaggaaatttctgcccgtgatttgattctgcttctgggtggcttgttccttatc
+
+template: 	TGGAAAGCCAGCAAGGAAATCCACGAATCCATTGAAGGTGAAGAAGAAGGGCTGAAAACA
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	tggaaagccagcaaggaaatccacgaatccattgaaggtgaagaagaagggctgaaaaca
+
+template: 	CGCGTTTCATCATTCCTCGGCGCTATCGTGCAGATTATGCTGCTGGATATTATCTTTAGC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	cgcgtttcatcattcctcggcgctatcgtgcagattatgctgctggatattatctttagc
+
+template: 	CTCGACTCGGTGATTACGGCTGTGGGTCTGTCAGATCACCTGTTTATTATGATGGCAGCC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	ctcgactcggtgattacggctgtgggtctgtcagatcacctgtttattatgatggcagcc
+
+template: 	GTGGTGATTGCCGTAGGCGTGATGATGTTCGCCGCGCGCTCGATTGGTGATTTTGTCGAA
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gtggtgattgccgtaggcgtgatgatgttcgccgcgcgctcgattggtgattttgtcgaa
+
+template: 	CGCCATCCTTCGGTAAAAATGCTGGCGCTCTCTTTCCTGATTCTGGTGGGCTTTACCCTG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	cgccatccttcggtaaaaatgctggcgctctctttcctgattctggtgggctttaccctg
+
+template: 	ATTCTGGAAAGTTTCGACATCCACGTACCGAAAGGTTACATCTACTTCGCGATGTTCTTC
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	attctggaaagtttcgacatccacgtaccgaaaggttacatctacttcgcgatgttcttc
+
+template: 	TCTATTGCGGTTGAAAGCCTCAACTTGATTCGCAACAAAAAGAATCCGCTCTGA
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	tctattgcggttgaaagcctcaacttgattcgcaacaaaaagaatccgctctga
+

@@ -17,6 +17,7 @@
 /virulencefinder
 # testing
 /local_app/coverage
+/.pytest_cache
 # production
 /local_app/build
 /local_app/dist
