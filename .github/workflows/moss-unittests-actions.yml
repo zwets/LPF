@@ -31,5 +31,6 @@ jobs:
         run: |
           nosetests
       - name: Run install script
-          run: |
-            python3 ubuntu_22_install.py
+        run: |
+          python3 ubuntu_22_install.py
+          cd /opt/moss
