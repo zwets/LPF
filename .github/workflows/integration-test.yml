@@ -19,18 +19,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           python3 docker_images.py
-      - name: Install KMA and CCphylo
-        run: |
-          sudo apt-get install libz-dev
-          git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..;
-          git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;
       - name: Run Pylint
         run: |
           find . -type f -name "*.py" | xargs pylint --fail-under 1
-      - name: Nosetests
-        run: |
-          nosetests
       - name: Run install script
         run: |
           python3 ubuntu_22_install.py
           cd /opt/moss
+          python3 src/validate_build.py
+      - name: Nosetests
+        run: |
+          nosetests
+
