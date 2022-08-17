@@ -16,9 +16,7 @@ jobs:
           python-version: 3.8
       - name: Run install script
         run: |
-          python3 ubuntu_22_install.py
-          cd /opt/moss
-          python3 src/validate_build.py
+          python3 ubuntu_22_install.py -action
       - name: Nosetests
         run: |
           nosetests

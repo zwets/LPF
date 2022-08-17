@@ -4,36 +4,56 @@ import subprocess
 import argparse
 
 parser = argparse.ArgumentParser(description='.')
-parser.add_argument("-light", action="store_true", default = False, dest="light", help="Downloades CGE databases, git pull and builds app")
-parser.add_argument("-git", action="store_true", default = False, dest="git", help="Only pulls github pushes and builds app")
+parser.add_argument("-action", action="store_true", default = False, dest="action", help="github action")
 args = parser.parse_args()
 
 def main(args):
-    #check_anaconda()
-    #docker_check()
-    #check_nvidia()
-    cwd = os.getcwd()
-    copy_install_files()
-    os.system('sudo apt-get update && apt-get upgrade')
-    os.system('sudo apt-get install kcri-seqtz-deps')
-    sys.exit(0)
-    #os.system('sudo groupadd docker; sudo usermod -aG docker $USER; newgrp docker;')
-    os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
-    os.system("pip install -r requirements.txt")
-    os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
-    os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
-    os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;")
-    if cwd != "/opt/moss":
-        move_moss_repo(cwd)
-    install_app()
-    path_list = ["/opt/moss_db", "/opt/moss_data/", "/opt/moss_data/fast5/", "/opt/moss_data/fastq/"]
-    for item in path_list:
-        if not os.path.exists(item):
-            os.system("sudo mkdir -m 777 {}".format(item))
-    download_finder_dbs()
-    os.system("python3 /opt/moss/docker_images.py")
-    check_dist_build()
-    return True
+    if args.action:
+        cwd = os.getcwd()
+        os.system(
+            "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
+        os.system("pip install -r requirements.txt")
+        os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
+        os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
+        os.system(
+            "git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;")
+        if cwd != "/opt/moss":
+            move_moss_repo(cwd)
+        install_app()
+        path_list = ["/opt/moss_db", "/opt/moss_data/", "/opt/moss_data/fast5/", "/opt/moss_data/fastq/"]
+        for item in path_list:
+            if not os.path.exists(item):
+                os.system("sudo mkdir -m 777 {}".format(item))
+        download_finder_dbs()
+        os.system("python3 /opt/moss/docker_images.py")
+        check_dist_build()
+        return True
+    else:
+        #check_anaconda()
+        #docker_check()
+        #check_nvidia()
+        cwd = os.getcwd()
+        copy_install_files()
+        os.system('sudo apt-get update && apt-get upgrade')
+        os.system('sudo apt-get install kcri-seqtz-deps')
+        sys.exit(0)
+        #os.system('sudo groupadd docker; sudo usermod -aG docker $USER; newgrp docker;')
+        os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
+        os.system("pip install -r requirements.txt")
+        os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
+        os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
+        os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;")
+        if cwd != "/opt/moss":
+            move_moss_repo(cwd)
+        install_app()
+        path_list = ["/opt/moss_db", "/opt/moss_data/", "/opt/moss_data/fast5/", "/opt/moss_data/fastq/"]
+        for item in path_list:
+            if not os.path.exists(item):
+                os.system("sudo mkdir -m 777 {}".format(item))
+        download_finder_dbs()
+        os.system("python3 /opt/moss/docker_images.py")
+        check_dist_build()
+        return True
 
 def copy_install_files():
     os.system("sudo cp install_files/kcri-seqtz.list /etc/apt/sources.list.d/.")
