@@ -17,6 +17,8 @@ jobs:
       - name: Run install script
         run: |
           python3 ubuntu_22_install.py -action
+      - name: moss init
+        run: |
           python3 /opt/moss/src/moss_init.py -kmaindex_db_path /opt/moss/tests/resources/data_for_tests/database/ -config_name test
       - name: Nosetests
         run: |
