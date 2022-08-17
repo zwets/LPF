@@ -378,7 +378,7 @@ def moss_mkfs(config_path, entry_id):
 
 
 def moss_init(input_dict):
-    input_dict['entry_id'] = md5(input_dict['input_path'])
+    input_dict['entry_id'] = md5_from_fname(input_dict['input_path'])
     input_dict['sample_name'] = input_dict['input_path'].split("/")[-1][0:-9]
     input_dict['moss_db'] = "{}/moss.db".format(input_dict['config_path'])
     input_dict['ref_db'] = "{}/REFDB.ATG".format(input_dict['config_path'])
@@ -447,6 +447,8 @@ def plot_tree(treedata, output_file):
     return
 
 def init_insert_reference_table(config_path):
+    #FIX ENTRY ID
+    #Add consensus md5 and reads md5
     infile = open(config_path + "REFDB.ATG.name", 'r')
     t = 1
     conn = sqlite3.connect(config_path + 'moss.db')
@@ -461,7 +463,7 @@ def init_insert_reference_table(config_path):
         output = proc.communicate()[0].decode()
         reference_header_text = output.split("\n")[0][1:]
         sequence = output.split("\n")[1]
-        entry_id = md5(sequence)
+        entry_id = md5_(sequence)
         #TMP SOLUTION TO AVOID ENTRYCLASHES:
         if entry_id not in ids:
             dbstring = "INSERT INTO reference_table(entry_id, reference_header_text) VALUES('{}', '{}')".format(entry_id, reference_header_text.replace("'", "''"))
@@ -759,7 +761,14 @@ def concatenateDraftGenome(input_file):
         writefile.close()
     return id, new_name
 
-def md5(sequence):
+def md5_from_fname(fname):
+    hash_md5 = hashlib.md5()
+    with open(fname, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
+
+def md5_from_sequence(sequence):
     hash_md5 = hashlib.md5(sequence.encode())
     return hash_md5.hexdigest()
 

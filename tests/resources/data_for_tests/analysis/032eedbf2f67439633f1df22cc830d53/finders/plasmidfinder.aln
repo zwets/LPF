@@ -1,0 +1,42 @@
+# IncFIA_1__AP001918
+template: 	TGTCTGTGACAAATTGCCCTTAACCCTGTGACAAATTGCCCTCAGAAGAAGCTGTTTTTT
+          	|||_||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	tgt-tgtgacaaattgcccttaaccctgtgacaaattgccctcagaagaagctgtttttt
+
+template: 	CACAAAGTTATCCCTGCTTATTGACTCTTTTTTATTTAGTGTGACAATCTAAAAACTTGT
+          	|_||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	cgcaaagttatccctgcttattgactcttttttatttagtgtgacaatctaaaaacttgt
+
+template: 	CACACTTCACATGGATCTGTCATGGCGGAAACAGCGGTTATCAATCACAAGAAACGTAAA
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	cacacttcacatggatctgtcatggcggaaacagcggttatcaatcacaagaaacgtaaa
+
+template: 	AATAGCCCGCGAATCGTCCAGTCAAACGACCTCACTGAGGCGGCATATAGTCTCTCCCGG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	aatagcccgcgaatcgtccagtcaaacgacctcactgaggcggcatatagtctctcccgg
+
+template: 	GATCAAAAACGTATGCTGTATCTGTTCGTTGACCAGATCAGAAAATCTGATGGCACCCTA
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	gatcaaaaacgtatgctgtatctgttcgttgaccagatcagaaaatctgatggcacccta
+
+template: 	CAGGAACATGACGGTATCTGCGAGATCCATGTTGCTAAATATGCTGAAATATTCGGATTG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	caggaacatgacggtatctgcgagatccatgttgctaaatatgctgaaatattcggattg
+
+template: 	ACCTCTGCGGAAGCCAGTAAGGATATAC
+          	||||||||||||||||||||||||||||
+query:    	acctctgcggaagccagtaaggatatac
+
+# IncI(Gamma)_1__AP011954
+template: 	CGAAAGCCGGACGGCAGAATGCGCCATAAGGCATTCAGGAGAGATGGCATTTACGGGCAG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	cgaaagccggacggcagaatgcgccataaggcattcaggagagatggcatttacgggcag
+
+template: 	TAAGTCAGAAGACCGAAGATGTTCCGGAAGCCATAAAAGGAAAACCCCCACAATCTTTCG
+          	||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query:    	taagtcagaagaccgaagatgttccggaagccataaaaggaaaacccccacaatctttcg
+
+template: 	ACGAACTTGGCGGGACGACGA
+          	|||||||||||||||||__||
+query:    	acgaacttggcgggacggaga
+
