@@ -12,45 +12,27 @@ def main(args):
     #check_anaconda()
     #docker_check()
     #check_nvidia()
-    if args.git:
-        os.system("cd /opt/moss; git pull")
-        install_app()
-        check_dist_build() #Fix check_dist - check for built executable instead
-        return True
-    elif args.light:
-        os.system("cd /opt/moss; git pull")
-        cwd = os.getcwd()
-        os.system("pip install -r requirements.txt")
-        os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
-        os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
-        os.system("python3 /opt/moss/docker_images.py")
-        download_finder_dbs() #Check if works TBD
-        cmd = "cd /opt/moss; git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py /opt/moss/kma/kma_index; cd ..; cd ..;"
-        os.system(cmd)
-        install_app()
-        check_dist_build()
-    else:
-        cwd = os.getcwd()
-        copy_install_files()
-        os.system('sudo apt update && apt upgrade')
-        os.system('sudo apt install kcri-seqtz-deps')
-        #os.system('sudo groupadd docker; sudo usermod -aG docker $USER; newgrp docker;')
-        os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
-        os.system("pip install -r requirements.txt")
-        os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
-        os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
-        os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;")
-        if cwd != "/opt/moss":
-            move_moss_repo(cwd)
-        install_app()
-        path_list = ["/opt/moss_db", "/opt/moss_data/", "/opt/moss_data/fast5/", "/opt/moss_data/fastq/"]
-        for item in path_list:
-            if not os.path.exists(item):
-                os.system("sudo mkdir -m 777 {}".format(item))
-        download_finder_dbs()
-        os.system("python3 /opt/moss/docker_images.py")
-        check_dist_build()
-        return True
+    cwd = os.getcwd()
+    copy_install_files()
+    os.system('sudo apt update && apt upgrade')
+    os.system('sudo apt install kcri-seqtz-deps')
+    #os.system('sudo groupadd docker; sudo usermod -aG docker $USER; newgrp docker;')
+    os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
+    os.system("pip install -r requirements.txt")
+    os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
+    os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
+    os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;")
+    if cwd != "/opt/moss":
+        move_moss_repo(cwd)
+    install_app()
+    path_list = ["/opt/moss_db", "/opt/moss_data/", "/opt/moss_data/fast5/", "/opt/moss_data/fastq/"]
+    for item in path_list:
+        if not os.path.exists(item):
+            os.system("sudo mkdir -m 777 {}".format(item))
+    download_finder_dbs()
+    os.system("python3 /opt/moss/docker_images.py")
+    check_dist_build()
+    return True
 
 def copy_install_files():
     os.system("sudo cp install_files/kcri-seqtz.list /etc/apt/sources.list.d/.")
