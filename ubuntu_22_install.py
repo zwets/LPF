@@ -15,8 +15,8 @@ def main(args):
         os.system("pip install -r requirements.txt")
         os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
         os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
-        #os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;")
-        #download_finder_dbs()
+        os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;")
+        download_finder_dbs()
 
         install_app()
         path_list = ["/opt/moss_db", "/opt/moss_data/", "/opt/moss_data/fast5/", "/opt/moss_data/fastq/"]
@@ -41,7 +41,7 @@ def main(args):
         os.system("pip install -r requirements.txt")
         os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
         os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
-        os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;")
+        os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ../../kma/kma_index > /dev/null; cd ..; cd ..;")
         install_app()
         path_list = ["/opt/moss_db", "/opt/moss_data/", "/opt/moss_data/fast5/", "/opt/moss_data/fastq/"]
         for item in path_list:
@@ -74,9 +74,9 @@ def download_finder_dbs():
     os.system("git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git")
     os.system("git clone https://git@bitbucket.org/genomicepidemiology/resfinder_db.git resfinder_db")
     os.system("git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git")
-    os.system("/opt/moss/kma/kma_index -i /opt/moss/plasmidfinder_db/*.fsa -o /opt/moss/plasmidfinder_db/all")
-    os.system("/opt/moss/kma/kma_index -i /opt/moss/resfinder_db/*.fsa -o /opt/moss/resfinder_db/all")
-    os.system("/opt/moss/kma/kma_index -i /opt/moss/virulencefinder_db/*.fsa -o /opt/moss/virulencefinder_db/all")
+    os.system("/opt/moss/kma/kma_index -i /opt/moss/plasmidfinder_db/*.fsa -o /opt/moss/plasmidfinder_db/all > /dev/null")
+    os.system("/opt/moss/kma/kma_index -i /opt/moss/resfinder_db/*.fsa -o /opt/moss/resfinder_db/all > /dev/null")
+    os.system("/opt/moss/kma/kma_index -i /opt/moss/virulencefinder_db/*.fsa -o /opt/moss/virulencefinder_db/all > /dev/null")
 
 def install_app():
     os.system("cd local_app; chmod a+x moss_launch; npm i; ./node_modules/.bin/electron-rebuild; npm run dist;sudo cp moss.desktop /usr/share/applications/.; cd ..")
