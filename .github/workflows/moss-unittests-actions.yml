@@ -1,4 +1,4 @@
-name: moss github actions
+name: moss integration test
 on:
   pull_request
 jobs:
@@ -30,3 +30,6 @@ jobs:
       - name: Nosetests
         run: |
           nosetests
+      - name: Run install script
+          run: |
+            python3 ubuntu_22_install.py
