@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
-      - name: Set up node14
+      - name: Set up node16
         uses: actions/setup-node@v3
         with:
           node-version: '14'
