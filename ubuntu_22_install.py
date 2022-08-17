@@ -64,9 +64,6 @@ def copy_install_files():
     os.system("sudo cp install_files/ont-repo.asc /etc/apt/trusted.gpg.d/.")
     os.system("sudo cp install_files/mozilla-ppa /etc/apt/preferences.d/.")
 
-
-
-
 def check_dist_build():
     if not os.path.isfile("local_app/dist/linux-unpacked/moss"):
         sys.exit("A MOSS distribution was not created correctly. Installation was not completed")
