@@ -27,6 +27,7 @@ def main(args):
                 os.system("sudo mkdir -m 777 {}".format(item))
         #os.system("python3 /opt/moss/docker_images.py")
         check_dist_build()
+        os.system('cd {}'.format(cwd))
         return True
     else:
         #check_anaconda()
