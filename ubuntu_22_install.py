@@ -25,7 +25,7 @@ def main(args):
         for item in path_list:
             if not os.path.exists(item):
                 os.system("sudo mkdir -m 777 {}".format(item))
-        os.system("python3 /opt/moss/docker_images.py")
+        #os.system("python3 /opt/moss/docker_images.py")
         check_dist_build()
         return True
     else:
