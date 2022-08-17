@@ -68,7 +68,7 @@ def copy_install_files():
 
 
 def check_dist_build():
-    if not os.path.isdir("/opt/moss/local_app/dist/"):
+    if not os.path.isfile("/opt/moss/local_app/dist/linux-unpacked/moss"):
         sys.exit("A MOSS distribution was not created correctly. Installation was not completed")
     else:
         print ("The installation was completed")
