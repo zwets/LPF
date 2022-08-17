@@ -59,7 +59,7 @@ def main(csv, jobs, config_name):
         jobslist.append(cmd)
         input = metadata_list[i].split(",")[-2]
         sample_name = metadata_list[i].split(",")[0]
-        entry_id = moss.md5(input)
+        entry_id = moss.md5_of_file(input)
         moss.sql_execute_command(
             "INSERT INTO status_table(entry_id, sample_name, status, type, current_stage, final_stage, result, time_stamp) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')" \
             .format(entry_id, sample_name, "Queued", "Queued", "Queued", "Queued", "Queued", ""), config_name)
