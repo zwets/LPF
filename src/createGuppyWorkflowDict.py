@@ -1,8 +1,6 @@
 import os
 import argparse
 import json
-import subprocess
-import sys
 
 parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
 parser.add_argument("-current_working_db", action="store", dest="current_working_db", help="Enter a name for your configuration file.")
