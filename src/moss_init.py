@@ -70,7 +70,6 @@ directory_structure = {
 }
 moss.create_directory_from_dict(directory_structure, config_name)
 
-sys.exit(0)
 
 conn = sqlite3.connect(config_name + 'moss.db')
 c = conn.cursor()
@@ -103,6 +102,7 @@ conn.close()
 #Can we add tables for genes with pointers? Better solution!
 
 
+sys.exit(0)
 
 moss.init_insert_reference_table(config_name)
 
