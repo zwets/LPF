@@ -456,18 +456,17 @@ def init_insert_reference_table(config_path):
     c = conn.cursor()
     ids = list()
     print ('Inserting References in to sql database')
-    sys.exit('I made it to here')
-
     for line in infile:
         line = line.rstrip()
         cmd = "/opt/moss/kma/kma seq2fasta -t_db {}/REFDB.ATG -seqs {}".format(config_path, t)
-        print (cmd)
         proc = subprocess.Popen(cmd, shell=True,
                                 stdout=subprocess.PIPE, )
         output = proc.communicate()[0].decode()
         reference_header_text = output.split("\n")[0][1:]
         sequence = output.split("\n")[1]
         entry_id = md5_of_file(sequence) #ID for references based on reference sequence
+        print (cmd)
+        sys.exit(reference_header_text)
         if entry_id not in ids:
             dbstring = "INSERT INTO reference_table(entry_id, reference_header_text) VALUES('{}', '{}')".format(entry_id, reference_header_text.replace("'", "''"))
             ids.append(entry_id)
