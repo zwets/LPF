@@ -119,8 +119,3 @@ jsondict["current_working_db"] = args.config_name
 with open("{}/sync_files/local_changes.json".format(config_name), 'w') as f_out:
   json.dump(jsondict, f_out)
 f_out.close()
-
-sys.exit(0)
-
-cmd = "python3 /opt/moss/src/createGuppyWorkflowDict.py -current_working_db {}".format(args.config_name)
-os.system(cmd)

@@ -8,10 +8,10 @@ parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
 parser.add_argument("-current_working_db", action="store", dest="current_working_db", help="Enter a name for your configuration file.")
 args = parser.parse_args()
 
-cmd = "/opt/ont/guppy/bin/guppy_basecaller --print_workflows > /opt/moss_db/{}/static_files/tmpworkflowdict.txt".format(args.current_working_db)
+cmd = "/opt/ont/guppy/bin/guppy_basecaller --print_workflows > /opt/moss/local_app/tmpworkflowdict.txt"
 os.system(cmd)
 
-infile = open("/opt/moss_db/{}/static_files/tmpworkflowdict.txt".format(args.current_working_db), 'r')
+infile = open("/opt/moss/local_app/static_files/tmpworkflowdict.txt", 'r')
 jsonlist = []
 for line in infile:
     if line[0:3] == "FLO":
@@ -31,16 +31,16 @@ for line in infile:
 
 
 infile.close()
-outfile = open("/opt/moss_db/{}/static_files/workflow.json".format(args.current_working_db), 'w')
+outfile = open("/opt/moss/local_app/workflow.json", 'w')
 
 print (json.dumps(jsonlist, indent=2), file=outfile)
 outfile.close()
 
 
-cmd = "/opt/ont/guppy/bin/guppy_barcoder --print_kits > /opt/moss_db/{}/static_files/printkitstmp.txt".format(args.current_working_db)
+cmd = "/opt/ont/guppy/bin/guppy_barcoder --print_kits > /opt/moss/local_app/printkitstmp.txt"
 os.system(cmd)
 
-infile = open("/opt/moss_db/{}/static_files/printkitstmp.txt".format(args.current_working_db), 'r')
+infile = open("/opt/moss/local_app/printkitstmp.txt", 'r')
 jsonlist = []
 for line in infile:
     if len(line) > 3: #Non emptie/home/meta2s
@@ -52,7 +52,7 @@ for line in infile:
 
 
 infile.close()
-outfile = open("/opt/moss_db/{}/static_files/barcodes.json".format(args.current_working_db), 'w')
+outfile = open("/opt/moss/local_app/barcodes.json", 'w')
 
 print (json.dumps(jsonlist, indent=2), file=outfile)
 outfile.close()
@@ -60,9 +60,9 @@ outfile.close()
 
 
 
-cmd = "rm /opt/moss_db/{}/static_files/tmpworkflowdict.txt".format(args.current_working_db)
+cmd = "rm /opt/moss/local_app/tmpworkflowdict.txt"
 os.system(cmd)
 
-cmd = "rm /opt/moss_db/{}/static_files/printkitstmp.txt".format(args.current_working_db)
+cmd = "rm /opt/moss/local_app/printkitstmp.txt"
 os.system(cmd)
 
