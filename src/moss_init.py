@@ -70,7 +70,7 @@ directory_structure = {
 }
 moss.create_directory_from_dict(directory_structure, config_name)
 
-
+sys.exit(0)
 
 conn = sqlite3.connect(config_name + 'moss.db')
 c = conn.cursor()
@@ -110,13 +110,6 @@ moss.init_insert_reference_table(config_name)
 jsondict = dict()
 jsondict["current_working_db"] = args.config_name
 with open("/opt/moss_db/config.json", 'w') as f_out:
-  json.dump(jsondict, f_out)
-f_out.close()
-
-# Generate config.json file
-jsondict = dict()
-jsondict["current_working_db"] = args.config_name
-with open("{}/sync_files/local_changes.json".format(config_name), 'w') as f_out:
   json.dump(jsondict, f_out)
 f_out.close()
 
