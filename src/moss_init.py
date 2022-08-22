@@ -102,9 +102,11 @@ conn.close()
 #Can we add tables for genes with pointers? Better solution!
 
 
-sys.exit(0)
 
 moss.init_insert_reference_table(config_name)
+
+sys.exit(0)
+
 
 # Generate config.json file
 jsondict = dict()
