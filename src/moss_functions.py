@@ -455,10 +455,12 @@ def init_insert_reference_table(config_path):
     conn = sqlite3.connect(config_path + 'moss.db')
     c = conn.cursor()
     ids = list()
+    print ('Inserting References in to sql database')
 
     for line in infile:
         line = line.rstrip()
         cmd = "/opt/moss/kma/kma seq2fasta -t_db {}/REFDB.ATG -seqs {}".format(config_path, t)
+        print (cmd)
         proc = subprocess.Popen(cmd, shell=True,
                                 stdout=subprocess.PIPE, )
         output = proc.communicate()[0].decode()
