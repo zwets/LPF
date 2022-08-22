@@ -111,4 +111,3 @@ with open("/opt/moss_db/config.json", 'w') as f_out:
   json.dump(jsondict, f_out)
 f_out.close()
 
-sys.exit(0) #GH action

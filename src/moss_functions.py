@@ -455,7 +455,6 @@ def init_insert_reference_table(config_path):
     conn = sqlite3.connect(config_path + 'moss.db')
     c = conn.cursor()
     ids = list()
-    print ('Inserting References in to sql database')
     for line in infile:
         line = line.rstrip()
         cmd = "/opt/moss/kma/kma seq2fasta -t_db {}/REFDB.ATG -seqs {}".format(config_path, t)
@@ -464,9 +463,7 @@ def init_insert_reference_table(config_path):
         output = proc.communicate()[0].decode()
         reference_header_text = output.split("\n")[0][1:]
         sequence = output.split("\n")[1]
-        entry_id = md5_of_file(sequence) #ID for references based on reference sequence
-        print (cmd)
-        sys.exit(reference_header_text)
+        entry_id = md5_of_sequence(sequence) #ID for references based on reference sequence
         if entry_id not in ids:
             dbstring = "INSERT INTO reference_table(entry_id, reference_header_text) VALUES('{}', '{}')".format(entry_id, reference_header_text.replace("'", "''"))
             ids.append(entry_id)
