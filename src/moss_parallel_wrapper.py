@@ -23,6 +23,8 @@ def main(json_file, config_name):
     with open(json_file) as infile:
         data = json.load(infile)
     print (data)
+    for item in data['samples']:
+        print (item)
     sys.exit("Printed json data")
     jobslist = []
 
