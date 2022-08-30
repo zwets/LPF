@@ -34,7 +34,7 @@
     "electron-rebuild": "^3.2.7"
   },
   "dependencies": {
-    "better-sqlite3": "^7.5.3",
+    "better-sqlite3": "^7.6.2",
     "electron-forge": "^5.2.4",
     "electron-json-storage": "^4.5.0",
     "electron-store": "^8.0.2",
