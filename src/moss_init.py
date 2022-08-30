@@ -60,7 +60,7 @@ print ("cloning reference DB complete")
 
 directory_structure = {
     "analysis": {},
-    "metadata_csv": {},
+    "metadata_json": {},
     "consensus_sequences": {},
     "basecall_output": {},
     "sync_files": {},
