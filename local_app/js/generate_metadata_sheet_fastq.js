@@ -76,7 +76,7 @@ function create_metadata_table_fastq(){
                     new_obj[header_row.cells[t].innerHTML] = document.getElementById(`input${[i]}${[t]}`).value;
                 }
             }
-            new_obj['file_path'] = file_list_obj[i].path;
+            new_obj['input_path'] = file_list_obj[i].path;
             new_obj['config_path'] = require('/opt/moss_db/config.json')["current_working_db"];
             var errorMessage = window.validateData(new_obj);
             obj_list.push(new_obj);
