@@ -12,7 +12,7 @@ CMD = "/opt/ont/guppy/bin/guppy_basecaller --print_workflows >" \
       " /opt/moss/local_app/tmpworkflowdict.txt"
 os.system(CMD)
 
-with open("/opt/moss/local_app/static_files/tmpworkflowdict.txt", 'r') as infile:
+with open("/opt/moss/local_app/tmpworkflowdict.txt", 'r') as infile:
     jsonlist = []
     for line in infile:
         if line[0:3] == "FLO":
