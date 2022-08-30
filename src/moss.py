@@ -2,11 +2,9 @@
 Main script for the moss pipeline.
 """
 import sys
-import os
 import argparse
 import json
 import moss_functions as moss
-import datetime
 
 parser = argparse.ArgumentParser(description='.')
 parser.add_argument('-version', action='version', version='MOSS 1.1.0')

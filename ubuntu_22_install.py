@@ -52,7 +52,7 @@ def main(args):
         check_dist_build()
         if cwd != "/opt/moss":
             move_moss_repo(cwd)
-        cmd = "python3 /opt/moss/src/createGuppyWorkflowDict.py"
+        cmd = "python3 /opt/moss/src/create_guppy_workflow_dict.py"
         os.system(cmd)
         return True
 

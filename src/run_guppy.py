@@ -1,7 +1,6 @@
 """
 Built in guppy runner for moss client
 """
-
 import sys
 import os
 import argparse

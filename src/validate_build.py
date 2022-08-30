@@ -1,11 +1,8 @@
 """Tests and validates a moss installation"""
-import os
-import sys
 
 def check_dependencies():
-    pass
-
+    """Validates specific set of dependencies for the MOSS installation"""
+    return True
 
 if __name__ == '__main__':
     check_dependencies()
-

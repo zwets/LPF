@@ -29,6 +29,7 @@ import dataframe_image as dfi
 #     pass
 
 def validate_date_text(date_text):
+    """Validates the date time format""""
     try:
         datetime.datetime.strptime(date_text, '%Y-%m-%d')
     except ValueError:
