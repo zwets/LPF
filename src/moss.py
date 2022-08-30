@@ -8,13 +8,15 @@ import moss_functions as moss
 
 parser = argparse.ArgumentParser(description='.')
 parser.add_argument('-version', action='version', version='MOSS 1.1.0')
-parser.add_argument("-json", action="store", type=str, default = "", dest="json", help="Input JSON file.")
+parser.add_argument("-json", action="store", type=str, default = "", dest="json", help="input object")
 args = parser.parse_args()
 
 def moss_pipeline(input_dict):
     """
     Workflow for analysis pipeline
     """
+    print (input_dict)
+    sys.exit()
     try:
         moss.validate_input(input_dict)
         input_dict = moss.moss_init(input_dict)
@@ -27,8 +29,7 @@ def moss_pipeline(input_dict):
 
 
 def main():
-    with open(args.json) as json_file:
-        input = json.load(json_file)
+    input = json.loads(args.json)
     moss_pipeline(input)
 
 
