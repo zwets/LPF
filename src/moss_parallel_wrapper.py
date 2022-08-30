@@ -23,7 +23,7 @@ def main(json_file):
     jobslist = []
 
     for item in data['samples']:
-        cmd = 'python3 /opt/moss/src/moss.py -json \"{}\"'.format(item.replace("\'", "\""))
+        cmd = 'python3 /opt/moss/src/moss.py -json \"{}\"'.format(str(item))
         jobslist.append(cmd)
         entry_id = moss.md5_of_file(item['input_path'])
         # moss.sql_execute_command(
