@@ -67,26 +67,22 @@ function create_metadata_table_fastq(){
       var rows = document.getElementById("metadata_csv_table").rows;
       var header_row = rows[0];
 
-//      for (var i = 0; i < header_row.cells.length; i++) {
-//          csv_string = csv_string.concat(`${header_row.cells[i].innerHTML},`);
-//        }
-//      csv_string = csv_string.concat(`file_location,`);
-//      csv_string = csv_string.concat(`ont_type\n`);
       for (var i = 0; i < rows.length-1; i++) {
             var new_obj = {};
             for (var t = 0; t < rows[i].cells.length; t++) {
                 new_obj[header_row.cells[t].innerHTML] = document.getElementById(`input${[i]}${[t]}`).value;
             }
+            new_obj['file_path'] = file_list_obj[i].path;
+            new_obj['config_path'] = require('/opt/moss_db/config.json')["current_working_db"];
+            var errorMessage = window.validateData(new_obj);
             obj_list.push(new_obj);
 
         }
-      console.log(obj_list);
-      console.log(obj_list);
-      console.log(obj_list);
-      var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
+
+      var final_obj = {'samples': obj_list}
+
       var output_json_file = `/opt/moss_db/${current_moss_system}/metadata_json/${experiment_name}.json`;
-      var jsonObj = window.convertToJson(csv_string);
-      var errorMessage = window.validateData(jsonObj);
+
       if (errorMessage != "") {
       console.error(errorMessage);
       return;
@@ -96,7 +92,7 @@ function create_metadata_table_fastq(){
           // path exists
           alert("A file with this name already exists, please choose another one than: ", output_json_file);
         } else {
-            fs.writeFile(output_json_file, JSON.stringify(jsonObj), err => {
+            fs.writeFile(output_json_file, JSON.stringify(final_obj), err => {
                   if (err) {
                     console.error(err)
                     return
