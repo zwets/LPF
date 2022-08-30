@@ -7,11 +7,8 @@ from joblib import Parallel, delayed
 
 parser = argparse.ArgumentParser(description='.')
 parser.add_argument('-info', type=int, help='surveillance info')
-parser.add_argument('-csv', action="store", type=str, dest='csv', default="",
-                    help='metadata csv file')
-parser.add_argument("-jobs", type=int, action="store", dest="jobs", default = 1,
-                    help="Number of jobs to be run in parallel. Default is 4."
-                         " Consider your computational capabilities!")
+parser.add_argument('-json', action="store", type=str, dest='json', default="",
+                    help='json file')
 parser.add_argument('-config_name', action="store", type=str, dest='config_name',
                     default="", help='config_name')
 args = parser.parse_args()
@@ -20,15 +17,12 @@ def moss_analysis(jobslist, i):
     """Start analysis"""
     os.system(jobslist[i])
 
-def main(csv, jobs, config_name):
+def main(json_file, config_name):
     """Main func"""
-    with open(csv, 'r') as csv_file:
-        line = csv_file.read().split("\n")[0:-1]
-        metadata_headers = line[0]
-        metadata_list = line[1:]
-    if jobs > 8:
-        sys.exit("Currently a maximum of 8 jobs are permitted in parallel.")
-
+    with open(json_file) as infile:
+        data = json.load(infile)
+    print (data)
+    sys.exit("Printed json data")
     jobslist = []
 
     for i in range(len(metadata_list)):
@@ -49,4 +43,4 @@ def main(csv, jobs, config_name):
     print ("Analysis complete")
 
 if __name__== "__main__":
-    main(args.csv, args.jobs, args.config_name)
+    main(args.json, args.config_name)

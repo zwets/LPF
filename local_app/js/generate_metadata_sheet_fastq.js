@@ -217,9 +217,6 @@ function generate_table_fastq(file_number) {
 
       table.appendChild(tr);
     }
-
-    //table.appendChild(thead);
-    //table.appendChild(tbody);
     return table
 }
 
