@@ -17,9 +17,8 @@ function submitSingleAnalysis() {
     console.log(cmd_msg);
     execute_command_as_subprocess(cmd_msg);
 
-
-
 }
+
 function execute_command_as_subprocess(cmd, print_msg) {
     console.log(cmd);
 
