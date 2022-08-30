@@ -60,7 +60,7 @@ def validate_input(input_dict):
     if not input_dict['input_path'].endswith('.fastq.gz'):
         raise SystemExit('Input is not a fastq.gz file. Only this format is supported.')
     if not input_dict['config_path'].startswith('/opt/moss_db'):
-        raise SystemExit('An unvalid config_path was given.')
+        raise SystemExit('An invalid config_path was given.')
     validate_date_text(input_dict['collection_date'])
     print ('Validation complete')
 
