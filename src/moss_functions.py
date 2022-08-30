@@ -54,6 +54,7 @@ def validate_input(input_dict):
       "config_path": "/opt/moss_db/test/"
     }
     """
+    print ('Validating input')
     if not input_dict['input_file'] in input_dict['input_path']:
         raise SystemExit('Input file does not match the input path.')
     if not input_dict['input_path'].endswith('.fastq.gz'):
