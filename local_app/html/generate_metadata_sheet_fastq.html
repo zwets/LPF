@@ -42,8 +42,8 @@
                 <br>
                 <div class="generate-metadata-sheet" id="generate-metadata-sheet">
                     <div class="generate-multiple-index-file-section" id="generate-multiple-index-file-section">
-                        Enter a name of the sequencing experiment (This will be the name of your .csv file):
-                        <input type="text" id="experiment-name" name="experiment-name" value=""><br>
+                        Enter a name of the sequencing experiment (This will be the name of your .json file):
+                        <input type="text" id="experiment-name" name="experiment-name" value="" oninput="removeExtension()"><br>
 
                         <br>
 
@@ -66,11 +66,16 @@
                     </div>
                 </div>
         </div>
-
+          </div>
       </section>
     </main>
   </div>
   <script type="text/javascript">
+    function getFileNameOnly()
+        {
+        var fileName = document.getElementById("experiment-name").value;
+          return fileName.split('.').slice(0, -1).join('.');
+        }
   </script>
   </body>
 </html>

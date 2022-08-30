@@ -1,0 +1,103 @@
+//Code to perform a check whether user submittinf any file, if not alert the user
+//Code says if no file uploaded it is displaying generate metadata objects so to inform user to submit the file frst
+//function validatefastqfile() {
+
+ // if ( document.getElementById("fastqfile").files.length == 0 ){
+  //    alert("Please attach fastqfile");
+ // }
+
+//Code to  validate or restrict the user to allow file entension with .fastq files into the system
+//var ValidExt = ['fastq'];
+//var ext = this.value.split('.').pop();
+
+//if (validExt.indexof(ext.toLowerCase()) == -1) {
+ //   alert('Not allowed file type. Please input fastq file');
+   // this.value = '';
+//}
+//}
+
+// siri code to allow user not to rewrite the file extension in .csv tab
+//        x.replace(/\.[^/.]+$/, "")
+
+
+
+function checkValueWithRegex() {
+          var text=document.getElementById("inputText").value;
+          value = value.replace(/\.[^/.]+$/, '');
+          document.getElementById("inputText").value = value;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// perform a check whether user presses the submit button, if not alert the user
+function Validatefastqfile() {
+
+  if ( document.getElementById("fastqfile").files.length == 0 ){
+      alert("Please attach fastqfile");
+  }
+
+}
+
+//code to allow and validate only fastqfiles from user input
+function fileValidtion() {
+        var fileInput =
+        document.getElementById('file');
+
+         var filePath = fileInput.value;
+// allow only fastqfiles
+         var allowedExtensions = /(\.fastq|\.fa)$/i;
+         if (!allowedExtensions.exec(filePath)) {
+              alert('Input file type');
+              fileInput.value = '';
+              return false;
+        }
+        else
+                if (fileInput.files && fileINput.files[0]) {
+                    var reader = new FilerEADER();
+                    reader.onload = function(e) {
+                        document.getElementbyId(
+                            'fastqfile')
+                }
+        }
+
+// code to allow file name without extension
+        x.replace(/\.[^/.]+$/, "")
+
+// validate the file entension
+var ValidExt = ['fastq'];
+var ext = this.value.split('.').pop();
+
+if (validExt.indexof(ext.toLowerCase()) == -1) {
+    alert('Not allowed file type. Please input fastq file');
+    this.value = '';
+}
+}
+//Code to check numbers in input field(Age)
+function allnumeric(inputtxt)
+   {
+        var numbers = /^[0-9]+$/;
+        if(inputtxt.value.match(numbers))
+        {
+        return true;
+        }
+        else
+        {
+        alert('Invalid inputs, Numbers only');
+        return false;
+        }
+    }

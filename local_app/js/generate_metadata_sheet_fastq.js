@@ -88,8 +88,8 @@ function create_metadata_table_fastq(){
         }
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
       var output_json_file = `/opt/moss_db/${current_moss_system}/metadata_json/${experiment_name}.json`;
-      var jsonObj = convertToJson(csv_string);
-      var errorMessage = validateData(jsonObj);
+      var jsonObj = window.convertToJson(csv_string);
+      var errorMessage = window.validateData(jsonObj);
       if (errorMessage != "") {
       console.error(errorMessage);
       return;
@@ -228,12 +228,12 @@ function allLetters(inputText, propertyName, errors) {
    var letters = new RegExp("^[A-Za-z]+$");
    if(!letters.test(inputText)) {
    var message = new String(propertyName+" should contain only letters");
-     alert(message);
+     window.alert(message);
      errors = errors.concat("\n").concat(message);
    }
    return errors;
 }
-
+exports.allLetters = allLetters
 
 //code to check numerical in input field (patient_age)
 function allNumeric(inputText, propertyName, errors) {
@@ -241,10 +241,12 @@ function allNumeric(inputText, propertyName, errors) {
     if(!numeric.test(inputText)) {
     var message = new String(propertyName+" should contain only numbers");
        errors = errors.concat("\n").concat(message);
-       alert(message);
+       window.alert(message);
     }
     return errors;
 }
+
+exports.allNumeric = allNumeric
 
 // function to convert csv to json
 function convertToJson(csv_string) {
@@ -263,16 +265,18 @@ function convertToJson(csv_string) {
    return jsonFinal;
 }
 
+exports.convertToJson = convertToJson
+
 // function to validate the data input
 function validateData(jsonFinal) {
    var errors = "";
-   errors = allLetters(jsonFinal.city, "city", errors);
-   errors = allLetters(jsonFinal.country, "country", errors);
-   errors = allNumeric(jsonFinal.patient_age, "patient age", errors);
+   errors = window.allLetters(jsonFinal.city, "city", errors);
+   errors = window.allLetters(jsonFinal.country, "country", errors);
+   errors = window.allNumeric(jsonFinal.patient_age, "patient age", errors);
    var dateReg = /^\d{4}-\d{2}-\d{2}$/;
    var dateError = "Collection Date should be in YYYY-MM-DD format"
    if(!dateReg.test(jsonFinal.collection_date)) {
-      alert(dateError);
+      window.alert(dateError);
       errors = errors.concat("\n").concat(dateError);
       return errors;
    }
@@ -280,11 +284,13 @@ function validateData(jsonFinal) {
    var timeS = collDate.getTime();
 
    if (typeof timeS !== 'number' || Number.isNaN(timeS)) {
-      alert(dateError);
+      window.alert(dateError);
       errors = errors.concat("\n").concat(dateError);
    }
    return errors;
 }
+
+exports.validateData = validateData
 
 function readTextFile(file, callback) {
     var rawFile = new XMLHttpRequest();
