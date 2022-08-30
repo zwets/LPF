@@ -87,23 +87,24 @@ function create_metadata_table_fastq(){
 
         }
       var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
-      var output_csv_file = `/opt/moss_db/${current_moss_system}/metadata_csv/${experiment_name}.csv`;
-      var errorMessage = convertToJsonAndValidate(csv_string);
+      var output_json_file = `/opt/moss_db/${current_moss_system}/metadata_json/${experiment_name}.json`;
+      var jsonObj = convertToJson(csv_string);
+      var errorMessage = validateData(jsonObj);
       if (errorMessage != "") {
       console.error(errorMessage);
       return;
       }
-      //Here insert validation function for ENA compatability
-      if (fs.existsSync(output_csv_file)) {
+      //Here insert validation function for ENA compatibility
+      if (fs.existsSync(output_json_file)) {
           // path exists
-          alert("A file with this name already exists, please choose another one than: ", output_csv_file);
+          alert("A file with this name already exists, please choose another one than: ", output_json_file);
         } else {
-            fs.writeFile(output_csv_file, csv_string, err => {
+            fs.writeFile(output_json_file, JSON.stringify(jsonObj), err => {
                   if (err) {
                     console.error(err)
                     return
                   }
-                  alert(`The metadata csv file has been created and is stored at ${output_csv_file}`);
+                  alert(`The metadata json file has been created and is stored at ${output_json_file}`);
                   var create_button = document.createElement('button');
                   create_button.classList.add('button-7');
                   create_button.type = "button";
@@ -228,29 +229,28 @@ function allLetters(inputText, propertyName, errors) {
    if(!letters.test(inputText)) {
    var message = new String(propertyName+" should contain only letters");
      alert(message);
-     errors = errors + message;
+     errors = errors.concat("\n").concat(message);
    }
    return errors;
 }
 
 
-//code to check numericals in input field (patient_age)
+//code to check numerical in input field (patient_age)
 function allNumeric(inputText, propertyName, errors) {
     var numeric = new RegExp("^[0-9]+$");
     if(!numeric.test(inputText)) {
     var message = new String(propertyName+" should contain only numbers");
+       errors = errors.concat("\n").concat(message);
        alert(message);
-       errors = errors + message;
     }
     return errors;
 }
 
-// function to convert csv to json and validate the data input
-function convertToJsonAndValidate(csv_string) {
+// function to convert csv to json
+function convertToJson(csv_string) {
    var csvData = csv_string.split('\n');
    var headers = csvData[0].replace('"','').split(',');
    var csvToJson = [];
-   var errors = new String("");
    for (var i = 1; i < csvData.length-1; i++) {
        var jsonObj = {};
        var currentRow = csvData[i].replace('"','').split(',');
@@ -260,20 +260,28 @@ function convertToJsonAndValidate(csv_string) {
        csvToJson.push(jsonObj);
    }
    var jsonFinal = JSON.parse(JSON.stringify(csvToJson[0]));
-   // Validate data
-   allLetters(jsonFinal.city, "city", errors);
-   allLetters(jsonFinal.country, "country", errors);
-   allNumeric(jsonFinal.patient_age, "patient_age", errors);
+   return jsonFinal;
+}
+
+// function to validate the data input
+function validateData(jsonFinal) {
+   var errors = "";
+   errors = allLetters(jsonFinal.city, "city", errors);
+   errors = allLetters(jsonFinal.country, "country", errors);
+   errors = allNumeric(jsonFinal.patient_age, "patient age", errors);
    var dateReg = /^\d{4}-\d{2}-\d{2}$/;
+   var dateError = "Collection Date should be in YYYY-MM-DD format"
    if(!dateReg.test(jsonFinal.collection_date)) {
-      alert("Collection Date should be in YYYY-MM-DD format");
+      alert(dateError);
+      errors = errors.concat("\n").concat(dateError);
       return errors;
    }
    var collDate = new Date(jsonFinal.collection_date);
    var timeS = collDate.getTime();
 
    if (typeof timeS !== 'number' || Number.isNaN(timeS)) {
-      alert("Collection Date should be in YYYY-MM-DD format");
+      alert(dateError);
+      errors = errors.concat("\n").concat(dateError);
    }
    return errors;
 }
@@ -289,4 +297,3 @@ function readTextFile(file, callback) {
     }
     rawFile.send(null);
 }
-
