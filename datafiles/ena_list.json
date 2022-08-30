@@ -1,5 +1,5 @@
 { 
-   "sample_name": "free_text",
+   "input_file": "free_text",
    "type_of_sample": ["Soil", "Seawater", "Feces", "Swabs"],
    "sequencing_method": ["Nanopore Minion", "Nanopore Gridion"],
    "isolation_source": ["Isolate"],
