@@ -19,14 +19,14 @@ from Bio import Phylo
 from io import StringIO
 import dataframe_image as dfi
 
-# def clean_sql_for_moss_run(input_dict):
-#     pass
-#
-# def update_sql_database():
-#     pass
-#
-# def evaluate_moss_run():
-#     pass
+def clean_sql_for_moss_run(input_dict):
+    pass
+
+def update_sql_database():
+    pass
+
+def evaluate_moss_run():
+    pass
 
 def validate_date_text(date_text):
     """Validates the date time format"""
