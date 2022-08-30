@@ -80,12 +80,12 @@ function create_metadata_table_fastq(){
         }
 
       var final_obj = {'samples': obj_list}
-
+      var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
       var output_json_file = `/opt/moss_db/${current_moss_system}/metadata_json/${experiment_name}.json`;
 
       if (errorMessage != "") {
-      console.error(errorMessage);
-      return;
+        console.error(errorMessage);
+        return;
       }
       //Here insert validation function for ENA compatibility
       if (fs.existsSync(output_json_file)) {
