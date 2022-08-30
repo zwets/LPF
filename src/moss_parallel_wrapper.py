@@ -33,6 +33,7 @@ def main(json_file):
         #     .format(entry_id, item['sample_name'], "Queued", "Queued", "Queued",
         #             "Queued", "Queued", ""), item['config_path'] + 'moss.db')
 
+        print (cmd)
     Parallel(n_jobs=1)(delayed(moss_analysis)(jobslist, i) for i in range(len(jobslist)))
     print ("Analysis complete")
 
