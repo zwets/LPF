@@ -5,6 +5,7 @@ import sys
 import argparse
 import json
 import moss_functions as moss
+import ast
 
 parser = argparse.ArgumentParser(description='.')
 parser.add_argument('-version', action='version', version='MOSS 1.1.0')
@@ -15,7 +16,9 @@ def moss_pipeline(input_dict):
     """
     Workflow for analysis pipeline
     """
-    print (input_dict)
+    json_data = ast.literal_eval(json.dumps(input_dict))
+
+    print(json_data)
     sys.exit()
     try:
         moss.validate_input(input_dict)
