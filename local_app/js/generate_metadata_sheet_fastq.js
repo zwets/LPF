@@ -75,7 +75,7 @@ function create_metadata_table_fastq(){
       for (var i = 0; i < rows.length-1; i++) {
             var new_obj = {};
             for (var t = 0; t < rows[i].cells.length; t++) {
-                new_obj[t] = document.getElementById(`input${[i]}${[t]}`).value;
+                new_obj[header_row.cells[t].innerHTML] = document.getElementById(`input${[i]}${[t]}`).value;
             }
             obj_list.push(new_obj);
 
