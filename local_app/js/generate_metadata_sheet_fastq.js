@@ -77,7 +77,7 @@ function create_metadata_table_fastq(){
                 }
             }
             new_obj['input_path'] = file_list_obj[i].path;
-            new_obj['config_path'] = '/opt/moss/' + require('/opt/moss_db/config.json')["current_working_db"];
+            new_obj['config_path'] = '/opt/moss_db/' + require('/opt/moss_db/config.json')["current_working_db"];
             var errorMessage = window.validateData(new_obj);
             obj_list.push(new_obj);
 
