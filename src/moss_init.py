@@ -13,19 +13,19 @@ from pathlib import Path
 
 def check_and_add_bookmarks(config_name):
     home = str(Path.home())
+    if os.path.exists("{}/.config/gtk-3.0/bookmarks".format(home)):
+        with open("{}/.config/gtk-3.0/bookmarks".format(home)) as fd:
+            data = fd.readlines()
+        new_bookmark_list = list()
+        for item in data:
+            if "moss" not in item:
+                new_bookmark_list.append(item.rstrip())
+        new_bookmark_list.append("file:///opt/moss_data")
+        new_bookmark_list.append("file:///opt/moss_db/{}/metadata_csv".format(config_name))
 
-    with open("{}/.config/gtk-3.0/bookmarks".format(home)) as fd:
-        data = fd.readlines()
-    new_bookmark_list = list()
-    for item in data:
-        if "moss" not in item:
-            new_bookmark_list.append(item.rstrip())
-    new_bookmark_list.append("file:///opt/moss_data")
-    new_bookmark_list.append("file:///opt/moss_db/{}/metadata_csv".format(config_name))
-
-    with open("{}/.config/gtk-3.0/bookmarks".format(home), 'w') as fd:
-        for item in new_bookmark_list:
-            fd.write(item + '\n')
+        with open("{}/.config/gtk-3.0/bookmarks".format(home), 'w') as fd:
+            for item in new_bookmark_list:
+                fd.write(item + '\n')
 
 
 parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
@@ -111,12 +111,3 @@ with open("/opt/moss_db/config.json", 'w') as f_out:
   json.dump(jsondict, f_out)
 f_out.close()
 
-# Generate config.json file
-jsondict = dict()
-jsondict["current_working_db"] = args.config_name
-with open("{}/sync_files/local_changes.json".format(config_name), 'w') as f_out:
-  json.dump(jsondict, f_out)
-f_out.close()
-
-cmd = "python3 /opt/moss/src/createGuppyWorkflowDict.py -current_working_db {}".format(args.config_name)
-os.system(cmd)

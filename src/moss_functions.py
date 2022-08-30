@@ -19,20 +19,21 @@ from Bio import Phylo
 from io import StringIO
 import dataframe_image as dfi
 
-def clean_sql_for_moss_run(input_dict):
-    pass
+# def clean_sql_for_moss_run(input_dict):
+#     pass
+#
+# def update_sql_database():
+#     pass
+#
+# def evaluate_moss_run():
+#     pass
 
-def update_sql_database():
-    pass
-
-def evaluate_moss_run():
-    pass
-
-def validate(date_text):
+def validate_date_text(date_text):
+    """Validates the date time format"""
     try:
         datetime.datetime.strptime(date_text, '%Y-%m-%d')
     except ValueError:
-        raise ValueError("Incorrect data format, should be YYYY-MM-DD")
+        raise ValueError("Incorrect data format, should be YYYY-MM-DD.")
 
 
 def validate_input(input_dict):
@@ -53,11 +54,14 @@ def validate_input(input_dict):
       "config_path": "/opt/moss_db/test/"
     }
     """
+    if not input_dict['input_file'] in input_dict['input_path']:
+        raise SystemExit('Input file does not match the input path.')
     if not input_dict['input_path'].endswith('.fastq.gz'):
-        sys.exit('Input file is not a fastq.gz file. Only gzipped files are accepted.')
-    validate(input_dict['collection_date'])
+        raise SystemExit('Input is not a fastq.gz file. Only this format is supported.')
+    if not input_dict['config_path'].startswith('/opt/moss_db'):
+        raise SystemExit('An unvalid config_path was given.')
+    validate_date_text(input_dict['collection_date'])
     print ('Validation complete')
-    return True
 
 def parse_finders(input_dict):
     input_dict['resfinder_hits'] = parse_kma_res("{}/finders/resfinder.res".format(input_dict['target_dir']))
@@ -452,7 +456,6 @@ def init_insert_reference_table(config_path):
     conn = sqlite3.connect(config_path + 'moss.db')
     c = conn.cursor()
     ids = list()
-
     for line in infile:
         line = line.rstrip()
         cmd = "/opt/moss/kma/kma seq2fasta -t_db {}/REFDB.ATG -seqs {}".format(config_path, t)
@@ -461,8 +464,7 @@ def init_insert_reference_table(config_path):
         output = proc.communicate()[0].decode()
         reference_header_text = output.split("\n")[0][1:]
         sequence = output.split("\n")[1]
-        entry_id = md5_of_file(sequence) #ID for references based on reference sequence
-        #TMP SOLUTION TO AVOID ENTRYCLASHES:
+        entry_id = md5_of_sequence(sequence) #ID for references based on reference sequence
         if entry_id not in ids:
             dbstring = "INSERT INTO reference_table(entry_id, reference_header_text) VALUES('{}', '{}')".format(entry_id, reference_header_text.replace("'", "''"))
             ids.append(entry_id)
