@@ -33,3 +33,5 @@ setuptool*
 /local_app/npm-debug.log*
 /local_app/yarn-debug.log*
 /local_app/yarn-error.log*
+
+/.idea
