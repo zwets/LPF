@@ -13,8 +13,8 @@ def main(args):
         os.system(
             "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
         os.system("pip install -r requirements.txt")
-        os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
-        os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
+        os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..; mv kma src/.;")
+        os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..; mv ccphylo src/.;")
         os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; ../../kma/kma_index -i */*.fsa -o all -k 16 -m 14; cd ..; cd ..;")
         download_finder_dbs()
 
@@ -39,8 +39,8 @@ def main(args):
         #os.system('sudo groupadd docker; sudo usermod -aG docker $USER; newgrp docker;')
         os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
         os.system("pip install -r requirements.txt")
-        os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..")
-        os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;")
+        os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; cd ..; mv kma src/.;")
+        os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..; mv ccphylo src/.;")
         os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;")
         install_app()
         path_list = ["/opt/moss_db", "/opt/moss_data/", "/opt/moss_data/fast5/", "/opt/moss_data/fastq/"]
@@ -76,9 +76,9 @@ def download_finder_dbs():
     os.system("git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git")
     os.system("git clone https://git@bitbucket.org/genomicepidemiology/resfinder_db.git resfinder_db")
     os.system("git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git")
-    os.system("kma/kma_index -i plasmidfinder_db/*.fsa -o plasmidfinder_db/all")
-    os.system("kma/kma_index -i resfinder_db/*.fsa -o resfinder_db/all")
-    os.system("kma/kma_index -i virulencefinder_db/*.fsa -o virulencefinder_db/all")
+    os.system("src/kma/kma_index -i plasmidfinder_db/*.fsa -o plasmidfinder_db/all")
+    os.system("src/kma/kma_index -i resfinder_db/*.fsa -o resfinder_db/all")
+    os.system("src/kma/kma_index -i virulencefinder_db/*.fsa -o virulencefinder_db/all")
 
 def install_app():
     os.system("cd local_app; chmod a+x moss_launch; npm i; ./node_modules/.bin/electron-rebuild; npm run dist;sudo cp moss.desktop /usr/share/applications/.; cd ..")

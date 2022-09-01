@@ -26,7 +26,7 @@ def clean_sql_for_moss_run(input_dict):
               " time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("Run Failed", input_dict['sample_name'], "Run failed", "0", "0", "Run failed",
                 str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
-    sql_execute_command(sql_cmd, input_dict['moss_db'])
+    return sql_cmd
 
 def completed_run_update_sql_database(r_type, input_dict):
     if r_type == 'alignment':
@@ -42,7 +42,6 @@ def completed_run_update_sql_database(r_type, input_dict):
                     input_dict['entry_id'])
         sql_execute_command(sql_cmd, input_dict['moss_db'])
 
-
 def evaluate_moss_run():
     return 'alignment'
 
@@ -52,7 +51,6 @@ def validate_date_text(date_text):
         datetime.datetime.strptime(date_text, '%Y-%m-%d')
     except ValueError:
         raise ValueError("Incorrect data format, should be YYYY-MM-DD.")
-
 
 def validate_input(input_dict):
     """
@@ -175,7 +173,7 @@ def moss_run(input_dict):
 
     input_dict = make_phytree_output_folder(input_dict)
 
-    cmd = "/opt/moss/ccphylo/ccphylo dist --input {0}/phytree_output/* --reference \"{1}\" --min_cov 0.01" \
+    cmd = "ccphylo/ccphylo dist --input {0}/phytree_output/* --reference \"{1}\" --min_cov 0.01" \
           " --normalization_weight 0 --output {0}/phytree_output/distance_matrix"\
         .format(input_dict['target_dir'], input_dict['reference_header_text'])
     os.system(cmd)
@@ -197,7 +195,7 @@ def moss_run(input_dict):
                 input_dict['entry_id'])
     sql_execute_command(sql_cmd, input_dict['moss_db'])
 
-    os.system("/opt/moss/ccphylo/ccphylo tree --input {0}/phytree_output/distance_matrix --output {0}/phytree_output/tree.newick"\
+    os.system("ccphylo/ccphylo tree --input {0}/phytree_output/distance_matrix --output {0}/phytree_output/tree.newick"\
         .format(input_dict['target_dir']))
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\"," \
@@ -306,7 +304,6 @@ def parse_kma_res(filename):
 def kma_finders(arguments, output_name, input_dict, database):
     os.system("/opt/moss/kma/kma -i {} -o {}/finders/{} -t_db {} {}".format(input_dict['input_path'], input_dict['target_dir'], output_name, database, arguments))
 
-
 def derive_finalized_filenames(input_dir):
     """
     Either, directory have barcode01-barocdeX subdirectories. if so:
@@ -354,7 +351,6 @@ def derive_finalized_filenames(input_dir):
 
     return ["test", "test2"]
 
-
 def create_directory_from_dict(dict, path):
     for directory in dict:
         os.system("mkdir {}{}".format(path, directory))
@@ -391,15 +387,12 @@ def moss_mkfs(config_path, entry_id):
     os.system("mkdir {}".format(target_dir))
     os.system("mkdir {}/finders".format(target_dir))
 
-
 def moss_init(input_dict):
     input_dict['entry_id'] = md5_of_file(input_dict['input_path'])
     input_dict['sample_name'] = input_dict['input_path'].split("/")[-1][0:-9]
     input_dict['moss_db'] = "{}/moss.db".format(input_dict['config_path'])
     input_dict['ref_db'] = "{}/REFDB.ATG".format(input_dict['config_path'])
     input_dict['target_dir'] = "{}/analysis/{}/".format(input_dict['config_path'], input_dict['entry_id'])
-
-    check_unique_entry_id(input_dict['entry_id'], input_dict['moss_db'])
     print ('input loaded')
     return input_dict
 
@@ -469,7 +462,7 @@ def init_insert_reference_table(config_path):
     ids = list()
     for line in infile:
         line = line.rstrip()
-        cmd = "/opt/moss/kma/kma seq2fasta -t_db {}/REFDB.ATG -seqs {}".format(config_path, t)
+        cmd = "kma/kma seq2fasta -t_db {}/REFDB.ATG -seqs {}".format(config_path, t)
         proc = subprocess.Popen(cmd, shell=True,
                                 stdout=subprocess.PIPE, )
         output = proc.communicate()[0].decode()
@@ -511,78 +504,7 @@ def run_assembly(input_dict):
 def init_moss_variables(config_path, ):
     referenceSyncFile = config_path + "syncFiles/referenceSync.json"
     isolateSyncFile = config_path + "syncFiles/isolateSync.json"
-    return "/opt/moss/kma/kma"
-
-def update_pip_dependencies():
-    cmd = "python3 -m pip install --upgrade fpdf"
-    os.system(cmd)
-    cmd = "python3 -m pip install --upgrade tabulate biopython cgecore gitpython python-dateutil"
-    os.system(cmd)
-    pip_list = ["geocoder", "pandas", "geopy", "Nominatim"]
-    for item in pip_list:
-        cmd = "pip install --upgrade {}".format(item)
-        os.system(cmd)
-
-def update_moss_dependencies(laptop, update_list, force):
-    if force:
-        if laptop:
-            print ("laptop FORCE TBD")
-        else:
-            cmd = "cd /opt/moss/"
-            os.system(cmd)
-            cmd = "rm -rf kma; rm -rf ccphylo; rm -rf mlst; rm -rf resfinder; rm -rf plasmidfinder; rm -rf virulencefinder;"
-            os.system(cmd)
-            cmd = "git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; git checkout nano; make; cd ..;"
-            os.system(cmd)
-            cmd = "git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;"
-            os.system(cmd)
-            cmd = "git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;"
-            os.system(cmd)
-            cmd = "git clone https://git@bitbucket.org/genomicepidemiology/resfinder.git; cd resfinder; git checkout nanopore_flag; git clone https://git@bitbucket.org/genomicepidemiology/resfinder_db.git db_resfinder; cd db_resfinder; git checkout minimizer_implementation; python3 INSTALL.py ../../kma/kma_index non_interactive; cd ..; git clone https://git@bitbucket.org/genomicepidemiology/pointfinder_db.git db_pointfinder; cd db_pointfinder; python3 INSTALL.py ../../kma/kma_index non_interactive; cd ..; cd ..;"
-            os.system(cmd)
-            cmd = "git clone https://bitbucket.org/genomicepidemiology/plasmidfinder.git; cd plasmidfinder; git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git; cd plasmidfinder_db; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;"
-            os.system(cmd)
-            cmd = "git clone https://bitbucket.org/genomicepidemiology/virulencefinder.git; cd virulencefinder; git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git; cd virulencefinder_db; python3 INSTALL.py ../../kma/kma_index; cd ..; cd ..;"
-            os.system(cmd)
-            cmd = "apt-get install r-base"
-            os.system(cmd)
-            cmd = "apt install nodejs"
-            os.system(cmd)
-            cmd = "apt install npm"
-            os.system(cmd)
-            cmd = "apt install python3-pip"
-            os.system(cmd)
-            cmd = "apt install docker.io;  systemctl enable --now docker;  usermod -a -G docker $USER;"
-            os.system(cmd)
-
-    else:
-        if laptop:
-            print ("laptop SOFT TBD")
-        else:
-            if "kma" in update_list:
-                cmd = "cd /opt/moss/"
-                os.system(cmd)
-                cmd = "git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; git checkout nano; make; cd ..;"
-                os.system(cmd)
-            if "ccphylo" in update_list:
-                cmd = "cd /opt/moss/"
-                os.system(cmd)
-                cmd = "git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; cd ..;"
-                os.system(cmd)
-            if "docker" in update_list:
-                print ("Please make a manual installation of Docker and then run the python docker_images.py script")
-            if "r" in update_list:
-                cmd = " apt-get install r-base"
-                os.system(cmd)
-            if "npm" in update_list:
-                cmd = " apt install npm"
-                os.system(cmd)
-            if "python3-pip" in update_list:
-                cmd = " apt install python3-pip"
-                os.system(cmd)
-            if "conda" in update_list:
-                print ("Please download conda manually for a full installation!")
-    update_pip_dependencies()
+    return "kma/kma"
 
 def varify_tool(cmd, expected, index_start, index_end):
     proc = subprocess.Popen(cmd, shell=True,
@@ -597,9 +519,9 @@ def varify_tool(cmd, expected, index_start, index_end):
 
 def varify_all_dependencies(laptop):
     update_list = []
-    if not varify_tool("/opt/moss/kma/kma -v", '1.3.24', -8, -2):#KMA, expected: KMA-1.3.24+
+    if not varify_tool("kma/kma -v", '1.3.24', -8, -2):#KMA, expected: KMA-1.3.24+
         update_list.append("kma")
-    if not varify_tool("/opt/moss/ccphylo/ccphylo -v", '0.5.3', -6, -1): #ccphylo, expected: CCPhylo-0.5.3
+    if not varify_tool("ccphylo/ccphylo -v", '0.5.3', -6, -1): #ccphylo, expected: CCPhylo-0.5.3
         update_list.append("ccphylo")
     if not varify_tool("docker -v", '20.10.8', 15, 22): #docker, Docker version 20.10.8, build 3967b7d28e
         update_list.append("docker")
@@ -636,7 +558,7 @@ def run_mlst(input_dict):
         cmd = "mkdir {}/mlstresults".format(input_dict['target_dir'])
         os.system(cmd)
         cmd = "python3 /opt/moss/mlst/mlst.py -i {} -o {}mlstresults" \
-              " -mp /opt/moss/kma/kma -p /opt/moss/mlst/mlst_db/ -s {} -nano"\
+              " -mp kma/kma -p mlst/mlst_db/ -s {} -nano"\
             .format(input_dict['input_path'], input_dict['target_dir'], mlst_dict[specie])
         os.system(cmd)
         input_dict['mlst'] = specie
@@ -711,7 +633,7 @@ def check_alignment_kma_cov(file):
     return coverage
 
 def kma_mapping(input_dict):
-    os.system("/opt/moss/kma/kma -i {} -o {}kma_mapping -t_db {}/REFDB.ATG"
+    os.system("kma/kma -i {} -o {}kma_mapping -t_db {}/REFDB.ATG"
               " -ID 0 -nf -mem_mode -sasm -ef -1t1".format(input_dict['input_path'], input_dict['target_dir'], input_dict['config_path']))
     num_lines = sum(1 for line in open("{}kma_mapping.res".format(input_dict['target_dir']))) #1 line is empty, more have hits.
     template_score = 0
@@ -743,7 +665,7 @@ def kma_mapping(input_dict):
         return input_dict
 
 def nanopore_alignment(input_dict):
-    cmd = "/opt/moss/kma/kma -i {} -o {}{} -t_db {}/REFDB.ATG -mint3 -Mt1 {} -t 8"\
+    cmd = "kma/kma -i {} -o {}{} -t_db {}/REFDB.ATG -mint3 -Mt1 {} -t 8"\
         .format(input_dict['input_path'], input_dict['target_dir'], input_dict['consensus_name'][:-4],
                 input_dict['config_path'], str(input_dict['template_number']))
     os.system(cmd)
@@ -792,7 +714,6 @@ def md5_of_file(file_path):
         m.update(lines)
     md5code = m.hexdigest()
     return md5code
-
 
 def ThreshholdDistanceCheck(distancematrixfile, input_dict):
     infile = open(distancematrixfile, 'r')
@@ -846,7 +767,7 @@ def flye_assembly(input_dict):
             print(new_header_text, file=outfile)
             print(sequence, file=outfile)
 
-    os.system("/opt/moss/kma/kma index -t_db {} -i {}{}_assembly.fasta"\
+    os.system("kma/kma index -t_db {} -i {}{}_assembly.fasta"\
         .format(input_dict['ref_db'], input_dict['target_dir'], input_dict['sample_name']))
 
     #c = conn.cursor()

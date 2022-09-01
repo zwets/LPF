@@ -1,6 +1,24 @@
 from unittest import TestCase
 import src.moss_functions as moss
 import json
+import sqlvalidator
+
+
+class TestSqlCommands(TestCase):
+    def setUp(self):
+        with open('tests/resources/data_for_tests/json/assembly_test.json') as json_file:
+            test_json = json.load(json_file)
+        self.input_dict = moss.moss_init(test_json)
+
+
+
+    def test_clean_sql_for_moss_run(self):
+        cmd = moss.clean_sql_for_moss_run(self.input_dict)
+        print (cmd)
+        sql_query = sqlvalidator.parse(cmd)
+        print (sql_query)
+        print (sql_query.is_valid())
+        self.assertTrue(sql_query.is_valid(), 'clean_sql_for_moss_run command was not valid')
 
 class TestValidateDateText(TestCase):
     def setUp(self):

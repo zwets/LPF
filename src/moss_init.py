@@ -11,6 +11,9 @@ import json
 import sqlite3
 from pathlib import Path
 
+def create_sql_db():
+    pass
+
 def check_and_add_bookmarks(config_name):
     home = str(Path.home())
     if os.path.exists("{}/.config/gtk-3.0/bookmarks".format(home)):
@@ -34,7 +37,7 @@ parser.add_argument("-config_name", action="store", dest="config_name", help="En
 
 args = parser.parse_args()
 
-kma_path = "/opt/moss/kma/kma"
+kma_path = "kma/kma"
 config_name = args.config_name
 
 check_and_add_bookmarks(config_name)
@@ -75,7 +78,7 @@ conn = sqlite3.connect(config_name + 'moss.db')
 c = conn.cursor()
 
 metadata_string = ""
-with open("/opt/moss/datafiles/ena_list.json") as json_file:
+with open("../datafiles/ena_list.json") as json_file:
     data = json.load(json_file)
 for item in data:
     if '\ufeff' in item:
