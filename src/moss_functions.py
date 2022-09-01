@@ -20,13 +20,31 @@ from io import StringIO
 import dataframe_image as dfi
 
 def clean_sql_for_moss_run(input_dict):
-    pass
+    print ('cleaning sql for failed run.')
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\"," \
+              " type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\"," \
+              " time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Run Failed", input_dict['sample_name'], "Run failed", "0", "0", "Run failed",
+                str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
 
-def update_sql_database():
-    pass
+def completed_run_update_sql_database(r_type, input_dict):
+    if r_type == 'alignment':
+        sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+            .format("Completed", input_dict['sample_name'], "Alignment", "10", "10", "Completed",
+                    str(datetime.datetime.now())[0:-7],
+                    input_dict['entry_id'])
+        sql_execute_command(sql_cmd, input_dict['moss_db'])
+    elif r_type == 'assembly':
+        sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+            .format("Completed", input_dict['sample_name'], "Assembly", "5", "5", "Assembly",
+                    str(datetime.datetime.now())[0:-7],
+                    input_dict['entry_id'])
+        sql_execute_command(sql_cmd, input_dict['moss_db'])
+
 
 def evaluate_moss_run():
-    pass
+    return 'alignment'
 
 def validate_date_text(date_text):
     """Validates the date time format"""
@@ -117,7 +135,7 @@ def moss_run(input_dict):
 
     input_dict = kma_mapping(input_dict)
 
-    associated_species = "{} - assembly from ID: {}".format(input_dict['reference_header_text'], input_dict['entry_id'])
+    input_dict['associated_species'] = "{} - assembly from ID: {}".format(input_dict['reference_header_text'], input_dict['entry_id'])
 
     run_mlst(input_dict)
 
@@ -167,10 +185,10 @@ def moss_run(input_dict):
     print (distance)
     if distance == None:
         print ("NONE HERE") #Work cataches
-        associated_species = "{} - assembly from ID: {}".format(input_dict['reference_header_text'], input_dict['entry_id'])
+        input_dict['associated_species'] = "{} - assembly from ID: {}".format(input_dict['reference_header_text'], input_dict['entry_id'])
         run_assembly(input_dict)
     elif distance > 300:  # SNP distance
-        associated_species = "{} - assembly from ID: {}".format(input_dict['reference_header_text'],
+        input_dict['associated_species'] = "{} - assembly from ID: {}".format(input_dict['reference_header_text'],
                                                           input_dict['entry_id'])
         run_assembly(input_dict)
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\"," \
@@ -201,14 +219,6 @@ def moss_run(input_dict):
     sql_execute_command(sql_cmd, input_dict['moss_db'])
 
     compileReportAlignment(input_dict)
-
-    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("Completed", input_dict['sample_name'], "Alignment", "10", "10", "Completed", str(datetime.datetime.now())[0:-7],
-                input_dict['entry_id'])
-    sql_execute_command(sql_cmd, input_dict['moss_db'])
-
-
-    #    input_dict = push_finders_data_sql(input_dict) INSERT AFTER
 
 def derive_phenotype_amr(genes, database):
     new_genes = list()
