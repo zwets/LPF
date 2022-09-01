@@ -13,7 +13,7 @@
       "patient_age": "",
       "type_of_infection": "",
       "experimental_condition": "",
-      "config_path": "/opt/moss_db/test/"
+      "config_path": "tests/resources/data_for_tests/database/"
     }
   ]
 }
