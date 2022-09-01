@@ -69,8 +69,16 @@ directory_structure = {
 
 }
 moss.create_directory_from_dict(directory_structure, config_name)
-print (os.getcwd())
-moss.create_sql_db(config_name, '../datafiles/ena_list.json')
+if os.path.exists('/opt/moss/datafiles/ena_list.json'):
+    file = '/opt/moss/datafiles/ena_list.json'
+elif os.path.exists('datafiles/ena_list.json'):
+    file = 'datafiles/ena_list.json'
+elif os.path.exists('../datafiles/ena_list.json'):
+    file = '../datafiles/ena_list.json'
+else:
+    sys.exit('Could not located datafiles directory')
+
+moss.create_sql_db(config_name, file)
 
 # Generate config.json file
 jsondict = dict()
