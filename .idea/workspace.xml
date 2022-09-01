@@ -2,16 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="75692dd5-65dc-4ae9-8670-89fea401a678" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.coverage" beforeDir="false" afterPath="$PROJECT_DIR$/.coverage" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/moss_functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/moss_functions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/moss_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/moss_init.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/resources/data_for_tests/database/test_db.ATG.comp.b" beforeDir="false" afterPath="$PROJECT_DIR$/tests/resources/data_for_tests/database/REFDB.ATG.comp.b" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/resources/data_for_tests/database/test_db.ATG.length.b" beforeDir="false" afterPath="$PROJECT_DIR$/tests/resources/data_for_tests/database/REFDB.ATG.length.b" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/resources/data_for_tests/database/test_db.ATG.name" beforeDir="false" afterPath="$PROJECT_DIR$/tests/resources/data_for_tests/database/REFDB.ATG.name" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/resources/data_for_tests/database/test_db.ATG.seq.b" beforeDir="false" afterPath="$PROJECT_DIR$/tests/resources/data_for_tests/database/REFDB.ATG.seq.b" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/unit/test_python_unittests.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/unit/test_python_unittests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ubuntu_22_install.py" beforeDir="false" afterPath="$PROJECT_DIR$/ubuntu_22_install.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/resources/data_for_tests/json/alignment_test.json" beforeDir="false" afterPath="$PROJECT_DIR$/tests/resources/data_for_tests/json/alignment_test.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/resources/data_for_tests/json/assembly_test.json" beforeDir="false" afterPath="$PROJECT_DIR$/tests/resources/data_for_tests/json/assembly_test.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
