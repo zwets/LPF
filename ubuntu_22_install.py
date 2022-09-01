@@ -8,6 +8,8 @@ parser.add_argument("-action", action="store_true", default = False, dest="actio
 args = parser.parse_args()
 
 def main(args):
+    if not os.path.exists('~/bin/'):
+        os.system('sudo mkdir ~/bin/')
     if args.action:
         cwd = os.getcwd()
         os.system(
