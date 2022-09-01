@@ -31,7 +31,7 @@ def main(json_file):
             "INSERT INTO status_table(entry_id, sample_name, status,"
             " type, current_stage, final_stage, result, time_stamp)"
             " VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')" \
-            .format(entry_id, item['sample_name'], "Queued", "Queued", "Queued",
+            .format(entry_id, input_dict['input_path'].split("/")[-1][0:-9], "Queued", "Queued", "Queued",
                     "Queued", "Queued", ""), item['config_path'] + 'moss.db')
     Parallel(n_jobs=1)(delayed(moss_analysis)(jobslist, i) for i in range(len(jobslist)))
     print ("Analysis complete")
