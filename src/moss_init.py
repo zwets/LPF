@@ -69,7 +69,7 @@ directory_structure = {
 
 }
 moss.create_directory_from_dict(directory_structure, config_name)
-
+print (os.getcwd())
 moss.create_sql_db(config_name, '../datafiles/ena_list.json')
 
 # Generate config.json file
