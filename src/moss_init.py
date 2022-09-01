@@ -29,7 +29,7 @@ def check_and_add_bookmarks(config_name):
 
 
 parser = argparse.ArgumentParser(description='MinION-Typer-2.0')
-parser.add_argument('-kmaindex_db_path', action="store", type=str, dest='kmaindex_db_path', default="", help='Path a .ATG kma-index database that is desired to be used a references. It is expected that both the .ATG.name file and .ATG.seq.b file is present in this directory, and that NO OTHER files are present. http://www.cbs.dtu.dk/public/CGE/databases/KmerFinder/version/20190108_stable/ link to bacteria.tar.gz, which is a good option for a starting database')
+parser.add_argument('-db', action="store", type=str, dest='db', default="", help='Path a .ATG kma-index database that is desired to be used a references. It is expected that both the .ATG.name file and .ATG.seq.b file is present in this directory, and that NO OTHER files are present. http://www.cbs.dtu.dk/public/CGE/databases/KmerFinder/version/20190108_stable/ link to bacteria.tar.gz, which is a good option for a starting database')
 parser.add_argument("-config_name", action="store", dest="config_name", help="Enter a name for your configuration file.")
 
 args = parser.parse_args()
@@ -39,7 +39,7 @@ config_name = args.config_name
 
 check_and_add_bookmarks(config_name)
 
-kmaindex_db_path = moss.correctPathCheck(args.kmaindex_db_path)
+db = moss.correctPathCheck(args.db)
 
 if not os.path.exists("/opt/moss_db"):
     sys.exit("MOSS has not been correctly initialized. no /opt/moss_db exists")
@@ -52,10 +52,10 @@ else:
 config_name = "/opt/moss_db/{}/".format(config_name)
 
 print ("cloning reference DB, if you are using a big reference DB, this might take a while")
-os.system("cp {}*.ATG.comp.b {}REFDB.ATG.comp.b".format(kmaindex_db_path, config_name))
-os.system("cp {}*.ATG.length.b {}REFDB.ATG.length.b".format(kmaindex_db_path, config_name))
-os.system("cp {}*.ATG.seq.b {}REFDB.ATG.seq.b".format(kmaindex_db_path, config_name))
-os.system("cp {}*.ATG.name {}REFDB.ATG.name".format(kmaindex_db_path, config_name))
+os.system("cp {}*.ATG.comp.b {}REFDB.ATG.comp.b".format(db, config_name))
+os.system("cp {}*.ATG.length.b {}REFDB.ATG.length.b".format(db, config_name))
+os.system("cp {}*.ATG.seq.b {}REFDB.ATG.seq.b".format(db, config_name))
+os.system("cp {}*.ATG.name {}REFDB.ATG.name".format(db, config_name))
 print ("cloning reference DB complete")
 
 directory_structure = {
