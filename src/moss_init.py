@@ -11,9 +11,6 @@ import json
 import sqlite3
 from pathlib import Path
 
-def create_sql_db():
-    pass
-
 def check_and_add_bookmarks(config_name):
     home = str(Path.home())
     if os.path.exists("{}/.config/gtk-3.0/bookmarks".format(home)):
@@ -73,39 +70,7 @@ directory_structure = {
 }
 moss.create_directory_from_dict(directory_structure, config_name)
 
-
-conn = sqlite3.connect(config_name + 'moss.db')
-c = conn.cursor()
-
-metadata_string = ""
-with open("../datafiles/ena_list.json") as json_file:
-    data = json.load(json_file)
-for item in data:
-    if '\ufeff' in item:
-        item = item.replace(u'\ufeff', '')
-    metadata_string += "{} TEXT,".format(item)
-metadata_string = metadata_string[:-1]
-
-c.execute("""CREATE TABLE IF NOT EXISTS sample_table(entry_id TEXT PRIMARY KEY, sample_name TEXT, reference_id TEXT, amr_genes TEXT, virulence_genes TEXT, plasmids TEXT, consensus_name TEXT, mlst TEXT)""")
-conn.commit()
-c.execute("""CREATE TABLE IF NOT EXISTS reference_table(entry_id TEXT PRIMARY KEY, reference_header_text TEXT)""") #Mangler finder results. Implement eventually
-conn.commit()
-c.execute("""CREATE TABLE IF NOT EXISTS metadata_table(entry_id TEXT PRIMARY KEY, {})""".format(metadata_string))
-conn.commit()
-c.execute("""CREATE TABLE IF NOT EXISTS status_table(entry_id TEXT PRIMARY KEY, sample_name TEXT, status TEXT, type TEXT, current_stage TEXT, final_stage TEXT, result TEXT, time_stamp TEXT)""")
-conn.commit()
-c.execute( """CREATE TABLE IF NOT EXISTS sync_table(last_sync TEXT, sync_round TEXT)""")
-conn.commit()
-c.execute( """CREATE TABLE IF NOT EXISTS basecalling_table(name TEXT PRIMARY KEY, status TEXT, start_time TEXT, end_time TEXT)""")
-conn.commit()
-dbstring = "INSERT INTO sync_table(last_sync) VALUES('{}')".format(str(datetime.datetime.now())[0:-7])
-c.execute(dbstring)
-conn.commit()
-conn.close()
-#Can we add tables for genes with pointers? Better solution!
-
-
-moss.init_insert_reference_table(config_name)
+moss.create_sql_db(config_name, '../datafiles/ena_list.json')
 
 # Generate config.json file
 jsondict = dict()

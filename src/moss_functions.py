@@ -19,12 +19,48 @@ from Bio import Phylo
 from io import StringIO
 import dataframe_image as dfi
 
+def create_sql_db(config_name, json_file):
+    conn = sqlite3.connect(config_name + 'moss.db')
+    c = conn.cursor()
+
+    metadata_string = ""
+    with open(json_file) as json_file:
+        data = json.load(json_file)
+    for item in data:
+        if '\ufeff' in item:
+            item = item.replace(u'\ufeff', '')
+        metadata_string += "{} TEXT,".format(item)
+    metadata_string = metadata_string[:-1]
+
+    c.execute(
+        """CREATE TABLE IF NOT EXISTS sample_table(entry_id TEXT PRIMARY KEY, sample_name TEXT, reference_id TEXT, amr_genes TEXT, virulence_genes TEXT, plasmids TEXT, consensus_name TEXT, mlst TEXT)""")
+    conn.commit()
+    c.execute(
+        """CREATE TABLE IF NOT EXISTS reference_table(entry_id TEXT PRIMARY KEY, reference_header_text TEXT)""")  # Mangler finder results. Implement eventually
+    conn.commit()
+    c.execute("""CREATE TABLE IF NOT EXISTS metadata_table(entry_id TEXT PRIMARY KEY, {})""".format(metadata_string))
+    conn.commit()
+    c.execute(
+        """CREATE TABLE IF NOT EXISTS status_table(entry_id TEXT PRIMARY KEY, sample_name TEXT, status TEXT, type TEXT, current_stage TEXT, final_stage TEXT, result TEXT, time_stamp TEXT)""")
+    conn.commit()
+    c.execute("""CREATE TABLE IF NOT EXISTS sync_table(last_sync TEXT, sync_round TEXT)""")
+    conn.commit()
+    c.execute(
+        """CREATE TABLE IF NOT EXISTS basecalling_table(name TEXT PRIMARY KEY, status TEXT, start_time TEXT, end_time TEXT)""")
+    conn.commit()
+    dbstring = "INSERT INTO sync_table(last_sync) VALUES('{}')".format(str(datetime.datetime.now())[0:-7])
+    c.execute(dbstring)
+    conn.commit()
+    conn.close()
+
+    init_insert_reference_table(config_name)
+
 def clean_sql_for_moss_run(input_dict):
     print ('cleaning sql for failed run.')
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\"," \
               " type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\"," \
               " time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("Run Failed", input_dict['sample_name'], "Run failed", "0", "0", "Run failed",
+        .format("Run failed", input_dict['sample_name'], "Run failed", "0", "0", "Run failed",
                 str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
     return sql_cmd
 
@@ -41,6 +77,8 @@ def completed_run_update_sql_database(r_type, input_dict):
                     str(datetime.datetime.now())[0:-7],
                     input_dict['entry_id'])
         sql_execute_command(sql_cmd, input_dict['moss_db'])
+    else:
+        return None
 
 def evaluate_moss_run():
     return 'alignment'
@@ -150,7 +188,7 @@ def moss_run(input_dict):
     nanopore_alignment(input_dict)
 
     input_dict['reference_id'] = sql_fetch_one("SELECT entry_id FROM reference_table WHERE reference_header_text = '{}'"
-                                 .format(input_dict['reference_header_text']), input_dict['config_path'])[0]
+                                 .format(input_dict['reference_header_text']), input_dict['moss_db'])[0]
 
     sql_execute_command("UPDATE sample_table SET reference_id = '{}' WHERE entry_id = '{}'"
                         .format(input_dict['reference_id'], input_dict['entry_id']), input_dict['moss_db'])
@@ -163,7 +201,7 @@ def moss_run(input_dict):
         "UPDATE sample_table SET consensus_name = '{}' WHERE entry_id = '{}'"
             .format(input_dict['consensus_name'], input_dict['entry_id']), input_dict['moss_db'])
     input_dict['isolate_list'] = sql_fetch_all("SELECT consensus_name FROM sample_table WHERE reference_id = '{}'"
-            .format(input_dict['reference_id']), input_dict['config_path'])
+            .format(input_dict['reference_id']), input_dict['moss_db'])
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\"," \
               " final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
@@ -173,7 +211,7 @@ def moss_run(input_dict):
 
     input_dict = make_phytree_output_folder(input_dict)
 
-    cmd = "ccphylo/ccphylo dist --input {0}/phytree_output/* --reference \"{1}\" --min_cov 0.01" \
+    cmd = "~/bin/ccphylo dist --input {0}/phytree_output/* --reference \"{1}\" --min_cov 0.01" \
           " --normalization_weight 0 --output {0}/phytree_output/distance_matrix"\
         .format(input_dict['target_dir'], input_dict['reference_header_text'])
     os.system(cmd)
@@ -195,7 +233,7 @@ def moss_run(input_dict):
                 input_dict['entry_id'])
     sql_execute_command(sql_cmd, input_dict['moss_db'])
 
-    os.system("ccphylo/ccphylo tree --input {0}/phytree_output/distance_matrix --output {0}/phytree_output/tree.newick"\
+    os.system("~/bin/ccphylo tree --input {0}/phytree_output/distance_matrix --output {0}/phytree_output/tree.newick"\
         .format(input_dict['target_dir']))
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\"," \
@@ -302,7 +340,7 @@ def parse_kma_res(filename):
     return item_list
 
 def kma_finders(arguments, output_name, input_dict, database):
-    os.system("/opt/moss/kma/kma -i {} -o {}/finders/{} -t_db {} {}".format(input_dict['input_path'], input_dict['target_dir'], output_name, database, arguments))
+    os.system("~/bin/kma -i {} -o {}/finders/{} -t_db {} {}".format(input_dict['input_path'], input_dict['target_dir'], output_name, database, arguments))
 
 def derive_finalized_filenames(input_dir):
     """
@@ -358,16 +396,16 @@ def create_directory_from_dict(dict, path):
             os.system("mkdir {}{}/{}".format(path, directory, subdirectory))
     return True
 
-def sql_fetch_one(string, config_path):
-    conn = sqlite3.connect("{}/moss.db".format(config_path))
+def sql_fetch_one(string, moss_db):
+    conn = sqlite3.connect(moss_db)
     c = conn.cursor()
     c.execute(string)
     data = c.fetchone()
     conn.close()
     return data
 
-def sql_fetch_all(string, config_path):
-    conn = sqlite3.connect("{}/moss.db".format(config_path))
+def sql_fetch_all(string, moss_db):
+    conn = sqlite3.connect(moss_db)
     c = conn.cursor()
     c.execute(string)
     data = c.fetchall()
@@ -418,7 +456,7 @@ def make_phytree_output_folder(input_dict):
         os.system(cmd)
 
     input_dict['header_name'] = input_dict['reference_header_text'].split()[0] + '.fsa'
-    cmd = "/opt/moss/kma/kma seq2fasta -t_db {} -seqs {} > {}/phytree_output/{}"\
+    cmd = "~/bin/kma seq2fasta -t_db {} -seqs {} > {}/phytree_output/{}"\
         .format(input_dict['ref_db'], input_dict['template_number'], input_dict['target_dir'], input_dict['header_name'])
     os.system(cmd)
 
@@ -462,7 +500,7 @@ def init_insert_reference_table(config_path):
     ids = list()
     for line in infile:
         line = line.rstrip()
-        cmd = "kma/kma seq2fasta -t_db {}/REFDB.ATG -seqs {}".format(config_path, t)
+        cmd = "~/bin/kma seq2fasta -t_db {}/REFDB.ATG -seqs {}".format(config_path, t)
         proc = subprocess.Popen(cmd, shell=True,
                                 stdout=subprocess.PIPE, )
         output = proc.communicate()[0].decode()
@@ -504,7 +542,7 @@ def run_assembly(input_dict):
 def init_moss_variables(config_path, ):
     referenceSyncFile = config_path + "syncFiles/referenceSync.json"
     isolateSyncFile = config_path + "syncFiles/isolateSync.json"
-    return "kma/kma"
+    return "~/bin/kma"
 
 def varify_tool(cmd, expected, index_start, index_end):
     proc = subprocess.Popen(cmd, shell=True,
@@ -519,9 +557,9 @@ def varify_tool(cmd, expected, index_start, index_end):
 
 def varify_all_dependencies(laptop):
     update_list = []
-    if not varify_tool("kma/kma -v", '1.3.24', -8, -2):#KMA, expected: KMA-1.3.24+
+    if not varify_tool("~/bin/kma -v", '1.3.24', -8, -2):#KMA, expected: KMA-1.3.24+
         update_list.append("kma")
-    if not varify_tool("ccphylo/ccphylo -v", '0.5.3', -6, -1): #ccphylo, expected: CCPhylo-0.5.3
+    if not varify_tool("~/bin/ccphylo -v", '0.5.3', -6, -1): #ccphylo, expected: CCPhylo-0.5.3
         update_list.append("ccphylo")
     if not varify_tool("docker -v", '20.10.8', 15, 22): #docker, Docker version 20.10.8, build 3967b7d28e
         update_list.append("docker")
@@ -558,7 +596,7 @@ def run_mlst(input_dict):
         cmd = "mkdir {}/mlstresults".format(input_dict['target_dir'])
         os.system(cmd)
         cmd = "python3 /opt/moss/mlst/mlst.py -i {} -o {}mlstresults" \
-              " -mp kma/kma -p mlst/mlst_db/ -s {} -nano"\
+              " -mp ~/bin/kma -p mlst/mlst_db/ -s {} -nano"\
             .format(input_dict['input_path'], input_dict['target_dir'], mlst_dict[specie])
         os.system(cmd)
         input_dict['mlst'] = specie
@@ -633,7 +671,7 @@ def check_alignment_kma_cov(file):
     return coverage
 
 def kma_mapping(input_dict):
-    os.system("kma/kma -i {} -o {}kma_mapping -t_db {}/REFDB.ATG"
+    os.system("~/bin/kma -i {} -o {}kma_mapping -t_db {}/REFDB.ATG"
               " -ID 0 -nf -mem_mode -sasm -ef -1t1".format(input_dict['input_path'], input_dict['target_dir'], input_dict['config_path']))
     num_lines = sum(1 for line in open("{}kma_mapping.res".format(input_dict['target_dir']))) #1 line is empty, more have hits.
     template_score = 0
@@ -665,7 +703,7 @@ def kma_mapping(input_dict):
         return input_dict
 
 def nanopore_alignment(input_dict):
-    cmd = "kma/kma -i {} -o {}{} -t_db {}/REFDB.ATG -mint3 -Mt1 {} -t 8"\
+    cmd = "~/bin/kma -i {} -o {}{} -t_db {}/REFDB.ATG -mint3 -Mt1 {} -t 8"\
         .format(input_dict['input_path'], input_dict['target_dir'], input_dict['consensus_name'][:-4],
                 input_dict['config_path'], str(input_dict['template_number']))
     os.system(cmd)
@@ -767,7 +805,7 @@ def flye_assembly(input_dict):
             print(new_header_text, file=outfile)
             print(sequence, file=outfile)
 
-    os.system("kma/kma index -t_db {} -i {}{}_assembly.fasta"\
+    os.system("~/bin/kma index -t_db {} -i {}{}_assembly.fasta"\
         .format(input_dict['ref_db'], input_dict['target_dir'], input_dict['sample_name']))
 
     #c = conn.cursor()
