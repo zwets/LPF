@@ -38,6 +38,7 @@ def create_sql_db(config_name, json_file):
     c.execute(
         """CREATE TABLE IF NOT EXISTS reference_table(entry_id TEXT PRIMARY KEY, reference_header_text TEXT)""")  # Mangler finder results. Implement eventually
     conn.commit()
+    print (metadata_string)
     c.execute("""CREATE TABLE IF NOT EXISTS metadata_table(entry_id TEXT PRIMARY KEY, {})""".format(metadata_string))
     conn.commit()
     c.execute(
