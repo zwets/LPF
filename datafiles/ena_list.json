@@ -7,8 +7,8 @@
    "type_of_infection": ["Skin Infections", "Respiratory Infections", "FoodBorne Bacterial Infections", "Urinary Tract infections", "Sexually Transmitted Infections", "Other"],
    "patient_age": "free_text",
    "patient_gender": ["Male", "Female", "Unspecified"],
-   "city": "free_text",
-   "country": "free_text",
+   "city": [],
+   "country": [],
    "collection_date": "free_text"
 }
 

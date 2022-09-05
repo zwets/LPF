@@ -52,6 +52,15 @@ function create_metadata_table_fastq(){
     append_table = generate_table_fastq(file_number)
 
     document.getElementById('metadata-table-div').appendChild(append_table);
+    var cities_button = document.createElement('button');
+    cities_button.classList.add('button-7');
+    cities_button.type = "button";
+    cities_button.id = "get-cities";
+    cities_button.innerHTML = "Click to get Cities";
+    cities_button.onclick = function() {
+       window.getCities();
+    }
+    document.getElementById('metadata-table-div').appendChild(cities_button);
 
     var create_button = document.createElement('button');
     create_button.classList.add('button-7');
@@ -128,6 +137,35 @@ function create_metadata_table_fastq(){
     document.getElementById('metadata-table-div').appendChild(mybr);
     document.getElementById('metadata-table-div').appendChild(create_button);
 
+}
+
+function getCities() {
+   var rows = document.getElementById("metadata_csv_table").rows;
+   var header_row = rows[0];
+
+      for (var i = 0; i < rows.length-1; i++) {
+            for (var t = 0; t < rows[i].cells.length; t++) {
+                if (header_row.cells[t].innerHTML == "country") {
+                    const countryValue = document.getElementById(`input${[i]}${[t]}`).value
+                    const countryData= require('/opt/moss/datafiles/cities_and_countries.json');
+                    while (document.getElementById(`input${[i]}${[t-1]}`).hasChildNodes()) {
+                        document.getElementById(`input${[i]}${[t-1]}`).removeChild(document.getElementById(`input${[i]}${[t-1]}`).firstChild);
+                    }
+		    var none_option = document.createElement("option");
+                    none_option.value = "Select City";
+                    none_option.text = "Select City";
+                    document.getElementById(`input${[i]}${[t-1]}`).add(none_option);
+		    for(var city in countryData[countryValue]) {
+                       var cityName = countryData[countryValue][city]
+                       var option = document.createElement("option");
+                       option.value = cityName;
+                       option.text = cityName;
+                       document.getElementById(`input${[i]}${[t-1]}`).add(option);
+                    }
+                    document.getElementById(`input${[i]}${[t-1]}`).defaultValue = "Select City";
+                }
+            }
+        }
 }
 
 //function create_metadata_table_fastq(){
@@ -268,7 +306,16 @@ function generate_table_fastq(file_number) {
                 td.classList.add("select");
                 var input = document.createElement('select');
                 input.id = `input${i}${j}`;
-                var object_options = Object.values(identifier);
+                var object_options = [];
+                if(columnNames[j] =="country") {
+	            const countryData= require('/opt/moss/datafiles/cities_and_countries.json');
+	            const countries = Object.keys(countryData);
+                    const countryNames = [];
+                    countryNames.push.apply(countryNames, countries);
+		    object_options = countryNames;
+		} else {
+                    object_options = Object.values(identifier);
+		}
                 for (var t = 0; t < object_options.length; t++) {
                     var option = document.createElement("option");
                     option.value = object_options[t];
@@ -294,23 +341,22 @@ function generate_table_fastq(file_number) {
         tr.appendChild(td);
       }
 
-
       table.appendChild(tr);
     }
     return table
 }
 
 //code to check letters in input field (city, country)
-function allLetters(inputText, propertyName, errors) {
-   var letters = new RegExp("^[A-Za-z]+$");
-   if(!letters.test(inputText)) {
-   var message = new String(propertyName+" should contain only letters");
-     window.alert(message);
-     errors = errors.concat("\n").concat(message);
-   }
-   return errors;
-}
-exports.allLetters = allLetters
+//function allLetters(inputText, propertyName, errors) {
+//  var letters = new RegExp("^[A-Za-z]+$");
+//   if(!letters.test(inputText)) {
+//   var message = new String(propertyName+" should contain only letters");
+//    window.alert(message);
+//     errors = errors.concat("\n").concat(message);
+//   }
+//   return errors;
+//}
+//exports.allLetters = allLetters
 
 //code to check numerical in input field (patient_age)
 function allNumeric(inputText, propertyName, errors) {
@@ -347,9 +393,9 @@ exports.allNumeric = allNumeric
 // function to validate the data input
 function validateData(jsonFinal) {
    var errors = "";
-   errors = window.allLetters(jsonFinal.city, "city", errors);
-   errors = window.allLetters(jsonFinal.country, "country", errors);
-   errors = window.allNumeric(jsonFinal.patient_age, "patient age", errors);
+//   errors = window.allLetters(jsonFinal.city, "city", errors);
+//   errors = window.allLetters(jsonFinal.country, "country", errors);
+     errors = window.allNumeric(jsonFinal.patient_age, "patient age", errors);
    var dateReg = /^\d{4}-\d{2}-\d{2}$/;
    var dateError = "Collection Date should be in YYYY-MM-DD format"
    if(!dateReg.test(jsonFinal.collection_date)) {
