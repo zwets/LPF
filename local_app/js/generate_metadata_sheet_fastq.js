@@ -52,15 +52,6 @@ function create_metadata_table_fastq(){
     append_table = generate_table_fastq(file_number)
 
     document.getElementById('metadata-table-div').appendChild(append_table);
-    var cities_button = document.createElement('button');
-    cities_button.classList.add('button-7');
-    cities_button.type = "button";
-    cities_button.id = "get-cities";
-    cities_button.innerHTML = "Click to get Cities";
-    cities_button.onclick = function() {
-       window.getCities();
-    }
-    document.getElementById('metadata-table-div').appendChild(cities_button);
 
     var create_button = document.createElement('button');
     create_button.classList.add('button-7');
@@ -168,95 +159,6 @@ function getCities() {
         }
 }
 
-//function create_metadata_table_fastq(){
-//
-//    document.getElementById('metadata-table-div').innerHTML = "";
-//    var file_list_obj = document.getElementById('input').files;
-//    var file_number = Object.keys(file_list_obj).length;
-//
-//    append_table = generate_table_fastq(file_number)
-//
-//    document.getElementById('metadata-table-div').appendChild(append_table);
-//
-//    var create_button = document.createElement('button');
-//    create_button.classList.add('button-7');
-//
-//    create_button.type = "button";
-//    create_button.id = "generate-metadata-sheet";
-//    create_button.onclick = function() {
-//      var experiment_name = document.getElementById('experiment-name').value;
-//      var file_list_obj = document.getElementById('input').files;
-//      var file_number = Object.keys(file_list_obj).length;
-//
-//      var csv_string = "";
-//      var rows = document.getElementById("metadata_csv_table").rows;
-//      var header_row = rows[0];
-//
-//      for (var i = 0; i < header_row.cells.length; i++) {
-//          csv_string = csv_string.concat(`${header_row.cells[i].innerHTML},`);
-//        }
-//      csv_string = csv_string.concat(`file_location,`);
-//      csv_string = csv_string.concat(`ont_type\n`);
-//      for (var i = 0; i < rows.length-1; i++) {
-//            for (var t = 0; t < rows[i].cells.length; t++) {
-//            var table_item = document.getElementById(`input${[i]}${[t]}`).value;
-//              if (t == 0) {
-//                csv_string = csv_string.concat(`${table_item},`);
-//                }
-//              else {
-//                csv_string = csv_string.concat(`${table_item},`);
-//              }
-//            }
-//            csv_string = csv_string.concat(`${file_list_obj[i].path},fastq\n`);
-//
-//        }
-//      var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
-//      var output_json_file = `/opt/moss_db/${current_moss_system}/metadata_json/${experiment_name}.json`;
-//      var jsonObj = window.convertToJson(csv_string);
-//      var errorMessage = window.validateData(jsonObj);
-//      if (errorMessage != "") {
-//      console.error(errorMessage);
-//      return;
-//      }
-//      //Here insert validation function for ENA compatibility
-//      if (fs.existsSync(output_json_file)) {
-//          // path exists
-//          alert("A file with this name already exists, please choose another one than: ", output_json_file);
-//        } else {
-//            fs.writeFile(output_json_file, JSON.stringify(jsonObj), err => {
-//                  if (err) {
-//                    console.error(err)
-//                    return
-//                  }
-//                  alert(`The metadata json file has been created and is stored at ${output_json_file}`);
-//                  var create_button = document.createElement('button');
-//                  create_button.classList.add('button-7');
-//                  create_button.type = "button";
-//                  create_button.id = "go-to-analyses-button";
-//                  create_button.innerHTML = "Proceed to analyses";
-//                  create_button.onclick = function() {
-//                    location.href='./analyse.html';
-//                  }
-//                  create_button.style.width = "400px";
-//                  create_button.style.height = "150px";
-//                  create_button.style.fontSize = "large"
-//
-//                  document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
-//                  document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
-//
-//                  document.getElementById('metadata-table-div').appendChild(create_button);
-//                  //Make go to analyses shortcut
-//                })
-//
-//            }
-//          }
-//    create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
-//    var mybr = document.createElement('br');
-//    document.getElementById('metadata-table-div').appendChild(mybr);
-//    document.getElementById('metadata-table-div').appendChild(create_button);
-//
-//}
-
 function generate_table_fastq(file_number) {
 
     var file_list_obj = document.getElementById('input').files;
@@ -307,28 +209,28 @@ function generate_table_fastq(file_number) {
                 var input = document.createElement('select');
                 input.id = `input${i}${j}`;
                 var object_options = [];
-                if(columnNames[j] =="country") {
-	            const countryData= require('/opt/moss/datafiles/cities_and_countries.json');
-	            const countries = Object.keys(countryData);
-                    const countryNames = [];
-                    countryNames.push.apply(countryNames, countries);
-		    object_options = countryNames;
-		} else {
+                if (columnNames[j] =="country") {
+                    const countryData= require('/opt/moss/datafiles/cities_and_countries.json');
+                    const countries = Object.keys(countryData);
+                        const countryNames = [];
+                        countryNames.push.apply(countryNames, countries);
+                    object_options = countryNames;
+                    input.onclick = function(){window.getCities()};
+                } else {
                     object_options = Object.values(identifier);
-		}
-                for (var t = 0; t < object_options.length; t++) {
-                    var option = document.createElement("option");
-                    option.value = object_options[t];
-                    option.text = object_options[t];
-                    input.add(option);
+                    }
+            for (var t = 0; t < object_options.length; t++) {
+                var option = document.createElement("option");
+                option.value = object_options[t];
+                option.text = object_options[t];
+                input.add(option);
                 }
-                input.defaultValue = object_options[0];
-                td.appendChild(input);
-                tr.appendChild(td);
-                continue;
-                }
+            input.defaultValue = object_options[0];
+            td.appendChild(input);
+            tr.appendChild(td);
+            continue;
             }
-        else if (j == 0) {
+        } else if (j == 0) {
             td.defaultValue = "";
             var label = document.createElement('label');
             label.id = `input${i}${j}`;
@@ -371,24 +273,6 @@ function allNumeric(inputText, propertyName, errors) {
 
 exports.allNumeric = allNumeric
 
-// function to convert csv to json
-//function convertToJson(csv_string) {
-//   var csvData = csv_string.split('\n');
-//   var headers = csvData[0].replace('"','').split(',');
-//   var csvToJson = [];
-//   for (var i = 1; i < csvData.length-1; i++) {
-//       var jsonObj = {};
-//       var currentRow = csvData[i].replace('"','').split(',');
-//       for( var j = 0; j < headers.length; j++) {
-//          jsonObj[headers[j]]  = currentRow[j];
-//       }
-//       csvToJson.push(jsonObj);
-//   }
-//   var jsonFinal = JSON.parse(JSON.stringify(csvToJson[0]));
-//   return jsonFinal;
-//}
-//
-//exports.convertToJson = convertToJson
 
 // function to validate the data input
 function validateData(jsonFinal) {
