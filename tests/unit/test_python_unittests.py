@@ -1,24 +1,63 @@
 from unittest import TestCase
 import src.moss_functions as moss
 import json
-import sqlvalidator
-
+import os
 
 class TestSqlCommands(TestCase):
     def setUp(self):
         with open('tests/resources/data_for_tests/json/assembly_test.json') as json_file:
             test_json = json.load(json_file)
         self.input_dict = moss.moss_init(test_json)
+        self.input_dict['moss_db'] = 'tests/resources/data_for_tests/database/moss.db'
+        moss.create_sql_db('tests/resources/data_for_tests/database/', 'datafiles/ena_list.json')
+
+    def tearDown(self):
+        os.system("rm -rf tests/resources/data_for_tests/database/moss.db")
+
+    def test_completed_run_update_sql_database_assembly_sp(self):
+        result = moss.completed_run_update_sql_database(None, self.input_dict)
+        self.assertEqual(result, None)
 
 
+    def test_completed_run_update_sql_database_assembly_hp(self):
+        entry_id = moss.md5_of_file(self.input_dict['input_path'])
+        moss.sql_execute_command(
+            "INSERT INTO status_table(entry_id, sample_name, status,"
+            " type, current_stage, final_stage, result, time_stamp)"
+            " VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')" \
+                .format(entry_id, self.input_dict['sample_name'], "Queued", "Queued", "Queued",
+                        "Queued", "Queued", ""), 'tests/resources/data_for_tests/database/moss.db')
+        moss.completed_run_update_sql_database('assembly', self.input_dict)
+        result = moss.sql_fetch_one("SELECT status FROM status_table WHERE entry_id = '{}'".format(entry_id), self.input_dict['moss_db'])[0]
+        self.assertEqual(result, 'Completed')
+
+    def test_completed_run_update_sql_database_alignment_hp(self):
+        entry_id = moss.md5_of_file(self.input_dict['input_path'])
+        moss.sql_execute_command(
+            "INSERT INTO status_table(entry_id, sample_name, status,"
+            " type, current_stage, final_stage, result, time_stamp)"
+            " VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')" \
+                .format(entry_id, self.input_dict['sample_name'], "Queued", "Queued", "Queued",
+                        "Queued", "Queued", ""), 'tests/resources/data_for_tests/database/moss.db')
+        moss.completed_run_update_sql_database('alignment', self.input_dict)
+        result = moss.sql_fetch_one("SELECT status FROM status_table WHERE entry_id = '{}'".format(entry_id), self.input_dict['moss_db'])[0]
+        self.assertEqual(result, 'Completed')
 
     def test_clean_sql_for_moss_run(self):
-        cmd = moss.clean_sql_for_moss_run(self.input_dict)
-        print (cmd)
-        sql_query = sqlvalidator.parse(cmd)
-        print (sql_query)
-        print (sql_query.is_valid())
-        self.assertTrue(sql_query.is_valid(), 'clean_sql_for_moss_run command was not valid')
+        entry_id = moss.md5_of_file(self.input_dict['input_path'])
+        moss.sql_execute_command(
+            "INSERT INTO status_table(entry_id, sample_name, status,"
+            " type, current_stage, final_stage, result, time_stamp)"
+            " VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')" \
+                .format(entry_id, self.input_dict['sample_name'], "Queued", "Queued", "Queued",
+                        "Queued", "Queued", ""), 'tests/resources/data_for_tests/database/moss.db')
+        moss.sql_execute_command(moss.clean_sql_for_moss_run(self.input_dict), 'tests/resources/data_for_tests/database/moss.db')
+        result = moss.sql_fetch_one("SELECT status FROM status_table WHERE entry_id = '{}'"
+                      .format(entry_id), self.input_dict['moss_db'])[0]
+        self.assertEqual(result, 'Run failed')
+
+    def test_create_sql_db(self):
+        self.assertTrue(os.path.exists('tests/resources/data_for_tests/database/moss.db'), 'create_sql_db did not create a database')
 
 class TestValidateDateText(TestCase):
     def setUp(self):
