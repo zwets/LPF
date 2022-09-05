@@ -195,6 +195,11 @@ setuptool*
 /local_app/yarn-error.log*
 /local_app/node_modules*
 /local_app/node_modules*
+/local_app/.idea*
+/local_app/.idea
+/local_app/js/coverage
+
+
 
 /.idea
 .idea
