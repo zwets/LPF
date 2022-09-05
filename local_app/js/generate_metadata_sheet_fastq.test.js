@@ -9,20 +9,10 @@ test('check allNumeric in inputfield', () => {
     Object.defineProperty(global, "window", {
             value: {
                 alert: jest.fn(),
-                allLetters: mainJS.allLetters,
                 allNumeric: mainJS.allNumeric,
             },
         });
     expect(mainJS.allNumeric("aa", "Age", "")).toContain("Age should contain only numbers");
-});
-
-test('check allLetters in inputfield', () => {
-	expect(mainJS.allLetters("Acdd", "city", "")).toEqual("");
-    expect(mainJS.allLetters("aa1", "city", "")).toContain("city should contain only letters");
-});
-
-test('check allLetters in inputfield', () => {
-    expect(mainJS.allLetters("ABcd", "country", "")).toEqual("");
 });
 
 test('validate json data', () => {
@@ -48,11 +38,3 @@ test('validate json data', () => {
 	expect(mainJS.validateData(jsonDataEr)).toContain("Collection Date should be in YYYY-MM-DD format");
 	expect(mainJS.validateData(jsonDataEr2)).toContain("Collection Date should be in YYYY-MM-DD format");
 });
-
-
-test('split csv into json objects', () => {
-    var outJson = { "age" : "12", "name" : "aaa"};
-    var csv_string = 'age,name\n12,aaa\n';
-	expect(mainJS.convertToJson(csv_string)).toEqual(outJson);
-});
-
