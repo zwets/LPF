@@ -2,7 +2,8 @@ const { exec } = require('child_process');
 const fs = require('fs')
 
 function submitSingleAnalysis() {
-    var input = document.getElementById('json_file');
+    var input = document.getElementById('json_file').files[0];
+    console.log(document.getElementById('json_file').files)
     var config_json = require('/opt/moss_db/config.json');
 
     var cmd_msg = `conda run -n base python3 /opt/moss/src/moss_parallel_wrapper.py -json ${input}}`;
