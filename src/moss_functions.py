@@ -910,7 +910,7 @@ def compileReportAssembly(input_dict):
     df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
     dfi.export(df_styled, input_dict['target_dir'] + "quast_table.png")
     pdf.image("{}quast_table.png".format(input_dict['target_dir']), x=10, y=90, w=pdf.w / 2.5, h=pdf.h / 2.7)
-    run_bandage(input_dict['target_dir'], ID)
+    run_bandage(input_dict['target_dir'], input_dict['entry_id'])
     pdf.set_xy(x=10, y=58)
     pdf.set_font('Arial', '', 14)
     pdf.set_text_color(51, 153, 255)
