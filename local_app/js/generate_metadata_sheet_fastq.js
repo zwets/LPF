@@ -216,7 +216,10 @@ function generate_table_fastq(file_number) {
                         countryNames.push.apply(countryNames, countries);
                     object_options = countryNames;
                     input.onclick = function(){window.getCities()};
-                } else {
+                } else if (columnNames[j] =="collection_date") {
+                    columnNames[j] =="collection_date (YYYY-MM-DD)"
+                }
+                else {
                     object_options = Object.values(identifier);
                     }
             for (var t = 0; t < object_options.length; t++) {
