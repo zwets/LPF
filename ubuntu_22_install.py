@@ -54,10 +54,10 @@ def main(args):
         download_finder_dbs()
         os.system("python3 docker_images.py")
         check_dist_build()
-        if cwd != "/opt/moss":
-            move_moss_repo(cwd)
         cmd = "python3 src/create_guppy_workflow_dict.py"
         os.system(cmd)
+        if cwd != "/opt/moss":
+            move_moss_repo(cwd)
         return True
 
 def copy_install_files():
