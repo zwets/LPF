@@ -19,6 +19,12 @@ from Bio import Phylo
 from io import StringIO
 import dataframe_image as dfi
 
+def qc_check(input_dict):
+    """Very basic QC. Only checks for a minimum amount of input data so far."""
+    file_size_mb = os.path.getsize(input_dict['input_path'])/1000000
+    if 3 > file_size_mb:
+        sys.exit('The input file was less than 3 MB. This likely means only a very small amount of DNA was sequenced. Analysis can not be performed.')
+
 def create_sql_db(config_name, json_file):
     conn = sqlite3.connect(config_name + 'moss.db')
     c = conn.cursor()

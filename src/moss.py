@@ -21,6 +21,7 @@ def moss_pipeline(input_dict):
         moss.validate_input(input_dict)
         input_dict = moss.moss_init(input_dict)
         moss.check_unique_entry_id(input_dict['entry_id'], input_dict['moss_db'])
+        moss.qc_check(input_dict)
         moss.moss_run(input_dict)
         r_type = moss.evaluate_moss_run()
         if r_type != None: #Evals if completed correctly
