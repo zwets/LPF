@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="75692dd5-65dc-4ae9-8670-89fea401a678" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/install_jammy_dependencies.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/enable_docker_daemon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/enable_docker_daemon.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ubuntu_22_install.py" beforeDir="false" afterPath="$PROJECT_DIR$/ubuntu_22_install.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,6 +46,7 @@
       <recent name="$PROJECT_DIR$/tests/resources/data_for_tests/json" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/" />
       <recent name="$PROJECT_DIR$/tests/unit" />
       <recent name="$PROJECT_DIR$/tests/resources/data_for_tests/read_files" />
