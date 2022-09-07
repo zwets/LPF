@@ -98,6 +98,7 @@ function create_metadata_table_fastq(){
                         console.error(err)
                         return
                       }
+                      alert("The input data was successfully validated. Analysis can begin.");
                       const create_button = document.createElement('button');
                       create_button.classList.add('button-7');
                       create_button.type = "button";
