@@ -30,7 +30,7 @@ with open("local_app/tmpworkflowdict.txt", 'r') as infile:
                     "model_version": line[3]
                 })
 
-with open("/opt/moss/local_app/workflow.json", 'w') as outfile:
+with open("local_app/workflow.json", 'w') as outfile:
     print (json.dumps(jsonlist, indent=2), file=outfile)
 
 
