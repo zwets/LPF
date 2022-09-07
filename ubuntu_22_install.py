@@ -9,7 +9,7 @@ parser.add_argument("-pab", action="store_true", default = False, dest="pab", he
 args = parser.parse_args()
 
 def main(args):
-    if not os.path.exists('~/bin/'):
+    if not os.path.isdir('~/bin/'):
         os.system('sudo mkdir ~/bin/')
     if args.pab:
         os.system('cd /opt/moss; git pull;')
