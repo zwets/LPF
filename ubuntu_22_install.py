@@ -10,9 +10,6 @@ parser.add_argument("-pab", action="store_true", default = False, dest="pab", he
 args = parser.parse_args()
 
 def main(args):
-    if not os.path.exists('~/bin'):
-        os.system('sudo mkdir ~/bin')
-    time.sleep(3)
     if args.pab:
         os.system('cd /opt/moss; git pull;')
 
@@ -193,4 +190,6 @@ def check_anaconda():
 
 
 if __name__ == '__main__':
+    if not os.path.exists('~/bin'):
+        os.system('sudo mkdir ~/bin')
     main(args)
