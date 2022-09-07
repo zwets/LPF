@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 import argparse
+import time
 
 parser = argparse.ArgumentParser(description='.')
 parser.add_argument("-action", action="store_true", default = False, dest="action", help="github action")
@@ -11,8 +12,10 @@ args = parser.parse_args()
 def main(args):
     if not os.path.exists('~/bin'):
         os.system('sudo mkdir ~/bin')
+    time.sleep(3)
     if args.pab:
         os.system('cd /opt/moss; git pull;')
+
         #install_app()
         #check_dist_build()
         #return True
