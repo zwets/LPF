@@ -5,12 +5,18 @@ import argparse
 
 parser = argparse.ArgumentParser(description='.')
 parser.add_argument("-action", action="store_true", default = False, dest="action", help="github action")
+parser.add_argument("-pab", action="store_true", default = False, dest="pab", help="pull and build app")
 args = parser.parse_args()
 
 def main(args):
     if not os.path.exists('~/bin/'):
         os.system('sudo mkdir ~/bin/')
-    if args.action:
+    if args.pab:
+        os.system('cd /opt/moss; git pull;')
+        install_app()
+        check_dist_build()
+        return True
+    elif args.action: #Github tests
         cwd = os.getcwd()
         os.system(
             "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
@@ -30,7 +36,7 @@ def main(args):
         if cwd != "/opt/moss":
             move_moss_repo(cwd)
         return True
-    else:
+    else: #Main install pulls everything except anaconda3
         #check_anaconda() #Write check to check that ~/anaconda3/bin/conda exists
         #docker_check()
         #check_nvidia()
