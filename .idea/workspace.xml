@@ -45,6 +45,8 @@
       <recent name="$PROJECT_DIR$/tests/resources/data_for_tests/json" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/" />
       <recent name="$PROJECT_DIR$/tests/unit" />
       <recent name="$PROJECT_DIR$/tests/resources/data_for_tests/read_files" />
       <recent name="$PROJECT_DIR$/tests/resources/data_for_tests/json" />
@@ -78,32 +80,32 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/moss_functions.py</url>
-          <line>66</line>
+          <line>72</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/moss_functions.py</url>
-          <line>82</line>
+          <line>88</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/moss_functions.py</url>
-          <line>258</line>
+          <line>264</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/moss_functions.py</url>
-          <line>557</line>
+          <line>563</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/moss_functions.py</url>
-          <line>843</line>
+          <line>849</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/moss_functions.py</url>
-          <line>859</line>
+          <line>865</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
