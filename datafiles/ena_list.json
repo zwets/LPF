@@ -9,7 +9,7 @@
    "patient_gender": ["Male", "Female", "Unspecified"],
    "city": [],
    "country": [],
-   "collection_date (YYYY-MM-DD)": "free_text"
+   "collection_date": "free_text"
 }
 
 
