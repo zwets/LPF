@@ -13,9 +13,9 @@ def main(args):
         os.system('sudo mkdir ~/bin/')
     if args.pab:
         os.system('cd /opt/moss; git pull;')
-        install_app()
-        check_dist_build()
-        return True
+        #install_app()
+        #check_dist_build()
+        #return True
     elif args.action: #Github tests
         cwd = os.getcwd()
         os.system(
