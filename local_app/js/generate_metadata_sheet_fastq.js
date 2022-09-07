@@ -147,9 +147,9 @@ function getCities() {
                     while (document.getElementById(`input${[i]}${[t-1]}`).hasChildNodes()) {
                         document.getElementById(`input${[i]}${[t-1]}`).removeChild(document.getElementById(`input${[i]}${[t-1]}`).firstChild);
                     }
-		    const none_option = document.createElement("option");
-                    none_option.value = "Select City";
-                    none_option.text = "Select City";
+                    const none_option = document.createElement("option");
+                    none_option.value = "Unspecified city";
+                    none_option.text = "Unspecified city";
                     document.getElementById(`input${[i]}${[t-1]}`).add(none_option);
 		    for(let city in countryData[countryValue]) {
                        const cityName = countryData[countryValue][city]
@@ -158,7 +158,7 @@ function getCities() {
                        option.text = cityName;
                        document.getElementById(`input${[i]}${[t-1]}`).add(option);
                     }
-                    document.getElementById(`input${[i]}${[t-1]}`).defaultValue = "Select City";
+                    document.getElementById(`input${[i]}${[t-1]}`).defaultValue = "Unspecified city";
                 }
             }
         }
@@ -258,11 +258,13 @@ function generate_table_fastq(file_number) {
 
 //code to check numerical in input field (patient_age)
 function allNumeric(inputText, propertyName, errors) {
-    let numeric = new RegExp (/^\d{2}$/);
-    if(!numeric.test(inputText)) {
-    const message = String(propertyName+" should contain only two digits in numbers");
-       errors = errors.concat("\n").concat(message);
-       window.alert(message);
+    if (inputText != "") {
+        let numeric = new RegExp (/^\d{2}$/);
+        if(!numeric.test(inputText)) {
+        const message = String(propertyName+" should contain only two digits in numbers");
+           errors = errors.concat("\n").concat(message);
+           window.alert(message);
+        }
     }
     return errors;
 }
