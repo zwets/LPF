@@ -21,9 +21,11 @@
       <main data-router-wrapper>
       <section data-router-view="Guide" class="Guide">
           <div class ="home-choose">
-              <button onclick="update_moss(1);" type="button" class="analyse-btn"><i class="fa fa-address-book-o"></i>Update source code (Very fast)</button>
-             <!-- <button onclick="update_moss(2);" type="button" class="analyse-btn"><i class="fa fa-address-book-o"></i>Update dependencies (This might take a long time)</button> -->
-             <div class="loader" id="loader">
+              <h1>Update MOSS software</h1><br><br><br>
+              <button onclick="update_moss(1);" type="button" class="analyse-btn"><i class="fa fa-address-book-o"></i>Update and rebuild the MOSS app</button>
+              <button type="button" class="analyse-btn"><i class="fa fa-address-book-o"></i>Update Databases (Doesn't work)</button> <br> <br>
+              <button type="button" class="analyse-btn"><i class="fa fa-address-book-o"></i>Check for new dependency updates and update (Doesn't work)</button>
+            <div class="loader" id="loader">
               </div>
               <pre id="loadermessage"></pre>
 
