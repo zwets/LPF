@@ -98,7 +98,6 @@ function create_metadata_table_fastq(){
                         console.error(err)
                         return
                       }
-                      alert(`The metadata json file has been created and is stored at ${output_json_file}`);
                       const create_button = document.createElement('button');
                       create_button.classList.add('button-7');
                       create_button.type = "button";
@@ -125,7 +124,7 @@ function create_metadata_table_fastq(){
                 }
               }
           }
-    create_button.innerHTML = "Validate meta data";
+    create_button.innerHTML = "Validate metadata";
     const mybr = document.createElement('br');
     document.getElementById('metadata-table-div').appendChild(mybr);
     document.getElementById('metadata-table-div').appendChild(create_button);
