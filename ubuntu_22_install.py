@@ -38,8 +38,6 @@ def main(args):
         return True
     else: #Main install pulls everything except anaconda3
         #check_anaconda() #Write check to check that ~/anaconda3/bin/conda exists
-        #docker_check()
-        #check_nvidia()
         cwd = os.getcwd()
         copy_install_files()
         os.system('sudo apt-get update && sudo apt-get upgrade')
