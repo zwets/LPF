@@ -88,7 +88,7 @@ function create_metadata_table_fastq(){
       if (errorMessage != "") {
         console.log(errorMessage);
         //return;
-      } else {
+      } else {}
           //Here insert validation function for ENA compatibility
           if (fs.existsSync(output_json_file)) {
               // path exists
@@ -121,11 +121,12 @@ function create_metadata_table_fastq(){
 
                 }
               }
-        create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
-        const mybr = document.createElement('br');
-        document.getElementById('metadata-table-div').appendChild(mybr);
-        document.getElementById('metadata-table-div').appendChild(create_button);
-    }
+          }
+    create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
+    const mybr = document.createElement('br');
+    document.getElementById('metadata-table-div').appendChild(mybr);
+    document.getElementById('metadata-table-div').appendChild(create_button);
+
 }
 
 function getCities() {
