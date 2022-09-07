@@ -3,13 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="75692dd5-65dc-4ae9-8670-89fea401a678" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/local_app/html/analyse.html" beforeDir="false" afterPath="$PROJECT_DIR$/local_app/html/analyse.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/local_app/html/config.html" beforeDir="false" afterPath="$PROJECT_DIR$/local_app/html/config.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/local_app/html/generate_metadata_sheet_fastq.html" beforeDir="false" afterPath="$PROJECT_DIR$/local_app/html/generate_metadata_sheet_fastq.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/local_app/html/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/local_app/html/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/local_app/html/initialize.html" beforeDir="false" afterPath="$PROJECT_DIR$/local_app/html/initialize.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/local_app/html/results.html" beforeDir="false" afterPath="$PROJECT_DIR$/local_app/html/results.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/local_app/html/update.html" beforeDir="false" afterPath="$PROJECT_DIR$/local_app/html/update.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
