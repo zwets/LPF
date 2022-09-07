@@ -4,36 +4,29 @@ const storage = require('electron-json-storage');
 const mkdirp = require('mkdirp');
 const path = require("path");
 
-function execute_command_as_subprocess(cmd, start_msg, end_msg, fail_msg) {
+function execute_command_as_subprocess(cmd, print_msg) {
+    console.log(cmd);
 
-    alert(start_msg);
+    console.log("Analysis has been submitted");
 
-    const create_button = document.createElement('button');
-    create_button.classList.add('button-7');
-    create_button.type = "button";
-    create_button.id = "go-to-analyses-button";
-    create_button.innerHTML = "Proceed to basecalling overview";
-    create_button.onclick = function() {
-      location.href='./basecalling.html';
-    }
-    create_button.style.width = "400px";
-    create_button.style.height = "150px";
-    create_button.style.fontSize = "large"
+    alert("Analysis has been submitted. Go to the Results section is the left menu to see progress and final results.");
 
-    document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
-    document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
-
-    document.getElementById('metadata-table-div').appendChild(create_button);
-
-    exec(cmd, (error) => {
+    exec(cmd, (error, stdout, stderr) => {
 
         if (error) {
-            alert(`${error}`);
-            alert(fail_msg);
+            alert(`exec error: ${error}`);
+            document.getElementById('analysis-msg').innerHTML = `Analysis has failed: ${error}`;
           console.error(`exec error: ${error}`);
+          return;
         } else {
-            alert(end_msg);
+            alert("Analysis has been completed.");
+            document.getElementById('analysis-msg').innerHTML = `Analysis has been completed`;
         }
+
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+
+
 
       });
 
@@ -105,14 +98,18 @@ function create_metadata_table_fastq(){
                         console.error(err)
                         return
                       }
-                      alert(`The metadata json file has been created and is stored at ${output_json_file}`);
+                      alert("The input data was successfully validated. Analysis can begin.");
                       const create_button = document.createElement('button');
                       create_button.classList.add('button-7');
                       create_button.type = "button";
-                      create_button.id = "go-to-analyses-button";
-                      create_button.innerHTML = "Proceed to analyses";
+                      create_button.id = "begin-analyses-button";
+                      create_button.innerHTML = "Begin analysis";
                       create_button.onclick = function() {
-                        location.href='./analyse.html';
+                        var config_json = require('/opt/moss_db/config.json');
+
+                        var cmd_msg = `~/anaconda3/bin/conda run -n base python3 /opt/moss/src/moss_parallel_wrapper.py -json ${output_json_file}`;
+                        console.log(cmd_msg);
+                        execute_command_as_subprocess(cmd_msg);
                       }
                       create_button.style.width = "400px";
                       create_button.style.height = "150px";
@@ -128,7 +125,7 @@ function create_metadata_table_fastq(){
                 }
               }
           }
-    create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
+    create_button.innerHTML = "Validate metadata";
     const mybr = document.createElement('br');
     document.getElementById('metadata-table-div').appendChild(mybr);
     document.getElementById('metadata-table-div').appendChild(create_button);
