@@ -87,46 +87,45 @@ function create_metadata_table_fastq(){
 
       if (errorMessage != "") {
         console.log(errorMessage);
-        console.error(errorMessage);
-        return;
-      }
-      //Here insert validation function for ENA compatibility
-      if (fs.existsSync(output_json_file)) {
-          // path exists
-          alert("A file with this name already exists, please choose another one than: ", output_json_file);
-        } else {
-            fs.writeFile(output_json_file, JSON.stringify(final_obj), err => {
-                  if (err) {
-                    console.error(err)
-                    return
-                  }
-                  alert(`The metadata json file has been created and is stored at ${output_json_file}`);
-                  const create_button = document.createElement('button');
-                  create_button.classList.add('button-7');
-                  create_button.type = "button";
-                  create_button.id = "go-to-analyses-button";
-                  create_button.innerHTML = "Proceed to analyses";
-                  create_button.onclick = function() {
-                    location.href='./analyse.html';
-                  }
-                  create_button.style.width = "400px";
-                  create_button.style.height = "150px";
-                  create_button.style.fontSize = "large"
+        //return;
+      } else {
+          //Here insert validation function for ENA compatibility
+          if (fs.existsSync(output_json_file)) {
+              // path exists
+              alert("A file with this name already exists, please choose another one than: ", output_json_file);
+            } else {
+                fs.writeFile(output_json_file, JSON.stringify(final_obj), err => {
+                      if (err) {
+                        console.error(err)
+                        return
+                      }
+                      alert(`The metadata json file has been created and is stored at ${output_json_file}`);
+                      const create_button = document.createElement('button');
+                      create_button.classList.add('button-7');
+                      create_button.type = "button";
+                      create_button.id = "go-to-analyses-button";
+                      create_button.innerHTML = "Proceed to analyses";
+                      create_button.onclick = function() {
+                        location.href='./analyse.html';
+                      }
+                      create_button.style.width = "400px";
+                      create_button.style.height = "150px";
+                      create_button.style.fontSize = "large"
 
-                  document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
-                  document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
+                      document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
+                      document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
 
-                  document.getElementById('metadata-table-div').appendChild(create_button);
-                  //Make go to analyses shortcut
-                })
+                      document.getElementById('metadata-table-div').appendChild(create_button);
+                      //Make go to analyses shortcut
+                    })
 
-            }
-          }
-    create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
-    const mybr = document.createElement('br');
-    document.getElementById('metadata-table-div').appendChild(mybr);
-    document.getElementById('metadata-table-div').appendChild(create_button);
-
+                }
+              }
+        create_button.innerHTML = "Create metadata sheet for sequencing and analysis";
+        const mybr = document.createElement('br');
+        document.getElementById('metadata-table-div').appendChild(mybr);
+        document.getElementById('metadata-table-div').appendChild(create_button);
+    }
 }
 
 function getCities() {
