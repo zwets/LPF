@@ -9,10 +9,10 @@ parser.add_argument("-current_working_db", action="store", dest="current_working
 args = parser.parse_args()
 
 CMD = "/opt/ont/guppy/bin/guppy_basecaller --print_workflows >" \
-      " /opt/moss/local_app/tmpworkflowdict.txt"
+      " local_app/tmpworkflowdict.txt"
 os.system(CMD)
 
-with open("/opt/moss/local_app/tmpworkflowdict.txt", 'r') as infile:
+with open("local_app/tmpworkflowdict.txt", 'r') as infile:
     jsonlist = []
     for line in infile:
         if line[0:3] == "FLO":
@@ -30,14 +30,14 @@ with open("/opt/moss/local_app/tmpworkflowdict.txt", 'r') as infile:
                     "model_version": line[3]
                 })
 
-with open("/opt/moss/local_app/workflow.json", 'w') as outfile:
+with open("local_app/workflow.json", 'w') as outfile:
     print (json.dumps(jsonlist, indent=2), file=outfile)
 
 
-CMD = "/opt/ont/guppy/bin/guppy_barcoder --print_kits > /opt/moss/local_app/printkitstmp.txt"
+CMD = "/opt/ont/guppy/bin/guppy_barcoder --print_kits > local_app/printkitstmp.txt"
 os.system(CMD)
 
-with open("/opt/moss/local_app/printkitstmp.txt", 'r') as infile:
+with open("local_app/printkitstmp.txt", 'r') as infile:
     jsonlist = []
     for line in infile:
         if len(line) > 3: #Non emptie/home/meta2s
@@ -48,12 +48,12 @@ with open("/opt/moss/local_app/printkitstmp.txt", 'r') as infile:
                 })
 
 
-with open("/opt/moss/local_app/barcodes.json", 'w') as outfile:
+with open("local_app/barcodes.json", 'w') as outfile:
     print (json.dumps(jsonlist, indent=2), file=outfile)
 
 
-CMD = "rm /opt/moss/local_app/tmpworkflowdict.txt"
+CMD = "rm local_app/tmpworkflowdict.txt"
 os.system(CMD)
 
-CMD = "rm /opt/moss/local_app/printkitstmp.txt"
+CMD = "rm local_app/printkitstmp.txt"
 os.system(CMD)

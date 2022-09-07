@@ -5,9 +5,9 @@ const storage = require('electron-json-storage');
 function update_moss(argument){
     var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"] + "/";
     if (argument == 1) {
-        var cmd = `conda run -n base python3 /opt/moss/ubuntu_22_install.py -git`;
+        var cmd = `~/anaconda3/bin/conda run -n base python3 /opt/moss/ubuntu_22_install.py -git`;
     } else if (argument == 2) {
-        var cmd = `conda run -n base python3 /opt/moss/ubuntu_22_install.py -light`;
+        var cmd = `~/anaconda3/bin/conda run -n base python3 /opt/moss/ubuntu_22_install.py -light`;
     }
     var loader = document.getElementById('loader');
     loader.style.display = 'block';
