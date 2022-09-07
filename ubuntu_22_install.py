@@ -9,8 +9,8 @@ parser.add_argument("-pab", action="store_true", default = False, dest="pab", he
 args = parser.parse_args()
 
 def main(args):
-    if not os.path.isdir('~/bin/'):
-        os.system('sudo mkdir ~/bin/')
+    if not os.path.exists('~/bin'):
+        os.system('sudo mkdir ~/bin')
     if args.pab:
         os.system('cd /opt/moss; git pull;')
         #install_app()
@@ -99,15 +99,6 @@ def move_moss_repo(cwd):
         os.system("sudo mv {} /opt/moss".format(cwd))
     else:
         os.system("sudo cp -r {} /opt/moss".format(cwd))
-    return True
-
-def move_shortcut_script():
-    # Make moss start shortcut in bin
-    if os.path.exists("~/bin/"):
-        os.system("chmod a+x /opt/moss/moss; sudo mv /opt/moss/moss ~/bin/moss")
-    else:
-        os.system("sudo mkdir ~/bin/")
-        os.system("chmod a+x /opt/moss/moss; sudo mv /opt/moss/moss ~/bin/moss")
     return True
 
 def guppy_installer():
