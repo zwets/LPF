@@ -31,7 +31,7 @@ def main(args):
             move_moss_repo(cwd)
         return True
     else:
-        #check_anaconda()
+        #check_anaconda() #Write check to check that ~/anaconda3/bin/conda exists
         #docker_check()
         #check_nvidia()
         cwd = os.getcwd()

@@ -86,6 +86,7 @@ function create_metadata_table_fastq(){
       const output_json_file = `/opt/moss_db/${current_moss_system}/metadata_json/${experiment_name}.json`;
 
       if (errorMessage != "") {
+        console.log(errorMessage);
         console.error(errorMessage);
         return;
       }
