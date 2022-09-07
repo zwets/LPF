@@ -38,7 +38,7 @@ def main(args):
         copy_install_files()
         os.system('sudo apt-get update && apt-get upgrade')
         os.system('sudo apt-get install kcri-seqtz-deps')
-        #os.system('sudo groupadd docker; sudo usermod -aG docker $USER; newgrp docker;')
+        os.system('sudo groupadd docker; sudo usermod -aG docker $USER; sudo chmod 666 /var/run/docker.sock')
         os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
         os.system("pip install -r requirements.txt")
         os.system(
@@ -52,12 +52,12 @@ def main(args):
             if not os.path.exists(item):
                 os.system("sudo mkdir -m 777 {}".format(item))
         download_finder_dbs()
-        os.system("python3 /opt/moss/docker_images.py")
+        os.system("python3 docker_images.py")
         check_dist_build()
+        cmd = "python3 src/create_guppy_workflow_dict.py"
+        os.system(cmd)
         if cwd != "/opt/moss":
             move_moss_repo(cwd)
-        cmd = "python3 /opt/moss/src/create_guppy_workflow_dict.py"
-        os.system(cmd)
         return True
 
 def copy_install_files():

@@ -19,6 +19,12 @@ from Bio import Phylo
 from io import StringIO
 import dataframe_image as dfi
 
+def qc_check(input_dict):
+    """Very basic QC. Only checks for a minimum amount of input data so far."""
+    file_size_mb = os.path.getsize(input_dict['input_path'])/1000000
+    if 3 > file_size_mb:
+        sys.exit('The input file was less than 3 MB. This likely means only a very small amount of DNA was sequenced. Analysis can not be performed.')
+
 def create_sql_db(config_name, json_file):
     conn = sqlite3.connect(config_name + 'moss.db')
     c = conn.cursor()
@@ -910,7 +916,7 @@ def compileReportAssembly(input_dict):
     df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
     dfi.export(df_styled, input_dict['target_dir'] + "quast_table.png")
     pdf.image("{}quast_table.png".format(input_dict['target_dir']), x=10, y=90, w=pdf.w / 2.5, h=pdf.h / 2.7)
-    run_bandage(input_dict['target_dir'], ID)
+    run_bandage(input_dict['target_dir'], input_dict['entry_id'])
     pdf.set_xy(x=10, y=58)
     pdf.set_font('Arial', '', 14)
     pdf.set_text_color(51, 153, 255)

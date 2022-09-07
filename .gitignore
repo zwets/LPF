@@ -38,9 +38,11 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Unit test / coverage reports
+.idea
 htmlcov/
 .tox/
 .nox/
+/coveragerc
 .coverage
 .coverage.*
 .cache
@@ -195,6 +197,11 @@ setuptool*
 /local_app/yarn-error.log*
 /local_app/node_modules*
 /local_app/node_modules*
+/local_app/.idea*
+/local_app/.idea
+/local_app/js/coverage
+
+
 
 /.idea
 .idea

@@ -27,6 +27,7 @@ def main(json_file):
         cmd = 'python3 /opt/moss/src/moss.py -json \'{}\''.format(str(item).replace("\'", "\""))
         jobslist.append(cmd)
         entry_id = moss.md5_of_file(item['input_path'])
+        print (item['config_path'] + 'moss.db')
         moss.sql_execute_command(
             "INSERT INTO status_table(entry_id, sample_name, status,"
             " type, current_stage, final_stage, result, time_stamp)"
