@@ -258,7 +258,7 @@ function generate_table_fastq(file_number) {
 
 //code to check numerical in input field (patient_age)
 function allNumeric(inputText, propertyName, errors) {
-    if (inputText != "") {}
+    if (inputText != "") {
         let numeric = new RegExp (/^\d{2}$/);
         if(!numeric.test(inputText)) {
         const message = String(propertyName+" should contain only two digits in numbers");
