@@ -31,12 +31,12 @@ def main(args):
             move_moss_repo(cwd)
         return True
     else:
-        #check_anaconda()
+        #check_anaconda() #Write check to check that ~/anaconda3/bin/conda exists
         #docker_check()
         #check_nvidia()
         cwd = os.getcwd()
         copy_install_files()
-        os.system('sudo apt-get update && apt-get upgrade')
+        os.system('sudo apt-get update && sudo apt-get upgrade')
         os.system('sudo apt-get install kcri-seqtz-deps')
         os.system('sudo groupadd docker; sudo usermod -aG docker $USER; sudo chmod 666 /var/run/docker.sock')
         os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
