@@ -214,8 +214,8 @@ function generate_table_fastq(file_number) {
                 if (columnNames[j] =="country") {
                     const countryData= require('/opt/moss/datafiles/cities_and_countries.json');
                     const countries = Object.keys(countryData);
-                        const countryNames = [];
-                        countryNames.push.apply(countryNames, countries);
+                    const countryNames = ["Unspecified country"];
+                    countryNames.push.apply(countryNames, countries);
                     object_options = countryNames;
                     input.onclick = function(){window.getCities()};
                 } else if (columnNames[j] =="collection_date") {
@@ -255,15 +255,13 @@ function generate_table_fastq(file_number) {
 
 //code to check numerical in input field (patient_age)
 function allNumeric(inputText, propertyName, errors) {
-    if (inputText != "") {
-        let numeric = new RegExp (/^\d{2}$/);
-        if(!numeric.test(inputText)) {
-        const message = String(propertyName+" should contain only two digits in numbers");
-           errors = errors.concat("\n").concat(message);
-           window.alert(message);
-        }
-    }
-    return errors;
+   let numeric = new RegExp (/^\d{2}$/);
+   if (!numeric.test(inputText)) {
+      const message = String(propertyName+" should contain only two digits in numbers");
+      errors = errors.concat("\n").concat(message);
+      window.alert(message);
+   }
+   return errors;
 }
 
 exports.allNumeric = allNumeric
@@ -272,7 +270,15 @@ exports.allNumeric = allNumeric
 // function to validate the data input
 function validateData(jsonFinal) {
    let errors = "";
-     errors = window.allNumeric(jsonFinal.patient_age, "patient age", errors);
+   errors = window.allNumeric(jsonFinal.patient_age, "patient age", errors);
+   if(jsonFinal.city == "" || jsonFinal.city == "Unspecified city") {
+     window.alert("Please select city");
+     errors = errors.concat("\n").concat("Please select city");
+   }
+   if(jsonFinal.country === "" || jsonFinal.country == "Unspecified country") {
+     window.alert("Please select country");
+     errors = errors.concat("\n").concat("Please select country");
+   }
    const dateReg = /^\d{4}-\d{2}-\d{2}$/;
    const dateError = "Collection Date should be in YYYY-MM-DD format"
    if(!dateReg.test(jsonFinal.collection_date)) {
