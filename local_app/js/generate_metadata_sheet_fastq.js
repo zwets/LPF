@@ -36,29 +36,43 @@ function hasDuplicates(array) {
     return (new Set(array)).size !== array.length;
 }
 
+function isExperimentNameValid(experiment_name) {
+    const ext = experiment_name.split('.');
+    if (ext.length > 1) {
+       window.alert("please enter the sequencing experiment name without .json extension");
+       return false;
+    } else {
+       return true;
+    }
+}
+
+exports.isExperimentNameValid = isExperimentNameValid
+
 function create_metadata_table_fastq(){
-    document.getElementById('metadata-table-div').innerHTML = "";
-    const file_list_obj = document.getElementById('input').files;
-    const file_number = Object.keys(file_list_obj).length;
+    const experiment_name = document.getElementById('experiment-name').value;
+    if (window.isExperimentNameValid(experiment_name)) {
+        document.getElementById('metadata-table-div').innerHTML = "";
+        const file_list_obj = document.getElementById('input').files;
+        const file_number = Object.keys(file_list_obj).length;
 
-    let append_table = generate_table_fastq(file_number)
+        let append_table = generate_table_fastq(file_number)
 
-    document.getElementById('metadata-table-div').appendChild(append_table);
+        document.getElementById('metadata-table-div').appendChild(append_table);
 
-    const create_button = document.createElement('button');
-    create_button.classList.add('button-7');
+        const create_button = document.createElement('button');
+        create_button.classList.add('button-7');
 
-    create_button.type = "button";
-    create_button.id = "generate-metadata-sheet";
-    create_button.onclick = function() {
-      const experiment_name = document.getElementById('experiment-name').value;
-      const file_list_obj = document.getElementById('input').files;
+        create_button.type = "button";
+        create_button.id = "generate-metadata-sheet";
+        create_button.onclick = function() {
+        const experiment_name = document.getElementById('experiment-name').value;
+        const file_list_obj = document.getElementById('input').files;
 
-      const obj_list = [];
-      const rows = document.getElementById("metadata_csv_table").rows;
-      const header_row = rows[0];
+        const obj_list = [];
+        const rows = document.getElementById("metadata_csv_table").rows;
+        const header_row = rows[0];
 
-      for (let i = 0; i < rows.length-1; i++) {
+        for (let i = 0; i < rows.length-1; i++) {
             let new_obj = {};
             for (let t = 0; t < rows[i].cells.length; t++) {
                 if (header_row.cells[t].innerHTML == 'input_file') {
@@ -78,9 +92,9 @@ function create_metadata_table_fastq(){
 
         }
 
-      const final_obj = {'samples': obj_list}
-      const current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
-      const output_json_file = `/opt/moss_db/${current_moss_system}/metadata_json/${experiment_name}.json`;
+        const final_obj = {'samples': obj_list}
+        const current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
+        const output_json_file = `/opt/moss_db/${current_moss_system}/metadata_json/${experiment_name}.json`;
 
       /*
       if (errorMessage != "") {
@@ -88,8 +102,8 @@ function create_metadata_table_fastq(){
         return;
       }*/
       //Here insert validation function for ENA compatibility
-      if (errorMessage == "") {
-          if (fs.existsSync(output_json_file)) {
+        if (errorMessage == "") {
+            if (fs.existsSync(output_json_file)) {
               // path exists
               alert("A file with this name already exists, please choose another one than: ", output_json_file);
             } else {
@@ -120,16 +134,17 @@ function create_metadata_table_fastq(){
 
                       document.getElementById('metadata-table-div').appendChild(create_button);
                       //Make go to analyses shortcut
-                    })
+                })
 
-                }
-              }
-          }
-    create_button.innerHTML = "Validate metadata";
-    const mybr = document.createElement('br');
-    document.getElementById('metadata-table-div').appendChild(mybr);
-    document.getElementById('metadata-table-div').appendChild(create_button);
+            }
+        }
+      }
+      create_button.innerHTML = "Validate metadata";
+      const mybr = document.createElement('br');
+      document.getElementById('metadata-table-div').appendChild(mybr);
+      document.getElementById('metadata-table-div').appendChild(create_button);
 
+    }
 }
 
 function getCities() {
@@ -257,7 +272,7 @@ function generate_table_fastq(file_number) {
 function allNumeric(inputText, propertyName, errors) {
    let numeric = new RegExp (/^\d{2}$/);
    if (!numeric.test(inputText)) {
-      const message = String(propertyName+" should contain only two digits in numbers");
+      const message = String(propertyName+" should contain only numbers");
       errors = errors.concat("\n").concat(message);
       window.alert(message);
    }
