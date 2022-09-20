@@ -39,14 +39,13 @@ def main(args):
     else: #Main install pulls everything except anaconda3
         #check_anaconda() #Write check to check that ~/anaconda3/bin/conda exists
         cwd = os.getcwd()
-        os.system("cd ~/")
-        guppy_installer()
-        os.system("cd {}".format(cwd))
+        os.system(
+            "wget https://cdn.oxfordnanoportal.com/software/analysis/ont_guppy_6.2.11-1~focal_amd64.deb --no-check-certificate")
         copy_install_files()
         os.system('sudo apt-get update && sudo apt-get upgrade')
         os.system('sudo apt update')
         os.system('sudo apt-get install kcri-seqtz-deps')
-        os.system('sudo apt install kcri-seqtz-deps=1.0.12 kcri-minknow-gpu ~/ont_guppy_6.2.11-1~focal_amd64.deb')
+        os.system('sudo apt install kcri-seqtz-deps=1.0.12 kcri-minknow-gpu ./ont_guppy_6.2.11-1~focal_amd64.deb')
         os.system('sudo apt install minion-nc')
         os.system('sudo apt upgrade')
         os.system('sudo groupadd docker; sudo usermod -aG docker $USER; sudo chmod 666 /var/run/docker.sock')
