@@ -2,7 +2,7 @@
   "samples": [
     {
       "input_file": "assembly_test.fastq.gz",
-      "input_path": "tests/resources/data_for_tests/read_files/assembly_test.fastq.gz",
+      "input_path": "tests/fixtures/data_for_tests/read_files/assembly_test.fastq.gz",
       "sequencing_method": "nanopore minion",
       "isolation_source": "isolate",
       "investigation_type": "type1",

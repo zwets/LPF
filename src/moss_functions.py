@@ -24,6 +24,7 @@ def qc_check(input_dict):
     file_size_mb = os.path.getsize(input_dict['input_path'])/1000000
     if 3 > file_size_mb:
         sys.exit('The input file was less than 3 MB. This likely means only a very small amount of DNA was sequenced. Analysis can not be performed.')
+    return True
 
 def create_sql_db(config_name, json_file):
     conn = sqlite3.connect(config_name + 'moss.db')
@@ -86,7 +87,7 @@ def completed_run_update_sql_database(r_type, input_dict):
     else:
         return None
 
-def evaluate_moss_run():
+def evaluate_moss_run(): #TBD. Not implemented yet. Will be used to evaluate if the run finished correctly or if sql should be cleaned.
     return 'alignment'
 
 def validate_date_text(date_text):
@@ -262,7 +263,7 @@ def moss_run(input_dict):
 
     compileReportAlignment(input_dict)
 
-def derive_phenotype_amr(genes, database):
+def derive_phenotype_amr(genes, database): #TBD rewrite and remove.
     new_genes = list()
     for item in genes:
         new_genes.append(item.split("_")[0])
@@ -283,7 +284,7 @@ def derive_phenotype_amr(genes, database):
         csv_data.append((item, ", ".join(phenotype[item])))
     return phenotype, csv_data
 
-def derive_phenotype_virulence(genes, database, target_dir):
+def derive_phenotype_virulence(genes, database, target_dir):  #TBD rewrite and remove.
     new_genes = list()
     for item in genes:
         new_genes.append(item.split(":")[0])
@@ -306,15 +307,7 @@ def derive_phenotype_virulence(genes, database, target_dir):
     print (csv_data)
     return phenotype, csv_data
 
-def push_meta_data_to_sql(metadata_dict, entry_id, config_path):
-    sql_cmd = "INSERT INTO metadata_table(entry_id, sample_name, sequencing_method, isolation_source, investigation_type, \
-    collection_date, latitude, longitude, city, country) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"\
-        .format(entry_id, metadata_dict["sample_name"], metadata_dict["sequencing_method"], metadata_dict["isolation_source"], \
-                metadata_dict["investigation_type"], metadata_dict["collection_date"], metadata_dict["latitude"], \
-                metadata_dict["longitude"], metadata_dict["city"], metadata_dict["country"])
-    sql_execute_command(sql_cmd,  input_dict['config_path'])
-
-def push_finders_data_sql(target_dir, config_path, entry_id):
+def push_finders_data_sql(target_dir, config_path, entry_id): #TBD insert all meta data into sql and the end after a succesfull run.
     resfinder_hits = parse_kma_res("{}/finders/resfinder.res".format(target_dir))
     virulence_hits = parse_kma_res("{}/finders/virulencefinder.res".format(target_dir))
     plasmid_hits = parse_kma_res("{}/finders/plasmidfinder.res".format(target_dir))
@@ -327,7 +320,7 @@ def push_finders_data_sql(target_dir, config_path, entry_id):
 
     return resfinder_hits, virulence_hits, plasmid_hits, mlst_type
 
-def parse_mlst_result(filename):
+def parse_mlst_result(filename): #TBD rewrite
     try:
         with open(filename) as json_file:
             data = json.load(json_file)
@@ -347,53 +340,6 @@ def parse_kma_res(filename):
 
 def kma_finders(arguments, output_name, input_dict, database):
     os.system("~/bin/kma -i {} -o {}/finders/{} -t_db {} {}".format(input_dict['input_path'], input_dict['target_dir'], output_name, database, arguments))
-
-def derive_finalized_filenames(input_dir):
-    """
-    Either, directory have barcode01-barocdeX subdirectories. if so:
-        Check number of files. If >1, check combined file. If non, create.
-    else:
-        evaluate.
-
-    """
-    directory_type = None
-
-    sub_directories = os.listdir(input_dir)
-    if len(sub_directories) > 1:
-        dir_list = list()
-        file_list = list()
-        for item in sub_directories:
-            if os.path.isfile(input_dir + item):
-                file_list.append(item)
-            elif os.path.isdir(input_dir + item):
-                dir_list.append(item)
-        if len(dir_list) > 0 and len(file_list) == 0:
-            pass
-            #Only directoriespass
-        elif len(file_list) > 0 and len(dir_list) == 0:
-            pass
-            #Only files
-
-        elif len(file_list) > 0 and len(dir_list) > 0:
-            pass
-            #Mix
-        #CONTINUE
-
-    else:
-        #Check if one fastq
-        if os.path.isfile(input_dir + sub_directories[0]):
-            if sub_directories[0].endswith('.fastq') or sub_directories[0].endswith('.fastq.gz'):
-                #Assume that this one, single fastq file is the whole input.
-                return (input_dir + sub_directories[0], "single_input_fastq")
-            else:
-                sys.exit("The input does not appear to be a fastq file")
-        elif os.path.isdir(input_dir + sub_directories[0]):
-            if sub_directories[0] != "barcode01":
-                sys.exit("The input fastq files given in the metadata sheet are not correct. Please see the documentation at <LINK> for the correct input format.")
-
-    print (sub_directories)
-
-    return ["test", "test2"]
 
 def create_directory_from_dict(dict, path):
     for directory in dict:
