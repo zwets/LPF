@@ -39,9 +39,16 @@ def main(args):
     else: #Main install pulls everything except anaconda3
         #check_anaconda() #Write check to check that ~/anaconda3/bin/conda exists
         cwd = os.getcwd()
+        os.system("cd ~/")
+        guppy_installer()
+        os.system("cd {}".format(cwd))
         copy_install_files()
         os.system('sudo apt-get update && sudo apt-get upgrade')
+        os.system('sudo apt update')
         os.system('sudo apt-get install kcri-seqtz-deps')
+        os.system('sudo apt install kcri-seqtz-deps=1.0.12 kcri-minknow-gpu ~/ont_guppy_6.2.11-1~focal_amd64.deb')
+        os.system('sudo apt install minion-nc')
+        os.system('sudo apt upgrade')
         os.system('sudo groupadd docker; sudo usermod -aG docker $USER; sudo chmod 666 /var/run/docker.sock')
         os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
         os.system("pip install -r requirements.txt")
@@ -102,9 +109,10 @@ def move_moss_repo(cwd):
     return True
 
 def guppy_installer():
-    os.system("wget https://mirror.oxfordnanoportal.com/software/analysis/ont-guppy_6.0.7_linux64.tar.gz --no-check-certificate")
-    os.system("tar -xvf ont-guppy_6.0.7_linux64.tar.gz")
-
+    os.system("wget https://cdn.oxfordnanoportal.com/software/analysis/ont_guppy_6.2.11-1~focal_amd64.deb --no-check-certificate")
+    #os.system("tar -xvf ont-guppy*.deb")
+    #os.system("chmod a+rwx ont-guppy")
+    #os.system("chmod a+rwx ont-guppy/bin")
     return True
 
 def check_pip_dependencies():
@@ -190,6 +198,6 @@ def check_anaconda():
 
 
 if __name__ == '__main__':
-    if not os.path.exists('~/bin'):
-        os.system('sudo mkdir ~/bin')
+    if not os.path.exists('~/bin/'):
+        os.system('sudo mkdir ~/bin/')
     main(args)
