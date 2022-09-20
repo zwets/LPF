@@ -44,7 +44,7 @@ def main(args):
         copy_install_files()
         os.system('sudo apt-get update && sudo apt-get upgrade')
         os.system('sudo apt update')
-        os.system('sudo apt-get install kcri-seqtz-deps')
+        #os.system('sudo apt-get install kcri-seqtz-deps')
         os.system('sudo apt install kcri-seqtz-deps=1.0.12 kcri-minknow-gpu ./ont_guppy_6.2.11-1~focal_amd64.deb')
         os.system('sudo apt install minion-nc')
         os.system('sudo apt upgrade')
