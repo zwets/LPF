@@ -19,6 +19,35 @@ from Bio import Phylo
 from io import StringIO
 import dataframe_image as dfi
 
+def update_meta_data_table(input_dict):
+    for item in input_dict:
+        if isinstance(input_dict[item], list):
+            for i in range(len(input_dict[item])):
+                if "'" in input_dict[item][i]:
+                    input_dict[item][i] = input_dict[item][i].replace("'", "''")
+        else:
+            if "'" in str(input_dict[item]):
+                input_dict[item] = input_dict[item].replace("'", "''")
+    sql_cmd = "INSERT INTO meta_data_table(entry_id, meta_data_json) VALUES('{}', '{}')".format(input_dict['entry_id'], json.dumps(input_dict))
+
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+def update_reference_table(input_dict):
+    sql_cmd = "INSERT INTO reference_table(entry_id, reference_header_text) VALUES('{}', '{}')".format(input_dict['entry_id'], input_dict['reference_header_text'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+def update_sample_table(input_dict):
+    sql_cmd = "INSERT INTO sample_table(entry_id, sample_name, reference_id, consensus_name) VALUES('{}', '{}', '{}', '{}')".format(input_dict['entry_id'], input_dict['sample_name'], input_dict['reference_id'], input_dict['consensus_name'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+    return True
+def insert_sql_data_to_db(input_dict, r_type):
+    update_sample_table(input_dict)
+    update_meta_data_table(input_dict)
+    if r_type == 'assembly':
+        update_reference_table(input_dict)
+
+    return True
+
 def qc_check(input_dict):
     """Very basic QC. Only checks for a minimum amount of input data so far."""
     file_size_mb = os.path.getsize(input_dict['input_path'])/1000000
@@ -26,26 +55,17 @@ def qc_check(input_dict):
         sys.exit('The input file was less than 3 MB. This likely means only a very small amount of DNA was sequenced. Analysis can not be performed.')
     return True
 
-def create_sql_db(config_name, json_file):
+def create_sql_db(config_name):
     conn = sqlite3.connect(config_name + 'moss.db')
     c = conn.cursor()
 
-    metadata_string = ""
-    with open(json_file) as json_file:
-        data = json.load(json_file)
-    for item in data:
-        if '\ufeff' in item:
-            item = item.replace(u'\ufeff', '')
-        metadata_string += "{} TEXT,".format(item)
-    metadata_string = metadata_string[:-1]
-
     c.execute(
-        """CREATE TABLE IF NOT EXISTS sample_table(entry_id TEXT PRIMARY KEY, sample_name TEXT, reference_id TEXT, amr_genes TEXT, virulence_genes TEXT, plasmids TEXT, consensus_name TEXT, mlst TEXT)""")
+        """CREATE TABLE IF NOT EXISTS sample_table(entry_id TEXT PRIMARY KEY, sample_name TEXT, reference_id TEXT, consensus_name TEXT)""")
     conn.commit()
     c.execute(
         """CREATE TABLE IF NOT EXISTS reference_table(entry_id TEXT PRIMARY KEY, reference_header_text TEXT)""")  # Mangler finder results. Implement eventually
     conn.commit()
-    c.execute("""CREATE TABLE IF NOT EXISTS metadata_table(entry_id TEXT PRIMARY KEY, {})""".format(metadata_string))
+    c.execute("""CREATE TABLE IF NOT EXISTS meta_data_table(entry_id TEXT PRIMARY KEY, meta_data_json TEXT)""")
     conn.commit()
     c.execute(
         """CREATE TABLE IF NOT EXISTS status_table(entry_id TEXT PRIMARY KEY, sample_name TEXT, status TEXT, type TEXT, current_stage TEXT, final_stage TEXT, result TEXT, time_stamp TEXT)""")
@@ -87,8 +107,11 @@ def completed_run_update_sql_database(r_type, input_dict):
     else:
         return None
 
-def evaluate_moss_run(): #TBD. Not implemented yet. Will be used to evaluate if the run finished correctly or if sql should be cleaned.
-    return 'alignment'
+def evaluate_moss_run(input_dict): #TBD. Not implemented yet. Will be used to evaluate if the run finished correctly or if sql should be cleaned.
+    if input_dict['reference_id'] == None:
+        return 'assembly'
+    else:
+        return 'alignment'
 
 def validate_date_text(date_text):
     """Validates the date time format"""
@@ -186,6 +209,7 @@ def moss_run(input_dict):
 
     if input_dict['template_number'] == None:  # None == no template found
         run_assembly(input_dict)
+        return input_dict
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\"," \
               " final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("IPC check", input_dict['sample_name'], "Alignment", "4", "10", "Running", str(datetime.datetime.now())[0:-7],
@@ -197,18 +221,12 @@ def moss_run(input_dict):
     input_dict['reference_id'] = sql_fetch_one("SELECT entry_id FROM reference_table WHERE reference_header_text = '{}'"
                                  .format(input_dict['reference_header_text']), input_dict['moss_db'])[0]
 
-    sql_execute_command("UPDATE sample_table SET reference_id = '{}' WHERE entry_id = '{}'"
-                        .format(input_dict['reference_id'], input_dict['entry_id']), input_dict['moss_db'])
-
-    cmd = "cp {0}{1} {2}/consensus_sequences/{1}"\
+    cmd = "cp {0}{1} {2}consensus_sequences/{1}"\
         .format(input_dict['target_dir'], input_dict['consensus_name'], input_dict['config_path'])
     os.system(cmd)
 
-    sql_execute_command(
-        "UPDATE sample_table SET consensus_name = '{}' WHERE entry_id = '{}'"
-            .format(input_dict['consensus_name'], input_dict['entry_id']), input_dict['moss_db'])
     input_dict['isolate_list'] = sql_fetch_all("SELECT consensus_name FROM sample_table WHERE reference_id = '{}'"
-            .format(input_dict['reference_id']), input_dict['moss_db'])
+            .format(input_dict['reference_id']), input_dict['moss_db']) #Not all isolates are used current is not included either.
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\"," \
               " final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
@@ -217,6 +235,7 @@ def moss_run(input_dict):
     sql_execute_command(sql_cmd, input_dict['moss_db'])
 
     input_dict = make_phytree_output_folder(input_dict)
+
 
     cmd = "~/bin/ccphylo dist --input {0}/phytree_output/* --reference \"{1}\" --min_cov 0.01" \
           " --normalization_weight 0 --output {0}/phytree_output/distance_matrix"\
@@ -227,13 +246,14 @@ def moss_run(input_dict):
                                        .format(input_dict['target_dir']), input_dict)
     print (distance)
     if distance == None:
-        print ("NONE HERE") #Work cataches
         input_dict['associated_species'] = "{} - assembly from ID: {}".format(input_dict['reference_header_text'], input_dict['entry_id'])
         run_assembly(input_dict)
+        return input_dict
     elif distance > 300:  # SNP distance
         input_dict['associated_species'] = "{} - assembly from ID: {}".format(input_dict['reference_header_text'],
                                                           input_dict['entry_id'])
         run_assembly(input_dict)
+        return input_dict
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\"," \
               " result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("Distance Matrix", input_dict['sample_name'], "Alignment", "6", "10", "Running", str(datetime.datetime.now())[0:-7],
@@ -262,6 +282,7 @@ def moss_run(input_dict):
     sql_execute_command(sql_cmd, input_dict['moss_db'])
 
     compileReportAlignment(input_dict)
+    return input_dict
 
 def derive_phenotype_amr(genes, database): #TBD rewrite and remove.
     new_genes = list()
@@ -313,9 +334,6 @@ def push_finders_data_sql(target_dir, config_path, entry_id): #TBD insert all me
     plasmid_hits = parse_kma_res("{}/finders/plasmidfinder.res".format(target_dir))
     mlst_type = parse_mlst_result("{}/mlstresults/data.json".format(target_dir))
 
-    sql_cmd = "UPDATE sample_table SET amr_genes=\"{}\", virulence_genes=\"{}\", plasmids=\"{}\", mlst=\"{}\" WHERE entry_id=\"{}\"" \
-        .format(",".join(resfinder_hits).replace("'", "''"), ",".join(virulence_hits).replace("'", "''"), \
-                ",".join(plasmid_hits).replace("'", "''"), mlst_type, entry_id)
     sql_execute_command(sql_cmd,  input_dict['config_path'])
 
     return resfinder_hits, virulence_hits, plasmid_hits, mlst_type
@@ -406,6 +424,8 @@ def make_phytree_output_folder(input_dict):
         path = "{}/consensus_sequences/{}".format(input_dict['config_path'], item)
         cmd = "cp {} {}/phytree_output/.".format(path, input_dict['target_dir'])
         os.system(cmd)
+    os.system("cp {}consensus_sequences/{} {}/phytree_output/.".format(input_dict['config_path'], input_dict['consensus_name'], input_dict['target_dir']))
+
 
     input_dict['header_name'] = input_dict['reference_header_text'].split()[0] + '.fsa'
     cmd = "~/bin/kma seq2fasta -t_db {} -seqs {} > {}/phytree_output/{}"\
@@ -473,6 +493,7 @@ def check_assembly_result(path):
     return True
 
 def run_assembly(input_dict):
+    input_dict['reference_id'] = None
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\"," \
               " result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("Flye Assembly", "Assembly", "4", "5", "Running", str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
@@ -489,7 +510,6 @@ def run_assembly(input_dict):
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("Completed", "reference", "5", "5", "Completed", str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
     sql_execute_command(sql_cmd,  input_dict['moss_db'])
-    sys.exit("No template was found, so input was added to references.")
 
 def init_moss_variables(config_path, ):
     referenceSyncFile = config_path + "syncFiles/referenceSync.json"
@@ -724,10 +744,10 @@ def ThreshholdDistanceCheck(distancematrixfile, input_dict):
     return None
 
 def flye_assembly(input_dict):
-    print ("Made it to flye")
     cmd = "docker run --name assembly_{0} -v {1}:/tmp/{2} staphb/flye flye -o /tmp/assembly_results" \
           " --threads 8 --nano-raw /tmp/{2}"\
         .format(input_dict['entry_id'], input_dict['input_path'], input_dict['input_file'])
+    print (cmd)
     os.system(cmd)
 
     proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_", input_dict['entry_id']), shell=True,
@@ -760,11 +780,6 @@ def flye_assembly(input_dict):
     os.system("~/bin/kma index -t_db {} -i {}{}_assembly.fasta"\
         .format(input_dict['ref_db'], input_dict['target_dir'], input_dict['sample_name']))
 
-    #c = conn.cursor()
-    #dbstring = "INSERT INTO reference_table(entry_id, input_dict['reference_header_text']) VALUES('{}', '{}')".format(entry_id, new_header_text[1:])
-    #c.execute(dbstring)
-    #conn.commit()
-    #conn.close()
 
 def check_unique_entry_id(entry_id, moss_db):
 

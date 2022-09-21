@@ -48,7 +48,7 @@ function isExperimentNameValid(experiment_name) {
 
 exports.isExperimentNameValid = isExperimentNameValid
 
-function create_metadata_table_fastq(){
+function create_meta_data_table_fastq(){
     const experiment_name = document.getElementById('experiment-name').value;
     if (window.isExperimentNameValid(experiment_name)) {
         document.getElementById('metadata-table-div').innerHTML = "";
