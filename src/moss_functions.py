@@ -250,7 +250,6 @@ def moss_run(input_dict):
         run_assembly(input_dict)
         return input_dict
     elif distance > 300:  # SNP distance
-        input_dict['reference_id'] = None
         input_dict['associated_species'] = "{} - assembly from ID: {}".format(input_dict['reference_header_text'],
                                                           input_dict['entry_id'])
         run_assembly(input_dict)
@@ -494,6 +493,7 @@ def check_assembly_result(path):
     return True
 
 def run_assembly(input_dict):
+    input_dict['reference_id'] = None
     sql_cmd = "UPDATE status_table SET status=\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\"," \
               " result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("Flye Assembly", "Assembly", "4", "5", "Running", str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
