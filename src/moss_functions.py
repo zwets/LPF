@@ -23,17 +23,16 @@ def update_meta_data_table(input_dict):
     for item in input_dict:
         if "'" in input_dict[item]:
             input_dict[item] = input_dict[item].replace("'", "''")
-    sql_cmd = "INSERT INTO meta_data_table SET entry_id=\"{}\", meta_data_json=\"{}\"" \
-        .format(input_dict['entry_id'], input_dict)
+    sql_cmd = "INSERT INTO meta_data_table(entry_id, meta_data_json) VALUES('{}', '{}')".format(input_dict['entry_id'], json.dumps(input_dict))
+
     sql_execute_command(sql_cmd, input_dict['moss_db'])
 
 def update_reference_table(input_dict):
-    sql_cmd = "INSERT INTO reference_table SET entry_id=\"{}\", reference_header_text=\"{}\"" \
-        .format(input_dict['entry_id'], input_dict['reference_header_text'])
+    sql_cmd = "INSERT INTO reference_table(entry_id, reference_header_text) VALUES('{}', '{}')".format(input_dict['entry_id'], input_dict['reference_header_text'])
     sql_execute_command(sql_cmd, input_dict['moss_db'])
 
 def update_sample_table(input_dict):
-    sql_cmd = "INSERT INTO sample_table SET entry_id=\"{}\", sample_name=\"{}\", reference_id=\"{}\", consensus_name=\"{}\"".format(input_dict['entry_id'], input_dict['sample_name'], input_dict['reference_id'], input_dict['consensus_name'])
+    sql_cmd = "INSERT INTO sample_table(entry_id, sample_name, reference_id, consensus_name) VALUES('{}', '{}', '{}', '{}')".format(input_dict['entry_id'], input_dict['sample_name'], input_dict['reference_id'], input_dict['consensus_name'])
     sql_execute_command(sql_cmd, input_dict['moss_db'])
     return True
 def insert_sql_data_to_db(input_dict, r_type):
