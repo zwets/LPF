@@ -1012,6 +1012,7 @@ def compileReportAlignment(input_dict):
                            new_x="RIGHT", new_y="TOP", max_line_height=pdf.font_size)
         pdf.ln(line_height)
 
+    sys.exit('makes tables')
     pdf.ln(10)
 
     pdf.cell(85, 5, "Virulence Genes Found: ", 0, 1, 'L')
