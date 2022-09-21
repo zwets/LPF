@@ -218,6 +218,7 @@ def moss_run(input_dict):
     print (input_dict['sample_name'])
     cmd = "cp {0}{1} {2}consensus_sequences/{1}"\
         .format(input_dict['target_dir'], input_dict['consensus_name'], input_dict['config_path'])
+    print (cmd)
     os.system(cmd)
 
     input_dict['isolate_list'] = sql_fetch_all("SELECT consensus_name FROM sample_table WHERE reference_id = '{}'"
