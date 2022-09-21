@@ -220,7 +220,6 @@ def moss_run(input_dict):
 
     input_dict['isolate_list'] = sql_fetch_all("SELECT consensus_name FROM sample_table WHERE reference_id = '{}'"
             .format(input_dict['reference_id']), input_dict['moss_db']) #Not all isolates are used current is not included either.
-    input_dict['isolate_list'].append("{}consensus_sequences/{}".format(input_dict['config_path'], input_dict['consensus_name']))
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\"," \
               " final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
@@ -420,6 +419,8 @@ def make_phytree_output_folder(input_dict):
         path = "{}/consensus_sequences/{}".format(input_dict['config_path'], item)
         cmd = "cp {} {}/phytree_output/.".format(path, input_dict['target_dir'])
         os.system(cmd)
+    os.system("cp {}consensus_sequences/{} {}/phytree_output/.".format(input_dict['config_path'], input_dict['consensus_name'], input_dict['target_dir']))
+
 
     input_dict['header_name'] = input_dict['reference_header_text'].split()[0] + '.fsa'
     cmd = "~/bin/kma seq2fasta -t_db {} -seqs {} > {}/phytree_output/{}"\
