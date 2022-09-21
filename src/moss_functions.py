@@ -1003,10 +1003,10 @@ def compileReportAlignment(input_dict):
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
     for row in csv_data:
-        h = pdf.font_size*3
+        cell_height = pdf.font_size*3
         for datum in row:
             pdf.multi_cell(col_width, line_height, datum, border=1,
-                           new_x="RIGHT", new_y="TOP", h=mh)
+                           new_x="RIGHT", new_y="TOP", h=cell_height)
         pdf.ln(line_height)
     pdf.add_page()
 
