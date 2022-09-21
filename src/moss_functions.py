@@ -1010,7 +1010,7 @@ def compileReportAlignment(input_dict):
     lh_list = []  # list with proper line_height for each row
     use_default_height = 0  # flag
 
-    for row in data:
+    for row in csv_data:
         for datum in row:
             word_list = datum.split()
             number_of_words = len(word_list)  # how many words
@@ -1024,7 +1024,7 @@ def compileReportAlignment(input_dict):
             use_default_height = 0
 
     # create your fpdf table ..passing also max_line_height!
-    for j, row in enumerate(data):
+    for j, row in enumerate(csv_data):
         for datum in row:
             line_height = lh_list[j]  # choose right height for current row
             pdf.multi_cell(col_width, line_height, datum, border=1, align='L', ln=3,
