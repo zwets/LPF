@@ -23,8 +23,12 @@ def update_meta_data_table(input_dict):
     print (input_dict)
     for item in input_dict:
         print (item, input_dict[item])
-        if "'" in str(input_dict[item]):
-            input_dict[item] = input_dict[item].replace("'", "''")
+        if isinstance(input_dict[item], list):
+            for list_item in input_dict[item]:
+                input_dict[item][list_item] = input_dict[item][list_item].replace("'", "''")
+        else:
+            if "'" in str(input_dict[item]):
+                input_dict[item] = input_dict[item].replace("'", "''")
     sql_cmd = "INSERT INTO meta_data_table(entry_id, meta_data_json) VALUES('{}', '{}')".format(input_dict['entry_id'], json.dumps(input_dict))
 
     sql_execute_command(sql_cmd, input_dict['moss_db'])
