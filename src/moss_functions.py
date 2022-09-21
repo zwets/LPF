@@ -213,8 +213,10 @@ def moss_run(input_dict):
 
     input_dict['reference_id'] = sql_fetch_one("SELECT entry_id FROM reference_table WHERE reference_header_text = '{}'"
                                  .format(input_dict['reference_header_text']), input_dict['moss_db'])[0]
-
-    cmd = "cp {0}{1} {2}/consensus_sequences/{1}"\
+    print (input_dict['target_dir'])
+    print (input_dict['consensus_name'])
+    print (input_dict['sample_name'])
+    cmd = "cp {0}{1} {2}consensus_sequences/{1}"\
         .format(input_dict['target_dir'], input_dict['consensus_name'], input_dict['config_path'])
     os.system(cmd)
 
