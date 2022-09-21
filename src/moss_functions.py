@@ -1016,7 +1016,7 @@ def compileReportAlignment(input_dict):
             number_of_words = len(word_list)  # how many words
             if number_of_words > 2:  # names and cities formed by 2 words like Los Angeles are ok)
                 use_default_height = 1
-                new_line_height = pdf.font_size * (number_of_words / 2)  # new height change according to data
+                new_line_height = pdf.font_size * (number_of_words / 1.5)  # new height change according to data
         if not use_default_height:
             lh_list.append(line_height)
         else:
