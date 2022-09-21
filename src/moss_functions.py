@@ -284,28 +284,25 @@ def moss_run(input_dict):
     compileReportAlignment(input_dict)
     return input_dict
 
-def derive_phenotype_amr(genes, database): #TBD rewrite and remove.
+def derive_amr_stats(genes, database): #TBD rewrite and remove.
     new_genes = list()
     for item in genes:
         new_genes.append(item.split("_")[0])
     genes = new_genes
     phenotype = dict()
-    infile = open("/opt/moss/{}/notes.txt".format(database), 'r')
+    infile = open("/opt/moss/{}/phenotpyes.txt".format(database), 'r')
     for line in infile:
-        if line[0] != "#":
-            line = line.rstrip().split(":")
+        if not line.startswith("Gene_accession")
+            line = line.rstrip().split("\t")
             if line[0] in genes:
-                if line[1] in phenotype:
-                    phenotype[line[1]].append(line[0])
-                else:
-                    phenotype[line[1]] = [line[0]]
+                phenotype[line[0]] = [line[1], line[2]]
     csv_data = []
-    csv_data.append(("Resistance", "Genes"))
+    csv_data.append(("Gene", "Resistance Class", "Phenotype"))
     for item in phenotype:
-        csv_data.append((item, ", ".join(phenotype[item])))
-    return phenotype, csv_data
+        csv_data.append([phenotype, phenotype[item][0], phenotype[item][1]])
+    return csv_data
 
-def derive_phenotype_virulence(genes, database, target_dir):  #TBD rewrite and remove.
+def derive_virulence_stats(genes, database, target_dir):  #TBD rewrite and remove.
     new_genes = list()
     for item in genes:
         new_genes.append(item.split(":")[0])
@@ -326,7 +323,7 @@ def derive_phenotype_virulence(genes, database, target_dir):  #TBD rewrite and r
     for item in phenotype:
         csv_data.append((item, ", ".join(phenotype[item])))
     print (csv_data)
-    return phenotype, csv_data
+    return csv_data
 
 def push_finders_data_sql(target_dir, config_path, entry_id): #TBD insert all meta data into sql and the end after a succesfull run.
     resfinder_hits = parse_kma_res("{}/finders/resfinder.res".format(target_dir))
@@ -894,7 +891,7 @@ def compileReportAssembly(input_dict):
 
     pdf.cell(85, 5, "Antimicrobial Genes Found:", 0, 1, 'L')
 
-    amr_pheno, csv_data = derive_phenotype_amr(input_dict['resfinder_hits'], "resfinder_db")
+    csv_data = derive_amr_stats(input_dict['resfinder_hits'], "resfinder_db")
 
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
@@ -908,7 +905,7 @@ def compileReportAssembly(input_dict):
 
     pdf.cell(85, 5, "Virulence Genes Found: ", 0, 1, 'L')
 
-    virulence_pheno, csv_data = derive_phenotype_virulence(input_dict['virulence_hits'],
+    csv_data = derive_virulence_stats(input_dict['virulence_hits'],
                                                            "virulencefinder_db", input_dict['target_dir'])
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
@@ -1003,7 +1000,7 @@ def compileReportAlignment(input_dict):
 
     pdf.cell(85, 5, "Antimicrobial Genes Found:", 0, 1, 'L')
 
-    amr_pheno, csv_data = derive_phenotype_amr(input_dict['resfinder_hits'], "resfinder_db")
+    csv_data = derive_amr_stats(input_dict['resfinder_hits'], "resfinder_db")
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
     for row in csv_data:
@@ -1016,7 +1013,7 @@ def compileReportAlignment(input_dict):
 
     pdf.cell(85, 5, "Virulence Genes Found: ", 0, 1, 'L')
 
-    virulence_pheno, csv_data = derive_phenotype_virulence(input_dict['virulence_hits'], "virulencefinder_db", input_dict['target_dir'])
+    csv_data = derive_virulence_stats(input_dict['virulence_hits'], "virulencefinder_db", input_dict['target_dir'])
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
     for row in csv_data:
