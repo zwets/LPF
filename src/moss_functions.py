@@ -294,9 +294,8 @@ def derive_amr_stats(genes, database): #TBD rewrite and remove.
                 phenotype[line[0]] = [line[1], line[2]]
     csv_data = []
     csv_data.append(("Gene", "Resistance Class", "Phenotype"))
-    print (phenotype)
     for item in phenotype:
-        csv_data.append([phenotype, phenotype[item][0], phenotype[item][1]])
+        csv_data.append([item, phenotype[item][0], phenotype[item][1]])
     return csv_data
 
 def derive_virulence_stats(genes, database, target_dir):  #TBD rewrite and remove.
