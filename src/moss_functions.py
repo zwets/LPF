@@ -294,6 +294,7 @@ def derive_amr_stats(genes, database): #TBD rewrite and remove.
                 phenotype[line[0]] = [line[1], line[2]]
     csv_data = []
     csv_data.append(("Gene", "Resistance Class", "Phenotype"))
+    print (phenotype)
     for item in phenotype:
         csv_data.append([phenotype, phenotype[item][0], phenotype[item][1]])
     return csv_data
@@ -1012,7 +1013,6 @@ def compileReportAlignment(input_dict):
                            new_x="RIGHT", new_y="TOP", max_line_height=pdf.font_size)
         pdf.ln(line_height)
 
-    sys.exit('makes tables')
     pdf.ln(10)
 
     pdf.cell(85, 5, "Virulence Genes Found: ", 0, 1, 'L')
