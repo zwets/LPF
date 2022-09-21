@@ -895,7 +895,7 @@ def compileReportAssembly(input_dict):
     for row in csv_data:
         for datum in row:
             pdf.multi_cell(col_width, line_height, datum, border=1,
-                           new_x="RIGHT", new_y="TOP", max_line_height=pdf.font_size)
+                           new_x="RIGHT", new_y="TOP", max_line_height=pdf.font_siz)
         pdf.ln(line_height)
 
     pdf.ln(10)
@@ -1009,7 +1009,7 @@ def compileReportAlignment(input_dict):
     for row in csv_data:
         for datum in row:
             pdf.multi_cell(col_width, line_height, datum, border=1,
-                           new_x="RIGHT", new_y="TOP", max_line_height=pdf.font_size)
+                           new_x="RIGHT", new_y="TOP", max_line_height=pdf.font_size*3)
         pdf.ln(line_height)
 
     pdf.ln(10)
