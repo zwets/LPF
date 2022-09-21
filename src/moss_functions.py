@@ -1021,6 +1021,11 @@ def compileReportAlignment(input_dict):
     pdf.cell(85, 5, "Virulence Genes Found: ", 0, 1, 'L')
 
     csv_data = derive_virulence_stats(input_dict['virulence_hits'], "virulencefinder_db", input_dict['target_dir'])
+    print (csv_data)
+    print (csv_data)
+
+    print (csv_data)
+
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
     for row in csv_data:
