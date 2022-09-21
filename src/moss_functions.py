@@ -285,10 +285,6 @@ def moss_run(input_dict):
     return input_dict
 
 def derive_amr_stats(genes, database): #TBD rewrite and remove.
-    new_genes = list()
-    for item in genes:
-        new_genes.append(item.split("_")[0])
-    genes = new_genes
     phenotype = dict()
     infile = open("/opt/moss/{}/phenotypes.txt".format(database), 'r')
     for line in infile:
