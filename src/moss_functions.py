@@ -290,7 +290,7 @@ def derive_amr_stats(genes, database): #TBD rewrite and remove.
         new_genes.append(item.split("_")[0])
     genes = new_genes
     phenotype = dict()
-    infile = open("/opt/moss/{}/phenotpyes.txt".format(database), 'r')
+    infile = open("/opt/moss/{}/phenotypes.txt".format(database), 'r')
     for line in infile:
         if not line.startswith("Gene_accession"):
             line = line.rstrip().split("\t")
