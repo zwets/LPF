@@ -246,11 +246,11 @@ def moss_run(input_dict):
                                        .format(input_dict['target_dir']), input_dict)
     print (distance)
     if distance == None:
-        print ("NONE HERE") #Work cataches
         input_dict['associated_species'] = "{} - assembly from ID: {}".format(input_dict['reference_header_text'], input_dict['entry_id'])
         run_assembly(input_dict)
         return input_dict
     elif distance > 300:  # SNP distance
+        input_dict['reference_id'] = None
         input_dict['associated_species'] = "{} - assembly from ID: {}".format(input_dict['reference_header_text'],
                                                           input_dict['entry_id'])
         run_assembly(input_dict)
