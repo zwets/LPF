@@ -20,8 +20,8 @@ from io import StringIO
 import dataframe_image as dfi
 
 def update_meta_data_table(input_dict):
-    print (input_dict)
     for item in input_dict:
+        print (item, input_dict[item])
         if "'" in input_dict[item]:
             input_dict[item] = input_dict[item].replace("'", "''")
     sql_cmd = "INSERT INTO meta_data_table(entry_id, meta_data_json) VALUES('{}', '{}')".format(input_dict['entry_id'], json.dumps(input_dict))
