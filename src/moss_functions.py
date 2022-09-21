@@ -20,7 +20,6 @@ from io import StringIO
 import dataframe_image as dfi
 
 def update_meta_data_table(input_dict):
-    print (input_dict)
     for item in input_dict:
         if isinstance(input_dict[item], list):
             for i in range(len(input_dict[item])):
@@ -745,6 +744,7 @@ def flye_assembly(input_dict):
     cmd = "docker run --name assembly_{0} -v {1}:/tmp/{2} staphb/flye flye -o /tmp/assembly_results" \
           " --threads 8 --nano-raw /tmp/{2}"\
         .format(input_dict['entry_id'], input_dict['input_path'], input_dict['input_file'])
+    print (cmd)
     os.system(cmd)
 
     proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_", input_dict['entry_id']), shell=True,
