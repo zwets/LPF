@@ -893,6 +893,7 @@ def compileReportAssembly(input_dict):
 
     csv_data = derive_amr_stats(input_dict['resfinder_hits'], "resfinder_db")
 
+
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
     for row in csv_data:
@@ -1001,6 +1002,12 @@ def compileReportAlignment(input_dict):
     pdf.cell(85, 5, "Antimicrobial Genes Found:", 0, 1, 'L')
 
     csv_data = derive_amr_stats(input_dict['resfinder_hits'], "resfinder_db")
+    print (csv_data)
+    print (csv_data)
+
+    print (csv_data)
+
+
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
     for row in csv_data:
