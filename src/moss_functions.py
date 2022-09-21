@@ -998,10 +998,6 @@ def compileReportAlignment(input_dict):
     pdf.cell(85, 5, "Antimicrobial Genes Found:", 0, 1, 'L')
 
     csv_data = derive_amr_stats(input_dict['resfinder_hits'], "resfinder_db")
-    print (csv_data)
-    print (csv_data)
-
-    print (csv_data)
 
 
     line_height = pdf.font_size * 3
@@ -1011,6 +1007,7 @@ def compileReportAlignment(input_dict):
             pdf.multi_cell(col_width, line_height, datum, border=1,
                            new_x="RIGHT", new_y="TOP", max_line_height=pdf.font_size*3)
         pdf.ln(line_height)
+    pdf.add_page()
 
     pdf.ln(10)
 
