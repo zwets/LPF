@@ -25,6 +25,7 @@ def moss_pipeline(input_dict):
         input_dict = moss.moss_run(input_dict)
         r_type = moss.evaluate_moss_run()
         if r_type != None: #Evals if completed correctly
+            print (r_type)
             moss.completed_run_update_sql_database(r_type, input_dict)
             moss.insert_sql_data_to_db(input_dict, r_type)
         else:
