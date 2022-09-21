@@ -222,8 +222,6 @@ def moss_run(input_dict):
             .format(input_dict['reference_id']), input_dict['moss_db']) #Not all isolates are used current is not included either.
     input_dict['isolate_list'].append("{}consensus_sequences/{}".format(input_dict['config_path'], input_dict['consensus_name']))
 
-    sys.exit(input_dict['isolate_list'])
-
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\"," \
               " final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
         .format("CCphylo", input_dict['sample_name'], "Alignment", "5", "10", "Running",
