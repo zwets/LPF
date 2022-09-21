@@ -229,7 +229,6 @@ def moss_run(input_dict):
 
     input_dict = make_phytree_output_folder(input_dict)
 
-    sys.exit()
 
     cmd = "~/bin/ccphylo dist --input {0}/phytree_output/* --reference \"{1}\" --min_cov 0.01" \
           " --normalization_weight 0 --output {0}/phytree_output/distance_matrix"\
