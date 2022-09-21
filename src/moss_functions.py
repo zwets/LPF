@@ -889,13 +889,30 @@ def compileReportAssembly(input_dict):
 
     csv_data = derive_amr_stats(input_dict['resfinder_hits'], "resfinder_db")
 
-
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
+    lh_list = []  # list with proper line_height for each row
+    use_default_height = 0  # flag
+
     for row in csv_data:
         for datum in row:
-            pdf.multi_cell(col_width, line_height, datum, border=1,
-                           new_x="RIGHT", new_y="TOP", max_line_height=pdf.font_siz)
+            word_list = datum.split()
+            number_of_words = len(word_list)  # how many words
+            if number_of_words > 2:  # names and cities formed by 2 words like Los Angeles are ok)
+                use_default_height = 1
+                new_line_height = pdf.font_size * (number_of_words / 1.3)  # new height change according to data
+        if not use_default_height:
+            lh_list.append(line_height)
+        else:
+            lh_list.append(new_line_height)
+            use_default_height = 0
+
+    # create your fpdf table ..passing also max_line_height!
+    for j, row in enumerate(csv_data):
+        for datum in row:
+            line_height = lh_list[j]  # choose right height for current row
+            pdf.multi_cell(col_width, line_height, datum, border=1, align='L', ln=3,
+                           max_line_height=pdf.font_size)
         pdf.ln(line_height)
 
     pdf.ln(10)
@@ -906,10 +923,28 @@ def compileReportAssembly(input_dict):
                                                            "virulencefinder_db", input_dict['target_dir'])
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
+    lh_list = []  # list with proper line_height for each row
+    use_default_height = 0  # flag
+
     for row in csv_data:
         for datum in row:
-            pdf.multi_cell(col_width, line_height, datum, border=1,
-                           new_x="RIGHT", new_y="TOP", max_line_height=pdf.font_size)
+            word_list = datum.split()
+            number_of_words = len(word_list)  # how many words
+            if number_of_words > 2:  # names and cities formed by 2 words like Los Angeles are ok)
+                use_default_height = 1
+                new_line_height = pdf.font_size * (number_of_words / 1.3)  # new height change according to data
+        if not use_default_height:
+            lh_list.append(line_height)
+        else:
+            lh_list.append(new_line_height)
+            use_default_height = 0
+
+    # create your fpdf table ..passing also max_line_height!
+    for j, row in enumerate(csv_data):
+        for datum in row:
+            line_height = lh_list[j]  # choose right height for current row
+            pdf.multi_cell(col_width, line_height, datum, border=1, align='L', ln=3,
+                           max_line_height=pdf.font_size)
         pdf.ln(line_height)
 
     pdf.ln(10)
@@ -1002,11 +1037,6 @@ def compileReportAlignment(input_dict):
 
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
-    #for row in csv_data:
-    #    for datum in row:
-    #        pdf.multi_cell(col_width, line_height, datum, border=1,
-    #                       new_x="RIGHT", new_y="TOP")
-    #    pdf.ln(line_height)
     lh_list = []  # list with proper line_height for each row
     use_default_height = 0  # flag
 
@@ -1016,7 +1046,7 @@ def compileReportAlignment(input_dict):
             number_of_words = len(word_list)  # how many words
             if number_of_words > 2:  # names and cities formed by 2 words like Los Angeles are ok)
                 use_default_height = 1
-                new_line_height = pdf.font_size * (number_of_words / 1.5)  # new height change according to data
+                new_line_height = pdf.font_size * (number_of_words / 1.3)  # new height change according to data
         if not use_default_height:
             lh_list.append(line_height)
         else:
@@ -1030,24 +1060,36 @@ def compileReportAlignment(input_dict):
             pdf.multi_cell(col_width, line_height, datum, border=1, align='L', ln=3,
                            max_line_height=pdf.font_size)
         pdf.ln(line_height)
-    pdf.add_page()
 
     pdf.ln(10)
 
     pdf.cell(85, 5, "Virulence Genes Found: ", 0, 1, 'L')
 
     csv_data = derive_virulence_stats(input_dict['virulence_hits'], "virulencefinder_db", input_dict['target_dir'])
-    print (csv_data)
-    print (csv_data)
-
-    print (csv_data)
-
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
+    lh_list = []  # list with proper line_height for each row
+    use_default_height = 0  # flag
+
     for row in csv_data:
         for datum in row:
-            pdf.multi_cell(col_width, line_height, datum, border=1,
-                           new_x="RIGHT", new_y="TOP", max_line_height=pdf.font_size)
+            word_list = datum.split()
+            number_of_words = len(word_list)  # how many words
+            if number_of_words > 2:  # names and cities formed by 2 words like Los Angeles are ok)
+                use_default_height = 1
+                new_line_height = pdf.font_size * (number_of_words / 1.3)  # new height change according to data
+        if not use_default_height:
+            lh_list.append(line_height)
+        else:
+            lh_list.append(new_line_height)
+            use_default_height = 0
+
+    # create your fpdf table ..passing also max_line_height!
+    for j, row in enumerate(csv_data):
+        for datum in row:
+            line_height = lh_list[j]  # choose right height for current row
+            pdf.multi_cell(col_width, line_height, datum, border=1, align='L', ln=3,
+                           max_line_height=pdf.font_size)
         pdf.ln(line_height)
 
     pdf.ln(10)
