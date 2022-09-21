@@ -25,7 +25,8 @@ def update_meta_data_table(input_dict):
         print (item, input_dict[item])
         if isinstance(input_dict[item], list):
             for list_item in input_dict[item]:
-                if "'" in str(input_dict[item][list_item]):
+                print ('here')
+                if "'" in input_dict[item][list_item]:
                     input_dict[item][list_item] = input_dict[item][list_item].replace("'", "''")
         else:
             if "'" in str(input_dict[item]):
