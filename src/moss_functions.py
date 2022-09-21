@@ -20,6 +20,7 @@ from io import StringIO
 import dataframe_image as dfi
 
 def update_meta_data_table(input_dict):
+    print (input_dict)
     for item in input_dict:
         if "'" in input_dict[item]:
             input_dict[item] = input_dict[item].replace("'", "''")
