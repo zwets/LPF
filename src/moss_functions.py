@@ -108,12 +108,7 @@ def completed_run_update_sql_database(r_type, input_dict):
         return None
 
 def evaluate_moss_run(input_dict): #TBD. Not implemented yet. Will be used to evaluate if the run finished correctly or if sql should be cleaned.
-    print (input_dict['reference_id'])
-    print (input_dict['reference_id'])
-
-    print (input_dict['reference_id'])
-
-    if input_dict['reference_id'] == 'None':
+    if input_dict['reference_id'] == None:
         return 'assembly'
     else:
         return 'alignment'
