@@ -22,7 +22,6 @@ import dataframe_image as dfi
 def update_meta_data_table(input_dict):
     print (input_dict)
     for item in input_dict:
-        print (item, input_dict[item])
         if isinstance(input_dict[item], list):
             for i in range(len(input_dict[item])):
                 if "'" in input_dict[item][i]:
@@ -43,11 +42,8 @@ def update_sample_table(input_dict):
     sql_execute_command(sql_cmd, input_dict['moss_db'])
     return True
 def insert_sql_data_to_db(input_dict, r_type):
-    print ('sample')
     update_sample_table(input_dict)
-    print ('meta')
     update_meta_data_table(input_dict)
-    print ('assembly')
     if r_type == 'assembly':
         update_reference_table(input_dict)
 
