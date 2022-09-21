@@ -2,7 +2,7 @@
   "samples": [
     {
       "input_file": "alignment_test.fastq.gz",
-      "input_path": "tests/fixtures/data_for_tests/read_files/alignment_test.fastq.gz",
+      "input_path": "/opt/moss/tests/fixtures/data_for_tests/read_files/alignment_test.fastq.gz",
       "sequencing_method": "nanopore minion",
       "isolation_source": "isolate",
       "investigation_type": "type1",
