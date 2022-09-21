@@ -23,7 +23,7 @@ def moss_pipeline(input_dict):
         moss.check_unique_entry_id(input_dict['entry_id'], input_dict['moss_db'])
         moss.qc_check(input_dict)
         input_dict = moss.moss_run(input_dict)
-        r_type = moss.evaluate_moss_run()
+        r_type = moss.evaluate_moss_run(input_dict)
         if r_type != None: #Evals if completed correctly
             print (r_type)
             moss.completed_run_update_sql_database(r_type, input_dict)
