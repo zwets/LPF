@@ -10,6 +10,9 @@ parser.add_argument("-pab", action="store_true", default = False, dest="pab", he
 args = parser.parse_args()
 
 def main(args):
+    #Full install
+    #Scripts only and rebuild app
+    #Script, app, databases
     if args.pab:
         sys.exit('Update not yet implemented')
     elif args.action: #Github tests
