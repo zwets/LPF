@@ -5,14 +5,15 @@ import argparse
 
 parser = argparse.ArgumentParser(description='.')
 parser.add_argument('-version', action='version', version='MOSS 1.1.0')
-parser.add_argument("-config_name", action="store", type=str, default = "", dest="config_name", help="config_name")
+parser.add_argument("-folder", action="store", type=str, default = "", dest="folder", help="folder")
+parser.add_argument("-name", action="store", type=str, default = "", dest="name", help="name")
 args = parser.parse_args()
 
 def merge():
+    sys.exit(args.folder)
     existing_list = os.path.listdir("/opt/moss_data/")
-    black_list = ['core-dump-db', 'intermediate', 'persistance', 'pings', 'user_scripts', 'reads', 'queded_reads']
-    sequencing_list = os.path.listdir("/var/lib/minknow/data/")
-    complete_list = []
+    if args.name in existing_list:
+        sys.exit('There is already a file with that name in the moss_data folder. Please choose a different name.')
     for item in sequencing_list:
         if item not in black_list and item not in existing_list:
             complete_list.append(item)
