@@ -222,6 +222,7 @@ function generate_table_fastq(file_number) {
                 continue;
                 if (columnNames[j] =="collection_date") {
                     input.placeholder = "YYYY-MM-DD";
+                    }
             } else if (typeof identifier === "object") {
                 td.defaultValue = "";
                 td.classList.add("select");
