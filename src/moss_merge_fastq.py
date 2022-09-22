@@ -14,6 +14,7 @@ def merge():
     if args.name in existing_list:
         sys.exit('There is already a file with that name in the moss_data folder. Please choose a different name.')
     cmd = 'cat {}*.fastq.gz > /opt/moss_data/{}.fastq.gz'.format(args.folder, args.name)
+    print (cmd)
     os.system(cmd)
 
 
