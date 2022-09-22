@@ -11,11 +11,7 @@ args = parser.parse_args()
 
 def main(args):
     if args.pab:
-        os.system('cd /opt/moss; git pull;')
-
-        #install_app()
-        #check_dist_build()
-        #return True
+        sys.exit('Update not yet implemented')
     elif args.action: #Github tests
         cwd = os.getcwd()
         os.system(
