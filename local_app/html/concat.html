@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Microbial Outbreak Surveillance System 1.0</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../js/concat.js" type="text/javascript">
+    </script>
+</head>
+
+
+  <body>
+<div class="sidenav" id="mySidebar">
+    <a href="./index.html" id>Home</a>
+    <a href="./results.html">Results</>
+    <a href="./concat.html">Merge FastQ</a>
+    <a href="./update.html">Update</a>
+    <a href="./config.html">Config</a>
+</div>
+
+  <div class="main" id="main">
+      <main data-router-wrapper>
+          <section data-router-view="Guide" class="Guide">
+          <div class="Guide-content">
+              <div class ="Guide-presentation">
+                  <h1>Merge FastQ files to a single FastQ File</h1>
+              </div>
+
+            <div class="merge-section" id="merge-section">
+                <div class="init-path">
+                    <form>
+                    <label for="fastq-name"> Enter a name that you would like the merged FastQ file to receive (a .fastq.gz extension will be added automatically):</label>
+                    <input type="text" id="fastq-name" name="fastq-name" value="">
+                    <br><br>
+                  </form></div>
+
+                  <div class="kmaindex-path">
+                    <form>
+                    <label for="fastq_folder_path"> Select the folder with the fastQ files to be merged:</label>
+                    <input type="file" id="fastq_folder_path" value=""  webkitdirectory mozdirectory msdirectory odirectory directory multiple />
+                    <br><br>
+                  </form></div>
+
+                <button class="button-7" role="button" onclick="merge_fastq()";>Merge FastQ</button>
+                <br> <br>
+                <div class="loader" id="loader">
+                  </div>
+                  <pre id="loadermessage"></pre>
+        </div>
+          </div>
+      </section>
+    </main>
+  </div>
+  <script type="text/javascript">
+  </script>
+  </body>
+</html>
+
