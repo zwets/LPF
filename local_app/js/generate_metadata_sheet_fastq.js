@@ -219,10 +219,11 @@ function generate_table_fastq(file_number) {
                 input.id = `input${i}${j}`;
                 td.appendChild(input);
                 tr.appendChild(td);
-                continue;
                 if (columnNames[j] =="collection_date") {
                     input.placeholder = "YYYY-MM-DD";
                     }
+                continue;
+
             } else if (typeof identifier === "object") {
                 td.defaultValue = "";
                 td.classList.add("select");
