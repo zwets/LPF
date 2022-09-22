@@ -14,6 +14,7 @@ function merge_fastq() {
   var fastq_name = document.getElementById("fastq-name").value;
   var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"] + "/";
   var folder = getfolder("fastq_folder_path");
+  /*
   var execstring = `~/anaconda3/bin/conda run -n base python3 /opt/moss/src/moss_merge_fastq.py -folder ${folder} -name ${fastq_name}`;
   console.log(execstring);
     console.log("job submitted");
@@ -35,4 +36,5 @@ function merge_fastq() {
         loader.style.display = 'none';
         document.getElementById('loadermessage').innerHTML = "Your fastq files have been merged.";
     }
+    */
 }
