@@ -22,19 +22,23 @@ function merge_fastq() {
     var loader = document.getElementById('loader');
     loader.style.display = 'block';
     document.getElementById('loadermessage').innerHTML = "Merging fastq files. This might take some time, if there are a lot of files.";
-    /*
     exec(execstring, (error, stdout, stderr) => {
         if (error) {
-          //If error, change accepted ui to failure, which attached message.
-          console.error(`exec error: ${error}`);
-          alert(`exec error: ${error}`);
-          return;
-        }
-        console.log(`stdout: ${stdout}`);
-        console.error(`stderr: ${stderr}`);
-        //Automatic change of correct system config to
-        alert("Your fastq files have been merged!");
-        loader.style.display = 'none';
-        document.getElementById('loadermessage').innerHTML = "Your fastq files have been merged.";
-    }*/
+      //If error, change accepted ui to failure, which attached message.
+      console.error(`exec error: ${error}`);
+      alert(`exec error: ${error}`);
+      return;
+    }
+    console.log(`stdout: ${stdout}`);
+    console.error(`stderr: ${stderr}`);
+
+    //Automatic change of correct system config to
+    alert("FastQ File has been merged!");
+
+    loader.style.display = 'none';
+    document.getElementById('loadermessage').innerHTML = "FastQ File has been merged!";
+
+
+
+    });
 }
