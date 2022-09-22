@@ -27,16 +27,19 @@
               </div>
 
             <div class="merge-section" id="merge-section">
-                <form action="/action_page.php">
-                  <label >Select the folder with the fastQ files to be merged</label>
-                  <input type="file" id="fastq-input" name="fastq-input" multiple><br><br>
-                </form>
-                <br><br>
+                <div class="init-path">
+                    <form>
+                    <label for="config-name"> Enter a name that you would like the file to receive (a .fastq.gz extension will be added automatically):</label>
+                    <input type="text" id="config-name" name="config-name" value="">
+                    <br><br>
+                  </form></div>
 
-                Enter a name that you would like the file to receive (a .fastq.gz extension will be added automatically):
-                <input type="file" id="merge_files_path" value=""  webkitdirectory mozdirectory msdirectory odirectory directory multiple ><br>
-                <br>
-                <br>
+                  <div class="kmaindex-path">
+                    <form>
+                    <label for="kmaindex-path"> Select the folder with the fastQ files to be merged:</label>
+                    <input type="file" id="kmaindex-path" value=""  webkitdirectory mozdirectory msdirectory odirectory directory multiple />
+                    <br><br>
+                  </form></div>
 
                 <button class="button-7" role="button" onclick="merge_fastq()";>Merge FastQ</button>
                 <br> <br>
