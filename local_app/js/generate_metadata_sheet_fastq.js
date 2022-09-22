@@ -234,7 +234,7 @@ function generate_table_fastq(file_number) {
                     object_options = countryNames;
                     input.onclick = function(){window.getCities()};
                 } else if (columnNames[j] =="collection_date") {
-                    input.placeholder = "YYYY-MM-DD";
+                    input.innerHTML = "YYYY-MM-DD";
                 }
                 else {
                     object_options = Object.values(identifier);
