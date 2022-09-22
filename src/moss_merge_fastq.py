@@ -10,17 +10,10 @@ parser.add_argument("-name", action="store", type=str, default = "", dest="name"
 args = parser.parse_args()
 
 def merge():
-    sys.exit(args.folder)
     existing_list = os.path.listdir("/opt/moss_data/")
     if args.name in existing_list:
         sys.exit('There is already a file with that name in the moss_data folder. Please choose a different name.')
-    for item in sequencing_list:
-        if item not in black_list and item not in existing_list:
-            complete_list.append(item)
-
-    for item in complete_list:
-        barcode_list = os.path.listdir("/var/lib/minknow/data/" + item + "/reads/")
-        os.system("cat /var/lib/minknow/data/" + item + "/*/*/fastq_pass/* > /opt/moss_data/" + item + ".fastq.gz")
+    os.system('cat {}*.fastq.gz > /opt/moss_data/{}.fastq.gz'.format(args.folder, args.name))
 
 
 def main():
