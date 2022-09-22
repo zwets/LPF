@@ -220,6 +220,8 @@ function generate_table_fastq(file_number) {
                 td.appendChild(input);
                 tr.appendChild(td);
                 continue;
+                if (columnNames[j] =="collection_date") {
+                    input.placeholder = "YYYY-MM-DD";
             } else if (typeof identifier === "object") {
                 td.defaultValue = "";
                 td.classList.add("select");
@@ -233,8 +235,6 @@ function generate_table_fastq(file_number) {
                     countryNames.push.apply(countryNames, countries);
                     object_options = countryNames;
                     input.onclick = function(){window.getCities()};
-                } else if (columnNames[j] =="collection_date") {
-                    input.innerHTML = "YYYY-MM-DD";
                 }
                 else {
                     object_options = Object.values(identifier);
