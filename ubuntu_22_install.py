@@ -56,7 +56,7 @@ def main(args):
             "git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; sudo cp ccphylo ~/bin/.;  cd ..; mv ccphylo src/.;")
         os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ~/bin/kma_index;")
         install_app()
-        path_list = ["/opt/moss_db", "/opt/moss_data/", "/opt/moss_data/fast5/", "/opt/moss_data/fastq/"]
+        path_list = ["/opt/moss_db", "/opt/moss_data/"]
         for item in path_list:
             if not os.path.exists(item):
                 os.system("sudo mkdir -m 777 {}".format(item))
