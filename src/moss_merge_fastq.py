@@ -19,5 +19,7 @@ def merge():
 
 
 def main():
-    if __name__ == "__main__":
-        merge()
+    merge()
+
+if __name__ == "__main__":
+    merge()
