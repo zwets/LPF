@@ -10,6 +10,8 @@ parser.add_argument("-name", action="store", type=str, default = "", dest="name"
 args = parser.parse_args()
 
 def merge():
+    if args.name.endswith(".fastq.gz"):
+        args.name = args.name[:-9]
     existing_list = os.listdir("/opt/moss_data/")
     if args.name + ".fastq.gz" in existing_list:
         sys.exit('There is already a file with that name in the moss_data folder. Please choose a different name.')
