@@ -22,7 +22,7 @@ def main(args):
         os.system("pip install -r requirements.txt")
         os.system("git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; sudo cp kma* ~/bin/.; cd ..; mv kma src/.;")
         os.system("git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; sudo cp ccphylo ~/bin/.;  cd ..; mv ccphylo src/.;")
-            os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ~/bin/kma_index;")
+        os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ~/bin/kma_index;")
         download_finder_dbs()
 
         install_app()
