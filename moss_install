@@ -1,0 +1,62 @@
+#!/usr/bin/env python3
+import argparse
+import os
+import sys
+
+def main(command_line=None):
+    parser = argparse.ArgumentParser('MOSS INSTALL COMMANDS')
+    parser.add_argument(
+        '--debug',
+        action='store_true',
+        help='Print debug info'
+    )
+    subparsers = parser.add_subparsers(dest='command')
+    ont = subparsers.add_parser('ont', help='ONT repos for ubuntu 22.')
+    moss_deps = subparsers.add_parser('moss_deps', help='Local dependencies for MOSS')
+    moss_databses = subparsers.add_parser('moss_databses', help='Downloads databases for MOSS')
+    moss_install = subparsers.add_parser('moss_install', help='Build MOSS app and relocates report to /opt/moss ( Requires moss_deps to be installed in advance.')
+    deps_check = subparsers.add_parser('deps_check', help='Check for MOSS dependencies.')
+
+    args = parser.parse_args(command_line)
+    if args.command == 'ont':
+        os.system("sudo apt update && apt upgrade")
+        os.system("wget http://apt.kcri.it/debs/kcri-apt-repo_1.0.0_all.deb")
+        os.syste("sudo apt install ./kcri-apt-repo_1.0.0_all.deb")
+        os.system("sudo apt update")
+        os.system("sudo apt install kcri-seqtz-repo")
+        os.system("sudo apt update")
+        os.system("sudo apt install kcri-seqtz-deps")
+        os.system('sudo groupadd docker; sudo usermod -aG docker $USER; sudo chmod 666 /var/run/docker.sock')
+    elif args.command == 'moss_deps':
+        os.system(
+            "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
+        os.system("pip install -r requirements.txt")
+    elif args.command == 'moss_databses':
+        #Mkdir /opt/moss_databases
+        #Download databases
+        pass
+    elif args.command == 'moss_install':
+        #Set everything up
+        build_app()
+        move_moss_repo(os.cwd())
+    elif args.command == 'deps_check':
+        #Check ONT
+        #Check local deps
+        #Check docker
+        #Check docker images
+        #Check app
+        pass
+
+
+def build_app():
+    os.system("cd local_app; chmod a+x moss_launch; npm i; ./node_modules/.bin/electron-rebuild; npm run dist;sudo cp moss.desktop /usr/share/applications/.; cd ..")
+    return True
+
+def move_moss_repo(cwd):
+    if (cwd != '/opt/moss'):
+        os.system("rm -rf /opt/moss")
+        os.system("sudo cp -r {} /opt/moss".format(cwd))
+        os.system("sudo rm -r {}".format(cwd))
+
+if __name__ == '__main__':
+    main()
