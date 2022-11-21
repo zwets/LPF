@@ -52,7 +52,7 @@ def main(command_line=None):
         pass
 
 def check_google_chrome():
-    proc = subprocess.Popen("apt list --insalled | grep \"google-chrome\"", shell=True,
+    proc = subprocess.Popen("apt list --installed | grep \"google-chrome\"", shell=True,
                             stdout=subprocess.PIPE, )
     output = proc.communicate()[0].decode().split("\n")
     print (output)
