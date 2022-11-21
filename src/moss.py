@@ -12,6 +12,7 @@ parser.add_argument('-version', action='version', version='MOSS 1.1.0')
 parser.add_argument("-json", action="store", type=str, default = "", dest="json", help="input object")
 args = parser.parse_args()
 
+"""
 class MossObject:
     #TBD Generate from template instead
     def __init__(self, json_object):
@@ -46,7 +47,7 @@ class MossObject:
         raise SystemExit('An invalid config_path was given.')
     validate_date_text(input_dict['collection_date'])
     print('Validation complete')
-
+"""
 
 def moss_pipeline(input_dict):
     """

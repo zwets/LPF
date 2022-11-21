@@ -20,8 +20,8 @@ from io import StringIO
 import dataframe_image as dfi
 import logging
 
-import src.moss_helpers as moss_helpers
-from .version import __version__
+#import src.moss_helpers as moss_helpers
+#from .version import __version__
 
 def moss_run(input_dict):
     """
@@ -45,12 +45,12 @@ def moss_run(input_dict):
         'target_dir': ''
     }
     """
-    moss_helpers.begin_logging(input_dict['target_dir'] + input_dict['entry_id'] + '.log')
-    try:
-        pass
-    except Exception as e:
-        logging.error(e, exc_info=True)
-        raise
+    #moss_helpers.begin_logging(input_dict['target_dir'] + input_dict['entry_id'] + '.log')
+    #try:
+    #    pass
+    #except Exception as e:
+    #    logging.error(e, exc_info=True)
+    #    raise
 
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\"," \
               " type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\"," \
