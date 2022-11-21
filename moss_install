@@ -2,6 +2,7 @@
 import argparse
 import os
 import sys
+import subprocess
 
 def main(command_line=None):
     parser = argparse.ArgumentParser('MOSS INSTALL COMMANDS')
@@ -15,7 +16,7 @@ def main(command_line=None):
     moss_deps = subparsers.add_parser('moss_deps', help='Local dependencies for MOSS')
     moss_databses = subparsers.add_parser('moss_databses', help='Downloads databases for MOSS')
     moss_build = subparsers.add_parser('moss_build', help='Build MOSS app and relocates report to /opt/moss ( Requires moss_deps to be installed in advance.')
-    deps_check = subparsers.add_parser('deps_check', help='Check for MOSS dependencies.')
+    check_deps = subparsers.add_parser('check_deps', help='Check for MOSS dependencies.')
 
     args = parser.parse_args(command_line)
     if args.command == 'ont':
@@ -41,14 +42,87 @@ def main(command_line=None):
         build_app()
         check_dist_build()
         move_moss_repo(os.getcwd())
-    elif args.command == 'deps_check':
-        #Check ONT
+    elif args.command == 'check_deps':
+        #Check conda
+        docker_images_result = check_docker_images()
+        pip_deps_result = check_pip_deps()
+        check_google_chrome()
         #Check local deps
-        #Check docker
-        #Check docker images
         #Check app
         pass
 
+def check_google_chrome():
+    proc = subprocess.Popen("apt list --insalled | grep \"google-chrome\"", shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0].decode().split("\n")
+    print (output)
+    for item in output[0:-1]:
+        item = item.split()
+        name = item[0] + ":" + item[1]
+        if name == "google-chrome":
+            print(name + " is installed")
+            return True
+    print("Google Chrome is not installed")
+    return False
+def check_app_build():
+    pass
+def check_docker_images():
+    docker_list = [
+        "biocontainers/figtree:v1.4.4-3-deb_cv1",
+        "staphb/quast:5.0.2",
+        "nanozoo/bandage:0.8.1--7da3a06",
+    ]
+    proc = subprocess.Popen("docker images", shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0].decode().split("\n")
+
+    if "REPOSITORY" not in output[0]:
+        print("Docker is not installed")
+        return False
+
+    for item in output[0:-1]:
+        item = item.split()
+        name = item[0] + ":" + item[1]
+        if name in docker_list:
+            print (name + " is installed")
+            docker_list.remove(name)
+    if len(docker_list) > 0:
+        print ("The following docker images are missing:")
+        for item in docker_list:
+            print (item)
+        return False
+    else:
+        return True
+def check_ont_deps():
+    pass
+
+def check_pip_deps():
+    pip_list = [
+        "geocoder",
+        "geopy",
+        "nominatim",
+        "tabulate",
+        "biopython",
+        "cgecore",
+        "dataframe-image",
+        "fpdf2",
+    ]
+    proc = subprocess.Popen("pip list", shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0].decode().split("\n")
+    for item in output[0:-1]:
+        item = item.split()
+        name = item[0]
+        if name in pip_list:
+            print(name + " is installed")
+            pip_list.remove(name)
+    if len(pip_list) > 0:
+        print("The following pip packages are missing:")
+        for item in pip_list:
+            print(item)
+        return False
+    else:
+        return True
 
 def check_dist_build():
     if not os.path.isfile("local_app/dist/linux-unpacked/moss"):
