@@ -14,7 +14,7 @@ def main(command_line=None):
     ont = subparsers.add_parser('ont', help='ONT repos for ubuntu 22.')
     moss_deps = subparsers.add_parser('moss_deps', help='Local dependencies for MOSS')
     moss_databses = subparsers.add_parser('moss_databses', help='Downloads databases for MOSS')
-    moss_install = subparsers.add_parser('moss_install', help='Build MOSS app and relocates report to /opt/moss ( Requires moss_deps to be installed in advance.')
+    moss_build = subparsers.add_parser('moss_build', help='Build MOSS app and relocates report to /opt/moss ( Requires moss_deps to be installed in advance.')
     deps_check = subparsers.add_parser('deps_check', help='Check for MOSS dependencies.')
 
     args = parser.parse_args(command_line)
