@@ -23,7 +23,7 @@ def main(command_line=None):
         os.system("wget http://apt.kcri.it/debs/kcri-apt-repo_1.0.0_all.deb")
         os.system("sudo apt install ./kcri-apt-repo_1.0.0_all.deb")
         os.system("sudo apt update")
-        os.system("sudo apt install kcri-seqtz-repo")
+        os.system("sudo apt install kcri-seqtz-repos")
         os.system("sudo apt update")
         os.system("sudo apt install kcri-seqtz-deps")
         os.system('sudo groupadd docker; sudo usermod -aG docker $USER; sudo chmod 666 /var/run/docker.sock')
@@ -32,10 +32,11 @@ def main(command_line=None):
             "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
         os.system("pip install -r requirements.txt")
     elif args.command == 'moss_databses':
+        #STFP solution with Maja
         #Mkdir /opt/moss_databases
         #Download databases
         pass
-    elif args.command == 'moss_install':
+    elif args.command == 'moss_build':
         #Set everything up
         build_app()
         move_moss_repo(os.cwd())
