@@ -58,7 +58,7 @@ def check_google_chrome():
     print (output)
     for item in output[0:-1]:
         if item.startswith("google-chrome"):
-            print(google-chrome + " is installed")
+            print("google-chrome" + " is installed")
             return True
     print("Google Chrome is not installed")
     return False
