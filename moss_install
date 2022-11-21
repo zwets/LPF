@@ -39,7 +39,7 @@ def main(command_line=None):
     elif args.command == 'moss_build':
         #Set everything up
         build_app()
-        move_moss_repo(os.cwd())
+        move_moss_repo(os.getcwd())
     elif args.command == 'deps_check':
         #Check ONT
         #Check local deps

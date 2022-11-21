@@ -46,6 +46,8 @@ def main(args):
         os.system('sudo apt install kcri-seqtz-deps')
         os.system('apt install minion-nc-gpu')
         os.system('sudo apt upgrade')
+        # TDB Check if docker is running
+
         os.system('sudo groupadd docker; sudo usermod -aG docker $USER; sudo chmod 666 /var/run/docker.sock')
         os.system("wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
         os.system("pip install -r requirements.txt")
