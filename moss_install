@@ -39,6 +39,7 @@ def main(command_line=None):
     elif args.command == 'moss_build':
         #Set everything up
         build_app()
+        check_dist_build()
         move_moss_repo(os.getcwd())
     elif args.command == 'deps_check':
         #Check ONT
@@ -48,6 +49,12 @@ def main(command_line=None):
         #Check app
         pass
 
+
+def check_dist_build():
+    if not os.path.isfile("local_app/dist/linux-unpacked/moss"):
+        sys.exit("A MOSS distribution was not created correctly. Installation was not completed")
+    else:
+        print ("The installation was completed")
 
 def build_app():
     os.system("cd local_app; chmod a+x moss_launch; npm i; ./node_modules/.bin/electron-rebuild; npm run dist;sudo cp moss.desktop /usr/share/applications/.; cd ..")
