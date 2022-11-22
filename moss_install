@@ -25,24 +25,45 @@ def main(command_line=None):
     if not os.path.exists('~/bin'):
         os.system('sudo mkdir ~/bin')
     add_bin_path()
-    #os.system("sudo cp moss_install ~/bin/moss_install")
     if args.command == 'all':
         install_ont_deps()
         install_moss_deps()
-        moss_build()
+        moss_build_app()
+        download_finder_dbs()
     elif args.command == 'ont_deps':
         install_ont_deps()
     elif args.command == 'moss_deps':
         install_moss_deps()
     elif args.command == 'moss_databses':
+        download_finder_dbs()
         #STFP solution with Maja
-        #Mkdir /opt/moss_databases
-        #Download databases
         pass
     elif args.command == 'moss_build':
         moss_build_app()
     elif args.command == 'check_deps':
         check_all_deps()
+
+def check_local_database():
+    if not os.path.exists('resfinder_db'):
+        print(bcolors.FAIL + "Resfinder database not found" + bcolors.ENDC)
+        return False
+    if not os.path.exists('plasmidfinder_db'):
+        print(bcolors.FAIL + "Plasmidfinder database not found" + bcolors.ENDC)
+        return False
+    if not os.path.exists('virulencefinder_db'):
+        print(bcolors.FAIL + "Virulencefinder database not found" + bcolors.ENDC)
+        return False
+    else:
+        print(bcolors.OKGREEN + "CGE Finder Databases are installed" + bcolors.ENDC)
+        return True
+
+def download_finder_dbs():
+    os.system("git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git")
+    os.system("git clone https://git@bitbucket.org/genomicepidemiology/resfinder_db.git resfinder_db")
+    os.system("git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git")
+    os.system("~/bin/kma_index -i plasmidfinder_db/*.fsa -o plasmidfinder_db/all")
+    os.system("~/bin/kma_index -i resfinder_db/*.fsa -o resfinder_db/all")
+    os.system("~/bin/kma_index -i virulencefinder_db/*.fsa -o virulencefinder_db/all")
 
 def check_conda():
     proc = subprocess.Popen("whoami", shell=True,
@@ -51,8 +72,6 @@ def check_conda():
     proc = subprocess.Popen("which conda", shell=True,
                             stdout=subprocess.PIPE, )
     conda_output = proc.communicate()[0].decode().rstrip()
-    print ("/home/" + user)
-    print (conda_output)
     if (conda_output.startswith("/home/" + user)):
         print (bcolors.OKGREEN + "Conda is installed corrently in /home/user/" + bcolors.ENDC)
         return True
@@ -60,6 +79,16 @@ def check_conda():
         print(bcolors.FAIL + "Conda is not installed" + bcolors.ENDC)
         return False
 
+def check_local_software():
+    if not os.path.exists('~/bin/kma'):
+        print(bcolors.FAIL + "KMA not found in ~/bin" + bcolors.ENDC)
+        return False
+    if not os.path.exists('~/bin/ccphylo'):
+        print(bcolors.FAIL + "CCPHYLO not found in ~/bin" + bcolors.ENDC)
+        return False
+    else:
+        print(bcolors.OKGREEN + "KMA and CCPHYLO are installed" + bcolors.ENDC)
+        return True
 
 
 def check_all_deps():
@@ -67,13 +96,15 @@ def check_all_deps():
     ont_check = check_ont_deps()
     docker_images_result = check_docker_images()
     pip_deps_result = check_pip_deps()
+    local_software_result = check_local_software()
+    local_database_result = check_local_database()
     google_chrome_result = check_google_chrome()
     app_build_result = check_app_build()
 
     print("\n")
     print("Total dependencies check result:")
 
-    check_list = ["ONT dependencies", "Docker images", "Pip dependencies", "Google Chrome", "Local App", "Conda"]
+    check_list = ["ONT dependencies", "Docker images", "Pip dependencies", "Google Chrome", "Local App", "Conda", "Local software", "Local databases"]
     for item in check_list:
         if item == "ONT dependencies":
             if ont_check:
@@ -105,6 +136,16 @@ def check_all_deps():
                 print(bcolors.OKGREEN + item + " is installed" + bcolors.ENDC)
             else:
                 print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
+        elif item == "Local software":
+            if local_software_result:
+                print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+            else:
+                print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
+        elif item == "Local databases":
+            if local_database_result:
+                print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+            else:
+                print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
     pass
 
 def add_bin_path():
@@ -134,6 +175,10 @@ def install_docker_images():
         os.system(cmd)
 
 def install_moss_deps():
+    os.system(
+        "git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; sudo cp kma* ~/bin/.; cd ..; mv kma src/.;")
+    os.system(
+        "git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; sudo cp ccphylo ~/bin/.;  cd ..; mv ccphylo src/.;")
     install_docker_images()
     os.system(
         "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
