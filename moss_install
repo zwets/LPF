@@ -47,10 +47,10 @@ def main(command_line=None):
 def check_conda():
     proc = subprocess.Popen("whoami", shell=True,
                             stdout=subprocess.PIPE, )
-    user = proc.communicate()[0].decode()
+    user = proc.communicate()[0].decode().rstrip()
     proc = subprocess.Popen("which conda", shell=True,
                             stdout=subprocess.PIPE, )
-    conda_output = proc.communicate()[0].decode()
+    conda_output = proc.communicate()[0].decode().rstrip()
     print ("/home/" + user)
     print (conda_output)
     if (conda_output.startswith("/home/" + user)):
