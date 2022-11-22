@@ -15,7 +15,7 @@ def main(command_line=None):
     all = subparsers.add_parser('all', help='Complete installation of ONT deps, MOSS deps and build app. Recommended for first installation or complete reinstallation.')
     ont_deps = subparsers.add_parser('ont_deps', help='ONT repos for ubuntu 22.')
     moss_deps = subparsers.add_parser('moss_deps', help='Local dependencies for MOSS')
-    moss_databses = subparsers.add_parser('moss_databses', help='Downloads databases for MOSS')
+    moss_databases = subparsers.add_parser('moss_databases', help='Downloads databases for MOSS')
     moss_build = subparsers.add_parser('moss_build', help='Build MOSS app and relocates report to /opt/moss ( Requires moss_deps to be installed in advance.')
     check_deps = subparsers.add_parser('check_deps', help='Check for MOSS dependencies.')
 
@@ -37,7 +37,7 @@ def main(command_line=None):
         install_ont_deps()
     elif args.command == 'moss_deps':
         install_moss_deps()
-    elif args.command == 'moss_databses':
+    elif args.command == 'moss_databases':
         download_finder_dbs()
         #STFP solution with Maja
         pass
