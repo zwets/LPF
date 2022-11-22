@@ -38,7 +38,7 @@ def main(command_line=None):
     elif args.command == 'moss_deps':
         install_moss_deps()
     elif args.command == 'moss_databases':
-        download_finder_dbs()
+        download_finder_dbs() #DOES NOT CHECK FOR BACTERIA_DB
         #STFP solution with Maja
         pass
     elif args.command == 'moss_build':
@@ -64,9 +64,9 @@ def download_finder_dbs():
     os.system("sudo git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git")
     os.system("sudo git clone https://git@bitbucket.org/genomicepidemiology/resfinder_db.git resfinder_db")
     os.system("sudo git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git")
-    os.system("~/bin/kma_index -i plasmidfinder_db/*.fsa -o plasmidfinder_db/all")
-    os.system("~/bin/kma_index -i resfinder_db/*.fsa -o resfinder_db/all")
-    os.system("~/bin/kma_index -i virulencefinder_db/*.fsa -o virulencefinder_db/all")
+    os.system("sudo ~/bin/kma_index -i plasmidfinder_db/*.fsa -o plasmidfinder_db/all")
+    os.system("sudo ~/bin/kma_index -i resfinder_db/*.fsa -o resfinder_db/all")
+    os.system("sudo ~/bin/kma_index -i virulencefinder_db/*.fsa -o virulencefinder_db/all")
 
 def check_conda():
     proc = subprocess.Popen("whoami", shell=True,
