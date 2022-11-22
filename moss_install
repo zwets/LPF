@@ -25,7 +25,7 @@ def main(command_line=None):
     if not os.path.exists('~/bin'):
         os.system('sudo mkdir ~/bin')
     add_bin_path()
-    os.system("sudo cp moss_install ~/bin/moss_install")
+    #os.system("sudo cp moss_install ~/bin/moss_install")
     if args.command == 'all':
         install_ont_deps()
         install_moss_deps()
@@ -94,7 +94,8 @@ def add_bin_path():
 def moss_build_app():
     build_app()
     check_dist_build()
-    move_moss_repo(os.getcwd())
+    cwd = os.getcwd()
+    move_moss_repo(cwd)
     set_up_directories()
 
 def install_docker_images():
