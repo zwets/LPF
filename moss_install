@@ -64,13 +64,25 @@ def check_local_database():
         return True
 
 def download_finder_dbs():
+    cwd = os.getcwd()
+    if os.path.exists('plasmidfilder_db'):
+        os.system('sudo rm -r plasmidfinder_db')
     os.system("sudo git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git")
-    os.system("sudo git clone https://git@bitbucket.org/genomicepidemiology/resfinder_db.git resfinder_db")
-    os.system("sudo git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git")
     os.system("sudo ~/bin/kma_index -i plasmidfinder_db/*.fsa -o plasmidfinder_db/all")
+
+    if os.path.exists('resfinder_db'):
+        os.system('sudo rm -r resfinder_db')
+    os.system("sudo git clone https://bitbucket.org/genomicepidemiology/resfinder_db.git")
     os.system("sudo ~/bin/kma_index -i resfinder_db/*.fsa -o resfinder_db/all")
+
+    if os.path.exists('virulencefinder_db'):
+        os.system('sudo rm -r virulencefinder_db')
+    os.system("sudo git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git")
     os.system("sudo ~/bin/kma_index -i virulencefinder_db/*.fsa -o virulencefinder_db/all")
-    os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ~/bin/kma_index;")
+
+    if os.path.exists('mlst'):
+        os.system('sudo rm -r mlst')
+    os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ~/bin/kma_index; cd {};".format(cwd))
 
 
 def check_conda():
