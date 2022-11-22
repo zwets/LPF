@@ -355,7 +355,7 @@ def move_moss_repo(cwd):
     if (cwd != '/opt/moss'):
         os.system("sudo rm -rf /opt/moss")
         os.system("sudo cp -r {} /opt/moss".format(cwd))
-        os.system("sudo chmod a+x /opt/moss")
+        os.system("sudo chmod a+rwx /opt/moss")
         os.system("sudo rm -r {}".format(cwd))
 
 class bcolors:
