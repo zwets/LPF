@@ -80,7 +80,10 @@ def check_conda():
         return False
 
 def check_kma():
-    if not os.path.exists('~/bin/kma'):
+    proc = subprocess.Popen("whoami", shell=True,
+                            stdout=subprocess.PIPE, )
+    user = proc.communicate()[0].decode().rstrip()
+    if not os.path.exists('/home/{}/bin/kma'.format(user)):
         print(bcolors.FAIL + "KMA not found in ~/bin" + bcolors.ENDC)
         return False
     else:
@@ -88,9 +91,12 @@ def check_kma():
         return True
 
 def check_ccphylo():
-    if not os.path.exists('~/bin/ccphylo'):
+    proc = subprocess.Popen("whoami", shell=True,
+                            stdout=subprocess.PIPE, )
+    user = proc.communicate()[0].decode().rstrip()
+    if not os.path.exists('/home/{}/bin/ccphylo'.format(user)):
         print(bcolors.FAIL + "CCPHYLO not found in ~/bin" + bcolors.ENDC)
-        return False
+        return False''
     else:
         print(bcolors.OKGREEN + "CCPHYLO is installed" + bcolors.ENDC)
         return True
@@ -192,12 +198,12 @@ def install_moss_deps():
         if os.path.exists("kma"):
             os.system("sudo rm -rf kma")
         os.system(
-            "sudo git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma;sudo make; sudo cp kma* ~/bin/.; cd ..; mv kma src/.;")
+            "sudo git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma;sudo make; sudo cp kma* ~/bin/.; cd ..;")
     if not check_ccphylo():
         if os.path.exists("ccphylo"):
             os.system("sudo rm -rf ccphylo")
         os.system(
-            "sudo git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo; sudo make; sudo cp ccphylo ~/bin/.;  cd ..; mv ccphylo src/.;")
+            "sudo git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo; sudo make; sudo cp ccphylo ~/bin/.;  cd ..;;")
     install_docker_images()
     if not check_google_chrome():
         os.system(
