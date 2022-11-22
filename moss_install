@@ -79,9 +79,9 @@ def add_bin_path():
     infile.close()
     data = data.split("\n")
     print (data)
-    if not "export PATH=$PATH:~/bin" in data:
+    if "export PATH=$PATH:~/bin" not in data:
         print ("Adding ~/bin to PATH")
-        os.system("echo 'export PATH=$PATH:~/bin' >> ~/.bashrc")
+        os.system("echo \'export PATH=$PATH:~/bin\' >> ~/.bashrc")
         os.system("source ~/.bashrc")
 def moss_build_app():
     build_app()
