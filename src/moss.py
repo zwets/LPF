@@ -54,6 +54,7 @@ def moss_pipeline(input_dict):
     Workflow for analysis pipeline
     """
     input_dict = ast.literal_eval(json.dumps(input_dict))
+    print (input_dict)
     try:
         moss.validate_input(input_dict)
         input_dict = moss.moss_init(input_dict)
