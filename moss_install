@@ -51,6 +51,8 @@ def check_conda():
     proc = subprocess.Popen("which conda", shell=True,
                             stdout=subprocess.PIPE, )
     conda_output = proc.communicate()[0].decode()
+    print ("/home/" + user)
+    print (conda_output)
     if (conda_output.startswith("/home/" + user)):
         print (bcolors.OKGREEN + "Conda is installed corrently in /home/user/" + bcolors.ENDC)
         return True
