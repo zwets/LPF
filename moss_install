@@ -78,6 +78,7 @@ def moss_build_app():
     move_moss_repo(os.getcwd())
 
 def install_moss_deps():
+    os.system("python3 docker_install.py")
     os.system(
         "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
     os.system("pip install -r requirements.txt")
