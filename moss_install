@@ -192,12 +192,12 @@ def install_moss_deps():
         if os.path.exists("kma"):
             os.system("sudo rm -rf kma")
         os.system(
-            "sudo git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; sudo cp kma* ~/bin/.; cd ..; mv kma src/.;")
+            "sudo git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma;sudo make; sudo cp kma* ~/bin/.; cd ..; mv kma src/.;")
     if not check_ccphylo():
         if os.path.exists("ccphylo"):
             os.system("sudo rm -rf ccphylo")
         os.system(
-            "sudo git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; sudo cp ccphylo ~/bin/.;  cd ..; mv ccphylo src/.;")
+            "sudo git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo; sudo make; sudo cp ccphylo ~/bin/.;  cd ..; mv ccphylo src/.;")
     install_docker_images()
     if not check_google_chrome():
         os.system(
