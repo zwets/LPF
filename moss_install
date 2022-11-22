@@ -20,6 +20,8 @@ def main(command_line=None):
     check_deps = subparsers.add_parser('check_deps', help='Check for MOSS dependencies.')
 
     args = parser.parse_args(command_line)
+    if not os.path.exists('~/bin/'):
+        os.system('sudo mkdir ~/bin/')
     if args.command == 'all':
         install_ont_deps()
         install_moss_deps()
@@ -42,6 +44,30 @@ def main(command_line=None):
         pip_deps_result = check_pip_deps()
         google_chrome_result = check_google_chrome()
         #Check app
+
+        check_list = ["ONT dependencies", "Docker images", "Pip dependencies", "Google Chrome"]
+        for item in check_list:
+            if item == "ONT dependencies":
+                if ont_check:
+                    print(item + " are installed")
+                else:
+                    print(item + " are not installed")
+            elif item == "Docker images":
+                if docker_images_result:
+                    print(item + " are installed")
+                else:
+                    print(item + " are not installed")
+            elif item == "Pip dependencies":
+                if pip_deps_result:
+                    print(item + " are installed")
+                else:
+                    print(item + " are not installed")
+            elif item == "Google Chrome":
+                if google_chrome_result:
+                    print(item + " is installed")
+                else:
+                    print(item + " is not installed")
+
         pass
     os.system("cp moss_install ~/bin/moss_install")
     #CP mossinstall to bin
