@@ -141,7 +141,7 @@ def set_up_directories():
         if not os.path.exists(item):
             os.system("sudo mkdir -m 777 {}".format(item))
 def check_app_build():
-    path_list = ["/opt/moss_db", "/opt/moss_data", "opt/moss_resources", "/opt/moss_reports"]
+    path_list = ["/opt/moss_db", "/opt/moss_data", "/opt/moss_resources", "/opt/moss_reports"]
     for item in path_list:
         if not os.path.exists(item):
             print (item + " is not installed")
