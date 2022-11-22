@@ -571,7 +571,7 @@ def run_mlst(input_dict):
         cmd = "mkdir {}/mlstresults".format(input_dict['target_dir'])
         os.system(cmd)
         cmd = "python3 /opt/moss/mlst/mlst.py -i {} -o {}mlstresults" \
-              " -mp ~/bin/kma -p mlst/mlst_db/ -s {} -nano"\
+              " -mp ~/bin/kma -p /opt/moss/mlst/mlst_db/ -s {} -nano"\
             .format(input_dict['input_path'], input_dict['target_dir'], mlst_dict[specie])
         os.system(cmd)
         input_dict['mlst'] = specie

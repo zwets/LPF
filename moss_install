@@ -145,6 +145,7 @@ def check_all_deps():
 
     check_list = ["ONT dependencies", "Docker images", "Pip dependencies", "Google Chrome", "Local App", "Conda", "Local software", "Local databases"]
     for item in check_list:
+    for item in check_list:
         if item == "ONT dependencies":
             if ont_check:
                 print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
@@ -354,6 +355,7 @@ def move_moss_repo(cwd):
     if (cwd != '/opt/moss'):
         os.system("sudo rm -rf /opt/moss")
         os.system("sudo cp -r {} /opt/moss".format(cwd))
+        os.system("sudo chmod -R 777 /opt/moss")
         os.system("sudo rm -r {}".format(cwd))
 
 class bcolors:
