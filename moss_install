@@ -67,22 +67,22 @@ def download_finder_dbs():
     cwd = os.getcwd()
     if os.path.exists('plasmidfilder_db'):
         os.system('sudo rm -r plasmidfinder_db')
-    os.system("sudo git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git")
-    os.system("sudo ~/bin/kma_index -i plasmidfinder_db/*.fsa -o plasmidfinder_db/all")
+    os.system("git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git")
+    os.system("~/bin/kma_index -i plasmidfinder_db/*.fsa -o plasmidfinder_db/all")
 
     if os.path.exists('resfinder_db'):
         os.system('sudo rm -r resfinder_db')
-    os.system("sudo git clone https://bitbucket.org/genomicepidemiology/resfinder_db.git")
-    os.system("sudo ~/bin/kma_index -i resfinder_db/*.fsa -o resfinder_db/all")
+    os.system("git clone https://bitbucket.org/genomicepidemiology/resfinder_db.git")
+    os.system("~/bin/kma_index -i resfinder_db/*.fsa -o resfinder_db/all")
 
     if os.path.exists('virulencefinder_db'):
         os.system('sudo rm -r virulencefinder_db')
-    os.system("sudo git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git")
-    os.system("sudo ~/bin/kma_index -i virulencefinder_db/*.fsa -o virulencefinder_db/all")
+    os.system("git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git")
+    os.system("~/bin/kma_index -i virulencefinder_db/*.fsa -o virulencefinder_db/all")
 
     if os.path.exists('mlst'):
         os.system('sudo rm -r mlst')
-    os.system("sudo git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; sudo git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; sudo python3 INSTALL.py ~/bin/kma_index; cd {};".format(cwd))
+    os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; sudo python3 INSTALL.py ~/bin/kma_index; cd {};".format(cwd))
 
 
 def check_conda():
@@ -219,12 +219,12 @@ def install_moss_deps():
         if os.path.exists("kma"):
             os.system("sudo rm -rf kma")
         os.system(
-            "sudo git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma;sudo make; sudo cp kma* ~/bin/.; cd ..;")
+            "git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma;sudo make; sudo cp kma* ~/bin/.; cd ..;")
     if not check_ccphylo():
         if os.path.exists("ccphylo"):
             os.system("sudo rm -rf ccphylo")
         os.system(
-            "sudo git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo; sudo make; sudo cp ccphylo ~/bin/.;  cd ..;;")
+            "git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo; sudo make; sudo cp ccphylo ~/bin/.;  cd ..;;")
     install_docker_images()
     if not check_google_chrome():
         os.system(
