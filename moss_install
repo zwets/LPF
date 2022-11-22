@@ -12,6 +12,7 @@ def main(command_line=None):
         help='Print debug info'
     )
     subparsers = parser.add_subparsers(dest='command')
+    all = subparsers.add_parser('all', help='Complete installation of ONT deps, MOSS deps and build app. Recommended for first installation or complete reinstallation.')'
     ont = subparsers.add_parser('ont', help='ONT repos for ubuntu 22.')
     moss_deps = subparsers.add_parser('moss_deps', help='Local dependencies for MOSS')
     moss_databses = subparsers.add_parser('moss_databses', help='Downloads databases for MOSS')
@@ -19,46 +20,59 @@ def main(command_line=None):
     check_deps = subparsers.add_parser('check_deps', help='Check for MOSS dependencies.')
 
     args = parser.parse_args(command_line)
-    if args.command == 'ont':
-        os.system("sudo apt update && apt upgrade")
-        os.system("wget http://apt.kcri.it/debs/kcri-apt-repo_1.0.0_all.deb")
-        os.system("sudo apt install ./kcri-apt-repo_1.0.0_all.deb")
-        os.system("sudo apt update")
-        os.system("sudo apt install kcri-seqtz-repos")
-        os.system("sudo apt update")
-        os.system("sudo apt install kcri-seqtz-deps")
-        os.system('sudo groupadd docker; sudo usermod -aG docker $USER; sudo chmod 666 /var/run/docker.sock')
+    if args.all == 'all':
+        install_ont_deps()
+        install_moss_deps()
+        moss_build()
+    elif args.command == 'ont':
+        install_ont_deps()
     elif args.command == 'moss_deps':
-        os.system(
-            "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
-        os.system("pip install -r requirements.txt")
+        install_moss_deps()
     elif args.command == 'moss_databses':
         #STFP solution with Maja
         #Mkdir /opt/moss_databases
         #Download databases
         pass
     elif args.command == 'moss_build':
-        #Set everything up
-        build_app()
-        check_dist_build()
-        move_moss_repo(os.getcwd())
+        moss_build()
     elif args.command == 'check_deps':
         #Check conda
+        ont_check = check_ont_deps()
         docker_images_result = check_docker_images()
         pip_deps_result = check_pip_deps()
-        check_google_chrome()
-        #Check local deps
+        google_chrome_result = check_google_chrome()
         #Check app
         pass
+    #CP mossinstall to bin
+
+def moss_build():
+    build_app()
+    check_dist_build()
+    move_moss_repo(os.getcwd())
+
+def install_moss_deps():
+    os.system(
+        "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
+    os.system("pip install -r requirements.txt")
+def install_ont_deps():
+    os.system("sudo apt update")
+    os.system("sudo apt upgrade")
+    os.system("wget http://apt.kcri.it/debs/kcri-apt-repo_1.0.0_all.deb")
+    os.system("sudo apt install ./kcri-apt-repo_1.0.0_all.deb")
+    os.system("sudo apt update")
+    os.system("sudo apt install kcri-seqtz-repos")
+    os.system("sudo apt update")
+    os.system("sudo apt install kcri-seqtz-deps")
+    os.system('sudo groupadd docker; sudo usermod -aG docker $USER; sudo chmod 666 /var/run/docker.sock')
+
 
 def check_google_chrome():
     proc = subprocess.Popen("apt list --installed | grep \"google-chrome\"", shell=True,
                             stdout=subprocess.PIPE, )
     output = proc.communicate()[0].decode().split("\n")
-    print (output)
     for item in output[0:-1]:
         if item.startswith("google-chrome"):
-            print("google-chrome" + " is installed")
+            print("Google Chrome" + " is installed")
             return True
     print("Google Chrome is not installed")
     return False
@@ -92,7 +106,22 @@ def check_docker_images():
     else:
         return True
 def check_ont_deps():
-    pass
+    check_list = [
+        '/opt/moss',
+        '/opt/moss_data',
+        '/opt/moss_db',
+        '/opt/ont',
+        '/opt/ont/guppy',
+        '/opt/ont/minknow',
+        '/lib/systemd/system/guppyd.service'
+    ]
+    for item in check_list:
+        if os.path.exists(item):
+            print(item + " is installed")
+        else:
+            print(item + " is not installed")
+            return False
+    return True
 
 def check_pip_deps():
     pip_list = [
