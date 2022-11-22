@@ -56,27 +56,27 @@ def main(command_line=None):
         for item in check_list:
             if item == "ONT dependencies":
                 if ont_check:
-                    print(item + " are installed")
+                    print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
                 else:
-                    print(item + " are not installed")
+                    print(bcolors.FAIL+ item +" is not installed" + bcolors.ENDC)
             elif item == "Docker images":
                 if docker_images_result:
-                    print(item + " are installed")
+                    print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
                 else:
-                    print(item + " are not installed")
+                    print(bcolors.FAIL+ item +" is not installed" + bcolors.ENDC)
             elif item == "Pip dependencies":
                 if pip_deps_result:
-                    print(item + " are installed")
+                    print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
                 else:
-                    print(item + " are not installed")
+                    print(bcolors.FAIL+ item +" is not installed" + bcolors.ENDC)
             elif item == "Google Chrome":
                 if google_chrome_result:
-                    print(item + " is installed")
+                    print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
                 else:
                     print(item + " is not installed")
             elif item == "Local App":
                 if app_build_result:
-                    print(item + " is installed")
+                    print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
                 else:
                     print(item + " is not installed")
         pass
@@ -145,7 +145,7 @@ def check_app_build():
     path_list = ["/opt/moss_db", "/opt/moss_data", "/opt/moss_resources", "/opt/moss_reports"]
     for item in path_list:
         if not os.path.exists(item):
-            print (item + " is not installed")
+            print(bcolors.FAIL+ item +" is not installed" + bcolors.ENDC)
             return False
     if check_dist_build():
         return True
@@ -170,7 +170,7 @@ def check_docker_images():
         item = item.split()
         name = item[0] + ":" + item[1]
         if name in docker_list:
-            print (name + " is installed")
+            print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
             docker_list.remove(name)
     if len(docker_list) > 0:
         print ("The following docker images are missing:")
@@ -188,7 +188,7 @@ def check_ont_deps():
     ]
     for item in check_list:
         if os.path.exists(item):
-            print(item + " is installed")
+            print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
         else:
             print(item + " is not installed")
             return False
@@ -212,7 +212,7 @@ def check_pip_deps():
         item = item.split()
         name = item[0]
         if name in pip_list:
-            print(name + " is installed")
+            print(bcolors.OKGREEN + item + " is installed" + bcolors.ENDC)
             pip_list.remove(name)
     if len(pip_list) > 0:
         print("The following pip packages are missing:")
@@ -239,6 +239,17 @@ def move_moss_repo(cwd):
         os.system("sudo rm -rf /opt/moss")
         os.system("sudo cp -r {} /opt/moss".format(cwd))
         os.system("sudo rm -r {}".format(cwd))
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 if __name__ == '__main__':
     main()
