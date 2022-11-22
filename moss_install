@@ -54,7 +54,7 @@ def check_conda():
     if (conda_output.startswith("/home/" + user)):
         print (bcolors.OKGREEN + "Conda is installed corrently in /home/user/" + bcolors.ENDC)
         return True
-    else
+    else:
         print(bcolors.FAIL + "Conda is not installed" + bcolors.ENDC)
         return False
 
