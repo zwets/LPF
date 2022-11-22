@@ -47,12 +47,12 @@ def main(command_line=None):
         docker_images_result = check_docker_images()
         pip_deps_result = check_pip_deps()
         google_chrome_result = check_google_chrome()
-        #Check app
+        app_build_result = check_app_build()
 
         print ("\n")
         print ("Total dependencies check result:")
 
-        check_list = ["ONT dependencies", "Docker images", "Pip dependencies", "Google Chrome"]
+        check_list = ["ONT dependencies", "Docker images", "Pip dependencies", "Google Chrome", "Local App"]
         for item in check_list:
             if item == "ONT dependencies":
                 if ont_check:
@@ -74,7 +74,11 @@ def main(command_line=None):
                     print(item + " is installed")
                 else:
                     print(item + " is not installed")
-
+            elif item == "Local App":
+                if app_build_result:
+                    print(item + " is installed")
+                else:
+                    print(item + " is not installed")
         pass
     #CP mossinstall to bin
 
@@ -91,6 +95,7 @@ def moss_build_app():
     build_app()
     check_dist_build()
     move_moss_repo(os.getcwd())
+    set_up_directories()
 
 def install_docker_images():
     docker_list = [
@@ -129,8 +134,21 @@ def check_google_chrome():
             return True
     print("Google Chrome is not installed")
     return False
+
+def set_up_directories():
+    path_list = ["/opt/moss_db", "/opt/moss_data", "opt/moss_resources", "/opt/moss_reports"]
+    for item in path_list:
+        if not os.path.exists(item):
+            os.system("sudo mkdir -m 777 {}".format(item))
 def check_app_build():
-    pass
+    path_list = ["/opt/moss_db", "/opt/moss_data", "opt/moss_resources", "/opt/moss_reports"]
+    for item in path_list:
+        if not os.path.exists(item):
+            return False
+    if check_dist_build():
+        return True
+    else:
+        return False
 def check_docker_images():
     docker_list = [
         "biocontainers/figtree:v1.4.4-3-deb_cv1",
@@ -160,9 +178,6 @@ def check_docker_images():
         return True
 def check_ont_deps():
     check_list = [
-        '/opt/moss',
-        '/opt/moss_data',
-        '/opt/moss_db',
         '/opt/ont',
         '/opt/ont/guppy',
         '/opt/ont/minknow',
@@ -207,8 +222,10 @@ def check_pip_deps():
 def check_dist_build():
     if not os.path.isfile("local_app/dist/linux-unpacked/moss"):
         sys.exit("A MOSS distribution was not created correctly. Installation was not completed")
+        return False
     else:
         print ("The installation was completed")
+        return True
 
 def build_app():
     os.system("cd local_app; chmod a+x moss_launch; npm i; ./node_modules/.bin/electron-rebuild; npm run dist;sudo cp moss.desktop /usr/share/applications/.; cd ..")
