@@ -64,9 +64,9 @@ def check_local_database():
         return True
 
 def download_finder_dbs():
-    if not install_moss_deps():
+    if not check_local_software:
         print(bcolors.FAIL + "MOSS dependencies are not installed, and databases cant be indexed" + bcolors.ENDC)
-        return False
+        sys.exit()
     cwd = os.getcwd()
     if os.path.exists('plasmidfilder_db'):
         os.system('sudo rm -r plasmidfinder_db')
@@ -233,6 +233,7 @@ def install_moss_deps():
         os.system(
             "sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
     os.system("pip install -r requirements.txt")
+
 def install_ont_deps():
     os.system("sudo apt update")
     os.system("sudo apt upgrade")
