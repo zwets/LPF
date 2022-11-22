@@ -64,6 +64,9 @@ def check_local_database():
         return True
 
 def download_finder_dbs():
+    if not install_moss_deps():
+        print(bcolors.FAIL + "MOSS dependencies are not installed, and databases cant be indexed" + bcolors.ENDC)
+        return False
     cwd = os.getcwd()
     if os.path.exists('plasmidfilder_db'):
         os.system('sudo rm -r plasmidfinder_db')
