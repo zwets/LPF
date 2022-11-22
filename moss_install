@@ -42,45 +42,68 @@ def main(command_line=None):
     elif args.command == 'moss_build':
         moss_build_app()
     elif args.command == 'check_deps':
-        #Check conda
-        ont_check = check_ont_deps()
-        docker_images_result = check_docker_images()
-        pip_deps_result = check_pip_deps()
-        google_chrome_result = check_google_chrome()
-        app_build_result = check_app_build()
+        check_all_deps()
 
-        print ("\n")
-        print ("Total dependencies check result:")
+def check_conda():
+    proc = subprocess.Popen("whoami", shell=True,
+                            stdout=subprocess.PIPE, )
+    user = proc.communicate()[0].decode()
+    proc = subprocess.Popen("which conda", shell=True,
+                            stdout=subprocess.PIPE, )
+    conda_output = proc.communicate()[0].decode()
+    if (conda_output.startswith("/home/" + user)):
+        print (bcolors.OKGREEN + "Conda is installed corrently in /home/user/" + bcolors.ENDC)
+        return True
+    else
+        print(bcolors.FAIL + "Conda is not installed" + bcolors.ENDC)
+        return False
 
-        check_list = ["ONT dependencies", "Docker images", "Pip dependencies", "Google Chrome", "Local App"]
-        for item in check_list:
-            if item == "ONT dependencies":
-                if ont_check:
-                    print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
-                else:
-                    print(bcolors.FAIL+ item +" is not installed" + bcolors.ENDC)
-            elif item == "Docker images":
-                if docker_images_result:
-                    print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
-                else:
-                    print(bcolors.FAIL+ item +" is not installed" + bcolors.ENDC)
-            elif item == "Pip dependencies":
-                if pip_deps_result:
-                    print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
-                else:
-                    print(bcolors.FAIL+ item +" is not installed" + bcolors.ENDC)
-            elif item == "Google Chrome":
-                if google_chrome_result:
-                    print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
-                else:
-                    print(item + " is not installed")
-            elif item == "Local App":
-                if app_build_result:
-                    print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
-                else:
-                    print(item + " is not installed")
-        pass
-    #CP mossinstall to bin
+
+
+def check_all_deps():
+    conda_result = check_conda()
+    ont_check = check_ont_deps()
+    docker_images_result = check_docker_images()
+    pip_deps_result = check_pip_deps()
+    google_chrome_result = check_google_chrome()
+    app_build_result = check_app_build()
+
+    print("\n")
+    print("Total dependencies check result:")
+
+    check_list = ["ONT dependencies", "Docker images", "Pip dependencies", "Google Chrome", "Local App", "Conda"]
+    for item in check_list:
+        if item == "ONT dependencies":
+            if ont_check:
+                print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+            else:
+                print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
+        elif item == "Docker images":
+            if docker_images_result:
+                print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+            else:
+                print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
+        elif item == "Pip dependencies":
+            if pip_deps_result:
+                print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+            else:
+                print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
+        elif item == "Google Chrome":
+            if google_chrome_result:
+                print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+            else:
+                print(item + " is not installed")
+        elif item == "Local App":
+            if app_build_result:
+                print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+            else:
+                print(item + " is not installed")
+        elif item == "Conda":
+            if conda_result:
+                print(bcolors.OKGREEN + item + " is installed" + bcolors.ENDC)
+            else:
+                print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
+    pass
 
 def add_bin_path():
     infile = open(os.path.expanduser("~/.bashrc"), "r")
