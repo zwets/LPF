@@ -12,7 +12,7 @@ def main(command_line=None):
         help='Print debug info'
     )
     subparsers = parser.add_subparsers(dest='command')
-    all = subparsers.add_parser('all', help='Complete installation of ONT deps, MOSS deps and build app. Recommended for first installation or complete reinstallation.')'
+    all = subparsers.add_parser('all', help='Complete installation of ONT deps, MOSS deps and build app. Recommended for first installation or complete reinstallation.')
     ont = subparsers.add_parser('ont', help='ONT repos for ubuntu 22.')
     moss_deps = subparsers.add_parser('moss_deps', help='Local dependencies for MOSS')
     moss_databses = subparsers.add_parser('moss_databses', help='Downloads databases for MOSS')
