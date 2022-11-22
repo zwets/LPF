@@ -36,7 +36,7 @@ def main(command_line=None):
         #Download databases
         pass
     elif args.command == 'moss_build':
-        moss_build()
+        moss_build_app()
     elif args.command == 'check_deps':
         #Check conda
         ont_check = check_ont_deps()
@@ -72,7 +72,7 @@ def main(command_line=None):
     os.system("cp moss_install ~/bin/moss_install")
     #CP mossinstall to bin
 
-def moss_build():
+def moss_build_app():
     build_app()
     check_dist_build()
     move_moss_repo(os.getcwd())
