@@ -96,7 +96,7 @@ def check_ccphylo():
     user = proc.communicate()[0].decode().rstrip()
     if not os.path.exists('/home/{}/bin/ccphylo'.format(user)):
         print(bcolors.FAIL + "CCPHYLO not found in ~/bin" + bcolors.ENDC)
-        return False''
+        return False
     else:
         print(bcolors.OKGREEN + "CCPHYLO is installed" + bcolors.ENDC)
         return True
