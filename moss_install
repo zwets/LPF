@@ -22,7 +22,7 @@ def main(command_line=None):
     args = parser.parse_args(command_line)
     if not os.path.exists('~/bin'):
         os.system('sudo mkdir ~/bin')
-    os.system("cp moss_install ~/bin/moss_install")
+    os.system("sudo cp moss_install ~/bin/moss_install")
     if args.command == 'all':
         install_ont_deps()
         install_moss_deps()
@@ -76,6 +76,16 @@ def moss_build_app():
     build_app()
     check_dist_build()
     move_moss_repo(os.getcwd())
+
+def install_docker_images():
+    docker_list = [
+        "biocontainers/figtree:v1.4.4-3-deb_cv1",
+        "staphb/quast:5.0.2",
+        "nanozoo/bandage:0.8.1--7da3a06",
+    ]
+    for item in docker_list:
+        cmd = "docker pull " + item
+        os.system(cmd)
 
 def install_moss_deps():
     os.system("python3 docker_install.py")
