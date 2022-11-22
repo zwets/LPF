@@ -49,6 +49,9 @@ def main(command_line=None):
         google_chrome_result = check_google_chrome()
         #Check app
 
+        print ("\n")
+        print ("Total dependencies check result:")
+
         check_list = ["ONT dependencies", "Docker images", "Pip dependencies", "Google Chrome"]
         for item in check_list:
             if item == "ONT dependencies":
@@ -80,7 +83,6 @@ def add_bin_path():
     data = infile.read()
     infile.close()
     data = data.split("\n")
-    print (data)
     if "export PATH=$PATH:~/bin" not in data:
         print ("Adding ~/bin to PATH")
         os.system("echo \'export PATH=$PATH:~/bin\' >> ~/.bashrc")
