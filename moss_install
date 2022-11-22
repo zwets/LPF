@@ -82,7 +82,7 @@ def download_finder_dbs():
 
     if os.path.exists('mlst'):
         os.system('sudo rm -r mlst')
-    os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; python3 INSTALL.py ~/bin/kma_index; cd {};".format(cwd))
+    os.system("sudo git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; sudo git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; sudo python3 INSTALL.py ~/bin/kma_index; cd {};".format(cwd))
 
 
 def check_conda():
