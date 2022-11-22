@@ -144,10 +144,12 @@ def check_app_build():
     path_list = ["/opt/moss_db", "/opt/moss_data", "opt/moss_resources", "/opt/moss_reports"]
     for item in path_list:
         if not os.path.exists(item):
+            print (item + " is not installed")
             return False
     if check_dist_build():
         return True
     else:
+        print ("Local App is not installed")
         return False
 def check_docker_images():
     docker_list = [
