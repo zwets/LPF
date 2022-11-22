@@ -79,16 +79,29 @@ def check_conda():
         print(bcolors.FAIL + "Conda is not installed" + bcolors.ENDC)
         return False
 
-def check_local_software():
+def check_kma():
     if not os.path.exists('~/bin/kma'):
         print(bcolors.FAIL + "KMA not found in ~/bin" + bcolors.ENDC)
         return False
+    else:
+        print(bcolors.OKGREEN + "KMA is installed" + bcolors.ENDC)
+        return True
+
+def check_ccphylo():
     if not os.path.exists('~/bin/ccphylo'):
         print(bcolors.FAIL + "CCPHYLO not found in ~/bin" + bcolors.ENDC)
         return False
     else:
-        print(bcolors.OKGREEN + "KMA and CCPHYLO are installed" + bcolors.ENDC)
+        print(bcolors.OKGREEN + "CCPHYLO is installed" + bcolors.ENDC)
         return True
+
+def check_local_software():
+    kma_result = check_kma()
+    ccphylo_result = check_ccphylo()
+    if kma_result and ccphylo_result:
+        return True
+    else:
+        return False
 
 
 def check_all_deps():
@@ -175,10 +188,12 @@ def install_docker_images():
         os.system(cmd)
 
 def install_moss_deps():
-    os.system(
-        "sudo git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; sudo cp kma* ~/bin/.; cd ..; mv kma src/.;")
-    os.system(
-        "sudo git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; sudo cp ccphylo ~/bin/.;  cd ..; mv ccphylo src/.;")
+    if not check_kma():
+        os.system(
+            "sudo git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma; make; sudo cp kma* ~/bin/.; cd ..; mv kma src/.;")
+    if not check_ccphylo():
+        os.system(
+            "sudo git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; sudo cp ccphylo ~/bin/.;  cd ..; mv ccphylo src/.;")
     install_docker_images()
     if not check_google_chrome():
         os.system(
