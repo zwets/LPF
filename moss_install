@@ -37,7 +37,6 @@ def main(command_line=None):
         download_finder_dbs()
         print ("MOSS BUILD")
         moss_build_app()
-        check_all_deps()
     elif args.command == 'ont_deps':
         install_ont_deps()
     elif args.command == 'moss_deps':
