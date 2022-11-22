@@ -132,6 +132,7 @@ def check_local_software():
 
 
 def check_all_deps():
+    os.system("cd /opt/moss")
     conda_result = check_conda()
     ont_check = check_ont_deps()
     docker_images_result = check_docker_images()
