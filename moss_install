@@ -212,7 +212,7 @@ def check_pip_deps():
         item = item.split()
         name = item[0]
         if name in pip_list:
-            print(bcolors.OKGREEN + item + " is installed" + bcolors.ENDC)
+            print(bcolors.OKGREEN + name + " is installed" + bcolors.ENDC)
             pip_list.remove(name)
     if len(pip_list) > 0:
         print("The following pip packages are missing:")
