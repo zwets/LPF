@@ -1,0 +1,373 @@
+#!/usr/bin/env python3
+import argparse
+import os
+import sys
+import subprocess
+
+def main(command_line=None):
+    parser = argparse.ArgumentParser('MOSS INSTALL COMMANDS')
+    parser.add_argument(
+        '--debug',
+        action='store_true',
+        help='Print debug info'
+    )
+    subparsers = parser.add_subparsers(dest='command')
+    all = subparsers.add_parser('all', help='Complete installation of ONT deps, MOSS deps and build app. Recommended for first installation or complete reinstallation.')
+    ont_deps = subparsers.add_parser('ont_deps', help='ONT repos for ubuntu 22.')
+    moss_deps = subparsers.add_parser('moss_deps', help='Local dependencies for MOSS')
+    moss_databases = subparsers.add_parser('moss_databases', help='Downloads databases for MOSS')
+    moss_build = subparsers.add_parser('moss_build', help='Build MOSS app and relocates report to /opt/moss ( Requires moss_deps to be installed in advance.')
+    check_deps = subparsers.add_parser('check_deps', help='Check for MOSS dependencies.')
+
+    args = parser.parse_args(command_line)
+    proc = subprocess.Popen("whoami", shell=True,
+                            stdout=subprocess.PIPE, )
+    user = proc.communicate()[0].decode().rstrip()
+    if args.command == None:
+        sys.exit("No command given.")
+    if not os.path.exists('/home/{}/bin'.format(user)):
+        os.system('sudo mkdir /home/{}/bin'.format(user))
+    add_bin_path()
+    if args.command == 'all':
+        print ("ONT DEPENDENCIES")
+        install_ont_deps()
+        print ("MOSS DEPENDENCIES")
+        install_moss_deps()
+        print ("MOSS DATABASES")
+        download_finder_dbs()
+        print ("MOSS BUILD")
+        moss_build_app()
+    elif args.command == 'ont_deps':
+        install_ont_deps()
+    elif args.command == 'moss_deps':
+        install_moss_deps()
+    elif args.command == 'moss_databases':
+        download_finder_dbs() #DOES NOT CHECK FOR BACTERIA_DB
+        #STFP solution with Maja
+    elif args.command == 'moss_build':
+        moss_build_app()
+    elif args.command == 'check_deps':
+        check_all_deps()
+
+def check_local_database():
+    if not os.path.exists('resfinder_db'):
+        print(bcolors.FAIL + "Resfinder database not found" + bcolors.ENDC)
+        return False
+    if not os.path.exists('plasmidfinder_db'):
+        print(bcolors.FAIL + "Plasmidfinder database not found" + bcolors.ENDC)
+        return False
+    if not os.path.exists('virulencefinder_db'):
+        print(bcolors.FAIL + "Virulencefinder database not found" + bcolors.ENDC)
+        return False
+    else:
+        print(bcolors.OKGREEN + "CGE Finder Databases are installed" + bcolors.ENDC)
+        return True
+
+def download_finder_dbs():
+    cwd = os.getcwd()
+    if os.path.exists('plasmidfilder_db'):
+        os.system('sudo rm -r plasmidfinder_db')
+    os.system("sudo git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git")
+    os.system("sudo ~/bin/kma_index -i plasmidfinder_db/*.fsa -o plasmidfinder_db/all")
+
+    if os.path.exists('resfinder_db'):
+        os.system('sudo rm -r resfinder_db')
+    os.system("sudo git clone https://bitbucket.org/genomicepidemiology/resfinder_db.git")
+    os.system("sudo ~/bin/kma_index -i resfinder_db/*.fsa -o resfinder_db/all")
+
+    if os.path.exists('virulencefinder_db'):
+        os.system('sudo rm -r virulencefinder_db')
+    os.system("sudo git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git")
+    os.system("sudo ~/bin/kma_index -i virulencefinder_db/*.fsa -o virulencefinder_db/all")
+
+    if os.path.exists('mlst'):
+        os.system('sudo rm -r mlst')
+    os.system("sudo git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; sudo git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; sudo python3 INSTALL.py ~/bin/kma_index; cd {};".format(cwd))
+
+
+def check_conda():
+    proc = subprocess.Popen("whoami", shell=True,
+                            stdout=subprocess.PIPE, )
+    user = proc.communicate()[0].decode().rstrip()
+    proc = subprocess.Popen("which conda", shell=True,
+                            stdout=subprocess.PIPE, )
+    conda_output = proc.communicate()[0].decode().rstrip()
+    if (conda_output.startswith("/home/" + user)):
+        print (bcolors.OKGREEN + "Conda is installed corrently in /home/user/" + bcolors.ENDC)
+        return True
+    else:
+        print(bcolors.FAIL + "Conda is not installed" + bcolors.ENDC)
+        return False
+
+def check_kma():
+    proc = subprocess.Popen("whoami", shell=True,
+                            stdout=subprocess.PIPE, )
+    user = proc.communicate()[0].decode().rstrip()
+    if not os.path.exists('/home/{}/bin/kma'.format(user)):
+        print(bcolors.FAIL + "KMA not found in ~/bin" + bcolors.ENDC)
+        return False
+    else:
+        print(bcolors.OKGREEN + "KMA is installed" + bcolors.ENDC)
+        return True
+
+def check_ccphylo():
+    proc = subprocess.Popen("whoami", shell=True,
+                            stdout=subprocess.PIPE, )
+    user = proc.communicate()[0].decode().rstrip()
+    if not os.path.exists('/home/{}/bin/ccphylo'.format(user)):
+        print(bcolors.FAIL + "CCPHYLO not found in ~/bin" + bcolors.ENDC)
+        return False
+    else:
+        print(bcolors.OKGREEN + "CCPHYLO is installed" + bcolors.ENDC)
+        return True
+
+def check_local_software():
+    kma_result = check_kma()
+    ccphylo_result = check_ccphylo()
+    if kma_result and ccphylo_result:
+        return True
+    else:
+        return False
+
+
+def check_all_deps():
+    os.system("cd /opt/moss")
+    conda_result = check_conda()
+    ont_check = check_ont_deps()
+    docker_images_result = check_docker_images()
+    pip_deps_result = check_pip_deps()
+    local_software_result = check_local_software()
+    local_database_result = check_local_database()
+    google_chrome_result = check_google_chrome()
+    app_build_result = check_app_build()
+
+    print("\n")
+    print("Total dependencies check result:")
+
+    check_list = ["ONT dependencies", "Docker images", "Pip dependencies", "Google Chrome", "Local App", "Conda", "Local software", "Local databases"]
+    for item in check_list:
+        if item == "ONT dependencies":
+            if ont_check:
+                print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+            else:
+                print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
+        elif item == "Docker images":
+            if docker_images_result:
+                print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+            else:
+                print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
+        elif item == "Pip dependencies":
+            if pip_deps_result:
+                print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+            else:
+                print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
+        elif item == "Google Chrome":
+            if google_chrome_result:
+                print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+            else:
+                print(item + " is not installed")
+        elif item == "Local App":
+            if app_build_result:
+                print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+            else:
+                print(item + " is not installed")
+        elif item == "Conda":
+            if conda_result:
+                print(bcolors.OKGREEN + item + " is installed" + bcolors.ENDC)
+            else:
+                print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
+        elif item == "Local software":
+            if local_software_result:
+                print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+            else:
+                print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
+        elif item == "Local databases":
+            if local_database_result:
+                print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+            else:
+                print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
+    pass
+
+def add_bin_path():
+    infile = open(os.path.expanduser("~/.bashrc"), "r")
+    data = infile.read()
+    infile.close()
+    data = data.split("\n")
+    if "export PATH=$PATH:~/bin" not in data:
+        print ("Adding ~/bin to PATH")
+        os.system("echo \'export PATH=$PATH:~/bin\' >> ~/.bashrc")
+        os.system("source ~/.bashrc")
+def moss_build_app():
+    build_app()
+    check_dist_build()
+    cwd = os.getcwd()
+    set_up_directories()
+    move_moss_repo(cwd)
+
+def install_docker_images():
+    docker_list = [
+        "biocontainers/figtree:v1.4.4-3-deb_cv1",
+        "staphb/quast:5.0.2",
+        "nanozoo/bandage:0.8.1--7da3a06",
+    ]
+    for item in docker_list:
+        cmd = "docker pull " + item
+        os.system(cmd)
+
+def install_moss_deps():
+    if not check_kma():
+        if os.path.exists("kma"):
+            os.system("sudo rm -rf kma")
+        os.system(
+            "sudo git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma;sudo make; sudo cp kma* ~/bin/.; cd ..;")
+    if not check_ccphylo():
+        if os.path.exists("ccphylo"):
+            os.system("sudo rm -rf ccphylo")
+        os.system(
+            "sudo git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo; sudo make; sudo cp ccphylo ~/bin/.;  cd ..;;")
+    install_docker_images()
+    if not check_google_chrome():
+        os.system(
+            "sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
+    os.system("pip install -r requirements.txt")
+def install_ont_deps():
+    os.system("sudo apt update")
+    os.system("sudo apt upgrade")
+    os.system("wget http://apt.kcri.it/debs/kcri-apt-repo_1.0.0_all.deb")
+    os.system("sudo apt install ./kcri-apt-repo_1.0.0_all.deb")
+    os.system("sudo apt update")
+    os.system("sudo apt install kcri-seqtz-repos")
+    os.system("sudo apt update")
+    os.system("sudo apt install kcri-seqtz-deps")
+    os.system('sudo groupadd docker; sudo usermod -aG docker $USER; sudo chmod 666 /var/run/docker.sock')
+
+
+def check_google_chrome():
+    proc = subprocess.Popen("apt list --installed | grep \"google-chrome\"", shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0].decode().split("\n")
+    for item in output[0:-1]:
+        if item.startswith("google-chrome"):
+            print("Google Chrome" + " is installed")
+            return True
+    print("Google Chrome is not installed")
+    return False
+
+def set_up_directories():
+    path_list = ["/opt/moss_db/", "/opt/moss_data/", "/opt/moss_resources/", "/opt/moss_reports/"]
+    for item in path_list:
+        if not os.path.exists(item):
+            os.system("sudo mkdir -m 777 {}".format(item))
+def check_app_build():
+    path_list = ["/opt/moss_db", "/opt/moss_data", "/opt/moss_resources", "/opt/moss_reports"]
+    for item in path_list:
+        if not os.path.exists(item):
+            print(bcolors.FAIL+ item +" is not installed" + bcolors.ENDC)
+            return False
+    if check_dist_build():
+        return True
+    else:
+        print ("Local App is not installed")
+        return False
+def check_docker_images():
+    docker_list = [
+        "biocontainers/figtree:v1.4.4-3-deb_cv1",
+        "staphb/quast:5.0.2",
+        "nanozoo/bandage:0.8.1--7da3a06",
+    ]
+    proc = subprocess.Popen("docker images", shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0].decode().split("\n")
+
+    if "REPOSITORY" not in output[0]:
+        print("Docker is not installed")
+        return False
+
+    for item in output[0:-1]:
+        item = item.split()
+        name = item[0] + ":" + item[1]
+        if name in docker_list:
+            print(bcolors.OKGREEN + name + " are installed" + bcolors.ENDC)
+            docker_list.remove(name)
+    if len(docker_list) > 0:
+        print ("The following docker images are missing:")
+        for item in docker_list:
+            print (item)
+        return False
+    else:
+        return True
+def check_ont_deps():
+    check_list = [
+        '/opt/ont',
+        '/opt/ont/guppy',
+        '/opt/ont/minknow',
+        '/lib/systemd/system/guppyd.service'
+    ]
+    for item in check_list:
+        if os.path.exists(item):
+            print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+        else:
+            print(item + " is not installed")
+            return False
+    return True
+
+def check_pip_deps():
+    pip_list = [
+        "geocoder",
+        "geopy",
+        "nominatim",
+        "tabulate",
+        "biopython",
+        "cgecore",
+        "dataframe-image",
+        "fpdf2",
+    ]
+    proc = subprocess.Popen("pip list", shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0].decode().split("\n")
+    for item in output[0:-1]:
+        item = item.split()
+        name = item[0]
+        if name in pip_list:
+            print(bcolors.OKGREEN + name + " is installed" + bcolors.ENDC)
+            pip_list.remove(name)
+    if len(pip_list) > 0:
+        print("The following pip packages are missing:")
+        for item in pip_list:
+            print(item)
+        return False
+    else:
+        return True
+
+def check_dist_build():
+    if not os.path.isfile("local_app/dist/linux-unpacked/moss"):
+        sys.exit("A MOSS distribution was not created correctly. Installation was not completed")
+        return False
+    else:
+        print ("The installation was completed")
+        return True
+
+def build_app():
+    os.system("cd local_app; chmod a+x moss_launch; npm i; ./node_modules/.bin/electron-rebuild; npm run dist;sudo cp moss.desktop /usr/share/applications/.; cd ..")
+    return True
+
+def move_moss_repo(cwd):
+    if (cwd != '/opt/moss'):
+        os.system("sudo rm -rf /opt/moss")
+        os.system("sudo cp -r {} /opt/moss".format(cwd))
+        os.system("sudo chmod -R 777 /opt/moss")
+        os.system("sudo rm -r {}".format(cwd))
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+if __name__ == '__main__':
+    main()

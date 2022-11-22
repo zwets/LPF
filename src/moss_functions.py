@@ -18,6 +18,146 @@ import matplotlib.pyplot as plt
 from Bio import Phylo
 from io import StringIO
 import dataframe_image as dfi
+import logging
+
+#import src.moss_helpers as moss_helpers
+#from .version import __version__
+
+def moss_run(input_dict):
+    """
+    input_dict = {
+        'sample_name': 'file',
+        'sequencing_method': 'nanopore minion',
+        'isolation_source': 'isolate',
+        'investigation_type': 'type1',
+        'collection_date': '06-21-1998',
+        'input_path': '',
+        'city': 'Copenhagen',
+        'country': 'Denmark',
+        'patient_gender': '',
+        'patient_age': '',
+        'type_of_infection': '',
+        'experimental_condition': '',
+        'config_path': '',
+        'entry_id': '',
+        'moss_db: '',
+        'ref_db': '',
+        'target_dir': ''
+    }
+    """
+    #moss_helpers.begin_logging(input_dict['target_dir'] + input_dict['entry_id'] + '.log')
+    #try:
+    #    pass
+    #except Exception as e:
+    #    logging.error(e, exc_info=True)
+    #    raise
+
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\"," \
+              " type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\"," \
+              " time_stamp=\"{}\" WHERE entry_id=\"{}\""\
+        .format("CGE finders", input_dict['sample_name'], "Not Determined", "2", "10", "Running",
+                str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
+
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+    moss_mkfs(input_dict['config_path'], input_dict['entry_id'])
+
+    kma_finders("-ont -md 5", "resfinder", input_dict, "/opt/moss/resfinder_db/all")
+    kma_finders("-ont -md 5", "virulencefinder", input_dict, "/opt/moss/virulencefinder_db/all")
+    kma_finders("-ont -md 5", "plasmidfinder", input_dict, "/opt/moss/plasmidfinder_db/all")
+
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\"," \
+              " current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\"" \
+              " WHERE entry_id=\"{}\"" \
+        .format("KMA Mapping", input_dict['sample_name'], "Not Determined", "3", "10", "Running",
+                str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+    input_dict = kma_mapping(input_dict)
+
+    input_dict['associated_species'] = "{} - assembly from ID: {}".format(input_dict['reference_header_text'], input_dict['entry_id'])
+
+    run_mlst(input_dict)
+
+    input_dict = parse_finders(input_dict)
+
+    if input_dict['template_number'] == None:  # None == no template found
+        run_assembly(input_dict)
+        return input_dict
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\"," \
+              " final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("IPC check", input_dict['sample_name'], "Alignment", "4", "10", "Running", str(datetime.datetime.now())[0:-7],
+                input_dict['entry_id'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+    nanopore_alignment(input_dict)
+
+    input_dict['reference_id'] = sql_fetch_one("SELECT entry_id FROM reference_table WHERE reference_header_text = '{}'"
+                                 .format(input_dict['reference_header_text']), input_dict['moss_db'])[0]
+
+    cmd = "cp {0}{1} {2}consensus_sequences/{1}"\
+        .format(input_dict['target_dir'], input_dict['consensus_name'], input_dict['config_path'])
+    os.system(cmd)
+
+    input_dict['isolate_list'] = sql_fetch_all("SELECT consensus_name FROM sample_table WHERE reference_id = '{}'"
+            .format(input_dict['reference_id']), input_dict['moss_db']) #Not all isolates are used current is not included either.
+
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\"," \
+              " final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("CCphylo", input_dict['sample_name'], "Alignment", "5", "10", "Running",
+                str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+    input_dict = make_phytree_output_folder(input_dict)
+
+
+    cmd = "~/bin/ccphylo dist --input {0}/phytree_output/* --reference \"{1}\" --min_cov 0.01" \
+          " --normalization_weight 0 --output {0}/phytree_output/distance_matrix"\
+        .format(input_dict['target_dir'], input_dict['reference_header_text'])
+    os.system(cmd)
+
+    distance = ThreshholdDistanceCheck("{}/phytree_output/distance_matrix"
+                                       .format(input_dict['target_dir']), input_dict)
+    print (distance)
+    if distance == None:
+        input_dict['associated_species'] = "{} - assembly from ID: {}".format(input_dict['reference_header_text'], input_dict['entry_id'])
+        run_assembly(input_dict)
+        return input_dict
+    elif distance > 300:  # SNP distance
+        input_dict['associated_species'] = "{} - assembly from ID: {}".format(input_dict['reference_header_text'],
+                                                          input_dict['entry_id'])
+        run_assembly(input_dict)
+        return input_dict
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\"," \
+              " result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Distance Matrix", input_dict['sample_name'], "Alignment", "6", "10", "Running", str(datetime.datetime.now())[0:-7],
+                input_dict['entry_id'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+    os.system("~/bin/ccphylo tree --input {0}/phytree_output/distance_matrix --output {0}/phytree_output/tree.newick"\
+        .format(input_dict['target_dir']))
+
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\"," \
+              " result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Phylo Tree imaging", input_dict['sample_name'], "Alignment", "7", "10", "Running",
+                str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+    input_dict = create_phylo_tree(input_dict)
+
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Database updating", input_dict['sample_name'], "Alignment", "8", "10", "Running", str(datetime.datetime.now())[0:-7],
+                input_dict['entry_id'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
+        .format("Compiling PDF", input_dict['sample_name'], "Alignment", "9", "10", "Running", str(datetime.datetime.now())[0:-7],
+                input_dict['entry_id'])
+    sql_execute_command(sql_cmd, input_dict['moss_db'])
+
+    compileReportAlignment(input_dict)
+    return input_dict
+
 
 def update_meta_data_table(input_dict):
     for item in input_dict:
@@ -154,136 +294,6 @@ def parse_finders(input_dict):
     input_dict['plasmid_hits'] = parse_kma_res("{}/finders/plasmidfinder.res".format(input_dict['target_dir']))
     input_dict['mlst_type'] = parse_mlst_result("{}/mlstresults/data.json".format(input_dict['target_dir']))
     return input_dict
-
-def moss_run(input_dict):
-    """
-    input_dict = {
-        'sample_name': 'file',
-        'sequencing_method': 'nanopore minion',
-        'isolation_source': 'isolate',
-        'investigation_type': 'type1',
-        'collection_date': '06-21-1998',
-        'input_path': '',
-        'city': 'Copenhagen',
-        'country': 'Denmark',
-        'patient_gender': '',
-        'patient_age': '',
-        'type_of_infection': '',
-        'experimental_condition': '',
-        'config_path': '',
-        'entry_id': '',
-        'moss_db: '',
-        'ref_db': '',
-        'target_dir': ''
-    }
-    """
-
-    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\"," \
-              " type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\"," \
-              " time_stamp=\"{}\" WHERE entry_id=\"{}\""\
-        .format("CGE finders", input_dict['sample_name'], "Not Determined", "2", "10", "Running",
-                str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
-
-    sql_execute_command(sql_cmd, input_dict['moss_db'])
-
-    moss_mkfs(input_dict['config_path'], input_dict['entry_id'])
-
-    kma_finders("-ont -md 5", "resfinder", input_dict, "/opt/moss/resfinder_db/all")
-    kma_finders("-ont -md 5", "virulencefinder", input_dict, "/opt/moss/virulencefinder_db/all")
-    kma_finders("-ont -md 5", "plasmidfinder", input_dict, "/opt/moss/plasmidfinder_db/all")
-
-    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\"," \
-              " current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\"" \
-              " WHERE entry_id=\"{}\"" \
-        .format("KMA Mapping", input_dict['sample_name'], "Not Determined", "3", "10", "Running",
-                str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
-    sql_execute_command(sql_cmd, input_dict['moss_db'])
-
-    input_dict = kma_mapping(input_dict)
-
-    input_dict['associated_species'] = "{} - assembly from ID: {}".format(input_dict['reference_header_text'], input_dict['entry_id'])
-
-    run_mlst(input_dict)
-
-    input_dict = parse_finders(input_dict)
-
-    if input_dict['template_number'] == None:  # None == no template found
-        run_assembly(input_dict)
-        return input_dict
-    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\"," \
-              " final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("IPC check", input_dict['sample_name'], "Alignment", "4", "10", "Running", str(datetime.datetime.now())[0:-7],
-                input_dict['entry_id'])
-    sql_execute_command(sql_cmd, input_dict['moss_db'])
-
-    nanopore_alignment(input_dict)
-
-    input_dict['reference_id'] = sql_fetch_one("SELECT entry_id FROM reference_table WHERE reference_header_text = '{}'"
-                                 .format(input_dict['reference_header_text']), input_dict['moss_db'])[0]
-
-    cmd = "cp {0}{1} {2}consensus_sequences/{1}"\
-        .format(input_dict['target_dir'], input_dict['consensus_name'], input_dict['config_path'])
-    os.system(cmd)
-
-    input_dict['isolate_list'] = sql_fetch_all("SELECT consensus_name FROM sample_table WHERE reference_id = '{}'"
-            .format(input_dict['reference_id']), input_dict['moss_db']) #Not all isolates are used current is not included either.
-
-    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\"," \
-              " final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("CCphylo", input_dict['sample_name'], "Alignment", "5", "10", "Running",
-                str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
-    sql_execute_command(sql_cmd, input_dict['moss_db'])
-
-    input_dict = make_phytree_output_folder(input_dict)
-
-
-    cmd = "~/bin/ccphylo dist --input {0}/phytree_output/* --reference \"{1}\" --min_cov 0.01" \
-          " --normalization_weight 0 --output {0}/phytree_output/distance_matrix"\
-        .format(input_dict['target_dir'], input_dict['reference_header_text'])
-    os.system(cmd)
-
-    distance = ThreshholdDistanceCheck("{}/phytree_output/distance_matrix"
-                                       .format(input_dict['target_dir']), input_dict)
-    print (distance)
-    if distance == None:
-        input_dict['associated_species'] = "{} - assembly from ID: {}".format(input_dict['reference_header_text'], input_dict['entry_id'])
-        run_assembly(input_dict)
-        return input_dict
-    elif distance > 300:  # SNP distance
-        input_dict['associated_species'] = "{} - assembly from ID: {}".format(input_dict['reference_header_text'],
-                                                          input_dict['entry_id'])
-        run_assembly(input_dict)
-        return input_dict
-    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\"," \
-              " result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("Distance Matrix", input_dict['sample_name'], "Alignment", "6", "10", "Running", str(datetime.datetime.now())[0:-7],
-                input_dict['entry_id'])
-    sql_execute_command(sql_cmd, input_dict['moss_db'])
-
-    os.system("~/bin/ccphylo tree --input {0}/phytree_output/distance_matrix --output {0}/phytree_output/tree.newick"\
-        .format(input_dict['target_dir']))
-
-    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\"," \
-              " result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("Phylo Tree imaging", input_dict['sample_name'], "Alignment", "7", "10", "Running",
-                str(datetime.datetime.now())[0:-7], input_dict['entry_id'])
-    sql_execute_command(sql_cmd, input_dict['moss_db'])
-
-    input_dict = create_phylo_tree(input_dict)
-
-    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("Database updating", input_dict['sample_name'], "Alignment", "8", "10", "Running", str(datetime.datetime.now())[0:-7],
-                input_dict['entry_id'])
-    sql_execute_command(sql_cmd, input_dict['moss_db'])
-
-    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"" \
-        .format("Compiling PDF", input_dict['sample_name'], "Alignment", "9", "10", "Running", str(datetime.datetime.now())[0:-7],
-                input_dict['entry_id'])
-    sql_execute_command(sql_cmd, input_dict['moss_db'])
-
-    compileReportAlignment(input_dict)
-    return input_dict
-
 def derive_amr_stats(genes, database): #TBD rewrite and remove.
     phenotype = dict()
     infile = open("/opt/moss/{}/phenotypes.txt".format(database), 'r')
@@ -561,7 +571,7 @@ def run_mlst(input_dict):
         cmd = "mkdir {}/mlstresults".format(input_dict['target_dir'])
         os.system(cmd)
         cmd = "python3 /opt/moss/mlst/mlst.py -i {} -o {}mlstresults" \
-              " -mp ~/bin/kma -p mlst/mlst_db/ -s {} -nano"\
+              " -mp ~/bin/kma -p /opt/moss/mlst/mlst_db/ -s {} -nano"\
             .format(input_dict['input_path'], input_dict['target_dir'], mlst_dict[specie])
         os.system(cmd)
         input_dict['mlst'] = specie
