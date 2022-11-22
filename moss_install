@@ -13,7 +13,7 @@ def main(command_line=None):
     )
     subparsers = parser.add_subparsers(dest='command')
     all = subparsers.add_parser('all', help='Complete installation of ONT deps, MOSS deps and build app. Recommended for first installation or complete reinstallation.')
-    ont = subparsers.add_parser('ont', help='ONT repos for ubuntu 22.')
+    ont_deps = subparsers.add_parser('ont_deps', help='ONT repos for ubuntu 22.')
     moss_deps = subparsers.add_parser('moss_deps', help='Local dependencies for MOSS')
     moss_databses = subparsers.add_parser('moss_databses', help='Downloads databases for MOSS')
     moss_build = subparsers.add_parser('moss_build', help='Build MOSS app and relocates report to /opt/moss ( Requires moss_deps to be installed in advance.')
@@ -27,7 +27,7 @@ def main(command_line=None):
         install_ont_deps()
         install_moss_deps()
         moss_build()
-    elif args.command == 'ont':
+    elif args.command == 'ont_deps':
         install_ont_deps()
     elif args.command == 'moss_deps':
         install_moss_deps()
@@ -88,7 +88,7 @@ def install_docker_images():
         os.system(cmd)
 
 def install_moss_deps():
-    os.system("python3 docker_install.py")
+    install_docker_images()
     os.system(
         "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
     os.system("pip install -r requirements.txt")
