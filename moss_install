@@ -43,6 +43,7 @@ def main(command_line=None):
         google_chrome_result = check_google_chrome()
         #Check app
         pass
+    os.system("cp moss_install ~/bin/moss_install")
     #CP mossinstall to bin
 
 def moss_build():
