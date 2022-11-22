@@ -180,8 +180,9 @@ def install_moss_deps():
     os.system(
         "sudo git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo && make; sudo cp ccphylo ~/bin/.;  cd ..; mv ccphylo src/.;")
     install_docker_images()
-    os.system(
-        "sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
+    if not check_google_chrome():
+        os.system(
+            "sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
     os.system("pip install -r requirements.txt")
 def install_ont_deps():
     os.system("sudo apt update")
