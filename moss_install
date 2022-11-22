@@ -170,7 +170,7 @@ def check_docker_images():
         item = item.split()
         name = item[0] + ":" + item[1]
         if name in docker_list:
-            print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+            print(bcolors.OKGREEN + name + " are installed" + bcolors.ENDC)
             docker_list.remove(name)
     if len(docker_list) > 0:
         print ("The following docker images are missing:")
