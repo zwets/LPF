@@ -7,7 +7,7 @@ function submitSingleAnalysis() {
     console.log(document.getElementById('json_file').files[0].path)
     var config_json = require('/opt/moss_db/config.json');
 
-    var cmd_msg = `~/anaconda3/bin/conda run -n base python3 /opt/moss/src/moss_parallel_wrapper.py -json ${input}`;
+    var cmd_msg = `~/anaconda3/bin/conda run -n moss python3 /opt/moss/src/moss_parallel_wrapper.py -json ${input}`;
     console.log(cmd_msg);
     execute_command_as_subprocess(cmd_msg);
 

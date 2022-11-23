@@ -121,7 +121,7 @@ function create_meta_data_table_fastq(){
                       create_button.onclick = function() {
                         var config_json = require('/opt/moss_db/config.json');
 
-                        var cmd_msg = `~/anaconda3/bin/conda run -n base python3 /opt/moss/src/moss_parallel_wrapper.py -json ${output_json_file}`;
+                        var cmd_msg = `~/anaconda3/bin/conda run -n moss python3 /opt/moss/src/moss_parallel_wrapper.py -json ${output_json_file}`;
                         console.log(cmd_msg);
                         execute_command_as_subprocess(cmd_msg);
                       }

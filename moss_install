@@ -25,6 +25,7 @@ def main(command_line=None):
     user = proc.communicate()[0].decode().rstrip()
     if args.command == None:
         sys.exit("No command given.")
+    solve_conda_env(user)
     if not os.path.exists('/home/{}/bin'.format(user)):
         os.system('sudo mkdir /home/{}/bin'.format(user))
     add_bin_path()
@@ -49,6 +50,16 @@ def main(command_line=None):
     elif args.command == 'check_deps':
         check_all_deps()
 
+def solve_conda_env(user):
+    proc = subprocess.Popen("conda env list", shell=True,
+                            stdout=subprocess.PIPE, )
+    env = proc.communicate()[0].decode().split()
+    if 'moss' in env:
+        print ("Moss environment already exists")
+        print ("Updating moss environment")
+        os.system("conda env update --file environment.yml  --prune")
+    else:
+        os.system("conda env create -f environment.yml")
 def check_local_database():
     if not os.path.exists('resfinder_db'):
         print(bcolors.FAIL + "Resfinder database not found" + bcolors.ENDC)
