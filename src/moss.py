@@ -56,7 +56,8 @@ def moss_pipeline(moss_object):
 def main():
     input = json.loads(args.json)
     moss_object = MossObject(input)
-    sys.exit(dir(moss_object))
+    attributes = [a for a in dir(moss_object) if not a.startswith('__')]
+    sys.exit(attributes)
     moss_pipeline(moss_object)
 
 
