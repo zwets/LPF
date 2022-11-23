@@ -25,9 +25,9 @@ def main(command_line=None):
     user = proc.communicate()[0].decode().rstrip()
     if args.command == None:
         sys.exit("No command given.")
+    solve_conda_env(user)
     if not os.path.exists('/home/{}/bin'.format(user)):
         os.system('sudo mkdir /home/{}/bin'.format(user))
-    solve_conda_env(user)
     add_bin_path()
     if args.command == 'all':
         print ("ONT DEPENDENCIES")
