@@ -150,7 +150,7 @@ def update_meta_data_table(moss_object):
         else:
             if isinstance(val, str) and "'" in val:
                 val = val.replace("'", "''")
-        sql_dict[attribute] = str(val)
+        sql_dict[attribute] = val
     print (sql_dict)
     sql_cmd = "INSERT INTO meta_data_table(entry_id, meta_data_json) VALUES('{}', '{}')".format(moss_object.entry_id, json.dumps(sql_dict))
     print (sql_cmd)
