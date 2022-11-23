@@ -28,7 +28,6 @@ def main(command_line=None):
     if not os.path.exists('/home/{}/bin'.format(user)):
         os.system('sudo mkdir /home/{}/bin'.format(user))
     solve_conda_env(user)
-    sys.exit()
     add_bin_path()
     if args.command == 'all':
         print ("ONT DEPENDENCIES")
