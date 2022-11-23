@@ -133,9 +133,9 @@ def moss_run(moss_object):
         .format("Compiling PDF", moss_object.sample_name, "Alignment", "9", "10", "Running", str(datetime.datetime.now())[0:-7],
                 moss_object.entry_id)
     sql_execute_command(sql_cmd, moss_object.moss_db)
-    print ("made it to alignment pdf")
 
     compileReportAlignment(moss_object)
+    print ("pas pdf")
     return moss_object
 
 
