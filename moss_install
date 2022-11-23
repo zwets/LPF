@@ -61,7 +61,7 @@ def solve_conda_env(user):
         os.system("conda env update --file environment.yml  --prune")
     else:
         os.system("conda env create -f environment.yml")
-    os.system("/home/{}/anaconda3/bin/conda activate moss".format(user))
+    os.system("source activate moss".format(user))
 def check_local_database():
     if not os.path.exists('resfinder_db'):
         print(bcolors.FAIL + "Resfinder database not found" + bcolors.ENDC)
