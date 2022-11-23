@@ -238,6 +238,18 @@ def evaluate_moss_run(moss_object): #TBD. Not implemented yet. Will be used to e
     else:
         return 'alignment'
 
+def validate_moss_object(object):
+    print('Validating input')
+    if not object.input_file in object.input_path:
+        raise SystemExit('Input file does not match the input path.')
+    if not object.input_path.endswith('.fastq.gz'):
+        raise SystemExit('Input is not a fastq.gz file. Only this format is supported.')
+    if not object.config_path.startswith('/opt/moss_db'):
+        raise SystemExit('An invalid config_path was given.')
+    validate_date_text(object.collection_date)
+    print('Validation complete')
+    return True
+
 def validate_date_text(date_text):
     """Validates the date time format"""
     try:

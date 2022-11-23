@@ -18,22 +18,11 @@ class MossObject:
         for item in json_object:
             setattr(self, item, json_object[item])
 
-    def validate_object(self):
-        print('Validating input')
-        if not self.input_file in self.input_path:
-            raise SystemExit('Input file does not match the input path.')
-        if not self.input_path.endswith('.fastq.gz'):
-            raise SystemExit('Input is not a fastq.gz file. Only this format is supported.')
-        if not self.config_path.startswith('/opt/moss_db'):
-            raise SystemExit('An invalid config_path was given.')
-        moss.validate_date_text(self.collection_date)
-        print('Validation complete')
-        return True
-
 def moss_pipeline(moss_object):
     """
     Workflow for analysis pipeline
     """
+    moss.validate_moss_object(moss_object)
     try:
         moss_object = moss.moss_init(moss_object)
         moss.check_unique_entry_id(moss_object.entry_id, moss_object.moss_db)
