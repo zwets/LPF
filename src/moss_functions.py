@@ -135,7 +135,7 @@ def moss_run(moss_object):
     sql_execute_command(sql_cmd, moss_object.moss_db)
 
     compileReportAlignment(moss_object)
-    print ("pas pdf")
+    sys.exit("here")
     return moss_object
 
 
