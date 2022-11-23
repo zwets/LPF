@@ -31,37 +31,32 @@ class MossObject:
         print('Validation complete')
         return True
 
-def moss_pipeline(input_dict):
+def moss_pipeline(moss_object):
     """
     Workflow for analysis pipeline
     """
-    input_dict = ast.literal_eval(json.dumps(input_dict))
     try:
-        moss.validate_input(input_dict)
-        input_dict = moss.moss_init(input_dict)
-        moss.check_unique_entry_id(input_dict['entry_id'], input_dict['moss_db'])
-        moss.qc_check(input_dict)
-        input_dict = moss.moss_run(input_dict)
-        r_type = moss.evaluate_moss_run(input_dict)
+        moss_object = moss.moss_init(moss_object)
+        moss.check_unique_entry_id(moss_object.entry_id, moss_object.moss_db)
+        moss.qc_check(moss_object)
+        moss_object = moss.moss_run(moss_object)
+        r_type = moss.evaluate_moss_run(moss_object)
         if r_type != None: #Evals if completed correctly
             print (r_type)
-            moss.completed_run_update_sql_database(r_type, input_dict)
-            moss.insert_sql_data_to_db(input_dict, r_type)
+            moss.completed_run_update_sql_database(r_type, moss_object)
+            moss.insert_sql_data_to_db(moss_object, r_type)
         else:
-            moss.sql_execute_command(moss.clean_sql_for_moss_run(input_dict), input_dict['moss_db'])
+            moss.sql_execute_command(moss.clean_sql_for_moss_run(moss_object), moss_object.moss_db)
             sys.exit(error)
     except Exception as error:
-        moss.sql_execute_command(moss.clean_sql_for_moss_run(input_dict), input_dict['moss_db'])
+        moss.sql_execute_command(moss.clean_sql_for_moss_run(moss_object), moss_object.moss_db.)
         sys.exit(error)
 
 
 def main():
     input = json.loads(args.json)
     moss_object = MossObject(input)
-    print (moss_object.input_file)
-    print (input)
-    sys.exit()
-    moss_pipeline(input)
+    moss_pipeline(moss_object)
 
 
 if __name__== "__main__":
