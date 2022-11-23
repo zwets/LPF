@@ -49,7 +49,7 @@ def moss_pipeline(moss_object):
             moss.sql_execute_command(moss.clean_sql_for_moss_run(moss_object), moss_object.moss_db)
             sys.exit(error)
     except Exception as error:
-        moss.sql_execute_command(moss.clean_sql_for_moss_run(moss_object), moss_object.moss_db.)
+        moss.sql_execute_command(moss.clean_sql_for_moss_run(moss_object), moss_object.moss_db)
         sys.exit(error)
 
 
