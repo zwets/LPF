@@ -56,6 +56,8 @@ def solve_conda_env():
                             stdout=subprocess.PIPE, )
     env = proc.communicate()[0].decode().split()
     if 'moss' in env:
+        print ("Moss environment already exists")
+        print ("Updating moss environment")
         os.system("conda env update --file environment.yml  --prune")
     else:
         os.system("conda env create -f environment.yml")
