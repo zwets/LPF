@@ -241,7 +241,7 @@ def validate_date_text(date_text):
 
 def parse_finders(moss_object):
     moss_object.resfinder_hits = parse_kma_res("{}/finders/resfinder.res".format(moss_object.target_dir))
-    moss_objectvirulence_hits = parse_kma_res("{}/finders/virulencefinder.res".format(moss_object.target_dir))
+    moss_object.virulence_hits = parse_kma_res("{}/finders/virulencefinder.res".format(moss_object.target_dir))
     moss_object.plasmid_hits = parse_kma_res("{}/finders/plasmidfinder.res".format(moss_object.target_dir))
     moss_object.mlst_type = parse_mlst_result("{}/mlstresults/data.json".format(moss_object.target_dir))
     return moss_object
@@ -879,7 +879,7 @@ def compileReportAssembly(moss_object):
 
     pdf.cell(85, 5, "Virulence Genes Found: ", 0, 1, 'L')
 
-    csv_data = derive_virulence_stats(moss_objectvirulence_hits,
+    csv_data = derive_virulence_stats(moss_object.virulence_hits,
                                                            "virulencefinder_db", moss_object.target_dir)
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
@@ -973,7 +973,7 @@ def compileReportAlignment(moss_object):
                  "Plasmids in this sample: {}. \n" \
                  "Virulence genes in this sample: {}. \n" \
                  "MLST: ST{}. \n" \
-                 "".format(len(moss_object.resfinder_hits), len(moss_object.plasmid_hits), len(moss_objectvirulence_hits), moss_object.mlst_type)
+                 "".format(len(moss_object.resfinder_hits), len(moss_object.plasmid_hits), len(moss_object.virulence_hits), moss_object.mlst_type)
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('Arial', '', 10)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
@@ -1025,7 +1025,7 @@ def compileReportAlignment(moss_object):
 
     pdf.cell(85, 5, "Virulence Genes Found: ", 0, 1, 'L')
 
-    csv_data = derive_virulence_stats(moss_objectvirulence_hits, "virulencefinder_db", moss_object.target_dir)
+    csv_data = derive_virulence_stats(moss_object.virulence_hits, "virulencefinder_db", moss_object.target_dir)
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
     lh_list = []  # list with proper line_height for each row
