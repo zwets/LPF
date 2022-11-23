@@ -44,7 +44,9 @@ def moss_pipeline(moss_object):
         if r_type != None: #Evals if completed correctly
             print (r_type)
             moss.completed_run_update_sql_database(r_type, moss_object)
+            print ("test1")
             moss.insert_sql_data_to_db(moss_object, r_type)
+            print ("test2")
         else:
             moss.sql_execute_command(moss.clean_sql_for_moss_run(moss_object), moss_object.moss_db)
             sys.exit(error)
