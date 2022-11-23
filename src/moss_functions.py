@@ -140,14 +140,10 @@ def moss_run(moss_object):
 
 def update_meta_data_table(moss_object):
     attributes = [a for a in dir(moss_object) if not a.startswith('__')]
-    print (attributes)
     for attribute in attributes:
         val = getattr(moss_object, attribute)
-        print(attribute, val)
         if isinstance(val, list):
-            print(attribute, val)
-
-            for i in range(val):
+            for i in range(len(val)):
                 if "'" in val[i]:
                     val[i] = val[i].replace("'", "''")
         else:
