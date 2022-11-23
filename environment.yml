@@ -455,16 +455,5 @@ dependencies:
     - ratelim==0.1.6
     - yarl==1.8.1
     - pip:
-        - geocoder
-        - geopy
-        - nominatim
-        - tabulate
-        - biopython
-        - cgecore
-        - dataframe-image
-        - fpdf2
-        - nose2
-        - pinocchio
-        - coverage
-        - pylint
+        - r requirements.txt
 
