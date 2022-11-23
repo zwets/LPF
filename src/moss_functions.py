@@ -166,7 +166,9 @@ def update_sample_table(moss_object):
     return True
 def insert_sql_data_to_db(moss_object, r_type):
     update_sample_table(moss_object)
+    print ("t1")
     update_meta_data_table(moss_object)
+    print ("t2")
     if r_type == 'assembly':
         update_reference_table(moss_object)
 
