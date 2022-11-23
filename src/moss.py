@@ -75,6 +75,8 @@ def moss_pipeline(input_dict):
 
 def main():
     input = json.loads(args.json)
+    print (input)
+    sys.exit()
     moss_pipeline(input)
 
 
