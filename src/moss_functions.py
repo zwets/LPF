@@ -48,7 +48,7 @@ def moss_run(moss_object):
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\"," \
               " current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\"" \
               " WHERE entry_id=\"{}\"" \
-        .format("KMA Mapping", moss_object.sample_name., "Not Determined", "3", "10", "Running",
+        .format("KMA Mapping", moss_object.sample_name, "Not Determined", "3", "10", "Running",
                 str(datetime.datetime.now())[0:-7], moss_object.entry_id)
     sql_execute_command(sql_cmd, moss_object.moss_db)
 
