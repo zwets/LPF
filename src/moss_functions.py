@@ -140,6 +140,7 @@ def moss_run(moss_object):
 
 def update_meta_data_table(moss_object):
     attributes = [a for a in dir(moss_object) if not a.startswith('__')]
+    print (attributes)
     for attribute in attributes:
         val = getattr(moss_object, attribute)
         if isinstance(val, list):
@@ -149,6 +150,7 @@ def update_meta_data_table(moss_object):
         else:
             if "'" in val:
                 val = val.replace("'", "''")
+        print (attribute, val)
         moss_object.attribute = val
     sql_cmd = "INSERT INTO meta_data_table(entry_id, meta_data_json) VALUES('{}', '{}')".format(moss_object.entry_id, json.dumps(moss_object))
     sql_execute_command(sql_cmd, moss_object.moss_db)
