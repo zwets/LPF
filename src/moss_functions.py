@@ -148,7 +148,7 @@ def update_meta_data_table(moss_object):
                 if "'" in val[i]:
                     val[i] = val[i].replace("'", "''")
         else:
-            if "'" in val:
+            if isinstance(val, str) and "'" in val:
                 val = val.replace("'", "''")
         moss_object.attribute = val
     print ("sql update")
