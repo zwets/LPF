@@ -153,7 +153,9 @@ def update_meta_data_table(moss_object):
         sql_dict[attribute] = str(val)
     print (sql_dict)
     sql_cmd = "INSERT INTO meta_data_table(entry_id, meta_data_json) VALUES('{}', '{}')".format(moss_object.entry_id, json.dumps(sql_dict))
+    print (sql_cmd)
     sql_execute_command(sql_cmd, moss_object.moss_db)
+    print ("after")
 
 def update_reference_table(moss_object):
     sql_cmd = "INSERT INTO reference_table(entry_id, reference_header_text) VALUES('{}', '{}')".format(moss_object.entry_id, moss_object.reference_header_text)
