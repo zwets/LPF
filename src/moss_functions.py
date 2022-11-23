@@ -145,6 +145,8 @@ def update_meta_data_table(moss_object):
         val = getattr(moss_object, attribute)
         print(attribute, val)
         if isinstance(val, list):
+            print(attribute, val)
+
             for i in range(val):
                 if "'" in val[i]:
                     val[i] = val[i].replace("'", "''")
