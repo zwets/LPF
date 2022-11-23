@@ -17,7 +17,6 @@ class MossObject:
     def __init__(self, json_object):
         for item in json_object:
             setattr(self, item, json_object[item])
-        self.validate_object()
 
     def validate_object(self):
         print('Validating input')
