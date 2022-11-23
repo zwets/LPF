@@ -435,5 +435,5 @@ dependencies:
   - zope.interface=5.4.0
   - zstd=1.5.2
   - pip:
-    - r requirements.txt
+      - -r requirements.txt
 
