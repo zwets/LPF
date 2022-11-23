@@ -153,6 +153,7 @@ def update_meta_data_table(moss_object):
     sql_dict = dict()
     for attribute in attributes:
         sql_dict[attribute] = getattr(moss_object, attribute)
+    print (sql_dict)
     sql_cmd = "INSERT INTO meta_data_table(entry_id, meta_data_json) VALUES('{}', '{}')".format(moss_object.entry_id, json.dumps(sql_dict))
     sql_execute_command(sql_cmd, moss_object.moss_db)
 
@@ -166,9 +167,7 @@ def update_sample_table(moss_object):
     return True
 def insert_sql_data_to_db(moss_object, r_type):
     update_sample_table(moss_object)
-    print ("t1")
     update_meta_data_table(moss_object)
-    print ("t2")
     if r_type == 'assembly':
         update_reference_table(moss_object)
 
