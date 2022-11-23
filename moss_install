@@ -23,12 +23,11 @@ def main(command_line=None):
     proc = subprocess.Popen("whoami", shell=True,
                             stdout=subprocess.PIPE, )
     user = proc.communicate()[0].decode().rstrip()
-    solve_conda_env(user)
-    sys.exit()
     if args.command == None:
         sys.exit("No command given.")
     if not os.path.exists('/home/{}/bin'.format(user)):
         os.system('sudo mkdir /home/{}/bin'.format(user))
+    solve_conda_env(user)
     add_bin_path()
     if args.command == 'all':
         print ("ONT DEPENDENCIES")
