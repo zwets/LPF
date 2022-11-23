@@ -140,7 +140,7 @@ def moss_run(moss_object):
 
 def update_meta_data_table(moss_object):
     attributes = [a for a in dir(obj) if not a.startswith('__')]
-    for item in moss_object:
+    for item in moss_object:s
         if isinstance(moss_object[item], list):
             for i in range(len(moss_object[item])):
                 if "'" in moss_object[item][i]:
