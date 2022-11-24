@@ -41,7 +41,7 @@ def main(command_line=None):
     elif args.command == 'ont_deps':
         install_ont_deps()
     elif args.command == 'moss_deps':
-        install_moss_deps()
+        install_moss_deps(user)
     elif args.command == 'moss_databases':
         download_finder_dbs() #DOES NOT CHECK FOR BACTERIA_DB
         #STFP solution with Maja
