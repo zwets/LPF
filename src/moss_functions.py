@@ -784,7 +784,7 @@ def run_bandage(target_dir, jobid):
 
 def compileReportAssembly(moss_object):
     pdf = FPDF()  # A4 (210 by 297 mm)
-    filename = "{}_report.pdf".format(moss_object.entry_id)
+    filename = "{}.pdf".format(moss_object.entry_id)
 
     ''' First Page '''
     pdf.add_page()
@@ -909,7 +909,7 @@ def mlst_sequence_type(target_dir):
 def compileReportAlignment(moss_object):
     pdf = FPDF()  # A4 (210 by 297 mm)
 
-    filename = "{}_report.pdf".format(moss_object.entry_id) #ADD idd
+    filename = "{}.pdf".format(moss_object.entry_id) #ADD idd
     clusterSize = len(moss_object.isolate_list)
 
     ''' First Page '''
