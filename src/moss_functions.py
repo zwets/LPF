@@ -723,6 +723,7 @@ def flye_assembly(moss_object):
     proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_", moss_object.entry_id, shell=True, stdout=subprocess.PIPE))
     output = proc.communicate()[0]
     id = output.decode().rstrip()
+    print ("HERE")
 
     cmd = "docker cp {}:/tmp/assembly_results {}.".format(id, moss_object.target_dir)
     os.system(cmd)
