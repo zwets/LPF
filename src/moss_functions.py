@@ -1232,7 +1232,7 @@ def plasmidPage(jsoninput, pdf, target_dir):
 def create_title(pdf, id, string):
   # Unicode is not yet supported in the py3k version; use windows-1252 standard font
   pdf.set_text_color(51, 153, 255)
-  pdf.set_font('Arial', 'BU', 36)
+  pdf.set_font('Arial', 'BU', 24)
   pdf.ln(10)
   pdf.write(5, f"{string}")
   pdf.ln(10)
