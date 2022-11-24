@@ -72,7 +72,7 @@ def moss_run(moss_object):
     distance = ThreshholdDistanceCheck("{}/phytree_output/distance_matrix"
                                        .format(moss_object.target_dir), moss_object)
     print (distance)
-    logging.info("Distance from best reference is SNPs: {}".format(distance))
+    logging.info("Distance from best reference in SNPs: {}".format(distance))
     if distance == None:
         moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text, moss_object.entry_id)
         run_assembly(moss_object)
