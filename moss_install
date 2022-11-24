@@ -24,7 +24,7 @@ def main(command_line=None):
                             stdout=subprocess.PIPE, )
     user = proc.communicate()[0].decode().rstrip()
     if user == "root":
-        print(bcolors.FAIL + "MOSS should not be installed as root, please run as a normal user" + bcolors.ENDC)
+        print(bcolors.FAIL + "MOSS should not be installed as root, please run as a normal user. This means DO NOT put sudo in the command line when running ./moss_install, as it will ruin your user path" + bcolors.ENDC)
         sys.exit()
     if args.command == None:
         sys.exit("No command given.")
