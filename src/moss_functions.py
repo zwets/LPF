@@ -20,7 +20,7 @@ from io import StringIO
 import dataframe_image as dfi
 import logging
 
-import src.moss_helpers as moss_helpers
+import moss_helpers as moss_helpers
 from .version import __version__
 
 def moss_run(moss_object):
