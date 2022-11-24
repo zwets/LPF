@@ -956,7 +956,7 @@ def compileReportAlignment(moss_object):
     pdf.add_page()
     pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
 
-    create_title(pdf, moss_object.entry_id, "MOSS analytical report, Version : {}".format(moss_object.version))")
+    create_title(pdf, moss_object.entry_id, "MOSS analytical report, Version : {}".format(moss_object.version))
     pdf.ln(5)
     pdf.set_font('Arial', '', 12)
 
