@@ -105,6 +105,8 @@ def ccphylo_dist(moss_object):
 
     proc = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     err = proc.communicate()[1].decode().rstrip().split(" ")
+    print (proc.communicate()[1].decode().rstrip())
+    logging.info(proc.communicate()[1].decode().rstrip())
     inclusion_fraction = int(err[1])/int(err[3])
     print ("Inclusion fraction: {}".format(inclusion_fraction))
     logging.info("Inclusion fraction: {}".format(inclusion_fraction))
