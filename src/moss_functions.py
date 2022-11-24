@@ -315,14 +315,6 @@ def moss_mkfs(config_path, entry_id):
     os.system("mkdir {}".format(target_dir))
     os.system("mkdir {}/finders".format(target_dir))
 
-def moss_init(moss_object):
-    moss_object.entry_id = md5_of_file(moss_object.input_path)
-    moss_object.sample_name = moss_object.input_path.split("/")[-1][0:-9]
-    moss_object.moss_db = "{}/moss.db".format(moss_object.config_path)
-    moss_object.ref_db = "{}/REFDB.ATG".format(moss_object.config_path)
-    moss_object.target_dir = "{}/analysis/{}/".format(moss_object.config_path, moss_object.entry_id)
-    print ('input loaded')
-    return moss_object
 
 def get_kma_template_number(moss_object):
     with open('{}/REFDB.ATG.name'.format(moss_object.config_path), 'r') as infile:
