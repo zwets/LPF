@@ -26,7 +26,6 @@ from version import __version__
 
 def moss_run(moss_object):
     sql_update_status_table("CGE finders", moss_object.sample_name, "Not Determined", "2", "10", "Running", moss_object.entry_id, moss_object.moss_db)
-    moss_mkfs(moss_object.config_path, moss_object.entry_id)
 
     kma_finders("-ont -md 5", "resfinder", moss_object, "/opt/moss/resfinder_db/all")
     kma_finders("-ont -md 5", "virulencefinder", moss_object, "/opt/moss/virulencefinder_db/all")
