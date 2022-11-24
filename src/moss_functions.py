@@ -46,6 +46,7 @@ def moss_run(moss_object):
 
     if moss_object.template_number == None:  # None == no template found
         run_assembly(moss_object)
+        copy_logs_reports(moss_object)
         return moss_object
     sql_update_status_table("IPC check", moss_object.sample_name, "Alignment", "4", "10", "Running", moss_object.entry_id, moss_object.moss_db)
 
@@ -76,11 +77,13 @@ def moss_run(moss_object):
     if distance == None:
         moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text, moss_object.entry_id)
         run_assembly(moss_object)
+        copy_logs_reports(moss_object)
         return moss_object
     elif distance > 300 or inclusion_fraction < 0.25:  # SNP distance #TBD EVAL ASSEMBLY QUALITY
         moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text,
                                                           moss_object.entry_id)
         run_assembly(moss_object)
+        copy_logs_reports(moss_object)
         return moss_object
 
     sql_update_status_table("CCphylo", moss_object.sample_name, "Alignment", "6", "10", "Running", moss_object.entry_id, moss_object.moss_db)
