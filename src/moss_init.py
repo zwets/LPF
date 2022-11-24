@@ -21,6 +21,8 @@ def check_and_add_bookmarks(config_name):
             if "moss" not in item:
                 new_bookmark_list.append(item.rstrip())
         new_bookmark_list.append("file:///opt/moss_data")
+        new_bookmark_list.append("file:///opt/moss_reports")
+        new_bookmark_list.append("file:///opt/moss_logs")
         new_bookmark_list.append("file:///opt/moss_db/{}/metadata_json".format(config_name))
 
         with open("{}/.config/gtk-3.0/bookmarks".format(home), 'w') as fd:
@@ -48,7 +50,6 @@ if not os.path.exists("/opt/moss_db/{}".format(config_name)):
     os.system("mkdir /opt/moss_db/{}".format(config_name))
 else:
     sys.exit("A moss database of that name already exists on this computer!")
-
 config_name = "/opt/moss_db/{}/".format(config_name)
 
 print ("cloning reference DB, if you are using a big reference DB, this might take a while")

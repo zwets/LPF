@@ -5,6 +5,8 @@ import sys
 import argparse
 import json
 import moss_functions as moss
+import moss_helpers as moss_helpers
+import logging
 import ast
 
 parser = argparse.ArgumentParser(description='.')
@@ -18,16 +20,28 @@ class MossObject:
         for item in json_object:
             setattr(self, item, json_object[item])
 
+        self.entry_id = moss.md5_of_file(self.input_path)
+        self.sample_name = self.input_path.split("/")[-1][0:-9]
+        self.moss_db = "{}/moss.db".format(self.config_path)
+        self.ref_db = "{}/REFDB.ATG".format(self.config_path)
+        self.target_dir = "{}/analysis/{}/".format(self.config_path, self.entry_id)
+        self.logfile = self.entry_id + ".log"
 def moss_pipeline(moss_object):
     """
     Workflow for analysis pipeline
     """
     moss.validate_moss_object(moss_object)
     try:
-        moss_object = moss.moss_init(moss_object)
         moss.check_unique_entry_id(moss_object.entry_id, moss_object.moss_db)
         moss.qc_check(moss_object)
-        moss_object = moss.moss_run(moss_object)
+        moss.moss_mkfs(moss_object.config_path, moss_object.entry_id)
+        moss_helpers.begin_logging(moss_object.target_dir + moss_object.logfile)
+        try:
+            moss_object = moss.moss_run(moss_object)
+        except Exception as e:
+            logging.error(e, exc_info=True)
+            raise
+
         r_type = moss.evaluate_moss_run(moss_object)
         if r_type != None: #Evals if completed correctly
             print (r_type)
