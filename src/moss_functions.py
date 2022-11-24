@@ -19,6 +19,7 @@ from Bio import Phylo
 from io import StringIO
 import dataframe_image as dfi
 import logging
+import pyfastx
 
 import moss_helpers as moss_helpers
 from version import __version__
@@ -27,6 +28,7 @@ from version import __version__
 def moss_run(moss_object):
     logging.info('Starting MOSS run')
     logging.info('MOSS version: {}'.format(__version__))
+    moss_object = evaluate_dna_depth(moss_object)
     sql_update_status_table("CGE finders", moss_object.sample_name, "Not Determined", "2", "10", "Running", moss_object.entry_id, moss_object.moss_db)
     kma_finders("-ont -md 5", "resfinder", moss_object, "/opt/moss/resfinder_db/all")
     kma_finders("-ont -md 5", "virulencefinder", moss_object, "/opt/moss/virulencefinder_db/all")
@@ -44,6 +46,7 @@ def moss_run(moss_object):
 
     if moss_object.template_number == None:  # None == no template found
         run_assembly(moss_object)
+        copy_logs_reports(moss_object)
         return moss_object
     sql_update_status_table("IPC check", moss_object.sample_name, "Alignment", "4", "10", "Running", moss_object.entry_id, moss_object.moss_db)
 
@@ -63,29 +66,29 @@ def moss_run(moss_object):
 
     moss_object = make_phytree_output_folder(moss_object)
 
+    inclusion_fraction = ccphylo_dist(moss_object)
 
-    cmd = "~/bin/ccphylo dist --input {0}/phytree_output/* --reference \"{1}\" --min_cov 0.01" \
-          " --normalization_weight 0 --output {0}/phytree_output/distance_matrix"\
-        .format(moss_object.target_dir, moss_object.reference_header_text)
-    os.system(cmd)
 
     distance = ThreshholdDistanceCheck("{}/phytree_output/distance_matrix"
                                        .format(moss_object.target_dir), moss_object)
     print (distance)
     logging.info("Distance from best reference in SNPs: {}".format(distance))
+
     if distance == None:
         moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text, moss_object.entry_id)
         run_assembly(moss_object)
+        copy_logs_reports(moss_object)
         return moss_object
-    elif distance > 300:  # SNP distance
+    elif distance > 300 or inclusion_fraction < 0.25:  # SNP distance #TBD EVAL ASSEMBLY QUALITY
         moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text,
                                                           moss_object.entry_id)
         run_assembly(moss_object)
+        copy_logs_reports(moss_object)
         return moss_object
+
     sql_update_status_table("CCphylo", moss_object.sample_name, "Alignment", "6", "10", "Running", moss_object.entry_id, moss_object.moss_db)
 
-    os.system("~/bin/ccphylo tree --input {0}/phytree_output/distance_matrix --output {0}/phytree_output/tree.newick"\
-        .format(moss_object.target_dir))
+    ccphylo_tree(moss_object)
 
     sql_update_status_table("Phylo Tree imaging", moss_object.sample_name, "Alignment", "7", "10", "Running", moss_object.entry_id, moss_object.moss_db)
 
@@ -100,6 +103,43 @@ def moss_run(moss_object):
     copy_logs_reports(moss_object)
 
     return moss_object
+
+def evaluate_dna_depth(moss_object):
+    fq = pyfastx.Fastq(moss_object.input_path, build_index=False)
+    total_bases = 0
+    for read in fq:
+        total_bases += len(read[1])
+    print ("Total bases in reads: {}. A minimum of 25.000.000 is required.".format(total_bases))
+    logging.info("Total bases in reads: {}. A minimum of 25.000.000 is required.".format(total_bases))
+    if total_bases < 25*10^6:
+        print ("Not enough DNA for analysis")
+        logging.info("Not enough DNA for analysis")
+        sys.exit(1)
+    moss_object.total_bases = total_bases
+    return moss_object
+
+
+
+def ccphylo_dist(moss_object):
+    cmd = "~/bin/ccphylo dist --input {0}/phytree_output/* --reference \"{1}\" --min_cov 0.01" \
+          " --normalization_weight 0 --output {0}/phytree_output/distance_matrix" \
+        .format(moss_object.target_dir, moss_object.reference_header_text)
+
+    proc = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    err = proc.communicate()[1].decode().rstrip().split(" ")
+    print (proc.communicate()[1].decode().rstrip())
+    logging.info(proc.communicate()[1].decode().rstrip())
+    inclusion_fraction = int(err[1])/int(err[3])
+    print ("Inclusion fraction: {}".format(inclusion_fraction))
+    logging.info("Inclusion fraction: {}".format(inclusion_fraction))
+    return inclusion_fraction
+
+def ccphylo_tree(moss_object):
+    cmd = "~/bin/ccphylo tree --input {0}/phytree_output/distance_matrix --output {0}/phytree_output/tree.newick"\
+        .format(moss_object.target_dir)
+    proc = subprocess.Popen(cmd, shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0].decode()
 
 def copy_logs_reports(moss_object):
     os.system("cp {} /opt/moss_logs/{}".format(moss_object.target_dir + moss_object.logfile, moss_object.logfile))
@@ -424,11 +464,11 @@ def run_assembly(moss_object):
     sql_update_status_table(moss_object.entry_id, "Running", "Flye Assembly", "Assembly", "4", "10", "Running", moss_object.moss_db)
     flye_assembly(moss_object)
 
-    sql_update_status_table(moss_object.entry_id, "Compiling PDF report", "Assembly", "9", "10", "Running", moss_object.moss_db)
+    sql_update_status_table(moss_object.entry_id, "Running", "Compiling PDF report", "Assembly", "9", "10", "Running", moss_object.moss_db)
 
     compileReportAssembly(moss_object)
 
-    sql_update_status_table(moss_object.entry_id, "Completed", "reference", "10", "10", "Completed", moss_object.moss_db)
+    sql_update_status_table(moss_object.entry_id, "Completed", "Completed", "reference", "10", "10", "Completed", moss_object.moss_db)
 
 def init_moss_variables(config_path, ):
     referenceSyncFile = config_path + "syncFiles/referenceSync.json"
@@ -677,10 +717,9 @@ def flye_assembly(moss_object):
     cmd = "docker run --name assembly_{0} -v {1}:/tmp/{2} staphb/flye flye -o /tmp/assembly_results" \
           " --threads 8 --nano-raw /tmp/{2}"\
         .format(moss_object.entry_id, moss_object.input_path, moss_object.input_file)
-    print (cmd)
     os.system(cmd)
 
-    proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_", moss_object.entry_id, shell=True, stdout=subprocess.PIPE))
+    proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_", moss_object.entry_id), shell=True, stdout=subprocess.PIPE)
     output = proc.communicate()[0]
     id = output.decode().rstrip()
 
@@ -708,7 +747,7 @@ def flye_assembly(moss_object):
 
     os.system("~/bin/kma index -t_db {} -i {}{}_assembly.fasta"\
         .format(moss_object.ref_db, moss_object.target_dir, moss_object.sample_name))
-
+    print ("Done indexing")
 
 def check_unique_entry_id(entry_id, moss_db):
 
