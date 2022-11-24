@@ -5,6 +5,8 @@ import sys
 import argparse
 import json
 import moss_functions as moss
+import moss_helpers as moss_helpers
+import logging
 import ast
 
 parser = argparse.ArgumentParser(description='.')
@@ -17,7 +19,7 @@ class MossObject:
     def __init__(self, json_object):
         for item in json_object:
             setattr(self, item, json_object[item])
-
+        self.logfile = self.target_dir + self.entry_id + ".log"
 def moss_pipeline(moss_object):
     """
     Workflow for analysis pipeline
@@ -27,7 +29,13 @@ def moss_pipeline(moss_object):
         moss_object = moss.moss_init(moss_object)
         moss.check_unique_entry_id(moss_object.entry_id, moss_object.moss_db)
         moss.qc_check(moss_object)
-        moss_object = moss.moss_run(moss_object)
+        moss_helpers.begin_logging(moss_object.logfile)
+        try:
+            moss_object = moss.moss_run(moss_object)
+        except Exception as e:
+            logging.error(e, exc_info=True)
+            raise
+
         r_type = moss.evaluate_moss_run(moss_object)
         if r_type != None: #Evals if completed correctly
             print (r_type)
