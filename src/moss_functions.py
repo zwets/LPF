@@ -108,6 +108,10 @@ def ccphylo_tree(moss_object):
     proc = subprocess.Popen(cmd, shell=True,
                             stdout=subprocess.PIPE, )
     output = proc.communicate()[0].decode()
+    print (output)
+    print (output)
+    print (output)
+
     sys.exit(output)
 
 def copy_logs_reports(moss_object):
