@@ -106,6 +106,9 @@ def evaluate_dna_depth(moss_object):
     total_bases = 0
     for read in fq:
         total_bases += len(read[1])
+    print (total_bases)
+    print(total_bases)
+    print(total_bases)
     sys.exit(total_bases)
 
 
