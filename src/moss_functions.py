@@ -105,7 +105,9 @@ def ccphylo_dist(moss_object):
 
     proc = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     err = proc.communicate()[1].decode().rstrip().split(" ")
-    print(err)
+    inclusion_fraction = int(err[1])/int(err[3])
+    print ("Inclusion fraction: {}".format(inclusion_fraction))
+    return inclusion_fraction
 
 def ccphylo_tree(moss_object):
     cmd = "~/bin/ccphylo tree --input {0}/phytree_output/distance_matrix --output {0}/phytree_output/tree.newick"\
