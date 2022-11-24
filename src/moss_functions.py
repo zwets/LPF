@@ -104,11 +104,11 @@ def ccphylo_dist(moss_object):
         .format(moss_object.target_dir, moss_object.reference_header_text)
 
     proc = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-    output = proc.communicate()[0].decode()
-    print (output)
-    print(output)
-    print(output)
-    print(output)
+    err = proc.communicate()[1].decode()
+    print (err)
+    print(err)
+    print(err)
+    print(err)
 
 def ccphylo_tree(moss_object):
     cmd = "~/bin/ccphylo tree --input {0}/phytree_output/distance_matrix --output {0}/phytree_output/tree.newick"\
