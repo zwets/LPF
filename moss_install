@@ -23,6 +23,9 @@ def main(command_line=None):
     proc = subprocess.Popen("whoami", shell=True,
                             stdout=subprocess.PIPE, )
     user = proc.communicate()[0].decode().rstrip()
+    if user == "root":
+        print(bcolors.FAIL + "MOSS should not be installed as root, please run as a normal user" + bcolors.ENDC)
+        sys.exit()
     if args.command == None:
         sys.exit("No command given.")
     solve_conda_env(user)
