@@ -146,6 +146,16 @@ def check_local_software():
     else:
         return False
 
+def check_virtual_env():
+    proc = subprocess.Popen("conda env list", shell=True,
+                            stdout=subprocess.PIPE, )
+    env = proc.communicate()[0].decode().split()
+    if 'moss' in env:
+        print(bcolors.OKGREEN + "Moss environment is installed" + bcolors.ENDC)
+        return True
+    else:
+        print(bcolors.FAIL + "Moss environment is not installed" + bcolors.ENDC)
+        return False
 
 def check_all_deps():
     os.system("cd /opt/moss")
@@ -157,6 +167,7 @@ def check_all_deps():
     local_database_result = check_local_database()
     google_chrome_result = check_google_chrome()
     app_build_result = check_app_build()
+    v_env_result = check_virtual_env()
 
     print("\n")
     print("Total dependencies check result:")
@@ -226,7 +237,7 @@ def install_docker_images():
         "biocontainers/figtree:v1.4.4-3-deb_cv1",
         "staphb/quast:5.0.2",
         "nanozoo/bandage:0.8.1--7da3a06",
-        "docker pull staphb/flye:2.9.1"
+        "staphb/flye:2.9.1"
     ]
     for item in docker_list:
         cmd = "docker pull " + item
@@ -293,7 +304,7 @@ def check_docker_images():
         "biocontainers/figtree:v1.4.4-3-deb_cv1",
         "staphb/quast:5.0.2",
         "nanozoo/bandage:0.8.1--7da3a06",
-        "docker pull staphb/flye:2.9.1"
+        "staphb/flye:2.9.1"
     ]
     proc = subprocess.Popen("docker images", shell=True,
                             stdout=subprocess.PIPE, )
