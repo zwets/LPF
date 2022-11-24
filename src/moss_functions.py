@@ -26,8 +26,9 @@ from version import __version__
 
 
 def moss_run(moss_object):
+    moss_object.version = __version__
     logging.info('Starting MOSS run')
-    logging.info('MOSS version: {}'.format(__version__))
+    logging.info('MOSS version: {}'.format(moss_object.version))
     moss_object = evaluate_dna_depth(moss_object)
     sql_update_status_table("CGE finders", moss_object.sample_name, "Not Determined", "2", "10", "Running", moss_object.entry_id, moss_object.moss_db)
     kma_finders("-ont -md 5", "resfinder", moss_object, "/opt/moss/resfinder_db/all")
@@ -828,7 +829,7 @@ def compileReportAssembly(moss_object):
     ''' First Page '''
     pdf.add_page()
     pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
-    create_title(pdf, moss_object.entry_id, "MOSS analytical report")
+    create_title(pdf, moss_object.entry_id, "MOSS analytical report, Version: {}".format(moss_object.version))
     pdf.ln(20)
     pdf.set_font('Arial', '', 12)
     textstring = "ID: {} \n" \
@@ -955,7 +956,7 @@ def compileReportAlignment(moss_object):
     pdf.add_page()
     pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
 
-    create_title(pdf, moss_object.entry_id, "MOSS analytical report")
+    create_title(pdf, moss_object.entry_id, "MOSS analytical report, Version : {}".format(moss_object.version))")
     pdf.ln(5)
     pdf.set_font('Arial', '', 12)
 
