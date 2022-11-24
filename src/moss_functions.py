@@ -19,6 +19,7 @@ from Bio import Phylo
 from io import StringIO
 import dataframe_image as dfi
 import logging
+import pyfastx
 
 import moss_helpers as moss_helpers
 from version import __version__
@@ -27,6 +28,7 @@ from version import __version__
 def moss_run(moss_object):
     logging.info('Starting MOSS run')
     logging.info('MOSS version: {}'.format(__version__))
+    evaluate_dna_depth(moss_object)
     sql_update_status_table("CGE finders", moss_object.sample_name, "Not Determined", "2", "10", "Running", moss_object.entry_id, moss_object.moss_db)
     kma_finders("-ont -md 5", "resfinder", moss_object, "/opt/moss/resfinder_db/all")
     kma_finders("-ont -md 5", "virulencefinder", moss_object, "/opt/moss/virulencefinder_db/all")
@@ -71,7 +73,6 @@ def moss_run(moss_object):
     print (distance)
     logging.info("Distance from best reference in SNPs: {}".format(distance))
     #If fraction too low, run assembly and
-
     if distance == None:
         moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text, moss_object.entry_id)
         run_assembly(moss_object)
@@ -99,6 +100,14 @@ def moss_run(moss_object):
     copy_logs_reports(moss_object)
 
     return moss_object
+
+def evaluate_dna_depth(moss_object):
+    fq = pyfastx.Fastq(moss_object.input_path, build_index=False)
+    total_bases = 0
+    for read in fq:
+        total_bases += len(read[1])
+    sys.exit(total_bases)
+
 
 def ccphylo_dist(moss_object):
     cmd = "~/bin/ccphylo dist --input {0}/phytree_output/* --reference \"{1}\" --min_cov 0.01" \
