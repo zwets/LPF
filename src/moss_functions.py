@@ -103,6 +103,8 @@ def moss_run(moss_object):
 
 def copy_logs_reports(moss_object):
     os.system("cp {} /opt/moss_logs/{}".format(moss_object.target_dir + moss_object.logfile, moss_object.logfile))
+    os.system("cp {} /opt/moss_reports/{}".format(moss_object.target_dir + moss_object.entry_id + ".pdf", moss_object.entry_id + ".pdf"))
+
 
 def sql_update_status_table(msg, sample_name, type, current_stage, final_stage, result, entry_id, moss_db):
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"".format(msg, sample_name, type, current_stage, final_stage, result, str(datetime.datetime.now())[0:-7], entry_id)
