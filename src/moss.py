@@ -20,7 +20,7 @@ class MossObject:
         for item in json_object:
             setattr(self, item, json_object[item])
 
-        self.entry_id = moss.md5_of_file(moss_object.input_path)
+        self.entry_id = moss.md5_of_file(self.input_path)
         self.sample_name = self.input_path.split("/")[-1][0:-9]
         self.moss_db = "{}/moss.db".format(self.config_path)
         self.ref_db = "{}/REFDB.ATG".format(self.config_path)
