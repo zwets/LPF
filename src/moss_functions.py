@@ -106,10 +106,13 @@ def evaluate_dna_depth(moss_object):
     total_bases = 0
     for read in fq:
         total_bases += len(read[1])
-    print (total_bases)
-    print(total_bases)
-    print(total_bases)
-    sys.exit(total_bases)
+    print ("Total bases in reads: {}. A minimum of 25.000.000 is required.".format(total_bases))
+    logging.info("Total bases in reads: {}. A minimum of 25.000.000 is required.".format(total_bases))
+    if total_bases < 25*10^6:
+        print ("Not enough DNA for analysis")
+        logging.info("Not enough DNA for analysis")
+        sys.exit(1)
+
 
 
 def ccphylo_dist(moss_object):
