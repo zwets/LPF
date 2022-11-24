@@ -468,7 +468,7 @@ def run_assembly(moss_object):
 
     compileReportAssembly(moss_object)
 
-    sql_update_status_table(moss_object.entry_id, "Completed", "reference", "10", "10", "Completed", moss_object.moss_db)
+    sql_update_status_table(moss_object.entry_id, "Completed", "Completed", "reference", "10", "10", "Completed", moss_object.moss_db)
 
 def init_moss_variables(config_path, ):
     referenceSyncFile = config_path + "syncFiles/referenceSync.json"
