@@ -72,6 +72,7 @@ def moss_run(moss_object):
     distance = ThreshholdDistanceCheck("{}/phytree_output/distance_matrix"
                                        .format(moss_object.target_dir), moss_object)
     print (distance)
+    logging.info("Distance from best reference is SNPs: {}".format(distance))
     if distance == None:
         moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text, moss_object.entry_id)
         run_assembly(moss_object)
@@ -277,6 +278,8 @@ def parse_kma_res(filename):
     return item_list
 
 def kma_finders(arguments, output_name, moss_object, database):
+    """Runs the kma finders"""
+    logging.info("Performing KMA alingnment against {}".format(database))
     os.system("~/bin/kma -i {} -o {}/finders/{} -t_db {} {}".format(moss_object.input_path, moss_object.target_dir, output_name, database, arguments))
 
 def create_directory_from_dict(dict, path):
@@ -405,6 +408,10 @@ def check_assembly_result(path):
     return True
 
 def run_assembly(moss_object):
+    """
+    Performing Flye assebly
+    """
+    logging.info("Performing assembly with Flye")
     moss_object.reference_id = None
     sql_update_status_table(moss_object.entry_id, "Running", "Flye Assembly", "Assembly", "4", "10", "Running", moss_object.moss_db)
     flye_assembly(moss_object)
@@ -453,7 +460,10 @@ def varify_all_dependencies(laptop):
     return update_list
 
 def run_mlst(moss_object):
-
+    """
+    Run MLST on raw reads
+    """
+    logging.info("Running MLST on raw reads")
     specie = moss_object.reference_header_text.split()[1].lower() + " " + moss_object.reference_header_text.split()[2].lower() #Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
 
     mlst_dict = dict()
@@ -547,6 +557,10 @@ def check_alignment_kma_cov(file):
     return coverage
 
 def kma_mapping(moss_object):
+    """
+    :param moss_object:
+    """
+    logging.info("KMA mapping of input reads ")
     os.system("~/bin/kma -i {} -o {}kma_mapping -t_db {}/REFDB.ATG"
               " -ID 0 -nf -mem_mode -sasm -ef -1t1".format(moss_object.input_path, moss_object.target_dir, moss_object.config_path))
     num_lines = sum(1 for line in open("{}kma_mapping.res".format(moss_object.target_dir))) #1 line is empty, more have hits.
@@ -579,6 +593,10 @@ def kma_mapping(moss_object):
         return moss_object
 
 def nanopore_alignment(moss_object):
+    """
+    :param moss_object:
+    """
+    logging.info("Performing KMA alignment against best reference")
     cmd = "~/bin/kma -i {} -o {}{} -t_db {}/REFDB.ATG -mint3 -Mt1 {} -t 8"\
         .format(moss_object.input_path, moss_object.target_dir, moss_object.consensus_name[:-4],
                 moss_object.config_path, str(moss_object.template_number))
