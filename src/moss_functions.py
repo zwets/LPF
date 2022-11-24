@@ -63,11 +63,8 @@ def moss_run(moss_object):
 
     moss_object = make_phytree_output_folder(moss_object)
 
+    ccphylo_dist(moss_object)
 
-    cmd = "~/bin/ccphylo dist --input {0}/phytree_output/* --reference \"{1}\" --min_cov 0.01" \
-          " --normalization_weight 0 --output {0}/phytree_output/distance_matrix"\
-        .format(moss_object.target_dir, moss_object.reference_header_text)
-    os.system(cmd)
 
     distance = ThreshholdDistanceCheck("{}/phytree_output/distance_matrix"
                                        .format(moss_object.target_dir), moss_object)
@@ -101,17 +98,25 @@ def moss_run(moss_object):
 
     return moss_object
 
+def ccphylo_dist(moss_object):
+    cmd = "~/bin/ccphylo dist --input {0}/phytree_output/* --reference \"{1}\" --min_cov 0.01" \
+          " --normalization_weight 0 --output {0}/phytree_output/distance_matrix" \
+        .format(moss_object.target_dir, moss_object.reference_header_text)
+
+    proc = subprocess.Popen(cmd, shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0].decode()
+    print (output)
+    print(output)
+    print(output)
+    print(output)
+
 def ccphylo_tree(moss_object):
     cmd = "~/bin/ccphylo tree --input {0}/phytree_output/distance_matrix --output {0}/phytree_output/tree.newick"\
         .format(moss_object.target_dir)
     proc = subprocess.Popen(cmd, shell=True,
                             stdout=subprocess.PIPE, )
     output = proc.communicate()[0].decode()
-    print (output)
-    print (output)
-    print (output)
-
-    sys.exit(output)
 
 def copy_logs_reports(moss_object):
     os.system("cp {} /opt/moss_logs/{}".format(moss_object.target_dir + moss_object.logfile, moss_object.logfile))
