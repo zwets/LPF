@@ -77,7 +77,7 @@ def moss_run(moss_object):
         moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text, moss_object.entry_id)
         run_assembly(moss_object)
         return moss_object
-    elif distance > 300 or inclusion_fraction < 0.25:  # SNP distance
+    elif distance > 300 or inclusion_fraction < 0.25:  # SNP distance #TBD EVAL ASSEMBLY QUALITY
         moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text,
                                                           moss_object.entry_id)
         run_assembly(moss_object)
