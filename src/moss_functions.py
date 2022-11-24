@@ -25,12 +25,12 @@ from version import __version__
 
 
 def moss_run(moss_object):
-    moss_helpers.begin_logging(moss_object.target_dir + moss_object.entry_id + '.log')
-    try:
-        pass
-    except Exception as e:
-        logging.error(e, exc_info=True)
-        raise
+    #moss_helpers.begin_logging(moss_object.target_dir + moss_object.entry_id + '.log')
+    #try:
+    #    pass
+    #except Exception as e:
+    #    logging.error(e, exc_info=True)
+    #    raise
 
     sql_update_status_table("CGE finders", moss_object.sample_name, "Not Determined", "2", "10", "Running", moss_object.entry_id, moss_object.moss_db)
     moss_mkfs(moss_object.config_path, moss_object.entry_id)
