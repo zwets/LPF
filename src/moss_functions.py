@@ -82,6 +82,7 @@ def moss_run(moss_object):
                                                           moss_object.entry_id)
         run_assembly(moss_object)
         return moss_object
+
     sql_update_status_table("CCphylo", moss_object.sample_name, "Alignment", "6", "10", "Running", moss_object.entry_id, moss_object.moss_db)
 
     os.system("~/bin/ccphylo tree --input {0}/phytree_output/distance_matrix --output {0}/phytree_output/tree.newick"\
@@ -100,6 +101,14 @@ def moss_run(moss_object):
     copy_logs_reports(moss_object)
 
     return moss_object
+
+def ccphylo_tree(moss_object):
+    cmd = "~/bin/ccphylo tree --input {0}/phytree_output/distance_matrix --output {0}/phytree_output/tree.newick"\
+        .format(moss_object.target_dir)
+    proc = subprocess.Popen(cmd, shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0].decode()
+    sys.exit(output)
 
 def copy_logs_reports(moss_object):
     os.system("cp {} /opt/moss_logs/{}".format(moss_object.target_dir + moss_object.logfile, moss_object.logfile))
