@@ -32,7 +32,6 @@ def moss_pipeline(moss_object):
     """
     moss.validate_moss_object(moss_object)
     try:
-        moss_object = moss.moss_init(moss_object)
         moss.check_unique_entry_id(moss_object.entry_id, moss_object.moss_db)
         moss.qc_check(moss_object)
         moss_helpers.begin_logging(moss_object.logfile)
