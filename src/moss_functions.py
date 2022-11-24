@@ -28,7 +28,7 @@ from version import __version__
 def moss_run(moss_object):
     logging.info('Starting MOSS run')
     logging.info('MOSS version: {}'.format(__version__))
-    evaluate_dna_depth(moss_object)
+    moss_object = evaluate_dna_depth(moss_object)
     sql_update_status_table("CGE finders", moss_object.sample_name, "Not Determined", "2", "10", "Running", moss_object.entry_id, moss_object.moss_db)
     kma_finders("-ont -md 5", "resfinder", moss_object, "/opt/moss/resfinder_db/all")
     kma_finders("-ont -md 5", "virulencefinder", moss_object, "/opt/moss/virulencefinder_db/all")
@@ -72,12 +72,12 @@ def moss_run(moss_object):
                                        .format(moss_object.target_dir), moss_object)
     print (distance)
     logging.info("Distance from best reference in SNPs: {}".format(distance))
-    #If fraction too low, run assembly and
+
     if distance == None:
         moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text, moss_object.entry_id)
         run_assembly(moss_object)
         return moss_object
-    elif distance > 300 or inclusion_fraction < 0.5:  # SNP distance
+    elif distance > 300 or inclusion_fraction < 0.25:  # SNP distance
         moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text,
                                                           moss_object.entry_id)
         run_assembly(moss_object)
@@ -112,6 +112,8 @@ def evaluate_dna_depth(moss_object):
         print ("Not enough DNA for analysis")
         logging.info("Not enough DNA for analysis")
         sys.exit(1)
+    moss_object.total_bases = total_bases
+    return moss_object
 
 
 
