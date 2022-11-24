@@ -63,7 +63,7 @@ def moss_run(moss_object):
 
     moss_object = make_phytree_output_folder(moss_object)
 
-    ccphylo_dist(moss_object)
+    inclusion_fraction = ccphylo_dist(moss_object)
 
 
     distance = ThreshholdDistanceCheck("{}/phytree_output/distance_matrix"
@@ -74,7 +74,7 @@ def moss_run(moss_object):
         moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text, moss_object.entry_id)
         run_assembly(moss_object)
         return moss_object
-    elif distance > 300:  # SNP distance
+    elif distance > 300 or inclusion_fraction < 0.5:  # SNP distance
         moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text,
                                                           moss_object.entry_id)
         run_assembly(moss_object)
@@ -107,6 +107,7 @@ def ccphylo_dist(moss_object):
     err = proc.communicate()[1].decode().rstrip().split(" ")
     inclusion_fraction = int(err[1])/int(err[3])
     print ("Inclusion fraction: {}".format(inclusion_fraction))
+    logging.info("Inclusion fraction: {}".format(inclusion_fraction))
     return inclusion_fraction
 
 def ccphylo_tree(moss_object):
