@@ -464,7 +464,7 @@ def run_assembly(moss_object):
     sql_update_status_table(moss_object.entry_id, "Running", "Flye Assembly", "Assembly", "4", "10", "Running", moss_object.moss_db)
     flye_assembly(moss_object)
 
-    sql_update_status_table(moss_object.entry_id, "Compiling PDF report", "Assembly", "9", "10", "Running", moss_object.moss_db)
+    sql_update_status_table(moss_object.entry_id, "Running", "Compiling PDF report", "Assembly", "9", "10", "Running", moss_object.moss_db)
 
     compileReportAssembly(moss_object)
 
@@ -717,14 +717,11 @@ def flye_assembly(moss_object):
     cmd = "docker run --name assembly_{0} -v {1}:/tmp/{2} staphb/flye flye -o /tmp/assembly_results" \
           " --threads 8 --nano-raw /tmp/{2}"\
         .format(moss_object.entry_id, moss_object.input_path, moss_object.input_file)
-    print (cmd)
     os.system(cmd)
-    print ("HERE1")
 
     proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_", moss_object.entry_id), shell=True, stdout=subprocess.PIPE)
     output = proc.communicate()[0]
     id = output.decode().rstrip()
-    print ("HERE")
 
     cmd = "docker cp {}:/tmp/assembly_results {}.".format(id, moss_object.target_dir)
     os.system(cmd)
@@ -750,7 +747,7 @@ def flye_assembly(moss_object):
 
     os.system("~/bin/kma index -t_db {} -i {}{}_assembly.fasta"\
         .format(moss_object.ref_db, moss_object.target_dir, moss_object.sample_name))
-
+    print ("Done indexing")
 
 def check_unique_entry_id(entry_id, moss_db):
 
