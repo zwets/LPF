@@ -21,7 +21,8 @@ import dataframe_image as dfi
 import logging
 
 import moss_helpers as moss_helpers
-from .version import __version__
+from version import __version__
+
 
 def moss_run(moss_object):
     moss_helpers.begin_logging(moss_object.target_dir + moss_object.entry_id + '.log')
