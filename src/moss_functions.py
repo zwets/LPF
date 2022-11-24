@@ -104,10 +104,7 @@ def ccphylo_dist(moss_object):
         .format(moss_object.target_dir, moss_object.reference_header_text)
 
     proc = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-    err = proc.communicate()[1].decode()
-    print (err)
-    print(err)
-    print(err)
+    err = proc.communicate()[1].decode().rstrip().split(" ")
     print(err)
 
 def ccphylo_tree(moss_object):
