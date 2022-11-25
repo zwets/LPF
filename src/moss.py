@@ -41,6 +41,7 @@ def moss_pipeline(moss_object):
             moss_object = moss.moss_run(moss_object)
         except Exception as e:
             logging.error(e, exc_info=True)
+            r_type = None
             raise
 
         r_type = moss.evaluate_moss_run(moss_object)
@@ -54,6 +55,8 @@ def moss_pipeline(moss_object):
             moss.sql_execute_command(moss.clean_sql_for_moss_run(moss_object), moss_object.moss_db)
             sys.exit(error)
     except Exception as error:
+        os.system(
+            "cp {} /opt/moss_logs/{}".format(moss_object.target_dir + moss_object.logfile, moss_object.logfile))
         moss.sql_execute_command(moss.clean_sql_for_moss_run(moss_object), moss_object.moss_db)
         sys.exit(error)
 
