@@ -239,11 +239,15 @@ def evaluate_moss_run(moss_object): #TBD. Not implemented yet. Will be used to e
 
 def validate_moss_object(object):
     print('Validating input')
+    logging.info('Validating input')
     if not object.input_file in object.input_path:
+        logging.error('Input file name does not match input path. Please check input.')
         raise SystemExit('Input file does not match the input path.')
     if not object.input_path.endswith('.fastq.gz'):
+        logging.error('Input file is not a fastq.gz file. Please check input.')
         raise SystemExit('Input is not a fastq.gz file. Only this format is supported.')
     if not object.config_path.startswith('/opt/moss_db'):
+        logging.error('No Config file found in /opt/moss_db. Please check input.')
         raise SystemExit('An invalid config_path was given.')
     validate_date_text(object.collection_date)
     print('Validation complete')

@@ -30,13 +30,13 @@ def moss_pipeline(moss_object):
     """
     Workflow for analysis pipeline
     """
-    moss.validate_moss_object(moss_object)
     try:
         moss.check_unique_entry_id(moss_object.entry_id, moss_object.moss_db)
         moss.qc_check(moss_object)
         moss.moss_mkfs(moss_object.config_path, moss_object.entry_id)
         moss_helpers.begin_logging(moss_object.target_dir + moss_object.logfile)
         try:
+            moss.validate_moss_object(moss_object)
             moss_object = moss.moss_run(moss_object)
         except Exception as e:
             logging.error(e, exc_info=True)
