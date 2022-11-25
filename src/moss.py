@@ -7,6 +7,7 @@ import json
 import moss_functions as moss
 import moss_helpers as moss_helpers
 import logging
+import os
 import ast
 
 parser = argparse.ArgumentParser(description='.')
@@ -48,6 +49,8 @@ def moss_pipeline(moss_object):
             moss.completed_run_update_sql_database(r_type, moss_object)
             moss.insert_sql_data_to_db(moss_object, r_type)
         else:
+            os.system(
+                "cp {} /opt/moss_logs/{}".format(moss_object.target_dir + moss_object.logfile, moss_object.logfile))
             moss.sql_execute_command(moss.clean_sql_for_moss_run(moss_object), moss_object.moss_db)
             sys.exit(error)
     except Exception as error:
