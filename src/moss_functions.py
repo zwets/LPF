@@ -105,6 +105,7 @@ def moss_run(moss_object):
 
     return moss_object
 
+
 def evaluate_dna_depth(moss_object):
     fq = pyfastx.Fastq(moss_object.input_path, build_index=False)
     total_bases = 0
