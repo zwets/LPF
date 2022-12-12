@@ -360,7 +360,7 @@ def derive_mlst_species(moss_object):
     else:
         return 'Unknown'
 
-def mlst_finder(moss_object)
+def mlst_finder(moss_object):
     """
         Run MLST on raw reads
         """
