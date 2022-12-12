@@ -572,7 +572,7 @@ def run_mlst(moss_object):
 
     mlst_dict = dict()
 
-    with open("/opt/moss/mlst/mlst_db/config", 'r') as infile:
+    with open("/opt/moss_resources/mlst_db/config", 'r') as infile:
         for line in infile:
             if line[0] != "#":
                 line = line.split("\t")
