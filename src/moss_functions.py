@@ -50,6 +50,7 @@ def moss_run(moss_object):
     moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text, moss_object.entry_id)
 
     run_mlst(moss_object)
+    mlst_finder(moss_object)
 
     moss_object = parse_finders(moss_object)
 
@@ -343,33 +344,7 @@ def derive_mlst_species(moss_object):
     specie = moss_object.reference_header_text.split()[1].lower() + " " + moss_object.reference_header_text.split()[
         2].lower()  # Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
 
-    mlst_dict = dict()
-
-    with open("/opt/moss/mlst/mlst_db/config", 'r') as infile:
-        for line in infile:
-            if line[0] != "#":
-                line = line.split("\t")
-                mlst_dict[line[1].lower()] = line[0]
-
-    if specie == "escherichia coli":
-        mlst_dict['escherichia coli'] = 'ecoli'
-
-    if moss_object.mlst_type == 'Unknown':
-        return 'Unknown'
-    else:
-        return moss_object.mlst_type.split("_")[0]
-
-def mlst_finder(moss_object)
-    """
-        Run MLST on raw reads
-        """
-    specie = derive_mlst_species(moss_object)
-
-    logging.info("Running MLST on raw reads")
-    specie = moss_object.reference_header_text.split()[1].lower() + " " + moss_object.reference_header_text.split()[
-        2].lower()  # Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
-
-    if specie == "escherichia coli": #special
+    if specie == "escherichia coli":  # special
         specie = 'ecoli'
     else:
         mlst_dict = dict()
@@ -379,13 +354,23 @@ def mlst_finder(moss_object)
                 if line[0] != "#":
                     line = line.split("\t")
                     mlst_dict[line[1].lower()] = line[0]
+
     if specie in mlst_dict or specie == 'ecoli':
-        kma_finders("-ont -md 5", "mlst", moss_object, "/opt/moss/mlst_db/{}/{}".format(specie, specie))
+        return specie
     else:
-        specie = 'Unknown'
-        st_type = 'Unknown'
-    return specie, st_type
-    
+        return 'Unknown'
+
+def mlst_finder(moss_object)
+    """
+        Run MLST on raw reads
+        """
+    specie = derive_mlst_species(moss_object)
+
+    if specie == 'Unknown':
+        logging.error('Species was not found in MLST database')
+        return 'Unknown'
+    else:
+        kma_finders("-ont -md 5", "mlst", moss_object, "/opt/moss/mlst_db/{}/{}".format(specie, specie))
 def kma_finders_consensus_sequence(arguments, output_name, moss_object, database):
     """Runs the kma finders"""
     logging.info("Performing KMA alingnment against {}".format(database))
