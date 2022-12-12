@@ -339,7 +339,6 @@ def parse_kma_res(filename):
             item_list.append(line[0])
     return item_list
 
-
 def derive_mlst_species(moss_object):
     specie = moss_object.reference_header_text.split()[1].lower() + " " + moss_object.reference_header_text.split()[
         2].lower()  # Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
@@ -386,8 +385,7 @@ def mlst_finder(moss_object)
         specie = 'Unknown'
         st_type = 'Unknown'
     return specie, st_type
-
-
+    
 def kma_finders_consensus_sequence(arguments, output_name, moss_object, database):
     """Runs the kma finders"""
     logging.info("Performing KMA alingnment against {}".format(database))
