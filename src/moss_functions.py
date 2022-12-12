@@ -346,12 +346,12 @@ def derive_mlst_species(moss_object):
     specie = moss_object.reference_header_text.split()[1].lower() + " " + moss_object.reference_header_text.split()[
         2].lower()  # Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
 
+    mlst_dict = dict()
     if specie == "escherichia coli":  # special
-        specie = 'ecoli'
+        return 'ecoli'
     else:
-        mlst_dict = dict()
 
-        with open("/opt/moss/mlst/mlst_db/config", 'r') as infile:
+        with open("/opt/moss_resources/mlst_db/config", 'r') as infile:
             for line in infile:
                 if line[0] != "#":
                     line = line.split("\t")
@@ -572,7 +572,7 @@ def run_mlst(moss_object):
 
     mlst_dict = dict()
 
-    with open("/opt/moss_resources/mlst_db/config", 'r') as infile:
+    with open("/opt/moss/mlst/mlst_db/config", 'r') as infile:
         for line in infile:
             if line[0] != "#":
                 line = line.split("\t")
