@@ -96,6 +96,7 @@ def download_finder_dbs(user, overwrite):
     if not os.path.exists('/opt/moss_resources/plasmidffinder_db'):
         print ("here")
         os.system("cd /opt/moss_resources/")
+        print (os.getcwd())
         os.system("git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git")
         os.system("/home/{}/bin/kma_index -i plasmidfinder_db/*.fsa -o plasmidfinder_db/all -m 14".format(user))
     sys.exit()
