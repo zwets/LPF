@@ -91,7 +91,7 @@ def download_finder_dbs(user, overwrite):
     if not os.path.exists('/opt/moss_resources'):
         os.system('sudo mkdir -m 777 /opt/moss_resources')
     if overwrite:
-        os.system('sudo rm -r /opt/moss_resources/*'
+        os.system('sudo rm -r /opt/moss_resources/*')
     if not os.path.exists('/opt/moss_resources/plasmidfilder_db'):
         os.system("cd /opt/moss_resources/")
         os.system("git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git")
