@@ -49,8 +49,10 @@ def moss_run(moss_object):
 
     moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text, moss_object.entry_id)
 
-    run_mlst(moss_object)
+    #run_mlst(moss_object)
     mlst_finder(moss_object)
+
+    sys.exit()
 
     moss_object = parse_finders(moss_object)
 
@@ -370,7 +372,7 @@ def mlst_finder(moss_object):
         logging.error('Species was not found in MLST database')
         return 'Unknown'
     else:
-        kma_finders("-ont -md 5", "mlst", moss_object, "/opt/moss/mlst_db/{}/{}".format(specie, specie))
+        kma_finders("-ont -md 5", "mlst", moss_object, "/opt/moss_resources/mlst_db/{}/{}".format(specie, specie))
 def kma_finders_consensus_sequence(arguments, output_name, moss_object, database):
     """Runs the kma finders"""
     logging.info("Performing KMA alingnment against {}".format(database))
