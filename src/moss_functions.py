@@ -31,9 +31,17 @@ def moss_run(moss_object):
     logging.info('MOSS version: {}'.format(moss_object.version))
     moss_object = evaluate_dna_depth(moss_object)
     sql_update_status_table("CGE finders", moss_object.sample_name, "Not Determined", "2", "10", "Running", moss_object.entry_id, moss_object.moss_db)
+    #Initial finders run
     kma_finders("-ont -md 5", "resfinder", moss_object, "/opt/moss/resfinder_db/all")
     kma_finders("-ont -md 5", "virulencefinder", moss_object, "/opt/moss/virulencefinder_db/all")
     kma_finders("-ont -md 5", "plasmidfinder", moss_object, "/opt/moss/plasmidfinder_db/all")
+    #MLST
+
+    #KMA remapping of consensus sequences
+    kma_finders_consensus_sequence("-1t1", "resfinder", moss_object, "/opt/moss/resfinder_db/all")
+    kma_finders_consensus_sequence("-1t1", "virulencefinder", moss_object, "/opt/moss/virulencefinder_db/all")
+    kma_finders_consensus_sequence("-1t1", "plasmidfinder", moss_object, "/opt/moss/plasmidfinder_db/all")
+    #MLST
 
     sql_update_status_table("KMA Mapping", moss_object.sample_name, "Not Determined", "3", "10", "Running", moss_object.entry_id, moss_object.moss_db)
 
@@ -331,6 +339,12 @@ def parse_kma_res(filename):
             item_list.append(line[0])
     return item_list
 
+def kma_finders_consensus_sequence(arguments, output_name, moss_object, database):
+    """Runs the kma finders"""
+    logging.info("Performing KMA alingnment against {}".format(database))
+    os.system("~/bin/kma -i {}/finders/{}.fsa -o {}/finders_1t1/{} -t_db {} {}".format(oss_object.target_dir, output_name, moss_object.target_dir, output_name, database, arguments))
+
+
 def kma_finders(arguments, output_name, moss_object, database):
     """Runs the kma finders"""
     logging.info("Performing KMA alingnment against {}".format(database))
@@ -393,7 +407,8 @@ def make_phytree_output_folder(moss_object):
         path = "{}/consensus_sequences/{}".format(moss_object.config_path, item)
         cmd = "cp {} {}/phytree_output/.".format(path, moss_object.target_dir)
         os.system(cmd)
-    os.system("cp {}consensus_sequences/{} {}/phytree_output/.".format(moss_object.config_path, moss_object.consensus_name, moss_object.target_dir))
+    moss_object.consensus_sequence_path = "{}consensus_sequences/{}".format(moss_object.config_path, moss_object.consensus_name,)
+    os.system("cp {} {}/phytree_output/.".format(moss_object.consensus_sequence_path, moss_object.target_dir))
 
 
     moss_object.header_name = moss_object.reference_header_text.split()[0] + '.fsa'
