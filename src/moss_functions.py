@@ -385,6 +385,7 @@ def moss_mkfs(config_path, entry_id):
     target_dir = "{}/analysis/{}/".format(config_path, entry_id)
     os.system("mkdir {}".format(target_dir))
     os.system("mkdir {}/finders".format(target_dir))
+    os.system("mkdir {}/finders_1t1".format(target_dir))
 
 
 def get_kma_template_number(moss_object):
