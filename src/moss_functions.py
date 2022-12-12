@@ -342,7 +342,7 @@ def parse_kma_res(filename):
 def kma_finders_consensus_sequence(arguments, output_name, moss_object, database):
     """Runs the kma finders"""
     logging.info("Performing KMA alingnment against {}".format(database))
-    os.system("~/bin/kma -i {}/finders/{}.fsa -o {}/finders_1t1/{} -t_db {} {}".format(oss_object.target_dir, output_name, moss_object.target_dir, output_name, database, arguments))
+    os.system("~/bin/kma -i {}/finders/{}.fsa -o {}/finders_1t1/{} -t_db {} {}".format(moss_object.target_dir, output_name, moss_object.target_dir, output_name, database, arguments))
 
 
 def kma_finders(arguments, output_name, moss_object, database):
