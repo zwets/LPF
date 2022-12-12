@@ -98,25 +98,26 @@ def download_finder_dbs(user, overwrite):
     print ("here1")
     if not os.path.exists('/opt/moss_resources/plasmidffinder_db'):
         print ("here")
-        os.system("cd /opt/moss_resources/")
+        os.chdir("/opt/moss_resources/")
         print (os.getcwd())
         os.system("git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git")
         os.system("/home/{}/bin/kma_index -i plasmidfinder_db/*.fsa -o plasmidfinder_db/all -m 14".format(user))
     sys.exit()
     if not os.path.exists('/opt/moss_resources/resfinder_db'):
-        os.system("cd /opt/moss_resources/")
+        os.chdir("/opt/moss_resources/")
         os.system("git clone https://bitbucket.org/genomicepidemiology/resfinder_db.git")
         os.system("/home/{}/bin/kma_index -i resfinder_db/*.fsa -o resfinder_db/all -m 14".format(user))
 
     if not os.path.exists('/opt/moss_resources/virulencefinder_db'):
-        os.system("cd /opt/moss_resources/")
+        os.chdir("/opt/moss_resources/")
         os.system("git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git")
         os.system("/home/{}/bin/kma_index -i virulencefinder_db/*.fsa -o virulencefinder_db/all -m 14".format(user))
 
     if not os.path.exists('/opt/moss_resources/mlst'):
+        os.chdir("/opt/moss_resources/")
         os.system("git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; sudo python3 INSTALL.py /home/{}/bin/kma_index;".format(user, cwd))
 
-    os.system("cd {}".format(cwd))
+    os.chdir(cwd)
     if check_local_database():
         print(bcolors.OKGREEN + "CGE Finder Databases are installed" + bcolors.ENDC)
     else:
