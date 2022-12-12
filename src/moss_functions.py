@@ -32,15 +32,15 @@ def moss_run(moss_object):
     moss_object = evaluate_dna_depth(moss_object)
     sql_update_status_table("CGE finders", moss_object.sample_name, "Not Determined", "2", "10", "Running", moss_object.entry_id, moss_object.moss_db)
     #Initial finders run
-    kma_finders("-ont -md 5", "resfinder", moss_object, "/opt/moss/resfinder_db/all")
-    kma_finders("-ont -md 5", "virulencefinder", moss_object, "/opt/moss/virulencefinder_db/all")
-    kma_finders("-ont -md 5", "plasmidfinder", moss_object, "/opt/moss/plasmidfinder_db/all")
+    kma_finders("-ont -md 5", "resfinder", moss_object, "/opt/moss_resources/resfinder_db/all")
+    kma_finders("-ont -md 5", "virulencefinder", moss_object, "/opt/moss_resources/virulencefinder_db/all")
+    kma_finders("-ont -md 5", "plasmidfinder", moss_object, "/opt/moss_resources/plasmidfinder_db/all")
     #MLST
 
     #KMA remapping of consensus sequences
-    kma_finders_consensus_sequence("-1t1", "resfinder", moss_object, "/opt/moss/resfinder_db/all")
-    kma_finders_consensus_sequence("-1t1", "virulencefinder", moss_object, "/opt/moss/virulencefinder_db/all")
-    kma_finders_consensus_sequence("-1t1", "plasmidfinder", moss_object, "/opt/moss/plasmidfinder_db/all")
+    kma_finders_consensus_sequence("-1t1", "resfinder", moss_object, "/opt/moss_resources/resfinder_db/all")
+    kma_finders_consensus_sequence("-1t1", "virulencefinder", moss_object, "/opt/moss_resources/virulencefinder_db/all")
+    kma_finders_consensus_sequence("-1t1", "plasmidfinder", moss_object, "/opt/moss_resources/plasmidfinder_db/all")
     #MLST
 
     sql_update_status_table("KMA Mapping", moss_object.sample_name, "Not Determined", "3", "10", "Running", moss_object.entry_id, moss_object.moss_db)
@@ -276,7 +276,7 @@ def parse_finders(moss_object):
     return moss_object
 def derive_amr_stats(genes, database): #TBD rewrite and remove.
     phenotype = dict()
-    infile = open("/opt/moss/{}/phenotypes.txt".format(database), 'r')
+    infile = open("/opt/moss_resources/{}/phenotypes.txt".format(database), 'r')
     for line in infile:
         if not line.startswith("Gene_accession"):
             line = line.rstrip().split("\t")
