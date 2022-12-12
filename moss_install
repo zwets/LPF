@@ -13,9 +13,11 @@ def main(command_line=None):
     )
     subparsers = parser.add_subparsers(dest='command')
     all = subparsers.add_parser('all', help='Complete installation of ONT deps, MOSS deps and build app. Recommended for first installation or complete reinstallation.')
+    env = subparsers.add_parser('env', help='Install conda environment')
     ont_deps = subparsers.add_parser('ont_deps', help='ONT repos for ubuntu 22.')
     moss_deps = subparsers.add_parser('moss_deps', help='Local dependencies for MOSS')
     moss_databases = subparsers.add_parser('moss_databases', help='Downloads databases for MOSS')
+    moss_databases_overwrite = subparsers.add_parser('moss_databases_overwrite', help='Full, fresh download which overwrites existing databases')
     moss_build = subparsers.add_parser('moss_build', help='Build MOSS app and relocates report to /opt/moss ( Requires moss_deps to be installed in advance.')
     check_deps = subparsers.add_parser('check_deps', help='Check for MOSS dependencies.')
 
@@ -28,25 +30,29 @@ def main(command_line=None):
         sys.exit()
     if args.command == None:
         sys.exit("No command given.")
-    solve_conda_env(user)
     if not os.path.exists('/home/{}/bin'.format(user)):
         os.system('sudo mkdir /home/{}/bin'.format(user))
     add_bin_path()
     if args.command == 'all':
         print ("ONT DEPENDENCIES")
+        solve_conda_env(user)
         install_ont_deps()
         print ("MOSS DEPENDENCIES")
         install_moss_deps(user)
         print ("MOSS DATABASES")
-        download_finder_dbs(user)
+        download_finder_dbs(user, False)
         print ("MOSS BUILD")
         moss_build_app()
+    elif args.command == 'env':
+        solve_conda_env(user)
     elif args.command == 'ont_deps':
         install_ont_deps()
     elif args.command == 'moss_deps':
         install_moss_deps(user)
     elif args.command == 'moss_databases':
-        download_finder_dbs(user) #DOES NOT CHECK FOR BACTERIA_DB
+        download_finder_dbs(user, False) #DOES NOT CHECK FOR BACTERIA_DB
+    elif args.command == 'moss_databases_overwrite':
+        download_finder_dbs(user, True)
         #STFP solution with Maja
     elif args.command == 'moss_build':
         moss_build_app()
@@ -64,49 +70,54 @@ def solve_conda_env(user):
     else:
         os.system("conda env create -f environment.yml")
 def check_local_database():
-    if not os.path.exists('resfinder_db'):
+    if not os.path.exists('/opt/moss_resources/resfinder_db'):
         print(bcolors.FAIL + "Resfinder database not found" + bcolors.ENDC)
         return False
-    if not os.path.exists('plasmidfinder_db'):
+    if not os.path.exists('/opt/moss_resources/plasmidfinder_db'):
         print(bcolors.FAIL + "Plasmidfinder database not found" + bcolors.ENDC)
         return False
-    if not os.path.exists('virulencefinder_db'):
+    if not os.path.exists('/opt/moss_resources/virulencefinder_db'):
         print(bcolors.FAIL + "Virulencefinder database not found" + bcolors.ENDC)
+        return False
+    if not os.path.exists('/opt/moss_resources/mlst_db'):
+        print(bcolors.FAIL + "MLST database not found" + bcolors.ENDC)
         return False
     else:
         print(bcolors.OKGREEN + "CGE Finder Databases are installed" + bcolors.ENDC)
         return True
 
-def download_finder_dbs(user):
+def download_finder_dbs(user, overwrite):
     if not check_local_software:
         print(bcolors.FAIL + "MOSS dependencies are not installed, and databases cant be indexed" + bcolors.ENDC)
         sys.exit()
     cwd = os.getcwd()
-    if os.path.exists('plasmidfilder_db'):
-        os.system('sudo rm -r plasmidfinder_db')
-    os.system("git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git")
-    os.system("/home/{}/bin/kma_index -i plasmidfinder_db/*.fsa -o plasmidfinder_db/all -m 14".format(user))
+    if not os.path.exists('/opt/moss_resources'):
+        os.system('sudo mkdir -m 777 /opt/moss_resources')
+    if overwrite:
+        os.system('sudo rm -r /opt/moss_resources/*')
+    if not os.path.exists('/opt/moss_resources/plasmidfinder_db'):
+        os.chdir("/opt/moss_resources/")
+        os.system("git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git")
+        os.system("/home/{}/bin/kma_index -i plasmidfinder_db/*.fsa -o plasmidfinder_db/all -m 14".format(user))
+    if not os.path.exists('/opt/moss_resources/resfinder_db'):
+        os.chdir("/opt/moss_resources/")
+        os.system("git clone https://bitbucket.org/genomicepidemiology/resfinder_db.git")
+        os.system("/home/{}/bin/kma_index -i resfinder_db/*.fsa -o resfinder_db/all -m 14".format(user))
 
-    if os.path.exists('resfinder_db'):
-        os.system('sudo rm -r resfinder_db')
-    os.system("git clone https://bitbucket.org/genomicepidemiology/resfinder_db.git")
-    os.system("/home/{}/bin/kma_index -i resfinder_db/*.fsa -o resfinder_db/all -m 14".format(user))
+    if not os.path.exists('/opt/moss_resources/virulencefinder_db'):
+        os.chdir("/opt/moss_resources/")
+        os.system("git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git")
+        os.system("/home/{}/bin/kma_index -i virulencefinder_db/*.fsa -o virulencefinder_db/all -m 14".format(user))
 
-    if os.path.exists('virulencefinder_db'):
-        os.system('sudo rm -r virulencefinder_db')
-    os.system("git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git")
-    os.system("/home/{}/bin/kma_index -i virulencefinder_db/*.fsa -o virulencefinder_db/all -m 14".format(user))
+    if not os.path.exists('/opt/moss_resources/mlst'):
+        os.chdir("/opt/moss_resources/")
+        os.system("git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; sudo python3 INSTALL.py /home/{}/bin/kma_index;".format(user, cwd))
 
-    #MLST
-    if os.path.exists('mlst_db'):
-        os.system('sudo rm -r mlst_db')
-    os.system("git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git")
-    os.system("/home/{}/bin/kma_index -i virulencefinder_db/*.fsa -o virulencefinder_db/all -m 14".format(user))
-
-    if os.path.exists('mlst'):
-        os.system('sudo rm -r mlst')
-    os.system("git clone https://bitbucket.org/genomicepidemiology/mlst.git; cd mlst; git checkout nanopore; git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; sudo python3 INSTALL.py /home/{}/bin/kma_index; cd {};".format(user, cwd))
-
+    os.chdir(cwd)
+    if check_local_database():
+        print(bcolors.OKGREEN + "CGE Finder Databases are installed" + bcolors.ENDC)
+    else:
+        print(bcolors.FAIL + "CGE Finder Databases are not installed" + bcolors.ENDC)
 
 def check_conda():
     proc = subprocess.Popen("whoami", shell=True,

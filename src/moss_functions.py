@@ -32,15 +32,15 @@ def moss_run(moss_object):
     moss_object = evaluate_dna_depth(moss_object)
     sql_update_status_table("CGE finders", moss_object.sample_name, "Not Determined", "2", "10", "Running", moss_object.entry_id, moss_object.moss_db)
     #Initial finders run
-    kma_finders("-ont -md 5", "resfinder", moss_object, "/opt/moss/resfinder_db/all")
-    kma_finders("-ont -md 5", "virulencefinder", moss_object, "/opt/moss/virulencefinder_db/all")
-    kma_finders("-ont -md 5", "plasmidfinder", moss_object, "/opt/moss/plasmidfinder_db/all")
+    kma_finders("-ont -md 5", "resfinder", moss_object, "/opt/moss_resources/resfinder_db/all")
+    kma_finders("-ont -md 5", "virulencefinder", moss_object, "/opt/moss_resources/virulencefinder_db/all")
+    kma_finders("-ont -md 5", "plasmidfinder", moss_object, "/opt/moss_resources/plasmidfinder_db/all")
     #MLST
 
     #KMA remapping of consensus sequences
-    kma_finders_consensus_sequence("-1t1", "resfinder", moss_object, "/opt/moss/resfinder_db/all")
-    kma_finders_consensus_sequence("-1t1", "virulencefinder", moss_object, "/opt/moss/virulencefinder_db/all")
-    kma_finders_consensus_sequence("-1t1", "plasmidfinder", moss_object, "/opt/moss/plasmidfinder_db/all")
+    kma_finders_consensus_sequence("-1t1", "resfinder", moss_object, "/opt/moss_resources/resfinder_db/all")
+    kma_finders_consensus_sequence("-1t1", "virulencefinder", moss_object, "/opt/moss_resources/virulencefinder_db/all")
+    kma_finders_consensus_sequence("-1t1", "plasmidfinder", moss_object, "/opt/moss_resources/plasmidfinder_db/all")
     #MLST
 
     sql_update_status_table("KMA Mapping", moss_object.sample_name, "Not Determined", "3", "10", "Running", moss_object.entry_id, moss_object.moss_db)
@@ -276,7 +276,7 @@ def parse_finders(moss_object):
     return moss_object
 def derive_amr_stats(genes, database): #TBD rewrite and remove.
     phenotype = dict()
-    infile = open("/opt/moss/{}/phenotypes.txt".format(database), 'r')
+    infile = open("/opt/moss_resources/{}/phenotypes.txt".format(database), 'r')
     for line in infile:
         if not line.startswith("Gene_accession"):
             line = line.rstrip().split("\t")
@@ -385,27 +385,7 @@ def mlst_finder(moss_object)
         specie = 'Unknown'
         st_type = 'Unknown'
     return specie, st_type
-
-    if specie == "escherichia coli": #special
-        mlst_dict['escherichia coli'] = 'ecoli'
-    elif specie in mlst_dict:
-        cmd = "mkdir {}/mlstresults".format(moss_object.target_dir)
-        os.system(cmd)
-        cmd = "python3 /opt/moss/mlst/mlst.py -i {} -o {}mlstresults" \
-              " -mp ~/bin/kma -p /opt/moss/mlst/mlst_db/ -s {} -nano" \
-            .format(moss_object.input_path, moss_object.target_dir, mlst_dict[specie])
-        os.system(cmd)
-        moss_object.mlst = specie
-
-    kma_finders("-ont -md 5", "resfinder", moss_object, "/opt/moss/resfinder_db/all")
-    kma_finders()
-    print('Running MLST')
-    logging.info('Running MLST')
-    mlst_cmd = "mlst --scheme {} --threads {} --csv {} {}".format(moss_object.mlst_scheme, moss_object.threads, moss_object.target_dir + "/mlstresults/data.csv", moss_object.target_dir + "/finders_1t1/contigs.fasta")
-    print(mlst_cmd)
-    logging.info
-
-
+    
 def kma_finders_consensus_sequence(arguments, output_name, moss_object, database):
     """Runs the kma finders"""
     logging.info("Performing KMA alingnment against {}".format(database))
