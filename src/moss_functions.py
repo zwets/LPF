@@ -339,6 +339,73 @@ def parse_kma_res(filename):
             item_list.append(line[0])
     return item_list
 
+def derive_mlst_species(moss_object):
+    specie = moss_object.reference_header_text.split()[1].lower() + " " + moss_object.reference_header_text.split()[
+        2].lower()  # Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
+
+    mlst_dict = dict()
+
+    with open("/opt/moss/mlst/mlst_db/config", 'r') as infile:
+        for line in infile:
+            if line[0] != "#":
+                line = line.split("\t")
+                mlst_dict[line[1].lower()] = line[0]
+
+    if specie == "escherichia coli":
+        mlst_dict['escherichia coli'] = 'ecoli'
+
+    if moss_object.mlst_type == 'Unknown':
+        return 'Unknown'
+    else:
+        return moss_object.mlst_type.split("_")[0]
+
+def mlst_finder(moss_object)
+    """
+        Run MLST on raw reads
+        """
+    specie = derive_mlst_species(moss_object)
+
+    logging.info("Running MLST on raw reads")
+    specie = moss_object.reference_header_text.split()[1].lower() + " " + moss_object.reference_header_text.split()[
+        2].lower()  # Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
+
+    if specie == "escherichia coli": #special
+        specie = 'ecoli'
+    else:
+        mlst_dict = dict()
+
+        with open("/opt/moss/mlst/mlst_db/config", 'r') as infile:
+            for line in infile:
+                if line[0] != "#":
+                    line = line.split("\t")
+                    mlst_dict[line[1].lower()] = line[0]
+    if specie in mlst_dict or specie == 'ecoli':
+        kma_finders("-ont -md 5", "mlst", moss_object, "/opt/moss/mlst_db/{}/{}".format(specie, specie))
+    else:
+        specie = 'Unknown'
+        st_type = 'Unknown'
+    return specie, st_type
+
+    if specie == "escherichia coli": #special
+        mlst_dict['escherichia coli'] = 'ecoli'
+    elif specie in mlst_dict:
+        cmd = "mkdir {}/mlstresults".format(moss_object.target_dir)
+        os.system(cmd)
+        cmd = "python3 /opt/moss/mlst/mlst.py -i {} -o {}mlstresults" \
+              " -mp ~/bin/kma -p /opt/moss/mlst/mlst_db/ -s {} -nano" \
+            .format(moss_object.input_path, moss_object.target_dir, mlst_dict[specie])
+        os.system(cmd)
+        moss_object.mlst = specie
+
+    kma_finders("-ont -md 5", "resfinder", moss_object, "/opt/moss/resfinder_db/all")
+    kma_finders()
+    print('Running MLST')
+    logging.info('Running MLST')
+    mlst_cmd = "mlst --scheme {} --threads {} --csv {} {}".format(moss_object.mlst_scheme, moss_object.threads, moss_object.target_dir + "/mlstresults/data.csv", moss_object.target_dir + "/finders_1t1/contigs.fasta")
+    print(mlst_cmd)
+    logging.info
+
+
 def kma_finders_consensus_sequence(arguments, output_name, moss_object, database):
     """Runs the kma finders"""
     logging.info("Performing KMA alingnment against {}".format(database))
