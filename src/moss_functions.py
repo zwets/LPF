@@ -269,9 +269,9 @@ def validate_date_text(date_text):
         raise ValueError("Incorrect data format, should be YYYY-MM-DD.")
 
 def parse_finders(moss_object):
-    moss_object.resfinder_hits = parse_kma_res("{}/finders/resfinder.res".format(moss_object.target_dir))
-    moss_object.virulence_hits = parse_kma_res("{}/finders/virulencefinder.res".format(moss_object.target_dir))
-    moss_object.plasmid_hits = parse_kma_res("{}/finders/plasmidfinder.res".format(moss_object.target_dir))
+    moss_object.resfinder_hits = parse_kma_res("{}/finders_1t1/resfinder.res".format(moss_object.target_dir))
+    moss_object.virulence_hits = parse_kma_res("{}/finders_1t1/virulencefinder.res".format(moss_object.target_dir))
+    moss_object.plasmid_hits = parse_kma_res("{}/finders_1t1/plasmidfinder.res".format(moss_object.target_dir))
     moss_object.mlst_type = parse_mlst_result("{}/mlstresults/data.json".format(moss_object.target_dir))
     return moss_object
 def derive_amr_stats(genes, database): #TBD rewrite and remove.
