@@ -243,7 +243,7 @@ def validate_moss_object(object):
     if not object.input_file in object.input_path:
         logging.error('Input file name does not match input path. Please check input.')
         raise SystemExit('Input file does not match the input path.')
-    if not object.input_path.endswith('.fastq.gz'):
+    if not object.input_path.endswith('.fastq.gz') or not object.input_path.endswith('.fq.gz'): #This might fail input!
         logging.error('Input file is not a fastq.gz file. Please check input.')
         raise SystemExit('Input is not a fastq.gz file. Only this format is supported.')
     if not object.config_path.startswith('/opt/moss_db'):
