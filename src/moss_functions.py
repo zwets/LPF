@@ -49,7 +49,7 @@ def moss_run(moss_object):
 
     moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text, moss_object.entry_id)
 
-    #run_mlst(moss_object)
+    #run_mlst(moss_object)s
     mlst_finder(moss_object)
 
     sys.exit()

@@ -1,13 +1,17 @@
 from unittest import TestCase
 import src.moss_functions as moss
+from src.moss import MossObject
 import json
 import os
+import inspect
 
 class TestSetUpFunctions(TestCase):
     def setUp(self):
         with open('tests/fixtures/data_for_tests/json/assembly_test.json') as json_file:
             test_json = json.load(json_file)['samples'][0]
-        self.input_dict = moss.moss_init(test_json)
+        self.input_dict = MossObject(test_json)
+        print (inspect(getmembers(self.input_dict)))
+
 
     def test_moss_init(self):
         self.input_dict = moss.moss_init(self.input_dict)
@@ -185,12 +189,12 @@ class TestValidateInput(TestCase):
 
     def test_sp_input_path(self):
         self.test_json['input_path'] = '/opt/moss_data/test_dir/file.fastq.gzsadgasd'
-        self.assertRaises(SystemExit, moss.validate_input, self.test_json)
+        self.assertRaises(SystemExit, moss.validate_moss_object, self.test_json)
 
     def test_hp_all(self):
-        self.assertEqual(None, moss.validate_input(self.test_json))
+        self.assertEqual(None, moss.validate_moss_object(self.test_json))
 
     def test_bad_path_collection_date(self):
         self.test_json['collection_date'] = '07/12/1984'
         with self.assertRaises(ValueError):
-            moss.validate_input(self.test_json)
+            moss.validate_moss_object(self.test_json)
