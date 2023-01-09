@@ -27,6 +27,7 @@ class MossObject:
         self.ref_db = "{}/REFDB.ATG".format(self.config_path)
         self.target_dir = "{}/analysis/{}/".format(self.config_path, self.entry_id)
         self.logfile = self.entry_id + ".log"
+
 def moss_pipeline(moss_object):
     """
     Workflow for analysis pipeline
