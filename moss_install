@@ -32,6 +32,7 @@ def main(command_line=None):
         sys.exit("No command given.")
     if not os.path.exists('/home/{}/bin'.format(user)):
         os.system('sudo mkdir /home/{}/bin'.format(user))
+    setup_moss_paths()
     add_bin_path()
     if args.command == 'all':
         print ("ONT DEPENDENCIES")
@@ -40,7 +41,7 @@ def main(command_line=None):
         print ("MOSS DEPENDENCIES")
         install_moss_deps(user)
         print ("MOSS DATABASES")
-        download_finder_dbs(user, False)
+        download_databases(user, False)
         print ("MOSS BUILD")
         moss_build_app()
     elif args.command == 'env':
@@ -50,14 +51,24 @@ def main(command_line=None):
     elif args.command == 'moss_deps':
         install_moss_deps(user)
     elif args.command == 'moss_databases':
-        download_finder_dbs(user, False) #DOES NOT CHECK FOR BACTERIA_DB
+        download_databases(user, False) #DOES NOT CHECK FOR BACTERIA_DB
     elif args.command == 'moss_databases_overwrite':
-        download_finder_dbs(user, True)
+        download_databases(user, True)
         #STFP solution with Maja
     elif args.command == 'moss_build':
         moss_build_app()
     elif args.command == 'check_deps':
         check_all_deps()
+
+def setup_moss_paths():
+    path_list = ["/opt/moss_db/",
+                 "/opt/moss_data/",
+                 "/opt/moss_databases/",
+                 "/opt/moss_reports/",
+                 "/opt/moss_logs/"]
+    for item in path_list:
+        if not os.path.exists(item):
+            os.system("sudo mkdir -m 777 {}".format(item))
 
 def solve_conda_env(user):
     proc = subprocess.Popen("conda env list", shell=True,
@@ -70,49 +81,50 @@ def solve_conda_env(user):
     else:
         os.system("conda env create -f environment.yml")
 def check_local_database():
-    if not os.path.exists('/opt/moss_resources/resfinder_db'):
+    if not os.path.exists('/opt/moss_databases/resfinder_db'):
         print(bcolors.FAIL + "Resfinder database not found" + bcolors.ENDC)
         return False
-    if not os.path.exists('/opt/moss_resources/plasmidfinder_db'):
+    if not os.path.exists('/opt/moss_databases/plasmidfinder_db'):
         print(bcolors.FAIL + "Plasmidfinder database not found" + bcolors.ENDC)
         return False
-    if not os.path.exists('/opt/moss_resources/virulencefinder_db'):
+    if not os.path.exists('/opt/moss_databases/virulencefinder_db'):
         print(bcolors.FAIL + "Virulencefinder database not found" + bcolors.ENDC)
         return False
-    if not os.path.exists('/opt/moss_resources/mlst_db'):
+    if not os.path.exists('/opt/moss_databases/mlst_db'):
         print(bcolors.FAIL + "MLST database not found" + bcolors.ENDC)
         return False
     else:
         print(bcolors.OKGREEN + "CGE Finder Databases are installed" + bcolors.ENDC)
         return True
 
-def download_finder_dbs(user, overwrite):
+def download_databases(user, overwrite):
     if not check_local_software:
         print(bcolors.FAIL + "MOSS dependencies are not installed, and databases cant be indexed" + bcolors.ENDC)
         sys.exit()
     cwd = os.getcwd()
-    if not os.path.exists('/opt/moss_resources'):
-        os.system('sudo mkdir -m 777 /opt/moss_resources')
     if overwrite:
-        os.system('sudo rm -r /opt/moss_resources/*')
-    if not os.path.exists('/opt/moss_resources/plasmidfinder_db'):
-        os.chdir("/opt/moss_resources/")
-        os.system("git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git")
-        os.system("/home/{}/bin/kma_index -i plasmidfinder_db/*.fsa -o plasmidfinder_db/all -m 14".format(user))
-    if not os.path.exists('/opt/moss_resources/resfinder_db'):
-        os.chdir("/opt/moss_resources/")
-        os.system("git clone https://bitbucket.org/genomicepidemiology/resfinder_db.git")
-        os.system("/home/{}/bin/kma_index -i resfinder_db/*.fsa -o resfinder_db/all -m 14".format(user))
+        os.system('sudo rm -r /opt/moss_databases/*')
 
-    if not os.path.exists('/opt/moss_resources/virulencefinder_db'):
-        os.chdir("/opt/moss_resources/")
-        os.system("git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git")
-        os.system("/home/{}/bin/kma_index -i virulencefinder_db/*.fsa -o virulencefinder_db/all -m 14".format(user))
-
-    if not os.path.exists('/opt/moss_resources/mlst'):
-        os.chdir("/opt/moss_resources/")
-        os.system("git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; sudo python3 INSTALL.py /home/{}/bin/kma_index;".format(user, cwd))
-
+    if not os.path.exists('/opt/moss_databases/plasmidfinder_db'):
+        os.mkdir('/opt/moss_databases/plasmidfinder_db')
+        os.chdir('/opt/moss_databases/plasmidfinder_db')
+        os.system("wget https://cge.food.dtu.dk/services/MINTyper/moss_databases/plasmidfinder_db/export/all_plasmidfinder.fasta.gz")
+        os.system("/home/{}/bin/kma_index -i all_plasmidfinder.fasta.gz -o plasmidfinder_db -m 14".format(user))
+    if not os.path.exists('/opt/moss_databases/resfinder_db'):
+        os.mkdir('/opt/moss_databases/resfinder_db')
+        os.chdir('/opt/moss_databases/resfinder_db')
+        os.system("wget https://cge.food.dtu.dk/services/MINTyper/moss_databases/resfinder_db/export/all_resfinder.fasta.gz")
+        os.system("/home/{}/bin/kma_index -i all_resfinder.fasta.gz -o resfinder_db -m 14".format(user))
+    if not os.path.exists('/opt/moss_databases/virulencefinder_db'):
+        os.mkdir('/opt/moss_databases/virulencefinder_db')
+        os.chdir('/opt/moss_databases/virulencefinder_db')
+        os.system("wget https://cge.food.dtu.dk/services/MINTyper/moss_databases/virulencefinder_db/export/all_virulencefinder.fasta.gz")
+        os.system("/home/{}/bin/kma_index -i all_virulencefinder.fasta.gz -o virulencefinder_db -m 14".format(user))
+    if not os.path.exists('/opt/moss_databases/mlst_db'):
+        os.mkdir('/opt/moss_databases/mlst_db')
+        os.chdir('/opt/moss_databases/mlst_db')
+        os.system("wget https://cge.food.dtu.dk/services/MINTyper/moss_databases/mlst_db/export/all_mlst.fasta.gz")
+        os.system("/home/{}/bin/kma_index -i all_mlst.fasta.gz -o mlst_db -m 14".format(user))
     os.chdir(cwd)
     if check_local_database():
         print(bcolors.OKGREEN + "CGE Finder Databases are installed" + bcolors.ENDC)
@@ -246,7 +258,6 @@ def moss_build_app():
     build_app()
     check_dist_build()
     cwd = os.getcwd()
-    set_up_directories()
     move_moss_repo(cwd)
 
 def install_docker_images():
@@ -300,13 +311,8 @@ def check_google_chrome():
     print("Google Chrome is not installed")
     return False
 
-def set_up_directories():
-    path_list = ["/opt/moss_db/", "/opt/moss_data/", "/opt/moss_resources/", "/opt/moss_reports/", "/opt/moss_logs/"]
-    for item in path_list:
-        if not os.path.exists(item):
-            os.system("sudo mkdir -m 777 {}".format(item))
 def check_app_build():
-    path_list = ["/opt/moss_db", "/opt/moss_data", "/opt/moss_resources", "/opt/moss_reports"]
+    path_list = ["/opt/moss_db", "/opt/moss_data", "/opt/moss_databases", "/opt/moss_reports"]
     for item in path_list:
         if not os.path.exists(item):
             print(bcolors.FAIL+ item +" is not installed" + bcolors.ENDC)
