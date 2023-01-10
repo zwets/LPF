@@ -178,6 +178,20 @@ body {
   .sidenav a {font-size: 18px;}
 }
 
+tr,th:nth-child(10)::after {
+    content: "*";
+    color: black;
+}
+
+tr,th:nth-child(11)::after {
+    content: "*";
+    color: black;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #fff;
+}
+
 .multiple-input {
   display: None;
 }
