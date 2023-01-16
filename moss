@@ -1,0 +1,87 @@
+#!/usr/bin/env python3
+
+###############################################################################
+# Main script for running moss
+###############################################################################
+
+import argparse
+import logging
+import json
+import os
+
+from src.loggingHandlers import begin_logging
+from scripts.version import __version__
+from src.createBacterialParser import BacterialParser
+from src.kmaRunner import KMARunner
+from src.bacterialAnalysis import bacterial_analysis_pipeline
+import src.util.md5 as md5
+#from scripts.validateDatabases import ValidateDatabases
+
+def main(arguments):
+    """Main function"""
+    if arguments.subparser_name == 'bacteria':
+        bacterial_parser = BacterialParser(arguments.json)
+        bacterial_parser.__setitem__('version', __version__)
+        bacterial_parser.__setitem__('resfinder_database', '/opt/moss_databases/resfinder_db/resfinder_db')
+        bacterial_parser.__setitem__('plasmidfinder_database', '/opt/moss_databases/resfinder_db/plasmidfinder_db/plasmidfinder_db')
+        bacterial_parser.__setitem__('virulencefinder_database', '/opt/moss_databases/resfinder_db/virulencefinder_db/virulencefinder_db')
+        bacterial_analysis_pipeline(bacterial_parser)
+
+        pass
+    elif arguments.subparser_name == 'viral':
+        pass
+    elif arguments.subparser_name == 'metagenomic':
+        pass
+
+    #bacterial_parser = BacterialParser(arguments)
+    #print (bacterial_parser.data.input_path)
+    pass
+
+if __name__ == '__main__':
+    # initialize the options parser
+    parser = argparse.ArgumentParser('Local Pathogen Finder', add_help=False)
+    subparsers = parser.add_subparsers(help="--", dest='subparser_name')
+
+    bacterial_parser = subparsers.add_parser('bacteria',
+                                             help='Bacterial analysis'
+                                             )
+    bacterial_parser.add_argument('-json', action="store", type=str, default="", dest="bacterial_json")
+
+    viral_parser = subparsers.add_parser('virus',
+                            help='Viral sample. Currently under development',
+                             )
+    viral_parser.add_argument('-json', action="store", type=str, default="", dest="viral_json")
+    metagenomic_parser = subparsers.add_parser('metagenomic',
+                             help='Metagenomic sample. Currently under development',
+                             )
+    metagenomic_parser.add_argument('-json', action="store", type=str, default="", dest="metagenomic_json")
+    install_parser = subparsers.add_parser('install',
+                                           help='Install',
+                                           )
+    update_parser = subparsers.add_parser('update',
+                                            help='Update',
+                                            )
+    clean_parser = subparsers.add_parser('clean',
+                                            help='Clean',
+                                            )
+
+    parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
+    parser.add_argument('-h', '--help', action='help', help='Show this help message and exit')
+
+
+    args = parser.parse_args()
+
+    try:
+        id = md5.md5_of_file(args.bacterial_json)
+        begin_logging('/Users/malhal/dev/testlog_{}.txt'.format(id)) #Edit location
+    except:
+        logging.error(e, exc_info=True)
+        r_type = None
+        raise
+
+    try:
+        main(args)
+    except Exception as e:
+        logging.error(e, exc_info=True)
+        r_type = None
+        raise
