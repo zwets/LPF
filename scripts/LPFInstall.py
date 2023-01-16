@@ -31,7 +31,8 @@ def install_databases(arguments):
         sys.exit()
     database_list = ["resfinder_db",
                      "plasmidfinder_db",
-                     "virulencefinder_db"] #Add bacteria_db
+                     "virulencefinder_db",
+                     "bacteria_db"]
     for item in database_list:
         if not os.path.exists('/opt/moss_databases/{}'.format(item)):
             os.system("sudo mkdir -m 777 /opt/moss_databases/{}".format(item))
