@@ -82,8 +82,8 @@ if __name__ == '__main__':
     try:
         id = md5.md5_of_file(args.bacterial_json)
         begin_logging('/Users/malhal/dev/testlog_{}.txt'.format(id)) #Edit location
-    except:
-        logging.error(e, exc_info=True)
+    except Exception as error:
+        logging.error(error, exc_info=True)
         r_type = None
         raise
 
