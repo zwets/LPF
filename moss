@@ -14,8 +14,11 @@ from scripts.version import __version__
 from src.createBacterialParser import BacterialParser
 from src.kmaRunner import KMARunner
 from src.bacterialAnalysis import bacterial_analysis_pipeline
+from scripts.LPFInstall import LPFInstall
 import src.util.md5 as md5
 #from scripts.validateDatabases import ValidateDatabases
+
+
 
 def main(arguments):
     """Main function"""
@@ -32,6 +35,8 @@ def main(arguments):
         pass
     elif arguments.subparser_name == 'metagenomic':
         pass
+    elif arguments.subparser_name == 'install':
+        LPFInstall.LPF_installation(arguments)
 
     #bacterial_parser = BacterialParser(arguments)
     #print (bacterial_parser.data.input_path)
@@ -58,12 +63,15 @@ if __name__ == '__main__':
     install_parser = subparsers.add_parser('install',
                                            help='Install',
                                            )
+    install_parser.add_argument('-complete', action="store_true", default=False, dest="complete", help="Complete installation of databases, LPF software and the LBP GUI.")
+    install_parser.add_argument('-databases', action="store", type=str, default="", dest="install_databases")
     update_parser = subparsers.add_parser('update',
                                             help='Update',
                                             )
     clean_parser = subparsers.add_parser('clean',
                                             help='Clean',
                                             )
+
 
     parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
     parser.add_argument('-h', '--help', action='help', help='Show this help message and exit')
