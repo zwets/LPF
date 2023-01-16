@@ -7,6 +7,7 @@ from pathlib import Path
 def LPF_installation(arguments):
     """Checks if the databases are installed"""
     mkfs_LPF()
+    print (bcolors.OKGREEN + "LPF filesystem created" + bcolors.ENDC)
     if arguments.complete:
         pass
     elif arguments.install_databases:
