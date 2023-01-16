@@ -14,7 +14,7 @@ from scripts.version import __version__
 from src.createBacterialParser import BacterialParser
 from src.kmaRunner import KMARunner
 from src.bacterialAnalysis import bacterial_analysis_pipeline
-from scripts.LPFInstall import LPFInstall
+import scripts.LPFInstall as LPFInstall
 import src.util.md5 as md5
 #from scripts.validateDatabases import ValidateDatabases
 
