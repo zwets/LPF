@@ -64,7 +64,7 @@ if __name__ == '__main__':
                                            help='Install',
                                            )
     install_parser.add_argument('-complete', action="store_true", default=False, dest="complete", help="Complete installation of databases, LPF software and the LBP GUI.")
-    install_parser.add_argument('-databases', action="store", type=str, default="", dest="install_databases")
+    install_parser.add_argument('-databases', action="store_true", default=False, dest="install_databases", help="Install databases.")
     update_parser = subparsers.add_parser('update',
                                             help='Update',
                                             )
