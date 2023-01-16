@@ -37,7 +37,7 @@ def install_databases(arguments):
             os.system("sudo mkdir -m 777 /opt/moss_databases/{}".format(item))
         if not os.path.exists('/opt/moss_databases/{}/{}.name'.format(item, item)):
             os.chdir('/opt/moss_databases/{}'.format(item))
-            os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/{0}_db.gz".format(item))
+            os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/{0}.gz".format(item))
 
 
 
