@@ -27,7 +27,7 @@ def main(arguments):
     else:
         try:
             with open(arguments.json, 'r') as f:
-                input_path = json.loads(f.read()).input_path
+                input_path = json.loads(f.read())['input_path']
             id = md5.md5_of_file(input_path)
             begin_logging("/opt/moss_logs/{}.log".format(id))
         except Exception as error:
