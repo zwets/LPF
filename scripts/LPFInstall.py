@@ -20,6 +20,7 @@ def LPF_installation(arguments):
 
     mkfs_LPF()
     print (bcolors.OKGREEN + "LPF filesystem created" + bcolors.ENDC)
+    cwd = os.getcwd()
     if arguments.complete:
         solve_conda_env()
         print (bcolors.OKGREEN + "Moss environment created" + bcolors.ENDC)
@@ -28,11 +29,13 @@ def LPF_installation(arguments):
         install_moss_deps(user)
         print (bcolors.OKGREEN + "Moss dependencies installed" + bcolors.ENDC)
         install_databases(arguments)
+        os.chdir(cwd)
         print (bcolors.OKGREEN + "Databases installed" + bcolors.ENDC)
         moss_build_app()
         print (bcolors.OKGREEN + "Moss app built" + bcolors.ENDC)
     elif arguments.install_databases:
         install_databases(arguments)
+        os.chdir(cwd)
     check_all_deps()
 
 def build_app():
@@ -49,7 +52,6 @@ def move_moss_repo():
 def moss_build_app():
     build_app()
     check_dist_build()
-    cwd = os.getcwd()
     move_moss_repo()
 
 def install_moss_deps(user):
@@ -128,47 +130,58 @@ def check_all_deps():
     print("Total dependencies check result:")
 
     check_list = ["ONT dependencies", "Docker images", "Pip dependencies", "Google Chrome", "Local App", "Conda", "Local software", "Local databases"]
+    approved = 0
     for item in check_list:
         if item == "ONT dependencies":
             if ont_check:
                 print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+                approved += 1
             else:
                 print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
         elif item == "Docker images":
             if docker_images_result:
                 print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+                approved += 1
             else:
                 print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
         elif item == "Pip dependencies":
             if pip_deps_result:
                 print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+                approved += 1
             else:
                 print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
         elif item == "Google Chrome":
             if google_chrome_result:
                 print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+                approved += 1
             else:
                 print(item + " is not installed")
         elif item == "Local App":
             if app_build_result:
                 print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+                approved += 1
             else:
                 print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
         elif item == "Conda":
             if conda_result:
                 print(bcolors.OKGREEN + item + " is installed" + bcolors.ENDC)
+                approved += 1
             else:
                 print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
         elif item == "Local software":
             if local_software_result:
                 print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+                approved += 1
             else:
                 print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
         elif item == "Local databases":
             if local_database_result:
                 print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
+                approved += 1
             else:
                 print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
+    if len(check_list) == approved:
+        print(bcolors.OKGREEN + "All dependencies are installed and LPF is ready for use." + bcolors.ENDC)
 def check_ont_deps():
     check_list = [
         '/opt/ont',
@@ -391,7 +404,6 @@ def check_google_chrome():
     return False
 
 def check_dist_build():
-    print (os.getcwd() + " is the current working directory")
     if not os.path.isfile("local_app/dist/linux-unpacked/moss"):
         print (bcolors.FAIL + "Local App is not installed" + bcolors.ENDC)
         return False
