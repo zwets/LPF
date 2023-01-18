@@ -4,7 +4,7 @@ import sys
 import subprocess
 from pathlib import Path
 
-class KMARunner:
+class KMARunner():
     def __init__(self, input, output, reference_database, argument_string):
         self.logger = logging.getLogger()
         self.logger.setLevel(logging.INFO)
