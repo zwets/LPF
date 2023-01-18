@@ -404,18 +404,25 @@ def check_google_chrome():
     return False
 
 def check_dist_build():
+    local = False
+    deployment = False
     if not os.path.isfile("local_app/dist/linux-unpacked/moss"):
         print (bcolors.FAIL + "Local App is not installed in current working directory" + bcolors.ENDC)
-        return False
+        local = False
     else:
         print (bcolors.OKGREEN + "Local App is installed in current working directory" + bcolors.ENDC)
-        return True
+        local = True
+
     if not os.path.isfile("/opt/moss/local_app/dist/linux-unpacked/moss"):
         print (bcolors.FAIL + "Local App is not installed /opt/moss" + bcolors.ENDC)
-        return False
+        deployment = False
     else:
         print (bcolors.OKGREEN + "Local App is installed /opt/moss" + bcolors.ENDC)
+        deployment = True
+    if local and deployment:
         return True
+    else:
+        return False
 
 
 class bcolors:
