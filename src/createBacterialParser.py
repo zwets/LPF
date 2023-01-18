@@ -75,3 +75,10 @@ class BacterialParser():
             self.logger.info("Target directory already exists. Sample has been analysed before. Exiting.")
             #Consider not existing but just rerunning the analysis
             sys.exit(1)
+
+    def get_mapping_results(self):
+        """Returns the mapping results from the reference mapping"""
+        if os.path.exists(self.data.target_dir + "/reference_mapping.res"):
+            with open(self.data.target_dir + "/reference_mapping.res", 'r') as f:
+                data = f.read()
+                print (data)

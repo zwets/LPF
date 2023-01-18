@@ -6,8 +6,6 @@ import logging
 import os
 import sys
 import datetime
-
-from scripts.kmaFinders import kma_finders
 from src.kmaRunner import KMARunner
 
 def bacterial_analysis_pipeline(bacterial_parser):
@@ -35,3 +33,10 @@ def bacterial_analysis_pipeline(bacterial_parser):
                             bacterial_parser.data.virulencefinder_db,
                             "-ont -md 5")
     virulencefinder_mapping.run()
+
+    #1t1?
+
+
+    bacterial_parser.get_reference_mapping()
+
+
