@@ -22,21 +22,32 @@ import src.util.md5 as md5
 
 def main(arguments):
     """Main function"""
-    if arguments.subparser_name == 'bacteria':
-        bacterial_parser = BacterialParser(arguments.json)
-        bacterial_analysis_pipeline(bacterial_parser)
-
-        pass
-    elif arguments.subparser_name == 'viral':
-        pass
-    elif arguments.subparser_name == 'metagenomic':
-        pass
-    elif arguments.subparser_name == 'install':
+    if arguments.subparser_name == 'install':
         LPFInstall.LPF_installation(arguments)
+    else:
+        try:
+            id = md5.md5_of_file(arguments.input_path)
+            begin_logging("/opt/moss_logs/{}.log".format(id))
+        except Exception as error:
+            logging.error(error, exc_info=True)
+            r_type = None
+            raise
 
-    #bacterial_parser = BacterialParser(arguments)
-    #print (bacterial_parser.data.input_path)
-    pass
+        if arguments.subparser_name == 'bacteria':
+            bacterial_parser = BacterialParser(arguments.json)
+            bacterial_analysis_pipeline(bacterial_parser)
+
+            pass
+        elif arguments.subparser_name == 'viral':
+            pass
+        elif arguments.subparser_name == 'metagenomic':
+            pass
+        elif arguments.subparser_name == 'install':
+            LPFInstall.LPF_installation(arguments)
+
+        #bacterial_parser = BacterialParser(arguments)
+        #print (bacterial_parser.data.input_path)
+        pass
 
 if __name__ == '__main__':
     # initialize the options parser
@@ -78,8 +89,8 @@ if __name__ == '__main__':
 
     if not args.subparser_name == 'install':
         try:
-            id = md5.md5_of_file(args.bacterial_json)
-            begin_logging('/Users/malhal/dev/testlog_{}.txt'.format(id)) #Edit location
+            id = md5.md5_of_file(args.bacterial_json.)
+            begin_logging('/opt/moss_logs/{}.log'.format(id)) #Edit location
         except Exception as error:
             logging.error(error, exc_info=True)
             r_type = None
