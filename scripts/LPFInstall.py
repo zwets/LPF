@@ -39,7 +39,9 @@ def build_app():
     os.system("cd local_app; chmod a+x moss_launch; npm i; ./node_modules/.bin/electron-rebuild; npm run dist;sudo cp moss.desktop /usr/share/applications/.; cd ..")
     return True
 
-def move_moss_repo(cwd):
+def move_moss_repo():
+    cwd = os.getcwd()
+    print ("current working directory is {}".format(cwd))
     if (cwd != '/opt/moss'):
         os.system("sudo rm -rf /opt/moss")
         os.system("sudo cp -r {} /opt/moss".format(cwd))
@@ -48,7 +50,7 @@ def moss_build_app():
     build_app()
     check_dist_build()
     cwd = os.getcwd()
-    move_moss_repo(cwd)
+    move_moss_repo()
 
 def install_moss_deps(user):
     if not check_kma():
