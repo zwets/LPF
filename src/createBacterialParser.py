@@ -86,9 +86,9 @@ class BacterialParser():
             reference_header_text = ""
             with open(self.data.target_dir + "/reference_mapping.res", 'r') as f:
                 data = f.read().split("\n")
+            data = data[:-1] #Last line is empty
             for item in data:
                 item = item.split("\t")
-                print (item)
                 if item[0][0] != "#":
                     if float(item[1]) > template_score:
                         template_score = float(item[1])
