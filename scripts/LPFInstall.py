@@ -42,9 +42,9 @@ def install_databases(arguments):
             os.chdir('/opt/moss_databases/{}'.format(item))
             os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/export/{0}.fasta.gz".format(item))
             if item == 'bacteria_db':
-                os.system("kma index -i {} -o {} -m 14 -Sparse ATG".format(item, item))
+                os.system("kma index -i {}.fasta.gz -o {} -m 14 -Sparse ATG".format(item, item))
             else:
-                os.system("kma index -i {} -o {} -m 14".format(item, item))
+                os.system("kma index -i {}.fasta.gz -o {} -m 14".format(item, item))
 
 def check_local_software():
     kma_result = check_kma()
