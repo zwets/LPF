@@ -379,13 +379,13 @@ def update_bacterial_reference_table():
 
     if os.path.exists('/opt/moss_databases/moss.db'):
         result = sqlCommands.sql_fetch_all("SELECT reference_header_text FROM bacteria_reference_table", '/opt/moss_databases/moss.db')
-        print (result[0:10])
     else:
         sys.exit("moss.db is not found")
 
     print ("calculating the difference between the reference table and the database")
     local_missing_references_in_sql_db = set(set(bacteria_db_reference_list) - set(result))
     local_missing_references_in_bacteria_db = set(set(result) - set(bacteria_db_reference_list))
+    print (local_missing_references_in_sql_db)
 
     if len(local_missing_references_in_sql_db) > 0:
         conn = sqlite3.connect('/opt/moss_databases/moss.db')
