@@ -34,8 +34,13 @@ def bacterial_analysis_pipeline(bacterial_parser):
                             "-ont -md 5")
     virulencefinder_mapping.run()
 
-    #1t1?
+    mlst_mapping = KMARunner(bacterial_parser.data.input_path,
+                             bacterial_parser.data.target_dir + "/finders/mlst_mapping",
+                            bacterial_parser.data.mlst_db,
+                            "-ont -md 5")
+    mlst_mapping.run()
 
+    #1t1?
 
     bacterial_parser.get_mapping_results()
 

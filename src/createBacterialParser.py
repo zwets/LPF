@@ -6,8 +6,10 @@ import datetime
 import src.util.md5 as md5
 import pyfastx
 from types import SimpleNamespace
+import src.util.kmaUtils as kmaUtils
 
 from src.loggingHandlers import begin_logging
+import src.util.mlst as mlst
 
 from scripts.version import __version__
 
@@ -79,6 +81,22 @@ class BacterialParser():
     def get_mapping_results(self):
         """Returns the mapping results from the reference mapping"""
         if os.path.exists(self.data.target_dir + "/reference_mapping.res"):
+            template_score = 0
+            reference_header_text = ""
             with open(self.data.target_dir + "/reference_mapping.res", 'r') as f:
-                data = f.read()
-                print (data)
+                data = f.read().split("\n")
+            for item in data:
+                item = item.split("\t")
+                if item[0][0] != "#":
+                    if float(item[1]) > template_score:
+                        template_score = float(item[1])
+                        reference_header_text = item[0]
+            template_number = kmaUtils.findTemplateNumber(reference_header_text, '/opt/moss_databases/bacteria_db/bacteria_db')
+            self.data.template_number = template_number
+            self.data.template_score = template_score
+            self.data.reference_header_text = reference_header_text
+
+    def get_mlst_results(self):
+        """Returns the mlst results"""
+        print (mlst.derive_mlst_species(self.data.reference_header_text))
+
