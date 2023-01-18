@@ -318,6 +318,13 @@ def check_google_chrome():
     print("Google Chrome is not installed")
     return False
 
+def check_dist_build():
+    if not os.path.isfile("local_app/dist/linux-unpacked/moss"):
+        sys.exit("A MOSS distribution was not created correctly. Installation was not completed")
+        return False
+    else:
+        print ("The installation was completed")
+        return True
 
 
 class bcolors:
