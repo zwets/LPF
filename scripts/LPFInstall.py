@@ -381,17 +381,19 @@ def update_bacterial_reference_table():
         result = sqlCommands.sql_fetch_all("SELECT * FROM bacteria_reference_table", '/opt/moss_databases/moss.db')
     else:
         sys.exit("moss.db is not found")
-
+    print ("calculating the difference between the reference table and the database")
     local_missing_references_in_sql_db = set(set(bacteria_db_reference_list) - set(result))
     local_missing_references_in_bacteria_db = set(set(result) - set(bacteria_db_reference_list))
 
     if len(local_missing_references_in_sql_db) > 0:
         conn = sqlite3.connect('/opt/moss_databases/moss.db')
-        print("Updating SQL database with new references")
+        print("Updating SQL database with new references. Number of new references: {}".format(len(local_missing_references_in_sql_db)))
         with open ('/opt/moss_databases/bacteria_db/bacteria_db.name', 'r') as f:
             t = 0
             for line in f:
                 t += 1
+                if t%100 == 0:
+                    print ("{} references processed".format(t))
                 if line.rstrip() in local_missing_references_in_sql_db: #set search
                     cmd = "~/bin/kma seq2fasta -t_db /opt/moss_databases/bacteria_db/bacteria_db -seqs {}".format(t)
                     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
