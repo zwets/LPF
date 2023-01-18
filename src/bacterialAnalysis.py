@@ -34,4 +34,4 @@ def bacterial_analysis_pipeline(bacterial_parser):
                             bacterial_parser.data.target_dir + "/finders/virulencefinder_mapping",
                             bacterial_parser.data.virulencefinder_db,
                             "-ont -md 5")
-    #virulencefinder_mapping.run()
+    virulencefinder_mapping.run()
