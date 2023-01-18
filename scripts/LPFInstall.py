@@ -1,6 +1,8 @@
 import os
 import sys
 import subprocess
+import sqlite3
+import src.sqlCommands as sqlCommands
 from pathlib import Path
 
 
@@ -335,17 +337,103 @@ def check_app_build():
     else:
         return False
 
+def create_sql_db():
+    conn = sqlite3.connect('/opt/moss_databases/moss.db')
+    c = conn.cursor()
+
+    c.execute(
+        """CREATE TABLE IF NOT EXISTS sample_table(entry_id TEXT PRIMARY KEY, sample_type TEXT)""")
+    conn.commit()
+
+    c.execute(
+        """CREATE TABLE IF NOT EXISTS bacteria_reference_table(entry_id TEXT PRIMARY KEY, isolates TEXT)""")
+    conn.commit()
+
+    c.execute(
+        """CREATE TABLE IF NOT EXISTS bacteria_table(entry_id TEXT PRIMARY KEY)""")
+    conn.commit()
+
+    c.execute(
+        """CREATE TABLE IF NOT EXISTS meta_data_table(entry_id TEXT PRIMARY KEY, meta_data_json TEXT)""")
+    conn.commit()
+
+
+    c.execute(
+        """CREATE TABLE IF NOT EXISTS status_table(entry_id TEXT PRIMARY KEY, sample_name TEXT, status TEXT, type TEXT, current_stage TEXT, final_stage TEXT, result TEXT, time_stamp TEXT)""")
+    conn.commit()
+
+    c.execute(
+        """CREATE TABLE IF NOT EXISTS sync_table(last_sync TEXT, sync_round TEXT)""")
+    conn.commit()
+    conn.close()
+
+def update_bacterial_reference_table():
+    sql_bacteria_reference_list = []
+    bacteria_db_reference_list = []
+
+    with open('/opt/moss_databases/bacteria_db/bacteria_db.name', 'r') as f:
+        for line in f:
+            bacteria_db_reference_list.append(line.rstrip())
+
+    if os.path.exists('/opt/moss_databases/moss.db'):
+        result = sqlCommands.sql_fetch_all("SELECT * FROM bacteria_reference_table")
+    else:
+
+    sys.exit(result)
+
+    infile = open("/opt/moss_databases/bacteria_db/bacteria_db.name", 'r')
+    t = 1
+    conn = sqlite3.connect(config_path + 'moss.db')
+    c = conn.cursor()
+    ids = list()
+    for line in infile:
+        line = line.rstrip()
+        cmd = "~/bin/kma seq2fasta -t_db {}/REFDB.ATG -seqs {}".format(config_path, t)
+        proc = subprocess.Popen(cmd, shell=True,
+                                stdout=subprocess.PIPE, )
+        output = proc.communicate()[0].decode()
+        reference_header_text = output.split("\n")[0][1:]
+        sequence = output.split("\n")[1]
+        entry_id = md5_of_sequence(sequence) #ID for references based on reference sequence
+        if entry_id not in ids:
+            dbstring = "INSERT INTO reference_table(entry_id, reference_header_text) VALUES('{}', '{}')".format(entry_id, reference_header_text.replace("'", "''"))
+            ids.append(entry_id)
+            c.execute(dbstring)
+
+        t += 1
+    conn.commit()
+    conn.close()
+
 
 def mkfs_LPF():
     """Makes the LPF filesystem"""
-    path_list = ["/opt/moss_db/",
-                 "/opt/moss_data/",
+    path_list = ["/opt/moss_data/",
+                 "/opt/moss_analyses/",
+                 "/opt/moss_metadata_json/",
                  "/opt/moss_databases/",
                  "/opt/moss_reports/",
                  "/opt/moss_logs/"]
     for item in path_list:
         if not os.path.exists(item):
             os.system("sudo mkdir -m 777 {}".format(item))
+
+def check_and_add_bookmarks():
+    home = str(Path.home())
+    if os.path.exists("{}/.config/gtk-3.0/bookmarks".format(home)):
+        with open("{}/.config/gtk-3.0/bookmarks".format(home)) as fd:
+            data = fd.readlines()
+        new_bookmark_list = list()
+        for item in data:
+            if "moss" not in item:
+                new_bookmark_list.append(item.rstrip())
+        new_bookmark_list.append("file:///opt/moss_data")
+        new_bookmark_list.append("file:///opt/moss_reports")
+        new_bookmark_list.append("file:///opt/moss_logs")
+        new_bookmark_list.append("file:///opt/moss_metadata_json")
+
+        with open("{}/.config/gtk-3.0/bookmarks".format(home), 'w') as fd:
+            for item in new_bookmark_list:
+                fd.write(item + '\n')
 
 def install_databases(arguments):
     """Installs the databases"""
@@ -369,6 +457,10 @@ def install_databases(arguments):
                 os.system("kma index -i {}.fasta.gz -o {} -m 14 -Sparse ATG".format(item, item))
             else:
                 os.system("kma index -i {}.fasta.gz -o {} -m 14".format(item, item))
+
+    if not os.path.exists('/opt/moss_databases/moss.db'):
+        create_sql_db()
+        #update_bacterial_reference_table()
 
 def check_local_software():
     kma_result = check_kma()
