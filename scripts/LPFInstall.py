@@ -316,6 +316,7 @@ def check_google_chrome():
     return False
 
 def check_dist_build():
+    print (os.getcwd() + " is the current working directory")
     if not os.path.isfile("local_app/dist/linux-unpacked/moss"):
         print (bcolors.FAIL + "Local App is not installed" + bcolors.ENDC)
         return False
