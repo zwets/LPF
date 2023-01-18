@@ -313,17 +313,15 @@ def check_google_chrome():
     output = proc.communicate()[0].decode().split("\n")
     for item in output[0:-1]:
         if item.startswith("google-chrome"):
-            print("Google Chrome" + " is installed")
             return True
-    print("Google Chrome is not installed")
     return False
 
 def check_dist_build():
     if not os.path.isfile("local_app/dist/linux-unpacked/moss"):
-        sys.exit("A MOSS distribution was not created correctly. Installation was not completed")
+        print (bcolors.FAIL + "Local App is not installed" + bcolors.ENDC)
         return False
     else:
-        print ("The installation was completed")
+        print (bcolors.OKGREEN + "Local App is installed" + bcolors.ENDC)
         return True
 
 
