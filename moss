@@ -26,7 +26,9 @@ def main(arguments):
         LPFInstall.LPF_installation(arguments)
     else:
         try:
-            id = md5.md5_of_file(arguments.input_path)
+            with open(arguments.json, 'r') as f:
+                input_path = json.loads(f.read()).input_path
+            id = md5.md5_of_file(input_path)
             begin_logging("/opt/moss_logs/{}.log".format(id))
         except Exception as error:
             logging.error(error, exc_info=True)
