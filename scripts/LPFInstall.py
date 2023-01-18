@@ -462,7 +462,7 @@ def install_databases(arguments):
 
     if not os.path.exists('/opt/moss_databases/moss.db'):
         create_sql_db()
-        #update_bacterial_reference_table()
+    update_bacterial_reference_table()
 
 def check_local_software():
     kma_result = check_kma()
