@@ -22,7 +22,10 @@ class BacterialParser():
         for item in data_dict:
             setattr(self.data, item, data_dict[item])
         self.data.entry_id = md5.md5_of_file(self.data.input_path)
-        self.logger = begin_logging('/opt/moss_logs/{}.log'.format(self.data.entry_id))
+        begin_logging('/opt/moss_logs/{}.log'.format(self.data.entry_id))
+        self.logger = logging.getLogger()
+        self.logger.setLevel(logging.INFO)
+        self.logger.addHandler(logging.StreamHandler())
         self.logger.info("Starting analysis of {}".format(self.data.entry_id))
         self.data.sample_name = self.data.input_path.split("/")[-1][0:-9]
         self.data.moss_db = "{}/moss.db".format(self.data.config_path)
