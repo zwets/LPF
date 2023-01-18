@@ -22,10 +22,15 @@ def LPF_installation(arguments):
     print (bcolors.OKGREEN + "LPF filesystem created" + bcolors.ENDC)
     if arguments.complete:
         solve_conda_env()
+        print (bcolors.OKGREEN + "Moss environment created" + bcolors.ENDC)
         install_ont_deps()
+        print (bcolors.OKGREEN + "ONT dependencies installed" + bcolors.ENDC)
         install_moss_deps(user)
+        print (bcolors.OKGREEN + "Moss dependencies installed" + bcolors.ENDC)
         install_databases(arguments)
+        print (bcolors.OKGREEN + "Databases installed" + bcolors.ENDC)
         moss_build_app()
+        print (bcolors.OKGREEN + "Moss app built" + bcolors.ENDC)
     elif arguments.install_databases:
         install_databases(arguments)
     check_all_deps()
@@ -39,8 +44,6 @@ def move_moss_repo(cwd):
         os.system("sudo rm -rf /opt/moss")
         os.system("sudo cp -r {} /opt/moss".format(cwd))
         os.system("sudo chmod a+rwx /opt/moss")
-        os.system("sudo rm -r {}".format(cwd))
-
 def moss_build_app():
     build_app()
     check_dist_build()
