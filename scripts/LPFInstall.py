@@ -29,18 +29,22 @@ def install_databases(arguments):
     if not check_local_software:
         print(bcolors.FAIL + "MOSS dependencies are not installed, and databases cant be indexed" + bcolors.ENDC)
         sys.exit()
+
     database_list = ["resfinder_db",
                      "plasmidfinder_db",
                      "virulencefinder_db",
                      "bacteria_db"]
+
     for item in database_list:
         if not os.path.exists('/opt/moss_databases/{}'.format(item)):
             os.system("sudo mkdir -m 777 /opt/moss_databases/{}".format(item))
         if not os.path.exists('/opt/moss_databases/{}/{}.name'.format(item, item)):
             os.chdir('/opt/moss_databases/{}'.format(item))
             os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/export/{0}.fasta.gz".format(item))
-
-
+            if item == 'bacteria_db':
+                os.system("kma index -i {} -o {} -m 14 -Sparse ATG".format(item, item))
+            else:
+                os.system("kma index -i {} -o {} -m 14".format(item, item))
 
 def check_local_software():
     kma_result = check_kma()
