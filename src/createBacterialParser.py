@@ -7,6 +7,8 @@ import src.util.md5 as md5
 import pyfastx
 from types import SimpleNamespace
 
+from src.loggingHandlers import begin_logging
+
 from scripts.version import __version__
 
 class EmptyDataObject:
@@ -14,15 +16,15 @@ class EmptyDataObject:
 
 class BacterialParser():
     def __init__(self, file):
-        self.logger = logging.getLogger()
-        self.logger.setLevel(logging.INFO)
-        self.logger.addHandler(logging.StreamHandler())
         with open(file, 'r') as f:
             data_dict = json.loads(f.read())
         self.data = EmptyDataObject()
         for item in data_dict:
             setattr(self.data, item, data_dict[item])
         self.data.entry_id = md5.md5_of_file(self.data.input_path)
+        self.logger = begin_logging('/opt/moss_logs/{}.log'.format(self.data.entry_id))
+        self.logger.setLevel(logging.INFO)
+        self.logger.addHandler(logging.StreamHandler())
         self.data.sample_name = self.data.input_path.split("/")[-1][0:-9]
         self.data.moss_db = "{}/moss.db".format(self.data.config_path)
         self.data.bacteria_db = "/opt/moss_databases/bacteria_db/bacteria_db"
@@ -30,7 +32,6 @@ class BacterialParser():
         self.data.plasmidfinder_db = '/opt/moss_databases/resfinder_db/plasmidfinder_db/plasmidfinder_db'
         self.data.virulencefinder_db = '/opt/moss_databases/resfinder_db/virulencefinder_db/virulencefinder_db'
         self.data.target_dir = "/opt/moss_analyses/{}".format(self.data.entry_id)
-        self.data.logfile = "/opt/moss_logs/{}".format(self.data.entry_id + ".log")
         self.data.version = __version__
         self.logger.info('BacterialParser initialized with data: {}'.format(self.data.__dict__))
         self.qc_check()
