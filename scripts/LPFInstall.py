@@ -382,8 +382,8 @@ def update_bacterial_reference_table():
     else:
         sys.exit("moss.db is not found")
 
-    local_missing_references_in_sql_db = set(bacteria_db_reference_list) - set(result)
-    local_missing_references_in_bacteria_db = set(result) - set(bacteria_db_reference_list)
+    local_missing_references_in_sql_db = set(set(bacteria_db_reference_list) - set(result))
+    local_missing_references_in_bacteria_db = set(set(result) - set(bacteria_db_reference_list))
 
     if len(local_missing_references_in_sql_db) > 0:
         conn = sqlite3.connect('/opt/moss_databases/moss.db')
