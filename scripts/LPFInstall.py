@@ -348,7 +348,7 @@ def create_sql_db():
     conn.commit()
 
     c.execute(
-        """CREATE TABLE IF NOT EXISTS bacteria_reference_table(entry_id TEXT PRIMARY KEY, isolates TEXT)""")
+        """CREATE TABLE IF NOT EXISTS bacteria_reference_table(entry_id TEXT PRIMARY KEY, isolates TEXT, reference_header_text TEXT)""")
     conn.commit()
 
     c.execute(
@@ -378,14 +378,14 @@ def update_bacterial_reference_table():
             bacteria_db_reference_list.append(line.rstrip())
 
     if os.path.exists('/opt/moss_databases/moss.db'):
-        result = sqlCommands.sql_fetch_all("SELECT entry_id FROM bacteria_reference_table", '/opt/moss_databases/moss.db')
+        result = sqlCommands.sql_fetch_all("SELECT reference_header_text FROM bacteria_reference_table", '/opt/moss_databases/moss.db')
         print (result[0:10])
     else:
         sys.exit("moss.db is not found")
+
     print ("calculating the difference between the reference table and the database")
     local_missing_references_in_sql_db = set(set(bacteria_db_reference_list) - set(result))
     local_missing_references_in_bacteria_db = set(set(result) - set(bacteria_db_reference_list))
-    sys.exit()
 
     if len(local_missing_references_in_sql_db) > 0:
         conn = sqlite3.connect('/opt/moss_databases/moss.db')
@@ -403,7 +403,7 @@ def update_bacterial_reference_table():
                     reference_header_text = output.split("\n")[0][1:]
                     sequence = output.split("\n")[1]
                     entry_id = md5.md5_of_sequence(sequence)
-                    cmd = 'INSERT OR IGNORE INTO bacteria_reference_table VALUES ("{}", "{}")'.format(entry_id, "")
+                    cmd = 'INSERT OR IGNORE INTO bacteria_reference_table VALUES ("{}", "{}", "{}")'.format(entry_id, "", reference_header_text)
                     sqlCommands.sql_execute_command(cmd, '/opt/moss_databases/moss.db')
         conn.commit()
         conn.close()
