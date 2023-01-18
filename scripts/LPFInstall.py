@@ -21,11 +21,81 @@ def LPF_installation(arguments):
     mkfs_LPF()
     print (bcolors.OKGREEN + "LPF filesystem created" + bcolors.ENDC)
     if arguments.complete:
-        pass
+        solve_conda_env()
+        install_ont_deps()
+        install_moss_deps(user)
+        install_databases(arguments)
+        moss_build_app()
     elif arguments.install_databases:
         install_databases(arguments)
-
     check_all_deps()
+
+def build_app():
+    os.system("cd local_app; chmod a+x moss_launch; npm i; ./node_modules/.bin/electron-rebuild; npm run dist;sudo cp moss.desktop /usr/share/applications/.; cd ..")
+    return True
+
+def move_moss_repo(cwd):
+    if (cwd != '/opt/moss'):
+        os.system("sudo rm -rf /opt/moss")
+        os.system("sudo cp -r {} /opt/moss".format(cwd))
+        os.system("sudo chmod a+rwx /opt/moss")
+        os.system("sudo rm -r {}".format(cwd))
+
+def moss_build_app():
+    build_app()
+    check_dist_build()
+    cwd = os.getcwd()
+    move_moss_repo(cwd)
+
+def install_moss_deps(user):
+    if not check_kma():
+        if os.path.exists("kma"):
+            os.system("sudo rm -rf kma")
+        os.system(
+            "git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma;make; sudo cp kma* /home/{}/bin/.; cd ..;".format(user))
+    if not check_ccphylo():
+        if os.path.exists("ccphylo"):
+            os.system("sudo rm -rf ccphylo")
+        os.system(
+            "git clone https://bitbucket.org/genomicepidemiology/ccphylo.git; cd ccphylo; make; sudo cp ccphylo /home/{}/bin/.;  cd ..;".format(user))
+    install_docker_images()
+    if not check_google_chrome():
+        os.system(
+            "sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
+    os.system("pip install -r requirements.txt")
+
+def install_docker_images():
+    docker_list = [
+        "biocontainers/figtree:v1.4.4-3-deb_cv1",
+        "staphb/quast:5.0.2",
+        "nanozoo/bandage:0.8.1--7da3a06",
+        "staphb/flye:2.9.1"
+    ]
+    for item in docker_list:
+        cmd = "docker pull " + item
+        os.system(cmd)
+
+def install_ont_deps():
+    os.system("sudo apt update")
+    os.system("sudo apt upgrade")
+    os.system("wget http://apt.kcri.it/debs/kcri-apt-repo_1.0.0_all.deb")
+    os.system("sudo apt install ./kcri-apt-repo_1.0.0_all.deb")
+    os.system("sudo apt update")
+    os.system("sudo apt install kcri-seqtz-repos")
+    os.system("sudo apt update")
+    os.system("sudo apt install kcri-seqtz-deps")
+    os.system('sudo groupadd docker; sudo usermod -aG docker $USER; sudo chmod 666 /var/run/docker.sock')
+
+def solve_conda_env():
+    proc = subprocess.Popen("conda env list", shell=True,
+                            stdout=subprocess.PIPE, )
+    env = proc.communicate()[0].decode().split()
+    if 'moss' in env:
+        print ("Moss environment already exists")
+        print ("Updating moss environment")
+        os.system("conda env update --file environment.yml  --prune")
+    else:
+        os.system("conda env create -f environment.yml")
 
 def add_bin_path():
     infile = open(os.path.expanduser("~/.bashrc"), "r")
