@@ -269,6 +269,7 @@ def install_databases(arguments):
     database_list = ["resfinder_db",
                      "plasmidfinder_db",
                      "virulencefinder_db",
+                     "mlst_db",
                      "bacteria_db"]
 
     for item in database_list:
