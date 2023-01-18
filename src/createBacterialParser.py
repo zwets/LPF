@@ -88,6 +88,7 @@ class BacterialParser():
                 data = f.read().split("\n")
             for item in data:
                 item = item.split("\t")
+                print (item)
                 if item[0][0] != "#":
                     if float(item[1]) > template_score:
                         template_score = float(item[1])
