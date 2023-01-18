@@ -31,8 +31,8 @@ class BacterialParser():
         self.data.moss_db = "{}/moss.db".format(self.data.config_path)
         self.data.bacteria_db = "/opt/moss_databases/bacteria_db/bacteria_db"
         self.data.resfinder_db = '/opt/moss_databases/resfinder_db/resfinder_db'
-        self.data.plasmidfinder_db = '/opt/moss_databases/resfinder_db/plasmidfinder_db/plasmidfinder_db'
-        self.data.virulencefinder_db = '/opt/moss_databases/resfinder_db/virulencefinder_db/virulencefinder_db'
+        self.data.plasmidfinder_db = '/opt/moss_databases/plasmidfinder_db/plasmidfinder_db'
+        self.data.virulencefinder_db = '/opt/moss_databases/virulencefinder_db/virulencefinder_db'
         self.data.target_dir = "/opt/moss_analyses/{}".format(self.data.entry_id)
         self.data.version = __version__
         self.logger.info('BacterialParser initialized with data: {}'.format(self.data.__dict__))
