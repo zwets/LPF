@@ -78,7 +78,7 @@ def check_all_deps():
             if app_build_result:
                 print(bcolors.OKGREEN + item + " are installed" + bcolors.ENDC)
             else:
-                print(item + " is not installed")
+                print(bcolors.FAIL + item + " is not installed" + bcolors.ENDC)
         elif item == "Conda":
             if conda_result:
                 print(bcolors.OKGREEN + item + " is installed" + bcolors.ENDC)
