@@ -40,10 +40,13 @@ def bacterial_analysis_pipeline(bacterial_parser):
                             "-ont -md 5")
     mlst_mapping.run()
 
-    bacterial_parser.get_mlst_results()
-
     #1t1?
 
     bacterial_parser.get_mapping_results()
+
+    #Eval reference hit
+    
+    bacterial_parser.get_mlst_results()
+
 
 
