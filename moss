@@ -87,15 +87,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    if not args.subparser_name == 'install':
-        try:
-            id = md5.md5_of_file(args.bacterial_json.)
-            begin_logging('/opt/moss_logs/{}.log'.format(id)) #Edit location
-        except Exception as error:
-            logging.error(error, exc_info=True)
-            r_type = None
-            raise
-
     try:
         main(args)
     except Exception as e:
