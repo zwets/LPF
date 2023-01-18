@@ -338,6 +338,7 @@ def check_app_build():
         return False
 
 def create_sql_db():
+    print ("Creating SQL database")
     conn = sqlite3.connect('/opt/moss_databases/moss.db')
     c = conn.cursor()
 
