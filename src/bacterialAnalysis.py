@@ -37,6 +37,6 @@ def bacterial_analysis_pipeline(bacterial_parser):
     #1t1?
 
 
-    bacterial_parser.get_reference_mapping()
+    bacterial_parser.get_mapping_results()
 
 
