@@ -7,6 +7,8 @@ import src.util.md5 as md5
 import pyfastx
 from types import SimpleNamespace
 
+from scripts.version import __version__
+
 class EmptyDataObject:
     pass
 
@@ -23,9 +25,13 @@ class BacterialParser():
         self.data.entry_id = md5.md5_of_file(self.data.input_path)
         self.data.sample_name = self.data.input_path.split("/")[-1][0:-9]
         self.data.moss_db = "{}/moss.db".format(self.data.config_path)
-        self.data.reference_database = "{}/REFDB.ATG".format(self.data.config_path)
-        self.data.target_dir = "{}/analysis/{}/".format(self.data.config_path, self.data.entry_id)
-        self.data.logfile = self.data.entry_id + ".log"
+        self.data.bacteria_db = "/opt/moss_databases/bacteria_db/bacteria_db"
+        self.data.resfinder_db = '/opt/moss_databases/resfinder_db/resfinder_db'
+        self.data.plasmidfinder_db = '/opt/moss_databases/resfinder_db/plasmidfinder_db/plasmidfinder_db'
+        self.data.virulencefinder_db = '/opt/moss_databases/resfinder_db/virulencefinder_db/virulencefinder_db'
+        self.data.target_dir = "/opt/moss_analyses/{}".format(self.data.entry_id)
+        self.data.logfile = "/opt/moss_logs/{}".format(self.data.entry_id + ".log")
+        self.data.version = __version__
         self.logger.info('BacterialParser initialized with data: {}'.format(self.data.__dict__))
         self.qc_check()
         self.mkfs()
@@ -57,6 +63,12 @@ class BacterialParser():
             self.logger.info("Enough DNA for analysis. Total bases: {}".format(total_bases))
 
     def mkfs(self):
-        os.system("mkdir {}".format(self.data.target_dir))
-        os.system("mkdir {}/finders".format(self.data.target_dir))
-        os.system("mkdir {}/finders_1t1".format(self.data.target_dir))
+        """Creates the target directory and the log file"""
+        if not os.path.exists(self.data.target_dir):
+            os.makedirs(self.data.target_dir)
+            os.makedirs(self.data.target_dir + "/finders")
+            os.makedirs(self.data.target_dir + "/finders_1t1/")
+        else:
+            self.logger.info("Target directory already exists. Sample has been analysed before. Exiting.")
+            #Consider not existing but just rerunning the analysis
+            sys.exit(1)

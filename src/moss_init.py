@@ -67,7 +67,6 @@ directory_structure = {
     "sync_files": {},
     "static_files": {},
     "datafiles": {}
-
 }
 moss.create_directory_from_dict(directory_structure, config_name)
 

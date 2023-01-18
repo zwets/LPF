@@ -24,10 +24,6 @@ def main(arguments):
     """Main function"""
     if arguments.subparser_name == 'bacteria':
         bacterial_parser = BacterialParser(arguments.json)
-        bacterial_parser.__setitem__('version', __version__)
-        bacterial_parser.__setitem__('resfinder_database', '/opt/moss_databases/resfinder_db/resfinder_db')
-        bacterial_parser.__setitem__('plasmidfinder_database', '/opt/moss_databases/resfinder_db/plasmidfinder_db/plasmidfinder_db')
-        bacterial_parser.__setitem__('virulencefinder_database', '/opt/moss_databases/resfinder_db/virulencefinder_db/virulencefinder_db')
         bacterial_analysis_pipeline(bacterial_parser)
 
         pass
