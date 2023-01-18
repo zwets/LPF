@@ -378,6 +378,7 @@ def update_bacterial_reference_table():
     if os.path.exists('/opt/moss_databases/moss.db'):
         result = sqlCommands.sql_fetch_all("SELECT * FROM bacteria_reference_table")
     else:
+        print ("here")
 
     sys.exit(result)
 
