@@ -6,7 +6,7 @@ from pathlib import Path
 
 class KMARunner():
     def __init__(self, input, output, reference_database, argument_string):
-        self.logger = logging.getLogger()
+        self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
         self.logger.addHandler(logging.StreamHandler())
         self.check_for_kma()
