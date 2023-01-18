@@ -16,19 +16,19 @@ def bacterial_analysis_pipeline(bacterial_parser):
                            bacterial_parser.data.target_dir + "/reference_mapping",
                            bacterial_parser.data.bacteria_db,
                            "-ID 0 -nf -mem_mode -sasm -ef -1t1")
-    #reference_mapping.run()
+    reference_mapping.run()
 
     resfinder_mapping = KMARunner(bacterial_parser.data.input_path,
                             bacterial_parser.data.target_dir + "/finders/resfinder_mapping",
                             bacterial_parser.data.resfinder_db,
                             "-ont -md 5")
-    #resfinder_mapping.run()
+    resfinder_mapping.run()
 
     plasmidfinder_mapping = KMARunner(bacterial_parser.data.input_path,
                             bacterial_parser.data.target_dir + "/finders/plasmidfinder_mapping",
                             bacterial_parser.data.plasmidfinder_db,
                             "-ont -md 5")
-    #plasmidfinder_mapping.run()
+    plasmidfinder_mapping.run()
 
     virulencefinder_mapping = KMARunner(bacterial_parser.data.input_path,
                             bacterial_parser.data.target_dir + "/finders/virulencefinder_mapping",
