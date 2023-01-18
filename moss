@@ -25,9 +25,8 @@ def main(arguments):
     if arguments.subparser_name == 'install':
         LPFInstall.LPF_installation(arguments)
     elif arguments.subparser_name == 'bacteria':
-        bacterial_parser = BacterialParser(arguments.json)
+        bacterial_parser = BacterialParser(arguments.bacterial_json)
         bacterial_analysis_pipeline(bacterial_parser)
-
         pass
     elif arguments.subparser_name == 'viral':
         pass
