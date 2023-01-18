@@ -245,7 +245,6 @@ def check_app_build():
     if check_dist_build():
         return True
     else:
-        print ("Local App is not installed")
         return False
 
 
