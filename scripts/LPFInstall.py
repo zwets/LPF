@@ -3,6 +3,7 @@ import sys
 import subprocess
 import sqlite3
 import src.sqlCommands as sqlCommands
+import src.util.md5 as md5
 from pathlib import Path
 
 
@@ -379,32 +380,29 @@ def update_bacterial_reference_table():
     if os.path.exists('/opt/moss_databases/moss.db'):
         result = sqlCommands.sql_fetch_all("SELECT * FROM bacteria_reference_table", '/opt/moss_databases/moss.db')
     else:
-        print ("here")
+        sys.exit("moss.db is not found")
 
-    sys.exit(result)
+    local_missing_references_in_sql_db = set(bacteria_db_reference_list) - set(result)
+    local_missing_references_in_bacteria_db = set(result) - set(bacteria_db_reference_list)
 
-    infile = open("/opt/moss_databases/bacteria_db/bacteria_db.name", 'r')
-    t = 1
-    conn = sqlite3.connect(config_path + 'moss.db')
-    c = conn.cursor()
-    ids = list()
-    for line in infile:
-        line = line.rstrip()
-        cmd = "~/bin/kma seq2fasta -t_db {}/REFDB.ATG -seqs {}".format(config_path, t)
-        proc = subprocess.Popen(cmd, shell=True,
-                                stdout=subprocess.PIPE, )
-        output = proc.communicate()[0].decode()
-        reference_header_text = output.split("\n")[0][1:]
-        sequence = output.split("\n")[1]
-        entry_id = md5_of_sequence(sequence) #ID for references based on reference sequence
-        if entry_id not in ids:
-            dbstring = "INSERT INTO reference_table(entry_id, reference_header_text) VALUES('{}', '{}')".format(entry_id, reference_header_text.replace("'", "''"))
-            ids.append(entry_id)
-            c.execute(dbstring)
-
-        t += 1
-    conn.commit()
-    conn.close()
+    if len(local_missing_references_in_sql_db) > 0:
+        conn = sqlite3.connect('/opt/moss_databases/moss.db')
+        print("Updating SQL database with new references")
+        with open ('/opt/moss_databases/bacteria_db/bacteria_db.name', 'r') as f:
+            t = 0
+            for line in f:
+                t += 1
+                if line.rstrip() in local_missing_references_in_sql_db: #set search
+                    cmd = "~/bin/kma seq2fasta -t_db /opt/moss_databases/bacteria_db/bacteria_db -seqs {}".format(t)
+                    proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+                    output = proc.communicate()[0].decode().rstrip()
+                    reference_header_text = output.split("\n")[0][1:]
+                    sequence = output.split("\n")[1]
+                    entry_id = md5.md5_of_sequence(sequence)
+                    cmd = 'INSERT INTO bacteria_reference_table VALUES ("{}", "{}")'.format(entry_id, "")
+                    sqlCommands.sql_insert(cmd, '/opt/moss_databases/moss.db')
+        conn.commit()
+        conn.close()
 
 
 def mkfs_LPF():
