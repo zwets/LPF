@@ -378,7 +378,7 @@ def update_bacterial_reference_table():
             bacteria_db_reference_list.append(line.rstrip())
 
     if os.path.exists('/opt/moss_databases/moss.db'):
-        result = sqlCommands.sql_fetch_all("SELECT * FROM bacteria_reference_table", '/opt/moss_databases/moss.db')
+        result = sqlCommands.sql_fetch_all("SELECT entry_id FROM bacteria_reference_table", '/opt/moss_databases/moss.db')
         print (result[0:10])
     else:
         sys.exit("moss.db is not found")
