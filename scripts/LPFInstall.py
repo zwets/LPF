@@ -400,7 +400,7 @@ def update_bacterial_reference_table():
                     sequence = output.split("\n")[1]
                     print (reference_header_text)
                     entry_id = md5.md5_of_sequence(sequence)
-                    cmd = 'INSERT INTO bacteria_reference_table VALUES ("{}", "{}")'.format(entry_id, "")
+                    cmd = 'INSERT OR IGNORE INTO bacteria_reference_table VALUES ("{}", "{}")'.format(entry_id, "")
                     sqlCommands.sql_execute_command(cmd, '/opt/moss_databases/moss.db')
         conn.commit()
         conn.close()
