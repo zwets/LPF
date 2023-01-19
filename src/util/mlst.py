@@ -48,7 +48,7 @@ def determine_mlst(bacterial_parser):
     mlst_flag = True
 
     if mlst_flag:
-        with open("/opt/moss_databases/mlst_db/mlst_talbes/{}.tsv".format(bacterial_parser.data.mlst_species), 'r'):
+        with open("/opt/moss_databases/mlst_db/mlst_tables/{}.tsv".format(bacterial_parser.data.mlst_species), 'r'):
             for line in infile:
                 if line.startswith("ST"):
                     line = line.rstrip().split("\t")
