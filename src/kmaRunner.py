@@ -25,6 +25,6 @@ class KMARunner():
 
     def run(self):
         """runs kma"""
-        self.logger.info("Performing KMA alignment against reference database: {}".format(self.reference_database))
         kma_cmd = "{}/bin/kma -t_db {} -i {} -o {} {}".format(str(Path.home()), self.reference_database, self.input, self.output, self.argument_string)
+        self.logger.info("Running KMA with the following command: {}".format(kma_cmd))
         os.system(kma_cmd)

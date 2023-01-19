@@ -7,6 +7,8 @@ import src.util.md5 as md5
 import pyfastx
 from types import SimpleNamespace
 import src.util.kmaUtils as kmaUtils
+from src.kmaRunner import KMARunner
+
 
 from src.loggingHandlers import begin_logging
 import src.util.mlst as mlst
@@ -108,10 +110,11 @@ class BacterialParser():
 
     def single_template_alignment_bacteria(self):
         self.logger.info("Running single template alignment for bacteria")
-        cmd = "~/bin/kma -i {} -o {} -t_db -mint3 -Mt1 {} -t 8" \
-            .format(self.data.input_path, self.data.target_dir + self.data.sample_name,
-                    self.data.bacteria_db, str(self.data.template_number))
-        os.system(cmd)
+        template_alignment = KMARunner(self.data.input_path,
+                                          self.data.target_dir + "/" + self.data.sample_name,
+                                          self.data.bacteria_db,
+                                          "-mint3 -Mt1 {} -t 8".format(self.data.template_number))
+        template_alignment.run()
 
 
 
