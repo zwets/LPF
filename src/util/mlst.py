@@ -28,7 +28,7 @@ def determine_mlst(bacterial_parser):
         return None
 
     found_genes = dict()
-    with open(bacterial_parser.target_dir + '/finders/mlst_mapping.res', 'r') as infile:
+    with open(bacterial_parser.data.target_dir + '/finders/mlst_mapping.res', 'r') as infile:
         for line in infile:
             if line[0] == "#":
                 line = line.rstrip().split("\t")
