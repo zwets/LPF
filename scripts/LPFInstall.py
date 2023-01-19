@@ -460,7 +460,7 @@ def install_databases(arguments):
                 os.system("kma index -i {}.fasta.gz -o {} -m 14 -Sparse ATG".format(item, item))
             else:
                 os.system("kma index -i {}.fasta.gz -o {} -m 14".format(item, item))
-        if item == "mlst_db" and not os.path.exists('/opt/moss_databases/{}/mlst_tables'.format(item)):
+        if item == "mlst_db": #and not os.path.exists('/opt/moss_databases/{}/mlst_tables/'.format(item)):
             print ("here")
             os.system("sudo wget --recursive https://cge.food.dtu.dk/services/MINTyper/LPF_databases/mlst_db/mlst_tables/")
 
