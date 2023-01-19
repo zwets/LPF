@@ -59,7 +59,7 @@ def determine_mlst(bacterial_parser):
                     test_set = set()
                     line = line.rstrip().split("\t")
                     for i in range(1, len(line)-1):
-                        test_set.add(gene_list[i] + line[i])
+                        test_set.add(gene_list[i-1] + line[i])
                     print (test_set)
 
     else:
