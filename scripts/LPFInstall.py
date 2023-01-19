@@ -482,7 +482,7 @@ def download_mlst_tables():
                     continue
                 species_list.append(line.split('\t')[0])
         for species in species_list:
-            os.system("sudo wget https://cge.cbs.dtu.dk/services/MINTyper/LPF_databases/mlst_db/mlst_tables/{}.tsv".format(species))
+            os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/mlst_db/mlst_tables/{}.tsv".format(species))
 
 def check_local_software():
     kma_result = check_kma()
