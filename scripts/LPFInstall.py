@@ -463,7 +463,7 @@ def install_databases(arguments):
         if item == "mlst_db":
             os.chdir('/opt/moss_databases/{}'.format(item))
             os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/config".format(item))
-
+            download_mlst_tables()
 
     if not os.path.exists('/opt/moss_databases/moss.db'):
         create_sql_db()
@@ -473,10 +473,15 @@ def download_mlst_tables():
     """Downloads the MLST tables"""
     species_list = []
     if not os.path.exists('/opt/moss_databases/mlst_db/mlst_tables/'):
-        pass
-        #with open ('/opt/moss_databases/')
-        #os.system("sudo wget -r https://cge.food.dtu.dk/services/MINTyper/LPF_databases/mlst_db/mlst_tables/")
-
+        os.mkdir('/opt/moss_databases/mlst_db/mlst_tables/')
+        os.chdir('/opt/moss_databases/mlst_db/mlst_tables/')
+        with open('/opt/moss_databases/mlst_db/config') as fd:
+            for line in fd:
+                if line.startswith('#'):
+                    continue
+                species_list.append(line.split('\t')[0])
+        for species in species_list:
+            os.system("wget https://cge.cbs.dtu.dk/services/MINTyper/LPF_databases/mlst_db/mlst_tables/{}.tsv".format(species))
 
 def check_local_software():
     kma_result = check_kma()
