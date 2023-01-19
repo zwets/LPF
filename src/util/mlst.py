@@ -45,8 +45,6 @@ def determine_mlst(bacterial_parser):
         else:
             mlst_flag = False
 
-    mlst_flag = True
-
     if mlst_flag:
         with open("/opt/moss_databases/mlst_db/mlst_tables/{}.tsv".format(bacterial_parser.data.mlst_species), 'r') as infile:
             for line in infile:
@@ -62,6 +60,8 @@ def determine_mlst(bacterial_parser):
                         test_set.add(gene_list[i-1] + '_' + line[i])
                     if test_set.issubset(found_genes):
                         return line[0]
+        else:
+            return "Unknown"
     else:
         return 'Unknown'
 
