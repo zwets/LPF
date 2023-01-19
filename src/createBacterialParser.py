@@ -102,7 +102,8 @@ class BacterialParser():
         """Returns the mlst results"""
         self.data.mlst_species = mlst.derive_mlst_species(self.data.reference_header_text)
         print (self.data.mlst_species)
-        mlst.determine_mlst(self)
+        result = mlst.determine_mlst(self)
+        print (result)
 
 
 
