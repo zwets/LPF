@@ -41,19 +41,13 @@ def determine_mlst(bacterial_parser):
     for item in expected_genes:
         for gene in found_genes:
             if gene.startswith(item):
-                print (item)
                 break
         else:
             mlst_flag = False
 
+    mlst_flag = True
+
     if mlst_flag:
-        print ("All MLST genes found")
-    else:
-        print ("Not all MLST genes found")
-
-    print (found_genes)
-
-    if len(found_genes) == len(expected_genes): #All genes found for mlst
         with open("/opt/moss_databases/mlst_db/mlst_talbes/{}.tsv".format(bacterial_parser.data.mlst_species), 'r'):
             for line in infile:
                 if line.startswith("ST"):
