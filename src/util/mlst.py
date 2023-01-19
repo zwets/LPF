@@ -31,7 +31,7 @@ def determine_mlst(bacterial_parser):
     found_genes = dict()
     with open(bacterial_parser.data.target_dir + '/finders/mlst_mapping.res', 'r') as infile:
         for line in infile:
-            if line[0] == "#":
+            if line[0] != "#":
                 line = line.rstrip().split("\t")
                 gene = line[0].split("_")[0]
                 number = line[0].split("_")[-1]
