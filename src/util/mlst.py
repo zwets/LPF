@@ -36,6 +36,20 @@ def determine_mlst(bacterial_parser):
                 gene = line[0].split("_")[0]
                 if gene in expected_genes:
                     found_genes.add(line[0])
+
+    mlst_flag = True
+    for item in expected_genes:
+        if gene in found_genes:
+            if gene.startswith(item):
+                pass
+        else:
+            mlst_flag = False
+
+    if mlst_flag:
+        print ("All MLST genes found")
+    else:
+        print ("Not all MLST genes found")
+
     print (found_genes)
 
     if len(found_genes) == len(expected_genes): #All genes found for mlst
