@@ -460,13 +460,22 @@ def install_databases(arguments):
                 os.system("kma index -i {}.fasta.gz -o {} -m 14 -Sparse ATG".format(item, item))
             else:
                 os.system("kma index -i {}.fasta.gz -o {} -m 14".format(item, item))
-        if item == "mlst_db": #and not os.path.exists('/opt/moss_databases/{}/mlst_tables/'.format(item)):
-            print ("here")
-            os.system("sudo wget --recursive https://cge.food.dtu.dk/services/MINTyper/LPF_databases/mlst_db/mlst_tables/")
+        if item == "mlst_db":
+            os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/config".format(item))
+
 
     if not os.path.exists('/opt/moss_databases/moss.db'):
         create_sql_db()
     update_bacterial_reference_table()
+
+def download_mlst_tables():
+    """Downloads the MLST tables"""
+    species_list = []
+    if not os.path.exists('/opt/moss_databases/mlst_db/mlst_tables/'):
+        pass
+        #with open ('/opt/moss_databases/')
+        #os.system("sudo wget -r https://cge.food.dtu.dk/services/MINTyper/LPF_databases/mlst_db/mlst_tables/")
+
 
 def check_local_software():
     kma_result = check_kma()
