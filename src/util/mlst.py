@@ -21,7 +21,7 @@ def determine_mlst(bacterial_parser):
         for line in fd:
             if line[0] != "#":
                 line = line.rstrip().split("\t")
-                if line[0] == bacterial_parser.mlst_species:
+                if line[0] == bacterial_parser.data.mlst_species:
                     expected_genes = line[2].split(",")
 
     if expected_genes == None: #No MLST database for this specie
@@ -38,7 +38,7 @@ def determine_mlst(bacterial_parser):
                     found_genes[gene] = number
 
     if len(found_genes) == len(expected_genes): #All genes found for mlst
-        with open("/opt/moss_databases/mlst_db/mlst_talbes/{}.tsv".format(bacterial_parser.mlst_species), 'r'):
+        with open("/opt/moss_databases/mlst_db/mlst_talbes/{}.tsv".format(bacterial_parser.data.mlst_species), 'r'):
             for line in infile:
                 if line.startswith("ST"):
                     line = line.rstrip().split("\t")
