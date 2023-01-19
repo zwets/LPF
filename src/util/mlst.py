@@ -60,8 +60,5 @@ def determine_mlst(bacterial_parser):
                         test_set.add(gene_list[i-1] + '_' + line[i])
                     if test_set.issubset(found_genes):
                         return line[0]
-        else:
-            return "Unknown"
-    else:
-        return 'Unknown'
+    return 'Unknown'
 
