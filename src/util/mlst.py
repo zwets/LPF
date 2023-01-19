@@ -28,15 +28,14 @@ def determine_mlst(bacterial_parser):
     if expected_genes == None: #No MLST database for this specie
         return None
 
-    found_genes = dict()
+    found_genes = set()
     with open(bacterial_parser.data.target_dir + '/finders/mlst_mapping.res', 'r') as infile:
         for line in infile:
             if line[0] != "#":
                 line = line.rstrip().split("\t")
                 gene = line[0].split("_")[0]
-                number = line[0].split("_")[-1]
                 if gene in expected_genes:
-                    found_genes[gene] = number
+                    found_genes.add(line[0])
     print (found_genes)
 
     if len(found_genes) == len(expected_genes): #All genes found for mlst
@@ -44,9 +43,11 @@ def determine_mlst(bacterial_parser):
             for line in infile:
                 if line.startswith("ST"):
                     line = line.rstrip().split("\t")
-                    current_scheme = dict()
+                    gene_list = list()
                     for i in range(1, len(line)-1):
-                        current_scheme[line[i]] = 0
-                    sys.exit('Found scheme: {}'.format(current_scheme))
+                        gene_list.append(line[i])
+                    print (gene_list)
 
+    else:
+        return 'Unknown'
 
