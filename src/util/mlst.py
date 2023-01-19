@@ -41,6 +41,7 @@ def determine_mlst(bacterial_parser):
     for item in expected_genes:
         if gene in found_genes:
             if gene.startswith(item):
+                print (ite)
                 pass
         else:
             mlst_flag = False
