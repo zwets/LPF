@@ -462,8 +462,8 @@ def install_databases(arguments):
                 os.system("kma index -i {}.fasta.gz -o {} -m 14".format(item, item))
         if item == "mlst_db":
             os.chdir('/opt/moss_databases/{}'.format(item))
-            if not os.path.exists('/opt/moss_databases/{}/config'.format(item))
-            os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/config".format(item))
+            if not os.path.exists('/opt/moss_databases/{}/config'.format(item)):
+                os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/config".format(item))
             download_mlst_tables()
 
     if not os.path.exists('/opt/moss_databases/moss.db'):
