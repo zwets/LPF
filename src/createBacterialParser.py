@@ -79,7 +79,7 @@ class BacterialParser():
             #Consider not existing but just rerunning the analysis
             sys.exit(1)
 
-    def get_mapping_results(self):
+    def get_reference_mapping_results(self):
         """Returns the mapping results from the reference mapping"""
         if os.path.exists(self.data.target_dir + "/reference_mapping.res"):
             template_score = 0
@@ -101,9 +101,17 @@ class BacterialParser():
     def get_mlst_results(self):
         """Returns the mlst results"""
         self.data.mlst_species = mlst.derive_mlst_species(self.data.reference_header_text)
-        print (self.data.mlst_species)
-        result = mlst.determine_mlst(self)
-        print (result)
+        self.data.mlst_result = mlst.determine_mlst(self)
+
+    def run_assembly(self):
+        pass
+
+    def single_template_alignment_bacteria(self):
+        self.logger.info("Running single template alignment for bacteria")
+        cmd = "~/bin/kma -i {} -o {} -t_db -mint3 -Mt1 {} -t 8" \
+            .format(self.data.input_path, self.data.target_dir + self.data.sample_name,
+                    self.data.bacteria_db, str(self.data.template_number))
+        os.system(cmd)
 
 
 

@@ -42,11 +42,17 @@ def bacterial_analysis_pipeline(bacterial_parser):
 
     #1t1?
 
-    bacterial_parser.get_mapping_results()
+    bacterial_parser.get_reference_mapping_results()
 
     #Eval reference hit
-    
+
     bacterial_parser.get_mlst_results()
+
+    if bacterial_parser.data.template_number == None: #No reference template found
+        bacterial_parser.run_assembly()
+
+    bacterial_parser.single_template_alignment_bacteria()
+
 
 
 
