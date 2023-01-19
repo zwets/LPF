@@ -1,4 +1,5 @@
 import sys
+import logging
 def derive_mlst_species(reference_header_text):
     specie = reference_header_text.split()[1].lower() + " " + reference_header_text.split()[2].lower()
     mlst_dict = dict()
@@ -17,6 +18,8 @@ def derive_mlst_species(reference_header_text):
 
 def determine_mlst(bacterial_parser):
     """Returns the mlst results"""
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
     with open("/opt/moss_databases/mlst_db/config", 'r') as fd:
         for line in fd:
             if line[0] != "#":
@@ -59,6 +62,9 @@ def determine_mlst(bacterial_parser):
                     for i in range(1, len(line)-1):
                         test_set.add(gene_list[i-1] + '_' + line[i])
                     if test_set.issubset(found_genes):
+                        bacterial_parser.logger()
+                        logger.info("MLST: {}".format(line[0]))
                         return line[0]
+    logger.info("No MLST found")
     return 'Unknown'
 
