@@ -474,7 +474,7 @@ def download_mlst_tables():
     """Downloads the MLST tables"""
     species_list = []
     if not os.path.exists('/opt/moss_databases/mlst_db/mlst_tables/'):
-        os.mkdir('/opt/moss_databases/mlst_db/mlst_tables/')
+        os.system('sudo mkdir -m 777 /opt/moss_databases/mlst_db/mlst_tables/')
         os.chdir('/opt/moss_databases/mlst_db/mlst_tables/')
         with open('/opt/moss_databases/mlst_db/config') as fd:
             for line in fd:
