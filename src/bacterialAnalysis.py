@@ -53,6 +53,17 @@ def bacterial_analysis_pipeline(bacterial_parser):
 
     bacterial_parser.single_template_alignment_bacteria()
 
+    #ccphylo distance matrix of cluster
+
+    #check distance, if too great assembly. What else? completeness?
+
+    #phytree
+
+    #pdf report
+
+
+
+
 
 
 

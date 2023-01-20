@@ -5,6 +5,8 @@ import sys
 import datetime
 import src.util.md5 as md5
 import pyfastx
+
+import src.sqlCommands as sqlCommands
 from types import SimpleNamespace
 import src.util.kmaUtils as kmaUtils
 from src.kmaRunner import KMARunner
@@ -115,6 +117,13 @@ class BacterialParser():
                                           self.data.bacteria_db,
                                           "-mint3 -Mt1 {} -t 8".format(self.data.template_number))
         template_alignment.run()
+
+    def get_list_of_isolates(self):
+        """Returns a list of isolates from the reference template"""
+        self.logger.info("Getting list of isolates from reference template")
+        result = sqlCommands.sql_fetch_all("SELECT isolates FROM bacteria_reference_table WHERE reference_header_text = \"{}\"".format(self.data.reference_header_text), '/opt/moss_databases/moss.db')
+        print (result)
+
 
 
 
