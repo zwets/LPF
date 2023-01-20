@@ -413,6 +413,7 @@ def mkfs_LPF():
     path_list = ["/opt/moss_data/",
                  "/opt/moss_analyses/",
                  "/opt/moss_metadata_json/",
+                 "/opt/moss_metadata_json/individual_json",
                  "/opt/moss_databases/",
                  "/opt/moss_reports/",
                  "/opt/moss_logs/"]
