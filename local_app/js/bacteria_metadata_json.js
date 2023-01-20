@@ -92,6 +92,9 @@ function create_meta_data_table_fastq(){
 
         }
 
+        console.log(obj_list);
+        console.log(JSON.stringify(obj_list));
+
         const final_obj = {'samples': obj_list}
         const current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
         const output_json_file = `/opt/moss_db/${current_moss_system}/metadata_json/${experiment_name}.json`;
