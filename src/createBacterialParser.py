@@ -34,7 +34,6 @@ class BacterialParser():
         self.logger.addHandler(logging.StreamHandler())
         self.logger.info("Starting analysis of {}".format(self.data.entry_id))
         self.data.sample_name = self.data.input_path.split("/")[-1][0:-9]
-        self.data.moss_db = "{}/moss.db".format(self.data.config_path)
         self.data.bacteria_db = "/opt/moss_databases/bacteria_db/bacteria_db"
         self.data.resfinder_db = '/opt/moss_databases/resfinder_db/resfinder_db'
         self.data.plasmidfinder_db = '/opt/moss_databases/plasmidfinder_db/plasmidfinder_db'
