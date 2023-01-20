@@ -1,5 +1,3 @@
-import {createBatchJson} from './createBatchJson.js';
-
 const { exec } = require('child_process');
 const fs = require('fs')
 const storage = require('electron-json-storage');
@@ -93,10 +91,6 @@ function create_meta_data_table_fastq(){
             obj_list.push(new_obj);
 
         }
-
-        console.log(obj_list);
-        console.log(obj_list);
-
 
         const final_obj = {'samples': obj_list}
         const current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
