@@ -94,7 +94,7 @@ function create_meta_data_table_fastq(){
         console.log(obj_list);
         console.log(JSON.stringify(obj_list));
 
-        const final_obj = {'batches': obj_list}
+        const final_obj = {'batch_runs': obj_list}
         const output_json_file = `/opt/moss_metadata_json/${experiment_name}.json`;
 
       //Here insert validation function for ENA compatibility
