@@ -47,9 +47,12 @@ def bacterial_analysis_pipeline(bacterial_parser):
     #Eval reference hit
 
     bacterial_parser.get_mlst_results()
+    if bacterial_parser.data.mlst_result != "Unknown":
+        bacterial_parser.logger.info("MLST result: {}".format(bacterial_parser.data.mlst_result))
 
     if bacterial_parser.data.template_number == None: #No reference template found
         bacterial_parser.run_assembly()
+
 
     bacterial_parser.single_template_alignment_bacteria()
 
