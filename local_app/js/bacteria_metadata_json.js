@@ -82,7 +82,6 @@ function create_meta_data_table_fastq(){
                 }
             }
             new_obj['input_path'] = file_list_obj[i].path;
-            new_obj['config_path'] = '/opt/moss_db/' + require('/opt/moss_db/config.json')["current_working_db"] + '/';
             var errorMessage = window.validateData(new_obj);
             if (errorMessage != "") {
                 console.log(errorMessage);
@@ -95,15 +94,9 @@ function create_meta_data_table_fastq(){
         console.log(obj_list);
         console.log(JSON.stringify(obj_list));
 
-        const final_obj = {'samples': obj_list}
-        const current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
-        const output_json_file = `/opt/moss_db/${current_moss_system}/metadata_json/${experiment_name}.json`;
+        const final_obj = {'batches': obj_list}
+        const output_json_file = `/opt/moss_metadata_json/${experiment_name}.json`;
 
-      /*
-      if (errorMessage != "") {
-        console.log(errorMessage);
-        return;
-      }*/
       //Here insert validation function for ENA compatibility
         if (errorMessage == "") {
             if (fs.existsSync(output_json_file)) {
