@@ -24,7 +24,7 @@ def main(analysis_type, batch_json):
     """Main func"""
     json_list = create_individual_json_files(batch_json)
     jobslist = []
-    for item in json_list
+    for item in json_list:
         if os.path.exists('/opt/moss/moss'):
             cmd = 'python3 /opt/moss/moss {} -json {}'.format(analysis_type, item)
         else:
