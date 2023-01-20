@@ -39,7 +39,7 @@ def main(analysis_type, batch_json):
         #    .format(entry_id, item['input_path'].split("/")[-1][0:-9], "Analysis waiting.", "Queued", "Queued",
         #            "Queued", "Queued", ""), item['config_path'] + 'moss.db')
     print (jobslist)
-    #Parallel(n_jobs=1)(delayed(moss_analysis)(jobslist, i) for i in range(len(jobslist))) #Can be changed to parallelize
+    Parallel(n_jobs=1)(delayed(moss_analysis)(jobslist, i) for i in range(len(jobslist))) #Can be changed to parallelize
 
 def create_individual_json_files(batch_json):
     """Create individual json files for each sample"""
