@@ -163,6 +163,10 @@ function getCities() {
                     none_option.value = "Unspecified city";
                     none_option.text = "Unspecified city";
                     document.getElementById(`input${[i]}${[t-1]}`).add(none_option);
+	            const custom_option = document.createElement("option");
+		    custom_option.value = "custom city";
+		    custom_option.text = "custom city";
+		    document.getElementById(`input${[i]}${[t-1]}`).add(custom_option);
 		    for(let city in countryData[countryValue]) {
                        const cityName = countryData[countryValue][city]
                        const option = document.createElement("option");
@@ -174,6 +178,34 @@ function getCities() {
                 }
             }
         }
+}
+
+function getCustomValue() {
+    let rows = document.getElementById("metadata_csv_table").rows;
+    let header_row = rows[0];
+
+        for (let i = 0; i < rows.length-1; i++) {
+            for (let t = 0; t < rows[i].cells.length; t++) {
+                if (header_row.cells[t].innerHTML == "city") {
+                    const cityValue = document.getElementById(`input${[i]}${[t]}`).value
+                    if(cityValue == "custom city") {
+                        const Dialogs = require('dialogs')
+                        const dialogs = Dialogs()
+                        dialogs.prompt('Give the city name', ok => {
+                        const custom_option = document.createElement("option");
+                        custom_option.value = ok;
+                        custom_option.text = ok;
+                        document.getElementById(`input${[i]}${[t]}`).add(custom_option);
+                        document.getElementById(`input${[i]}${[t]}`).value = custom_option.value;
+                           })
+                       }
+
+                }
+
+               }
+
+            }
+
 }
 
 function generate_table_fastq(file_number) {
@@ -237,6 +269,10 @@ function generate_table_fastq(file_number) {
                     countryNames.push.apply(countryNames, countries);
                     object_options = countryNames;
                     input.onclick = function(){window.getCities()};
+                }
+		else if (columnNames[j] == "city") {
+                    object_options = Object.values(identifier);
+                    input.onclick = function(){window.getCustomValue()};
                 }
                 else {
                     object_options = Object.values(identifier);
