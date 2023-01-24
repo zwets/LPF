@@ -270,7 +270,7 @@ function generate_table_fastq(file_number) {
                     object_options = countryNames;
                     input.onclick = function(){window.getCities()};
                 }
-		else if (columnNames[j] == "city") {
+		        else if (columnNames[j] == "city") {
                     object_options = Object.values(identifier);
                     input.onclick = function(){window.getCustomValue()};
                 }
@@ -326,6 +326,15 @@ exports.allNumeric = allNumeric
 function validateData(jsonFinal) {
    let errors = "";
    errors = window.allNumeric(jsonFinal.patient_age, "patient age", errors);
+   if(jsonFinal.city === "" || jsonFinal.city == "Unspecified city") {
+     window.alert("Please select city");
+     errors = errors.concat("\n").concat("Please select city");
+     return errors;
+   }
+   if(jsonFinal.city === "undefined") {
+     window.alert("Please enter or select the city");
+     errors = errors.concat("\n").concat("Please enter or select the city name");
+   }
    if(jsonFinal.country === "" || jsonFinal.country == "Unspecified country") {
      window.alert("Please select country");
      errors = errors.concat("\n").concat("Please select country");
