@@ -52,6 +52,7 @@ def bacterial_analysis_pipeline(bacterial_parser):
 
     if bacterial_parser.data.template_number == None: #No reference template found
         bacterial_parser.run_assembly() #TBD
+    bacterial_parser.run_assembly()  # remove after test
 
     bacterial_parser.single_template_alignment_bacteria()
 
