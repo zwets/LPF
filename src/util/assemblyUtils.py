@@ -12,7 +12,7 @@ def flye_assembly(bacterial_parser):
     output = proc.communicate()[0]
     id = output.decode().rstrip()
 
-    cmd = "docker cp {}:/tmp/assembly_results {}.".format(id, bacterial_parser.data.target_dir)
+    cmd = "docker cp {}:/tmp/assembly_results {}/assembly_results".format(id, bacterial_parser.data.target_dir)
     os.system(cmd)
     cmd = "docker container rm {}".format(id)
     os.system(cmd)
