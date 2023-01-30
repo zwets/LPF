@@ -5,6 +5,7 @@ def flye_assembly(bacterial_parser):
     cmd = "docker run --name assembly_{0} -v {1}:/tmp/{2} staphb/flye flye -o /tmp/assembly_results" \
           " --threads 8 --nano-raw /tmp/{2}"\
         .format(bacterial_parser.data.entry_id, bacterial_parser.data.input_path, bacterial_parser.data.input_file)
+    print (cmd)
     os.system(cmd)
 
     proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_", bacterial_parser.data.entry_id), shell=True, stdout=subprocess.PIPE)
