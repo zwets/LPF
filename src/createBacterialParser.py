@@ -41,6 +41,7 @@ class BacterialParser():
         self.data.mlst_db = '/opt/moss_databases/mlst_db/mlst_db'
         self.data.target_dir = "/opt/moss_analyses/{}".format(self.data.entry_id)
         self.data.version = __version__
+        self.data.black_list = ['62b06be200d3967db6b0f6023d7b5b2e', 'fac82762aa980d285edbbcd45ce952fb'] #IDs from testfiles to be excluded from SQL and reference indexing
         self.logger.info('BacterialParser initialized with data: {}'.format(self.data.__dict__))
         self.qc_check()
         self.mkfs()
