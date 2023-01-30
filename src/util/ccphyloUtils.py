@@ -1,7 +1,8 @@
 import os
 import sys
 
-def derive_file_list_from_template_header_text(template_):
+
+
 def make_ccphylo_folder(file_list, output_path):
     cmd = "mkdir {}/phytree_output".format(output_path)
     os.system(cmd)

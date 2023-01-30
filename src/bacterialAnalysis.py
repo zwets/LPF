@@ -52,10 +52,12 @@ def bacterial_analysis_pipeline(bacterial_parser):
 
     if bacterial_parser.data.template_number == None: #No reference template found
         sys.exit()
-        bacterial_parser.run_assembly()
+        bacterial_parser.run_assembly() #TBD
 
 
     bacterial_parser.single_template_alignment_bacteria()
+
+    bacterial_parser.get_list_of_isolates()
 
     #ccphylo distance matrix of cluster
 
