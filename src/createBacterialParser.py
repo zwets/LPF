@@ -10,6 +10,7 @@ import src.sqlCommands as sqlCommands
 from types import SimpleNamespace
 import src.util.kmaUtils as kmaUtils
 from src.kmaRunner import KMARunner
+from src.util.assemblyUtils import flye_assembly
 
 
 from src.loggingHandlers import begin_logging
@@ -108,7 +109,12 @@ class BacterialParser():
         self.data.mlst_result = mlst.determine_mlst(self)
 
     def run_assembly(self):
-        pass
+        """
+        Performing Flye assebly
+        """
+        self.logger.info('Performing Flye assebly')
+
+        flye_assembly(self)
 
     def single_template_alignment_bacteria(self):
         self.logger.info("Running single template alignment for bacteria")
@@ -124,7 +130,6 @@ class BacterialParser():
         result = sqlCommands.sql_fetch_all("SELECT isolates FROM bacteria_reference_table WHERE reference_header_text = \"{}\"".format(self.data.reference_header_text), '/opt/moss_databases/moss.db')
         self.logger.info(result)
         return result
-
 
 
 
