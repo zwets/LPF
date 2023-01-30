@@ -18,8 +18,8 @@ def flye_assembly(bacterial_parser):
     os.system(cmd)
 
     # Concatenate contigs
-    with open("{}assembly_results/assembly.fasta".format(bacterial_parser.data.target_dir), 'r') as infile:
-        with open("{}{}_assembly.fasta".format(bacterial_parser.data.target_dir, bacterial_parser.data.sample_name), 'w') as outfile:
+    with open("{}/assembly_results/assembly.fasta".format(bacterial_parser.data.target_dir), 'r') as infile:
+        with open("{}/{}_assembly.fasta".format(bacterial_parser.data.target_dir, bacterial_parser.data.sample_name), 'w') as outfile:
             sequence = ""
             for line in infile:
                 if line[0] != ">":
