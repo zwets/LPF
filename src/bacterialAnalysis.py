@@ -54,7 +54,6 @@ def bacterial_analysis_pipeline(bacterial_parser):
         sys.exit()
         bacterial_parser.run_assembly() #TBD
 
-
     bacterial_parser.single_template_alignment_bacteria()
 
     bacterial_parser.get_list_of_isolates()

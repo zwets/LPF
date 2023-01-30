@@ -122,6 +122,7 @@ class BacterialParser():
         self.logger.info("Getting list of isolates from reference template")
         result = sqlCommands.sql_fetch_all("SELECT isolates FROM bacteria_reference_table WHERE reference_header_text = \"{}\"".format(self.data.reference_header_text), '/opt/moss_databases/moss.db')
         self.logger.info(result)
+        return result
 
 
 
