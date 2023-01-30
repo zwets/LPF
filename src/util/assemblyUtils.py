@@ -30,9 +30,11 @@ def flye_assembly(bacterial_parser):
                 new_header_text = ">{}_Assembly_{}".format(bacterial_parser.data.entry_id, bacterial_parser.data.reference_header_text[1:]
                                                            .split("_Assembly_")[-1])
             else:
-                new_header_text = ">{}_Assembly_{}".format(bacterial_parser.data.reference_id, bacterial_parser.data.reference_header_text[1:])
+                new_header_text = ">{}_Assembly_{}".format(bacterial_parser.data.entry_id, bacterial_parser.data.reference_header_text[1:])
             print(new_header_text, file=outfile)
             print(sequence, file=outfile)
 
-    #os.system("~/bin/kma index -t_db {} -i {}{}_assembly.fasta"\
-    #    .format(bacterial_parser.data.ref_db, bacterial_parser.data.target_dir, bacterial_parser.data.sample_name))
+    #test_list = ['62b06be200d3967db6b0f6023d7b5b2e', 'fac82762aa980d285edbbcd45ce952fb'] #IDs of test files to be ignored
+    #if bacterial_parser.data.entry_id not in test_list:
+    #    os.system("~/bin/kma index -t_db {} -i {}{}_assembly.fasta"\
+    #              .format(bacterial_parser.data.ref_db, bacterial_parser.data.target_dir, bacterial_parser.data.sample_name))
