@@ -2,8 +2,8 @@ import os
 
 def clean_up(md5_list):
     for item in md5_list:
-        if os.path.exists():
-            os.system("sudo rm -rf {}".format(item))
+        os.system("sudo rm -rf /opt/moss_logs/{}.log".format(item))
+        os.system("sudo rm -rf /opt/moss_analyses/{}".format(item))
 
 if __name__ == '__main__':
     md5_list = ['62b06be200d3967db6b0f6023d7b5b2e', 'fac82762aa980d285edbbcd45ce952fb']
