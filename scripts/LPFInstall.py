@@ -361,7 +361,7 @@ def create_sql_db():
 
 
     c.execute(
-        """CREATE TABLE IF NOT EXISTS status_table(entry_id TEXT PRIMARY KEY, sample_name TEXT, status TEXT, time_stamp TEXT, stage TEXT)""")
+        """CREATE TABLE IF NOT EXISTS status_table(entry_id TEXT PRIMARY KEY, input_file TEXT, status TEXT, time_stamp TEXT, stage TEXT)""")
     conn.commit()
 
     c.execute(

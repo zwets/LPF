@@ -28,12 +28,12 @@ def main(analysis_type, batch_json):
     jobslist = []
     for item in json_list:
         data = json.load(open(item))
-        sample_name = data['sample_name']
+        input_file = data['sample_name']
         entry_id = md5.md5_of_file(data['input_path'])
         time_stamp = str(datetime.datetime.now())[0:-7]
 
         sqlCommands.sql_execute_command(
-            "INSERT INTO status_table(entry_id, sample_name, status, time_stamp, stage) VALUES ('{}', '{}', '{}', '{}', '{}')" \
+            "INSERT INTO status_table(entry_id, input_file, status, time_stamp, stage) VALUES ('{}', '{}', '{}', '{}', '{}')" \
                 .format(entry_id, sample_name, 'Queued, not started', time_stamp, '1'), '/opt/LPF_databases/LPF.db')
 
         if os.path.exists('/opt/LPF/LPF'):
