@@ -27,19 +27,21 @@ def main(analysis_type, batch_json):
     json_list = create_individual_json_files(batch_json)
     jobslist = []
     for item in json_list:
+        data = json.load(open(item))
+        print (data)
         if os.path.exists('/opt/LPF/LPF'):
             cmd = 'python3 /opt/LPF/LocalPathogenFinder {} -json {}'.format(analysis_type, item)
         else:
             cmd = 'python3 LocalPathogenFinder {} -json {}'.format(analysis_type, item)
         jobslist.append(cmd)
-        print (item)
-        sample_name = item['sample_name']
-        entry_id = md5.md5_of_file(item['input_path'])
-        time_stamp = str(datetime.datetime.now())[0:-7]
-
-        sqlCommands.sql_execute_command(
-            "INSERT INTO status_table(entry_id, sample_name, status, time_stamp, stage) VALUES ('{}', '{}', '{}', '{}', '{}')" \
-                .format(entry_id, sample_name, 'Queued, not started', time_stamp, '1'), '/opt/LPF_databases/LPF.db')
+        # print (item)
+        # sample_name = item['sample_name']
+        # entry_id = md5.md5_of_file(item['input_path'])
+        # time_stamp = str(datetime.datetime.now())[0:-7]
+        #
+        # sqlCommands.sql_execute_command(
+        #     "INSERT INTO status_table(entry_id, sample_name, status, time_stamp, stage) VALUES ('{}', '{}', '{}', '{}', '{}')" \
+        #         .format(entry_id, sample_name, 'Queued, not started', time_stamp, '1'), '/opt/LPF_databases/LPF.db')
     Parallel(n_jobs=1)(delayed(LPF_analysis)(jobslist, i) for i in range(len(jobslist))) #Can be changed to parallelize
 
 def create_individual_json_files(batch_json):
