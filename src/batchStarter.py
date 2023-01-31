@@ -4,7 +4,7 @@ import os
 import argparse
 import util.md5 as md5
 from joblib import Parallel, delayed
-import src.sqlCommands as sqlCommands
+import sqlCommands as sqlCommands
 import datetime
 import json
 
