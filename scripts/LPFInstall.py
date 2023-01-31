@@ -328,7 +328,7 @@ def check_virtual_env():
         return False
 
 def check_app_build():
-    path_list = ["/opt/LPF_db", "/opt/LPF_data", "/opt/LPF_databases", "/opt/LPF_reports"]
+    path_list = ["/opt/LPF_data", "/opt/LPF_databases", "/opt/LPF_reports"]
     for item in path_list:
         if not os.path.exists(item):
             print(bcolors.FAIL+ item +" is not installed" + bcolors.ENDC)
