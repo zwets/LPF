@@ -34,6 +34,7 @@ def main(analysis_type, batch_json):
         else:
             cmd = 'python3 LocalPathogenFinder {} -json {}'.format(analysis_type, item)
         jobslist.append(cmd)
+        sys.exit()
         # print (item)
         # sample_name = item['sample_name']
         # entry_id = md5.md5_of_file(item['input_path'])
