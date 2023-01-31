@@ -124,12 +124,13 @@ class BacterialParser():
                                           "-mint3 -Mt1 {} -t 8".format(self.data.template_number))
         template_alignment.run()
 
+        #handle consensus path
+        #Insert consesus into SQL?
+
     def get_list_of_isolates(self):
         """Returns a list of isolates from the reference template"""
         self.logger.info("Getting list of isolates from reference template")
-        result = sqlCommands.sql_fetch_all("SELECT isolates FROM bacteria_reference_table WHERE reference_header_text = \"{}\"".format(self.data.reference_header_text), '/opt/moss_databases/moss.db')
-        self.logger.info(result)
-        return result
+        self.data.isolate_list = sqlCommands.sql_fetch_all("SELECT isolates FROM bacteria_reference_table WHERE reference_header_text = \"{}\"".format(self.data.reference_header_text), '/opt/moss_databases/moss.db')
 
 
 
