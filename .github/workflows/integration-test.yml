@@ -1,4 +1,4 @@
-name: moss integration test
+name: LPF integration test
 on:
   pull_request
 jobs:
@@ -17,9 +17,9 @@ jobs:
       - name: Run install script
         run: |
           python3 ubuntu_22_install.py -action
-      - name: moss init
+      - name: LPF init
         run: |
-          python3 /opt/moss/src/moss_init.py -db /opt/moss/tests/fixtures/data_for_tests/database/ -config_name test
+          python3 /opt/LPF/src/LPF_init.py -db /opt/LPF/tests/fixtures/data_for_tests/database/ -config_name test
       - name: Nosetests
         run: |
            nose2 -s tests/integration --verbosity 2

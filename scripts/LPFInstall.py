@@ -15,7 +15,7 @@ def LPF_installation(arguments):
     user = proc.communicate()[0].decode().rstrip()
     if user == "root":
         print(
-            bcolors.FAIL + "This script should not be run as root, please run as a normal user. This means DO NOT put sudo in the command line when running ./moss_install, as it will ruin your user path" + bcolors.ENDC)
+            bcolors.FAIL + "This script should not be run as root, please run as a normal user. This means DO NOT put sudo in the command line when running ./LPF install, as it will ruin your user path" + bcolors.ENDC)
         sys.exit()
     if not os.path.exists('/home/{}/bin'.format(user)):
         os.system('sudo mkdir /home/{}/bin'.format(user))
@@ -26,38 +26,38 @@ def LPF_installation(arguments):
     cwd = os.getcwd()
     if arguments.complete:
         solve_conda_env()
-        print (bcolors.OKGREEN + "Moss environment created" + bcolors.ENDC)
+        print (bcolors.OKGREEN + "LPF environment created" + bcolors.ENDC)
         install_ont_deps()
         print (bcolors.OKGREEN + "ONT dependencies installed" + bcolors.ENDC)
-        install_moss_deps(user)
-        print (bcolors.OKGREEN + "Moss dependencies installed" + bcolors.ENDC)
+        install_LPF_deps(user)
+        print (bcolors.OKGREEN + "LPF dependencies installed" + bcolors.ENDC)
         install_databases(arguments)
         os.chdir(cwd)
         print (bcolors.OKGREEN + "Databases installed" + bcolors.ENDC)
-        moss_build_app()
-        print (bcolors.OKGREEN + "Moss app built" + bcolors.ENDC)
+        LPF_build_app()
+        print (bcolors.OKGREEN + "LPF app built" + bcolors.ENDC)
     elif arguments.install_databases:
         install_databases(arguments)
         os.chdir(cwd)
     check_all_deps()
 
 def build_app():
-    os.system("cd local_app; chmod a+x moss_launch; npm i; ./node_modules/.bin/electron-rebuild; npm run dist;sudo cp moss.desktop /usr/share/applications/.; cd ..")
+    os.system("cd local_app; chmod a+x LPF_launch; npm i; ./node_modules/.bin/electron-rebuild; npm run dist;sudo cp LPF.desktop /usr/share/applications/.; cd ..")
     return True
 
-def move_moss_repo():
+def move_LPF_repo():
     cwd = os.getcwd()
     print ("current working directory is {}".format(cwd))
-    if (cwd != '/opt/moss'):
-        os.system("sudo rm -rf /opt/moss")
-        os.system("sudo cp -r {} /opt/moss".format(cwd))
-        os.system("sudo chmod a+rwx /opt/moss")
-def moss_build_app():
+    if (cwd != '/opt/LPF'):
+        os.system("sudo rm -rf /opt/LPF")
+        os.system("sudo cp -r {} /opt/LPF".format(cwd))
+        os.system("sudo chmod a+rwx /opt/LPF")
+def LPF_build_app():
     build_app()
     check_dist_build()
-    move_moss_repo()
+    move_LPF_repo()
 
-def install_moss_deps(user):
+def install_LPF_deps(user):
     if not check_kma():
         if os.path.exists("kma"):
             os.system("sudo rm -rf kma")
@@ -100,9 +100,9 @@ def solve_conda_env():
     proc = subprocess.Popen("conda env list", shell=True,
                             stdout=subprocess.PIPE, )
     env = proc.communicate()[0].decode().split()
-    if 'moss' in env:
-        print ("Moss environment already exists")
-        print ("Updating moss environment")
+    if 'LPF' in env:
+        print ("LPF environment already exists")
+        print ("Updating LPF environment")
         os.system("conda env update --file environment.yml  --prune")
     else:
         os.system("conda env create -f environment.yml")
@@ -118,7 +118,7 @@ def add_bin_path():
         os.system("source ~/.bashrc")
 
 def check_all_deps():
-    os.system("cd /opt/moss")
+    os.system("cd /opt/LPF")
     conda_result = check_conda()
     ont_check = check_ont_deps()
     docker_images_result = check_docker_images()
@@ -229,19 +229,19 @@ def check_pip_deps():
         return True
 
 def check_local_database():
-    if not os.path.exists('/opt/moss_databases/resfinder_db/resfinder_db.name'):
+    if not os.path.exists('/opt/LPF_databases/resfinder_db/resfinder_db.name'):
         print(bcolors.FAIL + "Resfinder database not found" + bcolors.ENDC)
         return False
-    if not os.path.exists('/opt/moss_databases/plasmidfinder_db/plasmidfinder_db.name'):
+    if not os.path.exists('/opt/LPF_databases/plasmidfinder_db/plasmidfinder_db.name'):
         print(bcolors.FAIL + "Plasmidfinder database not found" + bcolors.ENDC)
         return False
-    if not os.path.exists('/opt/moss_databases/virulencefinder_db/virulencefinder_db.name'):
+    if not os.path.exists('/opt/LPF_databases/virulencefinder_db/virulencefinder_db.name'):
         print(bcolors.FAIL + "Virulencefinder database not found" + bcolors.ENDC)
         return False
-    if not os.path.exists('/opt/moss_databases/mlst_db/mlst_db.name'):
+    if not os.path.exists('/opt/LPF_databases/mlst_db/mlst_db.name'):
         print(bcolors.FAIL + "MLST database not found" + bcolors.ENDC)
         return False
-    if not os.path.exists('/opt/moss_databases/bacteria_db/bacteria_db.name'):
+    if not os.path.exists('/opt/LPF_databases/bacteria_db/bacteria_db.name'):
         print(bcolors.FAIL + "Bacteria database not found" + bcolors.ENDC)
         return False
     else:
@@ -320,15 +320,15 @@ def check_virtual_env():
     proc = subprocess.Popen("conda env list", shell=True,
                             stdout=subprocess.PIPE, )
     env = proc.communicate()[0].decode().split()
-    if 'moss' in env:
-        print(bcolors.OKGREEN + "Moss environment is installed" + bcolors.ENDC)
+    if 'LPF' in env:
+        print(bcolors.OKGREEN + "LPF environment is installed" + bcolors.ENDC)
         return True
     else:
-        print(bcolors.FAIL + "Moss environment is not installed" + bcolors.ENDC)
+        print(bcolors.FAIL + "LPF environment is not installed" + bcolors.ENDC)
         return False
 
 def check_app_build():
-    path_list = ["/opt/moss_db", "/opt/moss_data", "/opt/moss_databases", "/opt/moss_reports"]
+    path_list = ["/opt/LPF_db", "/opt/LPF_data", "/opt/LPF_databases", "/opt/LPF_reports"]
     for item in path_list:
         if not os.path.exists(item):
             print(bcolors.FAIL+ item +" is not installed" + bcolors.ENDC)
@@ -340,7 +340,7 @@ def check_app_build():
 
 def create_sql_db():
     print ("Creating SQL database")
-    conn = sqlite3.connect('/opt/moss_databases/moss.db')
+    conn = sqlite3.connect('/opt/LPF_databases/LPF.db')
     c = conn.cursor()
 
     c.execute(
@@ -361,7 +361,7 @@ def create_sql_db():
 
 
     c.execute(
-        """CREATE TABLE IF NOT EXISTS status_table(entry_id TEXT PRIMARY KEY, sample_name TEXT, status TEXT, type TEXT, current_stage TEXT, final_stage TEXT, result TEXT, time_stamp TEXT)""")
+        """CREATE TABLE IF NOT EXISTS status_table(entry_id TEXT PRIMARY KEY, sample_name TEXT, status TEXT, time_stamp TEXT, stage TEXT)""")
     conn.commit()
 
     c.execute(
@@ -373,50 +373,50 @@ def update_bacterial_reference_table():
     sql_bacteria_reference_list = []
     bacteria_db_reference_list = []
 
-    with open('/opt/moss_databases/bacteria_db/bacteria_db.name', 'r') as f:
+    with open('/opt/LPF_databases/bacteria_db/bacteria_db.name', 'r') as f:
         for line in f:
             bacteria_db_reference_list.append(line.rstrip())
 
-    if os.path.exists('/opt/moss_databases/moss.db'):
-        result = sqlCommands.sql_fetch_all("SELECT reference_header_text FROM bacteria_reference_table", '/opt/moss_databases/moss.db')
+    if os.path.exists('/opt/LPF_databases/LPF.db'):
+        result = sqlCommands.sql_fetch_all("SELECT reference_header_text FROM bacteria_reference_table", '/opt/LPF_databases/LPF.db')
     else:
-        sys.exit("moss.db is not found")
+        sys.exit("LPF.db is not found")
 
     print ("calculating the difference between the reference table and the database")
     local_missing_references_in_sql_db = set(set(bacteria_db_reference_list) - set(result))
     local_missing_references_in_bacteria_db = set(set(result) - set(bacteria_db_reference_list))
 
     if len(local_missing_references_in_sql_db) > 0:
-        conn = sqlite3.connect('/opt/moss_databases/moss.db')
+        conn = sqlite3.connect('/opt/LPF_databases/LPF.db')
         print("Updating SQL database with new references. Number of new references: {}".format(len(local_missing_references_in_sql_db)))
-        with open ('/opt/moss_databases/bacteria_db/bacteria_db.name', 'r') as f:
+        with open ('/opt/LPF_databases/bacteria_db/bacteria_db.name', 'r') as f:
             t = 0
             for line in f:
                 t += 1
                 if t%100 == 0:
                     print ("{} references processed".format(t))
                 if line.rstrip() in local_missing_references_in_sql_db: #set search
-                    cmd = "~/bin/kma seq2fasta -t_db /opt/moss_databases/bacteria_db/bacteria_db -seqs {}".format(t)
+                    cmd = "~/bin/kma seq2fasta -t_db /opt/LPF_databases/bacteria_db/bacteria_db -seqs {}".format(t)
                     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
                     output = proc.communicate()[0].decode().rstrip()
                     reference_header_text = output.split("\n")[0][1:]
                     sequence = output.split("\n")[1]
                     entry_id = md5.md5_of_sequence(sequence)
                     cmd = 'INSERT OR IGNORE INTO bacteria_reference_table VALUES ("{}", "{}", "{}")'.format(entry_id, "", reference_header_text)
-                    sqlCommands.sql_execute_command(cmd, '/opt/moss_databases/moss.db')
+                    sqlCommands.sql_execute_command(cmd, '/opt/LPF_databases/LPF.db')
         conn.commit()
         conn.close()
 
 
 def mkfs_LPF():
     """Makes the LPF filesystem"""
-    path_list = ["/opt/moss_data/",
-                 "/opt/moss_analyses/",
-                 "/opt/moss_metadata_json/",
-                 "/opt/moss_metadata_json/individual_json",
-                 "/opt/moss_databases/",
-                 "/opt/moss_reports/",
-                 "/opt/moss_logs/"]
+    path_list = ["/opt/LPF_data/",
+                 "/opt/LPF_analyses/",
+                 "/opt/LPF_metadata_json/",
+                 "/opt/LPF_metadata_json/individual_json",
+                 "/opt/LPF_databases/",
+                 "/opt/LPF_reports/",
+                 "/opt/LPF_logs/"]
     for item in path_list:
         if not os.path.exists(item):
             os.system("sudo mkdir -m 777 {}".format(item))
@@ -428,12 +428,12 @@ def check_and_add_bookmarks():
             data = fd.readlines()
         new_bookmark_list = list()
         for item in data:
-            if "moss" not in item:
+            if "LPF" not in item:
                 new_bookmark_list.append(item.rstrip())
-        new_bookmark_list.append("file:///opt/moss_data")
-        new_bookmark_list.append("file:///opt/moss_reports")
-        new_bookmark_list.append("file:///opt/moss_logs")
-        new_bookmark_list.append("file:///opt/moss_metadata_json")
+        new_bookmark_list.append("file:///opt/LPF_data")
+        new_bookmark_list.append("file:///opt/LPF_reports")
+        new_bookmark_list.append("file:///opt/LPF_logs")
+        new_bookmark_list.append("file:///opt/LPF_metadata_json")
 
         with open("{}/.config/gtk-3.0/bookmarks".format(home), 'w') as fd:
             for item in new_bookmark_list:
@@ -442,7 +442,7 @@ def check_and_add_bookmarks():
 def install_databases(arguments):
     """Installs the databases"""
     if not check_local_software:
-        print(bcolors.FAIL + "MOSS dependencies are not installed, and databases cant be indexed" + bcolors.ENDC)
+        print(bcolors.FAIL + "LPF dependencies are not installed, and databases cant be indexed" + bcolors.ENDC)
         sys.exit()
 
     database_list = ["resfinder_db",
@@ -452,32 +452,32 @@ def install_databases(arguments):
                      "bacteria_db"]
 
     for item in database_list:
-        if not os.path.exists('/opt/moss_databases/{}'.format(item)):
-            os.system("sudo mkdir -m 777 /opt/moss_databases/{}".format(item))
-        if not os.path.exists('/opt/moss_databases/{}/{}.name'.format(item, item)):
-            os.chdir('/opt/moss_databases/{}'.format(item))
+        if not os.path.exists('/opt/LPF_databases/{}'.format(item)):
+            os.system("sudo mkdir -m 777 /opt/LPF_databases/{}".format(item))
+        if not os.path.exists('/opt/LPF_databases/{}/{}.name'.format(item, item)):
+            os.chdir('/opt/LPF_databases/{}'.format(item))
             os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/export/{0}.fasta.gz".format(item))
             if item == 'bacteria_db':
                 os.system("kma index -i {}.fasta.gz -o {} -m 14 -Sparse ATG".format(item, item))
             else:
                 os.system("kma index -i {}.fasta.gz -o {} -m 14".format(item, item))
         if item == "mlst_db":
-            os.chdir('/opt/moss_databases/{}'.format(item))
-            if not os.path.exists('/opt/moss_databases/{}/config'.format(item)):
+            os.chdir('/opt/LPF_databases/{}'.format(item))
+            if not os.path.exists('/opt/LPF_databases/{}/config'.format(item)):
                 os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/config".format(item))
             download_mlst_tables()
 
-    if not os.path.exists('/opt/moss_databases/moss.db'):
+    if not os.path.exists('/opt/LPF_databases/LPF.db'):
         create_sql_db()
     update_bacterial_reference_table()
 
 def download_mlst_tables():
     """Downloads the MLST tables"""
     species_list = []
-    if not os.path.exists('/opt/moss_databases/mlst_db/mlst_tables/'):
-        os.system('sudo mkdir -m 777 /opt/moss_databases/mlst_db/mlst_tables/')
-        os.chdir('/opt/moss_databases/mlst_db/mlst_tables/')
-        with open('/opt/moss_databases/mlst_db/config') as fd:
+    if not os.path.exists('/opt/LPF_databases/mlst_db/mlst_tables/'):
+        os.system('sudo mkdir -m 777 /opt/LPF_databases/mlst_db/mlst_tables/')
+        os.chdir('/opt/LPF_databases/mlst_db/mlst_tables/')
+        with open('/opt/LPF_databases/mlst_db/config') as fd:
             for line in fd:
                 if line.startswith('#'):
                     continue
@@ -521,18 +521,18 @@ def check_google_chrome():
 def check_dist_build():
     local = False
     deployment = False
-    if not os.path.isfile("local_app/dist/linux-unpacked/moss"):
+    if not os.path.isfile("local_app/dist/linux-unpacked/LPF"):
         print (bcolors.FAIL + "Local App is not installed in current working directory" + bcolors.ENDC)
         local = False
     else:
         print (bcolors.OKGREEN + "Local App is installed in current working directory" + bcolors.ENDC)
         local = True
 
-    if not os.path.isfile("/opt/moss/local_app/dist/linux-unpacked/moss"):
-        print (bcolors.FAIL + "Local App is not installed /opt/moss" + bcolors.ENDC)
+    if not os.path.isfile("/opt/LPF/local_app/dist/linux-unpacked/LPF"):
+        print (bcolors.FAIL + "Local App is not installed /opt/LPF" + bcolors.ENDC)
         deployment = False
     else:
-        print (bcolors.OKGREEN + "Local App is installed /opt/moss" + bcolors.ENDC)
+        print (bcolors.OKGREEN + "Local App is installed /opt/LPF" + bcolors.ENDC)
         deployment = True
     if local and deployment:
         return True

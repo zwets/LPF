@@ -29,18 +29,19 @@ class BacterialParser():
         for item in data_dict:
             setattr(self.data, item, data_dict[item])
         self.data.entry_id = md5.md5_of_file(self.data.input_path)
-        begin_logging('/opt/moss_logs/{}.log'.format(self.data.entry_id))
+        begin_logging('/opt/LPF_logs/{}.log'.format(self.data.entry_id))
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
         self.logger.addHandler(logging.StreamHandler())
         self.logger.info("Starting analysis of {}".format(self.data.entry_id))
         self.data.sample_name = self.data.input_path.split("/")[-1][0:-9]
-        self.data.bacteria_db = "/opt/moss_databases/bacteria_db/bacteria_db"
-        self.data.resfinder_db = '/opt/moss_databases/resfinder_db/resfinder_db'
-        self.data.plasmidfinder_db = '/opt/moss_databases/plasmidfinder_db/plasmidfinder_db'
-        self.data.virulencefinder_db = '/opt/moss_databases/virulencefinder_db/virulencefinder_db'
-        self.data.mlst_db = '/opt/moss_databases/mlst_db/mlst_db'
-        self.data.target_dir = "/opt/moss_analyses/{}".format(self.data.entry_id)
+        self.data.bacteria_db = "/opt/LPF_databases/bacteria_db/bacteria_db"
+        self.data.resfinder_db = '/opt/LPF_databases/resfinder_db/resfinder_db'
+        self.data.plasmidfinder_db = '/opt/LPF_databases/plasmidfinder_db/plasmidfinder_db'
+        self.data.virulencefinder_db = '/opt/LPF_databases/virulencefinder_db/virulencefinder_db'
+        self.data.mlst_db = '/opt/LPF_databases/mlst_db/mlst_db'
+        self.data.sql_db = '/opt/LPF_databases/LPF.db'
+        self.data.target_dir = "/opt/LPF_analyses/{}".format(self.data.entry_id)
         self.data.version = __version__
         self.data.black_list = ['62b06be200d3967db6b0f6023d7b5b2e', 'fac82762aa980d285edbbcd45ce952fb'] #IDs from testfiles to be excluded from SQL and reference indexing
         self.logger.info('BacterialParser initialized with data: {}'.format(self.data.__dict__))
@@ -98,7 +99,7 @@ class BacterialParser():
                     if float(item[1]) > template_score:
                         template_score = float(item[1])
                         reference_header_text = item[0]
-            template_number = kmaUtils.findTemplateNumber(reference_header_text, '/opt/moss_databases/bacteria_db/bacteria_db')
+            template_number = kmaUtils.findTemplateNumber(reference_header_text, '/opt/LPF_databases/bacteria_db/bacteria_db')
             self.data.template_number = template_number
             self.data.template_score = template_score
             self.data.reference_header_text = reference_header_text
@@ -130,7 +131,7 @@ class BacterialParser():
     def get_list_of_isolates(self):
         """Returns a list of isolates from the reference template"""
         self.logger.info("Getting list of isolates from reference template")
-        self.data.isolate_list = sqlCommands.sql_fetch_all("SELECT isolates FROM bacteria_reference_table WHERE reference_header_text = \"{}\"".format(self.data.reference_header_text), '/opt/moss_databases/moss.db')
+        self.data.isolate_list = sqlCommands.sql_fetch_all("SELECT isolates FROM bacteria_reference_table WHERE reference_header_text = \"{}\"".format(self.data.reference_header_text), '/opt/LPF_databases/LPF.db')
 
 
 

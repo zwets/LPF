@@ -16,7 +16,7 @@ function submitinit() {
 
   var kmaindex_path = getfolder("kmaindex-path");
 
-  var execstring = `~/anaconda3/bin/conda run -n moss python3 /opt/moss/src/moss_init.py -config_name ${config_name} -db ${kmaindex_path}`
+  var execstring = `~/anaconda3/bin/conda run -n LPF python3 /opt/LPF/src/LPF_init.py -config_name ${config_name} -db ${kmaindex_path}`
   console.log(execstring);
 
 

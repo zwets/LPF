@@ -5,9 +5,9 @@ var mkdirp = require('mkdirp');
 
 function fetch_guppy_data(){
 
-    var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"] + "/";
+    var current_LPF_system = require('/opt/LPF_db/config.json')["current_working_db"] + "/";
 
-    readTextFile("/opt/moss_db/" + current_moss_system + "static_files/workflow.json", function(text){
+    readTextFile("/opt/LPF_db/" + current_LPF_system + "static_files/workflow.json", function(text){
         var data = JSON.parse(text);
         document.getElementById('workflowjson').innerHTML = data;
 
@@ -76,9 +76,9 @@ function fetch_guppy_data(){
 
 function find_model_from_input(flowcell, kit, algorithm){
     var model = "";
-    var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"] + "/";
+    var current_LPF_system = require('/opt/LPF_db/config.json')["current_working_db"] + "/";
 
-    const data = require("/opt/moss_db/" + current_moss_system + "static_files/workflow.json");
+    const data = require("/opt/LPF_db/" + current_LPF_system + "static_files/workflow.json");
     for (var i = 0; i < data.length; i++) {
                 if (data[i].flowcell == flowcell) {
                     if (data[i].kit == kit) {
@@ -111,14 +111,14 @@ function start_base_calling(){
 
 
     var check_basecall_name = false;
-    if (fs.existsSync("/opt/moss_data/fast5/" + output_name)) {
+    if (fs.existsSync("/opt/LPF_data/fast5/" + output_name)) {
         alert("A experiment name has already been used. Please choose another one.");
     } else {
         check_basecall_name = true;
     }
 
     if (check_basecall_name) {
-        cmd = `~/anaconda3/bin/conda run -n moss python3 /opt/moss/src/run_guppy.py -i ${input_path} -name ${output_name}`;
+        cmd = `~/anaconda3/bin/conda run -n LPF python3 /opt/LPF/src/run_guppy.py -i ${input_path} -name ${output_name}`;
 
         var model = find_model_from_input(flowcell, kit, algorithm);
         cmd = cmd.concat(` -c ${model}`)

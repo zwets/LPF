@@ -10,16 +10,16 @@ import logging
 
 class ValidateDatabases:
     def __init__(self):
-        self.moss_db = "/opt/moss_databases/bacteria_db/bacteria_db.ATG.name"
-        self.resfinder_db = "/opt/moss_databases/resfinder_db/resfinder_db.name"
-        self.virulencefinder_db = "/opt/moss_databases/virulencefinder_db/virulencefinder_db.name"
-        self.plasmidfinder_db = "/opt/moss_databases/plasmidfinder_db/plasmidfinder_db.name"
+        self.LPF_db = "/opt/LPF_databases/bacteria_db/bacteria_db.ATG.name"
+        self.resfinder_db = "/opt/LPF_databases/resfinder_db/resfinder_db.name"
+        self.virulencefinder_db = "/opt/LPF_databases/virulencefinder_db/virulencefinder_db.name"
+        self.plasmidfinder_db = "/opt/LPF_databases/plasmidfinder_db/plasmidfinder_db.name"
         #viral
         #metagenomic
 
     def validate(self):
-        if not os.path.isfile(self.moss_db):
-            print("Missing database: {}".format(self.moss_db))
+        if not os.path.isfile(self.LPF_db):
+            print("Missing database: {}".format(self.LPF_db))
             sys.exit(1)
         if not os.path.isfile(self.resfinder_db):
             print("Missing database: {}".format(self.resfinder_db))

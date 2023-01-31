@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-Exec=/opt/moss/local_app/dist/linux-unpacked/moss
-Name=Microbial Outbreak Surveillance System (MOSS)
-GenericName=Microbial Outbreak Surveillance System (MOSS)
-Icon=/opt/moss/local_app/images/report-icon.png
+Exec=/opt/LPF/local_app/dist/linux-unpacked/LPF
+Name=Microbial Outbreak Surveillance System (LPF)
+GenericName=Microbial Outbreak Surveillance System (LPF)
+Icon=/opt/LPF/local_app/images/report-icon.png
 Terminal=false

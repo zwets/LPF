@@ -6,7 +6,7 @@ def derive_mlst_species(reference_header_text):
     if specie == "escherichia coli":  # special
         return 'ecoli'
     else:
-        with open("/opt/moss_databases/mlst_db/config", 'r') as infile:
+        with open("/opt/LPF_databases/mlst_db/config", 'r') as infile:
             for line in infile:
                 if line[0] != "#":
                     line = line.split("\t")
@@ -20,7 +20,7 @@ def determine_mlst(bacterial_parser):
     """Returns the mlst results"""
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
-    with open("/opt/moss_databases/mlst_db/config", 'r') as fd:
+    with open("/opt/LPF_databases/mlst_db/config", 'r') as fd:
         for line in fd:
             if line[0] != "#":
                 line = line.rstrip().split("\t")
@@ -49,7 +49,7 @@ def determine_mlst(bacterial_parser):
             mlst_flag = False
 
     if mlst_flag:
-        with open("/opt/moss_databases/mlst_db/mlst_tables/{}.tsv".format(bacterial_parser.data.mlst_species), 'r') as infile:
+        with open("/opt/LPF_databases/mlst_db/mlst_tables/{}.tsv".format(bacterial_parser.data.mlst_species), 'r') as infile:
             for line in infile:
                 if line.startswith("ST"):
                     line = line.rstrip().split("\t")

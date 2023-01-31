@@ -10,8 +10,8 @@ def make_ccphylo_folder(file_list, output_path):
         if os.path.exists(item):
             os.system("cp {} {}/phytree_output/.".format(item, output_path))
 
-def create_phylo_tree(moss_object):
-    with open ("{}phytree_output/tree.newick".format(moss_object.target_dir)) as fd:
+def create_phylo_tree(LPF_object):
+    with open ("{}phytree_output/tree.newick".format(LPF_object.target_dir)) as fd:
         data = fd.read()
     handle = StringIO(data)
     tree = Phylo.read(handle, "newick")
@@ -19,9 +19,9 @@ def create_phylo_tree(moss_object):
     fig = plt.figure(figsize=(20, 20), dpi=80)
     axes = fig.add_subplot(1, 1, 1)
     Phylo.draw(tree, axes=axes, do_show=False)
-    plt.savefig("{}/phytree_output/tree.png".format(moss_object.target_dir), dpi=100)
-    moss_object.phytree_path = "{}/phytree_output/tree.png".format(moss_object.target_dir)
-    return moss_object
+    plt.savefig("{}/phytree_output/tree.png".format(LPF_object.target_dir), dpi=100)
+    LPF_object.phytree_path = "{}/phytree_output/tree.png".format(LPF_object.target_dir)
+    return LPF_object
 
 def plot_tree(treedata, output_file):
     handle = StringIO(treedata)  # parse the newick string

@@ -8,9 +8,11 @@ import sys
 import datetime
 from src.kmaRunner import KMARunner
 import src.util.ccphyloUtils as ccphyloUtils
+import src.sqlCommands as sqlCommands
 
 def bacterial_analysis_pipeline(bacterial_parser):
     """Runs the bacterial analysis pipeline"""
+    sqlCommands.sql_update_status_table('Analysis started', bacterial_parser.data.sample_name, '1', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
     reference_mapping = KMARunner(bacterial_parser.data.input_path,
                            bacterial_parser.data.target_dir + "/reference_mapping",
                            bacterial_parser.data.bacteria_db,

@@ -1,11 +1,11 @@
 """
-Script for initializing a MOSS database system from a KMA-indexed reference database.
+Script for initializing a LPF database system from a KMA-indexed reference database.
 """
 
 import sys
 import os
 import argparse
-import moss_functions as moss
+import LPF_functions as LPF
 import datetime
 import json
 import sqlite3
@@ -18,12 +18,12 @@ def check_and_add_bookmarks(config_name):
             data = fd.readlines()
         new_bookmark_list = list()
         for item in data:
-            if "moss" not in item:
+            if "LPF" not in item:
                 new_bookmark_list.append(item.rstrip())
-        new_bookmark_list.append("file:///opt/moss_data")
-        new_bookmark_list.append("file:///opt/moss_reports")
-        new_bookmark_list.append("file:///opt/moss_logs")
-        new_bookmark_list.append("file:///opt/moss_db/{}/metadata_json".format(config_name))
+        new_bookmark_list.append("file:///opt/LPF_data")
+        new_bookmark_list.append("file:///opt/LPF_reports")
+        new_bookmark_list.append("file:///opt/LPF_logs")
+        new_bookmark_list.append("file:///opt/LPF_db/{}/metadata_json".format(config_name))
 
         with open("{}/.config/gtk-3.0/bookmarks".format(home), 'w') as fd:
             for item in new_bookmark_list:
@@ -41,16 +41,16 @@ config_name = args.config_name
 
 check_and_add_bookmarks(config_name)
 
-db = moss.correctPathCheck(args.db)
+db = LPF.correctPathCheck(args.db)
 
-if not os.path.exists("/opt/moss_db"):
-    sys.exit("MOSS has not been correctly initialized. no /opt/moss_db exists")
+if not os.path.exists("/opt/LPF_db"):
+    sys.exit("LPF has not been correctly initialized. no /opt/LPF_db exists")
 
-if not os.path.exists("/opt/moss_db/{}".format(config_name)):
-    os.system("mkdir /opt/moss_db/{}".format(config_name))
+if not os.path.exists("/opt/LPF_db/{}".format(config_name)):
+    os.system("mkdir /opt/LPF_db/{}".format(config_name))
 else:
-    sys.exit("A moss database of that name already exists on this computer!")
-config_name = "/opt/moss_db/{}/".format(config_name)
+    sys.exit("A LPF database of that name already exists on this computer!")
+config_name = "/opt/LPF_db/{}/".format(config_name)
 
 print ("cloning reference DB, if you are using a big reference DB, this might take a while")
 os.system("cp {}*.ATG.comp.b {}REFDB.ATG.comp.b".format(db, config_name))
@@ -68,14 +68,14 @@ directory_structure = {
     "static_files": {},
     "datafiles": {}
 }
-moss.create_directory_from_dict(directory_structure, config_name)
+LPF.create_directory_from_dict(directory_structure, config_name)
 
-moss.create_sql_db(config_name)
+LPF.create_sql_db(config_name)
 
 # Generate config.json file
 jsondict = dict()
 jsondict["current_working_db"] = args.config_name
-with open("/opt/moss_db/config.json", 'w') as f_out:
+with open("/opt/LPF_db/config.json", 'w') as f_out:
   json.dump(jsondict, f_out)
 f_out.close()
 

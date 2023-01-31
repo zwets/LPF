@@ -1,6 +1,6 @@
 {
   "input_file": "assembly_test.fastq.gz",
-  "input_path": "/opt/moss/tests/fixtures/data_for_tests/read_files/assembly_test.fastq.gz",
+  "input_path": "/opt/LPF/tests/fixtures/data_for_tests/read_files/assembly_test.fastq.gz",
   "sequencing_method": "nanopore minion",
   "isolation_source": "isolate",
   "investigation_type": "type1",
@@ -11,7 +11,7 @@
   "patient_age": "",
   "type_of_infection": "",
   "experimental_condition": "",
-  "config_path": "/opt/moss_db/test/",
+  "config_path": "/opt/LPF_db/test/",
   "analysis_type": "bacteria"
 }
 
