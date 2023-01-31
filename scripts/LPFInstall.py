@@ -521,14 +521,14 @@ def check_google_chrome():
 def check_dist_build():
     local = False
     deployment = False
-    if not os.path.isfile("local_app/dist/linux-unpacked/LPF"):
+    if not os.path.isfile("local_app/dist/linux-unpacked/lpf"):
         print (bcolors.FAIL + "Local App is not installed in current working directory" + bcolors.ENDC)
         local = False
     else:
         print (bcolors.OKGREEN + "Local App is installed in current working directory" + bcolors.ENDC)
         local = True
 
-    if not os.path.isfile("/opt/LPF/local_app/dist/linux-unpacked/LPF"):
+    if not os.path.isfile("/opt/LPF/local_app/dist/linux-unpacked/lpf"):
         print (bcolors.FAIL + "Local App is not installed /opt/LPF" + bcolors.ENDC)
         deployment = False
     else:
