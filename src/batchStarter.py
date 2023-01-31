@@ -28,12 +28,12 @@ def main(analysis_type, batch_json):
     jobslist = []
     for item in json_list:
         if os.path.exists('/opt/LPF/LPF'):
-            cmd = 'python3 /opt/LPF/LPF {} -json {}'.format(analysis_type, item)
+            cmd = 'python3 /opt/LPF/LocalPathogenFinder {} -json {}'.format(analysis_type, item)
         else:
-            cmd = 'python3 LPF {} -json {}'.format(analysis_type, item)
+            cmd = 'python3 LocalPathogenFinder {} -json {}'.format(analysis_type, item)
         jobslist.append(cmd)
         sample_name = item['sample_name']
-        entry_id = LPF.md5_of_file(item['input_path'])
+        entry_id = md5.md5_of_file(item['input_path'])
         time_stamp = str(datetime.datetime.now())[0:-7]
 
         sqlCommands.sql_execute_command(
