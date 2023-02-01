@@ -114,8 +114,12 @@ class BacterialParser():
         Performing Flye assebly
         """
         self.logger.info('Performing Flye assebly')
+        sqlCommands.sql_update_status_table('Performing assembly', self.data.sample_name, '7', self.data.entry_id, self.data.sql_db)
 
         flye_assembly(self)
+
+        sqlCommands.sql_update_status_table('Assembly completed', self.data.sample_name, '8', self.data.entry_id, self.data.sql_db)
+
 
     def single_template_alignment_bacteria(self):
         self.logger.info("Running single template alignment for bacteria")

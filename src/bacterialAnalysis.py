@@ -13,11 +13,14 @@ import src.sqlCommands as sqlCommands
 def bacterial_analysis_pipeline(bacterial_parser):
     """Runs the bacterial analysis pipeline"""
     sqlCommands.sql_update_status_table('Analysis started', bacterial_parser.data.sample_name, '1', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
-    reference_mapping = KMARunner(bacterial_parser.data.input_path,
-                           bacterial_parser.data.target_dir + "/reference_mapping",
-                           bacterial_parser.data.bacteria_db,
-                           "-ID 0 -nf -mem_mode -sasm -ef -1t1")
-    reference_mapping.run()
+    sqlCommands.sql_update_status_table('Reference mapping', bacterial_parser.data.sample_name, '2', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
+
+    KMARunner(bacterial_parser.data.input_path,
+        bacterial_parser.data.target_dir + "/reference_mapping",
+        bacterial_parser.data.bacteria_db,
+        "-ID 0 -nf -mem_mode -sasm -ef -1t1").run()
+
+    sqlCommands.sql_update_status_table('ResFinder mapping', bacterial_parser.data.sample_name, '3', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
 
     resfinder_mapping = KMARunner(bacterial_parser.data.input_path,
                             bacterial_parser.data.target_dir + "/finders/resfinder_mapping",
@@ -25,17 +28,23 @@ def bacterial_analysis_pipeline(bacterial_parser):
                             "-ont -md 5")
     resfinder_mapping.run()
 
+    sqlCommands.sql_update_status_table('PlasmidFinder mapping', bacterial_parser.data.sample_name, '4', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
+
     plasmidfinder_mapping = KMARunner(bacterial_parser.data.input_path,
                             bacterial_parser.data.target_dir + "/finders/plasmidfinder_mapping",
                             bacterial_parser.data.plasmidfinder_db,
                             "-ont -md 5")
     plasmidfinder_mapping.run()
 
+    sqlCommands.sql_update_status_table('VirulenceFinder mapping', bacterial_parser.data.sample_name, '5', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
+
     virulencefinder_mapping = KMARunner(bacterial_parser.data.input_path,
                             bacterial_parser.data.target_dir + "/finders/virulencefinder_mapping",
                             bacterial_parser.data.virulencefinder_db,
                             "-ont -md 5")
     virulencefinder_mapping.run()
+
+    sqlCommands.sql_update_status_table('MLST mapping', bacterial_parser.data.sample_name, '6', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
 
     mlst_mapping = KMARunner(bacterial_parser.data.input_path,
                              bacterial_parser.data.target_dir + "/finders/mlst_mapping",
