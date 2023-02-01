@@ -344,25 +344,16 @@ def create_sql_db():
     c = conn.cursor()
 
     c.execute(
-        """CREATE TABLE IF NOT EXISTS sample_table(entry_id TEXT PRIMARY KEY, sample_type TEXT)""")
+        """CREATE TABLE IF NOT EXISTS sample_table(entry_id TEXT PRIMARY KEY, sample_type TEXT, reference_id TEXT)""")
     conn.commit()
 
     c.execute(
         """CREATE TABLE IF NOT EXISTS sequence_table(entry_id TEXT PRIMARY KEY, header TEXT, sequence TEXT)""")
     conn.commit()
-
+    
     c.execute(
-        """CREATE TABLE IF NOT EXISTS bacteria_reference_table(entry_id TEXT PRIMARY KEY, isolates TEXT, reference_header_text TEXT)""")
+        """CREATE TABLE IF NOT EXISTS meta_data_table(entry_id TEXT PRIMARY KEY, meta_data_json TEXT)""") #Consider better design for meta_data
     conn.commit()
-
-    c.execute(
-        """CREATE TABLE IF NOT EXISTS bacteria_table(entry_id TEXT PRIMARY KEY)""")
-    conn.commit()
-
-    c.execute(
-        """CREATE TABLE IF NOT EXISTS meta_data_table(entry_id TEXT PRIMARY KEY, meta_data_json TEXT)""")
-    conn.commit()
-
 
     c.execute(
         """CREATE TABLE IF NOT EXISTS status_table(entry_id TEXT PRIMARY KEY, input_file TEXT, status TEXT, time_stamp TEXT, stage TEXT)""")
@@ -373,7 +364,7 @@ def create_sql_db():
     conn.commit()
     conn.close()
 
-def update_bacterial_reference_table():
+def insert_bacterial_references_into_sql():
     sql_bacteria_reference_list = []
     bacteria_db_reference_list = []
 
@@ -382,7 +373,7 @@ def update_bacterial_reference_table():
             bacteria_db_reference_list.append(line.rstrip())
 
     if os.path.exists('/opt/LPF_databases/LPF.db'):
-        result = sqlCommands.sql_fetch_all("SELECT reference_header_text FROM bacteria_reference_table", '/opt/LPF_databases/LPF.db')
+        result = sqlCommands.sql_fetch_all("SELECT header FROM sequence_table", '/opt/LPF_databases/LPF.db')
     else:
         sys.exit("LPF.db is not found")
 
@@ -406,7 +397,9 @@ def update_bacterial_reference_table():
                     reference_header_text = output.split("\n")[0][1:]
                     sequence = output.split("\n")[1]
                     entry_id = md5.md5_of_sequence(sequence)
-                    cmd = 'INSERT OR IGNORE INTO bacteria_reference_table VALUES ("{}", "{}", "{}")'.format(entry_id, "", reference_header_text)
+                    cmd = 'INSERT OR IGNORE INTO sample_table VALUES (\"{}\", \"{}\", \"{}\")'.format(entry_id, 'bacteria', '')
+                    sqlCommands.sql_execute_command(cmd, '/opt/LPF_databases/LPF.db')
+                    cmd = 'INSERT OR IGNORE INTO sequence_table VALUES (\"{}\", \"{}\", \"{}\").format(entry_id, reference_header_text, '')'
                     sqlCommands.sql_execute_command(cmd, '/opt/LPF_databases/LPF.db')
         conn.commit()
         conn.close()
@@ -473,7 +466,7 @@ def install_databases(arguments):
 
     if not os.path.exists('/opt/LPF_databases/LPF.db'):
         create_sql_db()
-    update_bacterial_reference_table()
+    insert_bacterial_references_into_sql()
 
 def download_mlst_tables():
     """Downloads the MLST tables"""

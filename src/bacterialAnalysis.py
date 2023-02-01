@@ -13,6 +13,7 @@ import src.sqlCommands as sqlCommands
 def bacterial_analysis_pipeline(bacterial_parser):
     """Runs the bacterial analysis pipeline"""
     sqlCommands.sql_update_status_table('Analysis started', bacterial_parser.data.sample_name, '1', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
+    sqlCommands.sql_execute_command("INSERT INTO sample_table(entry_id, sample_type) VALUES('{}', '{}')".format(bacterial_parser.data.entry_id, 'bacteria'), bacterial_parser.data.sql_db)
     sqlCommands.sql_update_status_table('Reference mapping', bacterial_parser.data.sample_name, '2', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
 
     KMARunner(bacterial_parser.data.input_path,
@@ -88,6 +89,8 @@ def bacterial_analysis_pipeline(bacterial_parser):
     sqlCommands.sql_update_status_table('Generating report', bacterial_parser.data.sample_name, '10', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
 
     #pdf report
+
+    sqlCommands.sql_update_status_table('Analysis completed', bacterial_parser.data.sample_name, '10', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
 
     return 0
 

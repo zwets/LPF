@@ -155,5 +155,8 @@ class BacterialParser():
         self.logger.info("Getting list of isolates from reference template")
         self.data.isolate_list = sqlCommands.sql_fetch_all("SELECT isolates FROM bacteria_reference_table WHERE reference_header_text = \"{}\"".format(self.data.reference_header_text), '/opt/LPF_databases/LPF.db')
 
-
+    def insert_isolate_into_cluster_sql(self):
+        """Inserts the isolate into the cluster SQL database"""
+        self.logger.info("Inserting isolate into the identified cluster")
+        sqlCommands.sql_execute_command("INSERT INTO bacteria_reference_table(entry_id, isolate) VALUES('{}', '{}')".format(self.data.entry_id, self.data.isolate), '/opt/LPF_databases/LPF.db')
 
