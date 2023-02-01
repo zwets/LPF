@@ -60,7 +60,9 @@ def bacterial_analysis_pipeline(bacterial_parser):
 
     bacterial_parser.get_list_of_isolates()
 
-    bacterial_parser.data.isolate_list.append("consensus_sequence_path")
+    bacterial_parser.data.isolate_list.append(bacterial_parser.data.target_dir + "/" + bacterial_parser.data.sample_name + ".fsa") #Consensus sequence
+    bacterial_parser.data.isolate_list.append("reference_sequence_path")
+
 
     inclusion_fraction, distance = ccphyloUtils.ccphylo_dist(bacterial_parser)
 
