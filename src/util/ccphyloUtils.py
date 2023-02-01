@@ -3,6 +3,7 @@ import sys
 import subprocess
 
 def ccphylo_dist(bacterial_parser):
+    make_ccphylo_folder(bacterial_parser.data.isolate_list, bacterial_parser.data.target_dir)
     cmd = "~/bin/ccphylo dist --input {0}/phytree_output/* --reference \"{1}\" --min_cov 0.01" \
           " --normalization_weight 0 --output {0}/phytree_output/distance_matrix" \
         .format(bacterial_parser.data.target_dir, bacterial_parser.data.reference_header_text)
