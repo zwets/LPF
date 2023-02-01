@@ -18,7 +18,7 @@ def sql_fetch_all(string, database):
     conn.close()
     return data
 
-def sql_update_status_table(status, sample_name, stage, entry_id, database):
+def sql_update_status_table(status, input_file, stage, entry_id, database):
     time_stamp = str(datetime.datetime.now())[0:-7]
-    sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", time_stamp=\"{}\", stage=\"{}\" WHERE entry_id=\"{}\"".format(status, sample_name, time_stamp, stage, entry_id)
+    sql_cmd = "UPDATE status_table SET status=\"{}\", input_file =\"{}\", time_stamp=\"{}\", stage=\"{}\" WHERE entry_id=\"{}\"".format(status, input_file, time_stamp, stage, entry_id)
     sql_execute_command(sql_cmd, database)
