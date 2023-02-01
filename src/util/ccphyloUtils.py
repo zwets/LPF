@@ -19,9 +19,9 @@ def ccphylo_dist(bacterial_parser):
     return inclusion_fraction, distance
 
 def ThreshholdDistanceCheck(bacterial_parser):
-    if not os.path.exists(bacterial_parser.target_dir + '/phytree_output/distance_matrix'):
+    if not os.path.exists(bacterial_parser.data.target_dir + '/phytree_output/distance_matrix'):
         bacterial_parser.logger.info('ERROR: Distance matrix was not created.')
-    infile = open(bacterial_parser.target_dir + '/phytree_output/distance_matrix', 'r')
+    infile = open(bacterial_parser.data.target_dir + '/phytree_output/distance_matrix', 'r')
     consensus_name = bacterial_parser.data.sample_name + '.fsa'
     header_name = bacterial_parser.data.reference_header_text.split()[0] + '.fsa'
     linecount = 0
