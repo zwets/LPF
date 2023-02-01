@@ -104,9 +104,10 @@ class BacterialParser():
             self.data.template_score = template_score
             self.data.reference_header_text = reference_header_text
             if self.data.template_number != None:
-                self.logger.info("Reference mapping results: Template number: {}. Template score: {}. Reference header: {}. Reference ID: {}".format(self.data.template_number, self.data.template_score, self.data.reference_header_text, self.data.reference_id))
                 self.data.reference_id = sqlCommands.sql_fetch_one("SELECT entry_id FROM sequence_table WHERE header = '{}'"
                               .format(self.data.reference_header_text), self.data.sql_db)[0]
+                self.logger.info("Reference mapping results: Template number: {}. Template score: {}. Reference header: {}. Reference ID: {}".format(self.data.template_number, self.data.template_score, self.data.reference_header_text, self.data.reference_id))
+
 
     def get_mlst_results(self):
         """Returns the mlst results"""
