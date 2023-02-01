@@ -344,11 +344,11 @@ def create_sql_db():
     c = conn.cursor()
 
     c.execute(
-        """CREATE TABLE IF NOT EXISTS sample_table(entry_id TEXT PRIMARY KEY, sample_type TEXT""")
+        """CREATE TABLE IF NOT EXISTS sample_table(entry_id TEXT PRIMARY KEY, sample_type TEXT)""")
     conn.commit()
 
     c.execute(
-        """CREATE TABLE IF NOT EXISTS sequence_table(entry_id TEXT PRIMARY KEY, header TEXT, sequence TEXT""")
+        """CREATE TABLE IF NOT EXISTS sequence_table(entry_id TEXT PRIMARY KEY, header TEXT, sequence TEXT)""")
     conn.commit()
 
     c.execute(

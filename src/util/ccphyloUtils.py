@@ -51,6 +51,13 @@ def make_ccphylo_folder(bacterial_parser):
         .format(bacterial_parser.data.bacteria_db, bacterial_parser.data.template_number, bacterial_parser.data.target_dir, header_name)
     os.system(cmd)
 
+def ccphylo_tree(bacterial_parser):
+    cmd = "~/bin/ccphylo tree --input {0}/phytree_output/distance_matrix --output {0}/phytree_output/tree.newick"\
+        .format(bacterial_parser.data.target_dir)
+    proc = subprocess.Popen(cmd, shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0].decode()
+
 # def create_phylo_tree(LPF_object):
 #     with open ("{}phytree_output/tree.newick".format(bacterial_parser.data.target_dir)) as fd:
 #         data = fd.read()
