@@ -141,7 +141,7 @@ class BacterialParser():
                     else:
                         sequence += line.strip()
             if header != '' and sequence != '':
-                sqlCommands.sql_execute_command("INSERT INTO sequence_table(entry_id, header, sequence) VALUES('{}', '{}', '{}')".format(entry_id, header, sequence), '/opt/LPF_databases/LPF.db')
+                sqlCommands.sql_execute_command("INSERT INTO sequence_table(entry_id, header, sequence) VALUES('{}', '{}', '{}')".format(self.data.entry_id, header, sequence), '/opt/LPF_databases/LPF.db')
             else:
                 self.logger.info("No consensus sequence found")
         else:
