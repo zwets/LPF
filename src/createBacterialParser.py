@@ -129,6 +129,25 @@ class BacterialParser():
                                           "-mint3 -Mt1 {} -t 8".format(self.data.template_number))
         template_alignment.run()
 
+        if os.path.exists(self.data.target_dir + "/" + self.data.sample_name + '.fsa'):
+            self.logger.info("Single template alignment completed")
+            self.data.consensus_sequence_path = self.data.target_dir + "/" + self.data.sample_name + '.fsa'
+            header = ''
+            sequence = ''
+            with open(self.data.consensus_sequence_path, 'r') as f:
+                for line in f:
+                    if line[0] == '>':
+                        header = line[1:].strip()
+                    else:
+                        sequence += line.strip()
+            if header != '' and sequence != '':
+                sqlCommands.sql_execute_command("INSERT INTO sequence_table(entry_id, header, sequence) VALUES('{}', '{}', '{}')".format(entry_id, header, sequence), '/opt/LPF_databases/LPF.db')
+            else:
+                self.logger.info("No consensus sequence found")
+        else:
+            self.logger.info("No consensus sequence found")
+)
+
         #handle consensus path
         #Insert consesus into SQL?
 

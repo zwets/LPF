@@ -22,35 +22,31 @@ def bacterial_analysis_pipeline(bacterial_parser):
 
     sqlCommands.sql_update_status_table('ResFinder mapping', bacterial_parser.data.sample_name, '3', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
 
-    resfinder_mapping = KMARunner(bacterial_parser.data.input_path,
-                            bacterial_parser.data.target_dir + "/finders/resfinder_mapping",
-                            bacterial_parser.data.resfinder_db,
-                            "-ont -md 5")
-    resfinder_mapping.run()
+    KMARunner(bacterial_parser.data.input_path,
+        bacterial_parser.data.target_dir + "/finders/resfinder_mapping",
+        bacterial_parser.data.resfinder_db,
+        "-ont -md 5").run()
 
     sqlCommands.sql_update_status_table('PlasmidFinder mapping', bacterial_parser.data.sample_name, '4', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
 
-    plasmidfinder_mapping = KMARunner(bacterial_parser.data.input_path,
-                            bacterial_parser.data.target_dir + "/finders/plasmidfinder_mapping",
-                            bacterial_parser.data.plasmidfinder_db,
-                            "-ont -md 5")
-    plasmidfinder_mapping.run()
+    KMARunner(bacterial_parser.data.input_path,
+        bacterial_parser.data.target_dir + "/finders/plasmidfinder_mapping",
+        bacterial_parser.data.plasmidfinder_db,
+        "-ont -md 5").run()
 
     sqlCommands.sql_update_status_table('VirulenceFinder mapping', bacterial_parser.data.sample_name, '5', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
 
-    virulencefinder_mapping = KMARunner(bacterial_parser.data.input_path,
-                            bacterial_parser.data.target_dir + "/finders/virulencefinder_mapping",
-                            bacterial_parser.data.virulencefinder_db,
-                            "-ont -md 5")
-    virulencefinder_mapping.run()
+    KMARunner(bacterial_parser.data.input_path,
+        bacterial_parser.data.target_dir + "/finders/virulencefinder_mapping",
+        bacterial_parser.data.virulencefinder_db,
+        "-ont -md 5").run()
 
     sqlCommands.sql_update_status_table('MLST mapping', bacterial_parser.data.sample_name, '6', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
 
-    mlst_mapping = KMARunner(bacterial_parser.data.input_path,
-                             bacterial_parser.data.target_dir + "/finders/mlst_mapping",
-                            bacterial_parser.data.mlst_db,
-                            "-ont -md 5")
-    mlst_mapping.run()
+    KMARunner(bacterial_parser.data.input_path,
+        bacterial_parser.data.target_dir + "/finders/mlst_mapping",
+        bacterial_parser.data.mlst_db,
+        "-ont -md 5").run()
 
     #1t1?
 
@@ -65,13 +61,13 @@ def bacterial_analysis_pipeline(bacterial_parser):
     if bacterial_parser.data.template_number == None: #No reference template found
         bacterial_parser.run_assembly() #TBD
 
+    sqlCommands.sql_update_status_table('Reference alignment', bacterial_parser.data.sample_name, '7', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
+
     bacterial_parser.single_template_alignment_bacteria()
 
     bacterial_parser.get_list_of_isolates()
 
-    bacterial_parser.data.isolate_list.append(bacterial_parser.data.target_dir + "/" + bacterial_parser.data.sample_name + ".fsa") #Consensus sequence
-    bacterial_parser.data.isolate_list.append("reference_sequence_path")
-
+    bacterial_parser.data.isolate_list.append(bacterial_parser.data.consensus_sequence_path) #Consensus sequence
 
     inclusion_fraction, distance = ccphyloUtils.ccphylo_dist(bacterial_parser)
 
