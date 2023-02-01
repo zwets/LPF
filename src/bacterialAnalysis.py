@@ -69,6 +69,8 @@ def bacterial_analysis_pipeline(bacterial_parser):
 
     bacterial_parser.data.isolate_list.append(bacterial_parser.data.consensus_sequence_path) #Consensus sequence
 
+    sqlCommands.sql_update_status_table('Calculating distance matrix', bacterial_parser.data.sample_name, '8', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
+
     inclusion_fraction, distance = ccphyloUtils.ccphylo_dist(bacterial_parser)
 
     if distance == None:
@@ -76,11 +78,18 @@ def bacterial_analysis_pipeline(bacterial_parser):
     elif distance > 300 or inclusion_fraction < 0.25: #TBD
         bacterial_parser.run_assembly()
 
+    sqlCommands.sql_update_status_table('Generating phylogenetic tree', bacterial_parser.data.sample_name, '9', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
+
     if len(bacterial_parser.data.isolate_list) > 3:
-        #make tree
-        pass
+        ccphyloUtils.ccphylo_tree(bacterial_parser)
+    else:
+        bacterial_parser.logger.info("Not enough associated isolates with this cluster for generating a phylogenetic tree")
+
+    sqlCommands.sql_update_status_table('Generating report', bacterial_parser.data.sample_name, '10', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
 
     #pdf report
+
+    return 0
 
 
 
