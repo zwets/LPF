@@ -397,9 +397,9 @@ def insert_bacterial_references_into_sql():
                     reference_header_text = output.split("\n")[0][1:]
                     sequence = output.split("\n")[1]
                     entry_id = md5.md5_of_sequence(sequence)
-                    cmd = 'INSERT OR IGNORE INTO sample_table VALUES (\"{}\", \"{}\", \"{}\")'.format(entry_id, 'bacteria', '')
+                    cmd = 'INSERT OR IGNORE INTO sample_table VALUES ("{}", "{}", "{}")'.format(entry_id, 'bacteria', '')
                     sqlCommands.sql_execute_command(cmd, '/opt/LPF_databases/LPF.db')
-                    cmd = 'INSERT OR IGNORE INTO sequence_table VALUES (\"{}\", \"{}\", \"{}\").format(entry_id, reference_header_text, '')'
+                    cmd = 'INSERT OR IGNORE INTO sequence_table VALUES ("{}", "{}", "{}")'.format(entry_id, reference_header_text, '')
                     sqlCommands.sql_execute_command(cmd, '/opt/LPF_databases/LPF.db')
         conn.commit()
         conn.close()
