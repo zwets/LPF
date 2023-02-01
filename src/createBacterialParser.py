@@ -146,7 +146,6 @@ class BacterialParser():
                 self.logger.info("No consensus sequence found")
         else:
             self.logger.info("No consensus sequence found")
-)
 
         #handle consensus path
         #Insert consesus into SQL?
