@@ -103,6 +103,10 @@ class BacterialParser():
             self.data.template_number = template_number
             self.data.template_score = template_score
             self.data.reference_header_text = reference_header_text
+            if self.data.template_number != None:
+                self.logger.info("Reference mapping results: Template number: {}. Template score: {}. Reference header: {}. Reference ID: {}".format(self.data.template_number, self.data.template_score, self.data.reference_header_text, self.data.reference_id))
+                self.data.reference_id = sqlCommands.sql_fetch_one("SELECT entry_id FROM sequence_table WHERE header = '{}'"
+                              .format(self.data.reference_header_text), self.data.sql_db)[0]
 
     def get_mlst_results(self):
         """Returns the mlst results"""
@@ -142,6 +146,7 @@ class BacterialParser():
                         sequence += line.strip()
             if header != '' and sequence != '':
                 sqlCommands.sql_execute_command("INSERT INTO sequence_table(entry_id, header, sequence) VALUES('{}', '{}', '{}')".format(self.data.entry_id, header, sequence), '/opt/LPF_databases/LPF.db')
+                self.insert_isolate_into_cluster_sql()
             else:
                 self.logger.info("No consensus sequence found")
         else:
@@ -157,6 +162,6 @@ class BacterialParser():
 
     def insert_isolate_into_cluster_sql(self):
         """Inserts the isolate into the cluster SQL database"""
-        self.logger.info("Inserting isolate into the identified cluster")
-        sqlCommands.sql_execute_command("INSERT INTO bacteria_reference_table(entry_id, isolate) VALUES('{}', '{}')".format(self.data.entry_id, self.data.isolate), '/opt/LPF_databases/LPF.db')
+        self.logger.info("Inserting isolate into the identified cluster of {}".format(self.data.reference_header_text))
+        sqlCommands.sql_execute_command("UPDATE sample_table SET reference_id = \"{}\" WHERE entry_id = \"{}\"".format(self.data.reference_id, self.data.entry_id), self.data.sql_db)
 

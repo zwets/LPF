@@ -18,6 +18,14 @@ def sql_fetch_all(string, database):
     conn.close()
     return data
 
+def sql_fetch_one(string, database):
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    c.execute(string)
+    data = c.fetchone()
+    conn.close()
+    return data
+
 def sql_update_status_table(status, input_file, stage, entry_id, database):
     time_stamp = str(datetime.datetime.now())[0:-7]
     sql_cmd = "UPDATE status_table SET status=\"{}\", input_file =\"{}\", time_stamp=\"{}\", stage=\"{}\" WHERE entry_id=\"{}\"".format(status, input_file, time_stamp, stage, entry_id)
