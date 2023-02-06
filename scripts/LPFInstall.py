@@ -425,7 +425,7 @@ def check_and_add_bookmarks():
             data = fd.readlines()
         new_bookmark_list = list()
         for item in data:
-            if "LPF" not in item:
+            if "LPF" not in item and "moss" not in item: #remove old moss bookmarks
                 new_bookmark_list.append(item.rstrip())
         new_bookmark_list.append("file:///opt/LPF_data")
         new_bookmark_list.append("file:///opt/LPF_reports")
