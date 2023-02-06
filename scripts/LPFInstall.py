@@ -31,7 +31,7 @@ def LPF_installation(arguments):
         print (bcolors.OKGREEN + "ONT dependencies installed" + bcolors.ENDC)
         install_LPF_deps(user)
         print (bcolors.OKGREEN + "LPF dependencies installed" + bcolors.ENDC)
-        install_databases(arguments)
+        install_databases(cwd)
         os.chdir(cwd)
         print (bcolors.OKGREEN + "Databases installed" + bcolors.ENDC)
         LPF_build_app()
@@ -436,7 +436,7 @@ def check_and_add_bookmarks():
             for item in new_bookmark_list:
                 fd.write(item + '\n')
 
-def install_databases(arguments):
+def install_databases(cwd):
     """Installs the databases"""
     if not check_local_software:
         print(bcolors.FAIL + "LPF dependencies are not installed, and databases cant be indexed" + bcolors.ENDC)
@@ -463,6 +463,10 @@ def install_databases(arguments):
             if not os.path.exists('/opt/LPF_databases/{}/config'.format(item)):
                 os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/config".format(item))
             download_mlst_tables()
+
+    os.chdir(cwd)
+    os.system("cp scripts/schemes/notes.txt /opt/LPF_databases/virulencefinder_db/notes.txt")
+    os.sytsem("cp scripts/schemes/phenotypes.txt /opt/LPF_databases/resfinder_db/phenotypes.txt")
 
     if not os.path.exists('/opt/LPF_databases/LPF.db'):
         create_sql_db()
