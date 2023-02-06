@@ -9,6 +9,8 @@ import datetime
 from src.kmaRunner import KMARunner
 import src.util.ccphyloUtils as ccphyloUtils
 import src.sqlCommands as sqlCommands
+import src.pdfReport as pdfReport
+
 
 def bacterial_analysis_pipeline(bacterial_parser):
     """Runs the bacterial analysis pipeline"""
@@ -89,7 +91,7 @@ def bacterial_analysis_pipeline(bacterial_parser):
 
     sqlCommands.sql_update_status_table('Generating report', bacterial_parser.data.sample_name, '10', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
 
-    #pdf report
+    pdfReport.compile_alignment_report(bacterial_parser)
 
     sqlCommands.sql_update_status_table('Analysis completed', bacterial_parser.data.sample_name, '10', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
 

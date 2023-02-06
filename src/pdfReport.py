@@ -118,7 +118,7 @@ def compile_assembly_report(bacterial_parser):
     pdf.output("{}/{}".format(bacterial_parser.data.target_dir, filename), 'F')
 
 
-def compileReportAlignment(bacterial_parser):
+def compile_alignment_report(bacterial_parser):
     pdf = FPDF()  # A4 (210 by 297 mm)
 
     filename = "{}.pdf".format(bacterial_parser.data.entry_id)
