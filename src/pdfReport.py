@@ -26,7 +26,7 @@ def compile_assembly_report(bacterial_parser):
     df = pd.read_csv(bacterial_parser.data.target_dir + "/quast_output/report.tsv", sep='\t')
 
     df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
-    dfi.export(df_styled, bacterial_parser.data.target_dir + "quast_table.png")
+    dfi.export(df_styled, bacterial_parser.data.target_dir + "/quast_table.png")
     pdf.image("{}/quast_table.png".format(bacterial_parser.data.target_dir), x=10, y=90, w=pdf.w / 2.5, h=pdf.h / 2.7)
     pdf.set_xy(x=10, y=58)
     pdf.set_font('Arial', '', 14)
