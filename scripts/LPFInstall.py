@@ -466,7 +466,7 @@ def install_databases(cwd):
 
     os.chdir(cwd)
     os.system("cp scripts/schemes/notes.txt /opt/LPF_databases/virulencefinder_db/notes.txt")
-    os.sytsem("cp scripts/schemes/phenotypes.txt /opt/LPF_databases/resfinder_db/phenotypes.txt")
+    os.system("cp scripts/schemes/phenotypes.txt /opt/LPF_databases/resfinder_db/phenotypes.txt")
 
     if not os.path.exists('/opt/LPF_databases/LPF.db'):
         create_sql_db()
