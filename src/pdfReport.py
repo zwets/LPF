@@ -161,7 +161,7 @@ def compile_alignment_report(bacterial_parser):
                  "Plasmids in this sample: {}. \n" \
                  "Virulence genes in this sample: {}. \n" \
                  "MLST: ST{}. \n" \
-                 "".format(len(bacterial_parser.data.resfinder_hits), len(bacterial_parser.data.plasmid_hits), len(bacterial_parser.data.virulence_hits), bacterial_parser.data.mlst_type)
+                 "".format(len(bacterial_parser.data.resfinder_hits), len(bacterial_parser.data.plasmid_hits), len(bacterial_parser.data.virulence_hits), bacterial_parser.data.mlst_species)
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('Arial', '', 10)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
