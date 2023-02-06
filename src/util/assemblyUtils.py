@@ -29,7 +29,7 @@ def run_quast(bacterial_parser):
     output = proc.communicate()[0]
     id = output.decode().rstrip()
 
-    cmd = "docker cp {}:/output/quast_output {}quast_output".format(id, target_dir)
+    cmd = "docker cp {}:/output/quast_output {}quast_output".format(id, bacterial_parser.data.target_dir)
     os.system(cmd)
 
     cmd = "docker container rm {}".format(id)
