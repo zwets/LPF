@@ -301,7 +301,7 @@ def derive_virulence_stats(bacterial_parser):  #TBD rewrite and remove.
         new_genes.append(item.split(":")[0])
     genes = new_genes
     phenotype = dict()
-    infile = open("/opt/LPF/virulencefinder_db/notes.txt", 'r')
+    infile = open("/opt/LPF_databases/virulencefinder_db/notes.txt", 'r')
     for line in infile:
         if line[0] != "#":
             line = line.rstrip().split(":")
