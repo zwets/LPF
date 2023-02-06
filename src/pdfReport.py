@@ -8,7 +8,7 @@ import pandas as pd
 
 def compile_assembly_report(bacterial_parser):
     pdf = FPDF()  # A4 (210 by 297 mm)
-    filename = "{}.pdf".format(bacterial_parser.data.entry_id)
+    filename = "{}/{}.pdf".format(bacterial_parser.data.target_dir, bacterial_parser.data.entry_id)
 
     ''' First Page '''
     pdf.add_page()
@@ -121,7 +121,7 @@ def compile_assembly_report(bacterial_parser):
 def compileReportAlignment(bacterial_parser):
     pdf = FPDF()  # A4 (210 by 297 mm)
 
-    filename = "{}.pdf".format(bacterial_parser.data.entry_id) #ADD idd
+    filename = "{}/{}.pdf".format(bacterial_parser.data.target_dir, bacterial_parser.data.entry_id)
     clusterSize = len(bacterial_parser.data.isolate_list)
 
     ''' First Page '''
