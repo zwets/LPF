@@ -40,6 +40,7 @@ def LPF_installation(arguments):
         install_databases(arguments)
         os.chdir(cwd)
     check_all_deps()
+    check_and_add_bookmarks()
 
 def build_app():
     os.system("cd local_app; chmod a+x lpf_launch; npm i; ./node_modules/.bin/electron-rebuild; npm run dist;sudo cp lpf.desktop /usr/share/applications/.; cd ..")
