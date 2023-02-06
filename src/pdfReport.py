@@ -8,7 +8,7 @@ import pandas as pd
 
 def compile_assembly_report(bacterial_parser):
     pdf = FPDF()  # A4 (210 by 297 mm)
-    filename = "{}/{}.pdf".format(bacterial_parser.data.target_dir, bacterial_parser.data.entry_id)
+    filename = "{}.pdf".format(bacterial_parser.data.target_dir, bacterial_parser.data.entry_id)
 
     ''' First Page '''
     pdf.add_page()
@@ -115,13 +115,13 @@ def compile_assembly_report(bacterial_parser):
 
     pdf.set_font('Arial', '', 12)
 
-    pdf.output(bacterial_parser.data.target_dir + filename, 'F')
+    pdf.output("{}/{}".format(bacterial_parser.data.target_dir, filename), 'F')
 
 
 def compileReportAlignment(bacterial_parser):
     pdf = FPDF()  # A4 (210 by 297 mm)
 
-    filename = "{}/{}.pdf".format(bacterial_parser.data.target_dir, bacterial_parser.data.entry_id)
+    filename = "{}.pdf".format(bacterial_parser.data.target_dir, bacterial_parser.data.entry_id)
     clusterSize = len(bacterial_parser.data.isolate_list)
 
     ''' First Page '''
@@ -269,7 +269,7 @@ def compileReportAlignment(bacterial_parser):
 
     #pdf.image("{}/phytree_output/tree.png".format(bacterial_parser.data.target_dir), x=10, y=55, w=pdf.w / 1.5, h=pdf.h / 1.75)
 
-    pdf.output(bacterial_parser.data.target_dir + filename, 'F')
+    pdf.output("{}/{}".format(bacterial_parser.data.target_dir, filename), 'F')
 
 
 def create_title(pdf, id, string):
