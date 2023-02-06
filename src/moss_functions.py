@@ -1,5 +1,5 @@
 """
-Shared functions used by the MOSS back-end
+Shared functions used by the LPF back-end
 """
 import sys
 import os
@@ -21,104 +21,103 @@ import dataframe_image as dfi
 import logging
 import pyfastx
 
-import moss_helpers as moss_helpers
-from version import __version__
+from scripts.version import __version__
 
 
-def moss_run(moss_object):
-    moss_object.version = __version__
-    logging.info('Starting MOSS run')
-    logging.info('MOSS version: {}'.format(moss_object.version))
-    moss_object = evaluate_dna_depth(moss_object)
-    sql_update_status_table("CGE finders", moss_object.sample_name, "Not Determined", "2", "10", "Running", moss_object.entry_id, moss_object.moss_db)
+def LPF_run(LPF_object):
+    LPF_object.version = __version__
+    logging.info('Starting LPF run')
+    logging.info('LPF version: {}'.format(LPF_object.version))
+    LPF_object = evaluate_dna_depth(LPF_object)
+    sql_update_status_table("CGE finders", LPF_object.sample_name, "Not Determined", "2", "10", "Running", LPF_object.entry_id, LPF_object.LPF_db)
     #Initial finders run
-    kma_finders("-ont -md 5", "resfinder", moss_object, "/opt/moss_resources/resfinder_db/all")
-    kma_finders("-ont -md 5", "virulencefinder", moss_object, "/opt/moss_resources/virulencefinder_db/all")
-    kma_finders("-ont -md 5", "plasmidfinder", moss_object, "/opt/moss_resources/plasmidfinder_db/all")
+    kma_finders("-ont -md 5", "resfinder", LPF_object, "/opt/LPF_databases/resfinder_db/all")
+    kma_finders("-ont -md 5", "virulencefinder", LPF_object, "/opt/LPF_databases/virulencefinder_db/all")
+    kma_finders("-ont -md 5", "plasmidfinder", LPF_object, "/opt/LPF_databases/plasmidfinder_db/all")
     #MLST
 
     #KMA remapping of consensus sequences
-    kma_finders_consensus_sequence("-1t1", "resfinder", moss_object, "/opt/moss_resources/resfinder_db/all")
-    kma_finders_consensus_sequence("-1t1", "virulencefinder", moss_object, "/opt/moss_resources/virulencefinder_db/all")
-    kma_finders_consensus_sequence("-1t1", "plasmidfinder", moss_object, "/opt/moss_resources/plasmidfinder_db/all")
+    kma_finders_consensus_sequence("-1t1", "resfinder", LPF_object, "/opt/LPF_databases/resfinder_db/all")
+    kma_finders_consensus_sequence("-1t1", "virulencefinder", LPF_object, "/opt/LPF_databases/virulencefinder_db/all")
+    kma_finders_consensus_sequence("-1t1", "plasmidfinder", LPF_object, "/opt/LPF_databases/plasmidfinder_db/all")
     #MLST
 
-    sql_update_status_table("KMA Mapping", moss_object.sample_name, "Not Determined", "3", "10", "Running", moss_object.entry_id, moss_object.moss_db)
+    sql_update_status_table("KMA Mapping", LPF_object.sample_name, "Not Determined", "3", "10", "Running", LPF_object.entry_id, LPF_object.LPF_db)
 
-    moss_object = kma_mapping(moss_object)
+    LPF_object = kma_mapping(LPF_object)
 
-    moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text, moss_object.entry_id)
+    LPF_object.associated_species = "{} - assembly from ID: {}".format(LPF_object.reference_header_text, LPF_object.entry_id)
 
-    #run_mlst(moss_object)s
-    mlst_finder(moss_object)
+    #run_mlst(LPF_object)s
+    mlst_finder(LPF_object)
 
     sys.exit()
 
-    moss_object = parse_finders(moss_object)
+    LPF_object = parse_finders(LPF_object)
 
-    if moss_object.template_number == None:  # None == no template found
-        run_assembly(moss_object)
-        copy_logs_reports(moss_object)
-        return moss_object
-    sql_update_status_table("IPC check", moss_object.sample_name, "Alignment", "4", "10", "Running", moss_object.entry_id, moss_object.moss_db)
+    if LPF_object.template_number == None:  # None == no template found
+        run_assembly(LPF_object)
+        copy_logs_reports(LPF_object)
+        return LPF_object
+    sql_update_status_table("IPC check", LPF_object.sample_name, "Alignment", "4", "10", "Running", LPF_object.entry_id, LPF_object.LPF_db)
 
-    nanopore_alignment(moss_object)
+    nanopore_alignment(LPF_object)
 
-    moss_object.reference_id = sql_fetch_one("SELECT entry_id FROM reference_table WHERE reference_header_text = '{}'"
-                                 .format(moss_object.reference_header_text), moss_object.moss_db)[0]
+    LPF_object.reference_id = sql_fetch_one("SELECT entry_id FROM reference_table WHERE reference_header_text = '{}'"
+                                 .format(LPF_object.reference_header_text), LPF_object.LPF_db)[0]
 
     cmd = "cp {0}{1} {2}consensus_sequences/{1}"\
-        .format(moss_object.target_dir, moss_object.consensus_name, moss_object.config_path)
+        .format(LPF_object.target_dir, LPF_object.consensus_name, LPF_object.config_path)
     os.system(cmd)
 
-    moss_object.isolate_list = sql_fetch_all("SELECT consensus_name FROM sample_table WHERE reference_id = '{}'"
-            .format(moss_object.reference_id), moss_object.moss_db) #Not all isolates are used current is not included either.
+    LPF_object.isolate_list = sql_fetch_all("SELECT consensus_name FROM sample_table WHERE reference_id = '{}'"
+            .format(LPF_object.reference_id), LPF_object.LPF_db) #Not all isolates are used current is not included either.
 
-    sql_update_status_table("CCphylo", moss_object.sample_name, "Alignment", "5", "10", "Running", moss_object.entry_id, moss_object.moss_db)
+    sql_update_status_table("CCphylo", LPF_object.sample_name, "Alignment", "5", "10", "Running", LPF_object.entry_id, LPF_object.LPF_db)
 
-    moss_object = make_phytree_output_folder(moss_object)
+    LPF_object = make_phytree_output_folder(LPF_object)
 
-    inclusion_fraction = ccphylo_dist(moss_object)
+    inclusion_fraction = ccphylo_dist(LPF_object)
 
 
     distance = ThreshholdDistanceCheck("{}/phytree_output/distance_matrix"
-                                       .format(moss_object.target_dir), moss_object)
+                                       .format(LPF_object.target_dir), LPF_object)
     print (distance)
     logging.info("Distance from best reference in SNPs: {}".format(distance))
 
     if distance == None:
-        moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text, moss_object.entry_id)
-        run_assembly(moss_object)
-        copy_logs_reports(moss_object)
-        return moss_object
+        LPF_object.associated_species = "{} - assembly from ID: {}".format(LPF_object.reference_header_text, LPF_object.entry_id)
+        run_assembly(LPF_object)
+        copy_logs_reports(LPF_object)
+        return LPF_object
     elif distance > 300 or inclusion_fraction < 0.25:  # SNP distance #TBD EVAL ASSEMBLY QUALITY
-        moss_object.associated_species = "{} - assembly from ID: {}".format(moss_object.reference_header_text,
-                                                          moss_object.entry_id)
-        run_assembly(moss_object)
-        copy_logs_reports(moss_object)
-        return moss_object
+        LPF_object.associated_species = "{} - assembly from ID: {}".format(LPF_object.reference_header_text,
+                                                          LPF_object.entry_id)
+        run_assembly(LPF_object)
+        copy_logs_reports(LPF_object)
+        return LPF_object
 
-    sql_update_status_table("CCphylo", moss_object.sample_name, "Alignment", "6", "10", "Running", moss_object.entry_id, moss_object.moss_db)
+    sql_update_status_table("CCphylo", LPF_object.sample_name, "Alignment", "6", "10", "Running", LPF_object.entry_id, LPF_object.LPF_db)
 
-    ccphylo_tree(moss_object)
+    ccphylo_tree(LPF_object)
 
-    sql_update_status_table("Phylo Tree imaging", moss_object.sample_name, "Alignment", "7", "10", "Running", moss_object.entry_id, moss_object.moss_db)
+    sql_update_status_table("Phylo Tree imaging", LPF_object.sample_name, "Alignment", "7", "10", "Running", LPF_object.entry_id, LPF_object.LPF_db)
 
-    moss_object = create_phylo_tree(moss_object)
+    LPF_object = create_phylo_tree(LPF_object)
 
-    sql_update_status_table("Database updating", moss_object.sample_name, "Alignment", "8", "10", "Running", moss_object.entry_id, moss_object.moss_db)
+    sql_update_status_table("Database updating", LPF_object.sample_name, "Alignment", "8", "10", "Running", LPF_object.entry_id, LPF_object.LPF_db)
 
-    sql_update_status_table("Compiling PDF", moss_object.sample_name, "Alignment", "9", "10", "Running", moss_object.entry_id, moss_object.moss_db)
+    sql_update_status_table("Compiling PDF", LPF_object.sample_name, "Alignment", "9", "10", "Running", LPF_object.entry_id, LPF_object.LPF_db)
 
-    compileReportAlignment(moss_object)
+    compileReportAlignment(LPF_object)
 
-    copy_logs_reports(moss_object)
+    copy_logs_reports(LPF_object)
 
-    return moss_object
+    return LPF_object
 
 
-def evaluate_dna_depth(moss_object):
-    fq = pyfastx.Fastq(moss_object.input_path, build_index=False)
+def evaluate_dna_depth(LPF_object):
+    fq = pyfastx.Fastq(LPF_object.input_path, build_index=False)
     total_bases = 0
     for read in fq:
         total_bases += len(read[1])
@@ -128,15 +127,15 @@ def evaluate_dna_depth(moss_object):
         print ("Not enough DNA for analysis")
         logging.info("Not enough DNA for analysis")
         sys.exit(1)
-    moss_object.total_bases = total_bases
-    return moss_object
+    LPF_object.total_bases = total_bases
+    return LPF_object
 
 
 
-def ccphylo_dist(moss_object):
+def ccphylo_dist(LPF_object):
     cmd = "~/bin/ccphylo dist --input {0}/phytree_output/* --reference \"{1}\" --min_cov 0.01" \
           " --normalization_weight 0 --output {0}/phytree_output/distance_matrix" \
-        .format(moss_object.target_dir, moss_object.reference_header_text)
+        .format(LPF_object.target_dir, LPF_object.reference_header_text)
 
     proc = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     err = proc.communicate()[1].decode().rstrip().split(" ")
@@ -147,27 +146,27 @@ def ccphylo_dist(moss_object):
     logging.info("Inclusion fraction: {}".format(inclusion_fraction))
     return inclusion_fraction
 
-def ccphylo_tree(moss_object):
+def ccphylo_tree(LPF_object):
     cmd = "~/bin/ccphylo tree --input {0}/phytree_output/distance_matrix --output {0}/phytree_output/tree.newick"\
-        .format(moss_object.target_dir)
+        .format(LPF_object.target_dir)
     proc = subprocess.Popen(cmd, shell=True,
                             stdout=subprocess.PIPE, )
     output = proc.communicate()[0].decode()
 
-def copy_logs_reports(moss_object):
-    os.system("cp {} /opt/moss_logs/{}".format(moss_object.target_dir + moss_object.logfile, moss_object.logfile))
-    os.system("cp {} /opt/moss_reports/{}".format(moss_object.target_dir + moss_object.entry_id + ".pdf", moss_object.entry_id + ".pdf"))
+def copy_logs_reports(LPF_object):
+    os.system("cp {} /opt/LPF_logs/{}".format(LPF_object.target_dir + LPF_object.logfile, LPF_object.logfile))
+    os.system("cp {} /opt/LPF_reports/{}".format(LPF_object.target_dir + LPF_object.entry_id + ".pdf", LPF_object.entry_id + ".pdf"))
 
 
-def sql_update_status_table(msg, sample_name, type, current_stage, final_stage, result, entry_id, moss_db):
+def sql_update_status_table(msg, sample_name, type, current_stage, final_stage, result, entry_id, LPF_db):
     sql_cmd = "UPDATE status_table SET status=\"{}\", sample_name =\"{}\", type=\"{}\", current_stage=\"{}\", final_stage=\"{}\", result=\"{}\", time_stamp=\"{}\" WHERE entry_id=\"{}\"".format(msg, sample_name, type, current_stage, final_stage, result, str(datetime.datetime.now())[0:-7], entry_id)
-    sql_execute_command(sql_cmd, moss_db)
+    sql_execute_command(sql_cmd, LPF_db)
 
-def update_meta_data_table(moss_object):
-    attributes = [a for a in dir(moss_object) if not a.startswith('__')]
+def update_meta_data_table(LPF_object):
+    attributes = [a for a in dir(LPF_object) if not a.startswith('__')]
     sql_dict = dict()
     for attribute in attributes:
-        val = getattr(moss_object, attribute)
+        val = getattr(LPF_object, attribute)
         if isinstance(val, list) and len(val) > 0:
             for i in range(len(val)):
                 if "'" in val[i]:
@@ -176,35 +175,35 @@ def update_meta_data_table(moss_object):
             if isinstance(val, str) and "'" in val:
                 val = val.replace("'", "''")
         sql_dict[attribute] = val
-    sql_cmd = "INSERT INTO meta_data_table(entry_id, meta_data_json) VALUES('{}', '{}')".format(moss_object.entry_id, json.dumps(sql_dict))
-    sql_execute_command(sql_cmd, moss_object.moss_db)
+    sql_cmd = "INSERT INTO meta_data_table(entry_id, meta_data_json) VALUES('{}', '{}')".format(LPF_object.entry_id, json.dumps(sql_dict))
+    sql_execute_command(sql_cmd, LPF_object.LPF_db)
 
 
-def update_reference_table(moss_object):
-    sql_cmd = "INSERT INTO reference_table(entry_id, reference_header_text) VALUES('{}', '{}')".format(moss_object.entry_id, moss_object.reference_header_text)
-    sql_execute_command(sql_cmd, moss_object.moss_db)
+def update_reference_table(LPF_object):
+    sql_cmd = "INSERT INTO reference_table(entry_id, reference_header_text) VALUES('{}', '{}')".format(LPF_object.entry_id, LPF_object.reference_header_text)
+    sql_execute_command(sql_cmd, LPF_object.LPF_db)
 
-def update_sample_table(moss_object):
-    sql_cmd = "INSERT INTO sample_table(entry_id, sample_name, reference_id, consensus_name) VALUES('{}', '{}', '{}', '{}')".format(moss_object.entry_id, moss_object.sample_name, moss_object.reference_id, moss_object.consensus_name)
-    sql_execute_command(sql_cmd, moss_object.moss_db)
+def update_sample_table(LPF_object):
+    sql_cmd = "INSERT INTO sample_table(entry_id, sample_name, reference_id, consensus_name) VALUES('{}', '{}', '{}', '{}')".format(LPF_object.entry_id, LPF_object.sample_name, LPF_object.reference_id, LPF_object.consensus_name)
+    sql_execute_command(sql_cmd, LPF_object.LPF_db)
     return True
-def insert_sql_data_to_db(moss_object, r_type):
-    update_sample_table(moss_object)
-    update_meta_data_table(moss_object)
+def insert_sql_data_to_db(LPF_object, r_type):
+    update_sample_table(LPF_object)
+    update_meta_data_table(LPF_object)
     if r_type == 'assembly':
-        update_reference_table(moss_object)
+        update_reference_table(LPF_object)
 
     return True
 
-def qc_check(moss_object):
+def qc_check(LPF_object):
     """Very basic QC. Only checks for a minimum amount of input data so far."""
-    file_size_mb = os.path.getsize(moss_object.input_path)/1000000
+    file_size_mb = os.path.getsize(LPF_object.input_path)/1000000
     if 3 > file_size_mb:
         sys.exit('The input file was less than 3 MB. This likely means only a very small amount of DNA was sequenced. Analysis can not be performed.')
     return True
 
 def create_sql_db(config_name):
-    conn = sqlite3.connect(config_name + 'moss.db')
+    conn = sqlite3.connect(config_name + 'LPF.db')
     c = conn.cursor()
 
     c.execute(
@@ -230,25 +229,25 @@ def create_sql_db(config_name):
 
     init_insert_reference_table(config_name)
 
-def clean_sql_for_moss_run(moss_object):
+def clean_sql_for_LPF_run(LPF_object):
     print ('cleaning sql for failed run.')
-    sql_update_status_table("Run failed", moss_object.sample_name, "Run failed", "0", "0", "Run failed", moss_object.entry_id, moss_object.moss_db)
+    sql_update_status_table("Run failed", LPF_object.sample_name, "Run failed", "0", "0", "Run failed", LPF_object.entry_id, LPF_object.LPF_db)
 
-def completed_run_update_sql_database(r_type, moss_object):
+def completed_run_update_sql_database(r_type, LPF_object):
     if r_type == 'alignment':
-        sql_update_status_table("Completed", moss_object.sample_name, "Alignment", "10", "10", "Completed", moss_object.entry_id, moss_object.moss_db)
+        sql_update_status_table("Completed", LPF_object.sample_name, "Alignment", "10", "10", "Completed", LPF_object.entry_id, LPF_object.LPF_db)
     elif r_type == 'assembly':
-        sql_update_status_table("Completed", moss_object.sample_name, "Assembly", "10", "10", "Completed", moss_object.entry_id, moss_object.moss_db)
+        sql_update_status_table("Completed", LPF_object.sample_name, "Assembly", "10", "10", "Completed", LPF_object.entry_id, LPF_object.LPF_db)
     else:
         return None
 
-def evaluate_moss_run(moss_object): #TBD. Not implemented yet. Will be used to evaluate if the run finished correctly or if sql should be cleaned.
-    if moss_object.reference_id == None:
+def evaluate_LPF_run(LPF_object): #TBD. Not implemented yet. Will be used to evaluate if the run finished correctly or if sql should be cleaned.
+    if LPF_object.reference_id == None:
         return 'assembly'
     else:
         return 'alignment'
 
-def validate_moss_object(object):
+def validate_LPF_object(object):
     print('Validating input')
     logging.info('Validating input')
     if not object.input_file in object.input_path:
@@ -257,8 +256,8 @@ def validate_moss_object(object):
     if not object.input_path.endswith('.fastq.gz'):
         logging.error('Input file is not a fastq.gz file. Please check input.')
         raise SystemExit('Input is not a fastq.gz file. Only this format is supported.')
-    if not object.config_path.startswith('/opt/moss_db'):
-        logging.error('No Config file found in /opt/moss_db. Please check input.')
+    if not object.config_path.startswith('/opt/LPF_db'):
+        logging.error('No Config file found in /opt/LPF_db. Please check input.')
         raise SystemExit('An invalid config_path was given.')
     validate_date_text(object.collection_date)
     print('Validation complete')
@@ -271,15 +270,15 @@ def validate_date_text(date_text):
     except ValueError:
         raise ValueError("Incorrect data format, should be YYYY-MM-DD.")
 
-def parse_finders(moss_object):
-    moss_object.resfinder_hits = parse_kma_res("{}/finders_1t1/resfinder.res".format(moss_object.target_dir))
-    moss_object.virulence_hits = parse_kma_res("{}/finders_1t1/virulencefinder.res".format(moss_object.target_dir))
-    moss_object.plasmid_hits = parse_kma_res("{}/finders_1t1/plasmidfinder.res".format(moss_object.target_dir))
-    moss_object.mlst_type = parse_mlst_result("{}/mlstresults/data.json".format(moss_object.target_dir))
-    return moss_object
+def parse_finders(LPF_object):
+    LPF_object.resfinder_hits = parse_kma_res("{}/finders_1t1/resfinder.res".format(LPF_object.target_dir))
+    LPF_object.virulence_hits = parse_kma_res("{}/finders_1t1/virulencefinder.res".format(LPF_object.target_dir))
+    LPF_object.plasmid_hits = parse_kma_res("{}/finders_1t1/plasmidfinder.res".format(LPF_object.target_dir))
+    LPF_object.mlst_type = parse_mlst_result("{}/mlstresults/data.json".format(LPF_object.target_dir))
+    return LPF_object
 def derive_amr_stats(genes, database): #TBD rewrite and remove.
     phenotype = dict()
-    infile = open("/opt/moss_resources/{}/phenotypes.txt".format(database), 'r')
+    infile = open("/opt/LPF_databases/{}/phenotypes.txt".format(database), 'r')
     for line in infile:
         if not line.startswith("Gene_accession"):
             line = line.rstrip().split("\t")
@@ -297,7 +296,7 @@ def derive_virulence_stats(genes, database, target_dir):  #TBD rewrite and remov
         new_genes.append(item.split(":")[0])
     genes = new_genes
     phenotype = dict()
-    infile = open("/opt/moss/{}/notes.txt".format(database), 'r')
+    infile = open("/opt/LPF/{}/notes.txt".format(database), 'r')
     for line in infile:
         if line[0] != "#":
             line = line.rstrip().split(":")
@@ -320,7 +319,7 @@ def push_finders_data_sql(target_dir, config_path, entry_id): #TBD insert all me
     plasmid_hits = parse_kma_res("{}/finders/plasmidfinder.res".format(target_dir))
     mlst_type = parse_mlst_result("{}/mlstresults/data.json".format(target_dir))
 
-    sql_execute_command(sql_cmd,  moss_object.config_path)
+    sql_execute_command(sql_cmd,  LPF_object.config_path)
 
     return resfinder_hits, virulence_hits, plasmid_hits, mlst_type
 
@@ -342,8 +341,8 @@ def parse_kma_res(filename):
             item_list.append(line[0])
     return item_list
 
-def derive_mlst_species(moss_object):
-    specie = moss_object.reference_header_text.split()[1].lower() + " " + moss_object.reference_header_text.split()[
+def derive_mlst_species(LPF_object):
+    specie = LPF_object.reference_header_text.split()[1].lower() + " " + LPF_object.reference_header_text.split()[
         2].lower()  # Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
 
     mlst_dict = dict()
@@ -351,7 +350,7 @@ def derive_mlst_species(moss_object):
         return 'ecoli'
     else:
 
-        with open("/opt/moss_resources/mlst_db/config", 'r') as infile:
+        with open("/opt/LPF_databases/mlst_db/config", 'r') as infile:
             for line in infile:
                 if line[0] != "#":
                     line = line.split("\t")
@@ -362,27 +361,27 @@ def derive_mlst_species(moss_object):
     else:
         return 'Unknown'
 
-def mlst_finder(moss_object):
+def mlst_finder(LPF_object):
     """
         Run MLST on raw reads
         """
-    specie = derive_mlst_species(moss_object)
+    specie = derive_mlst_species(LPF_object)
 
     if specie == 'Unknown':
         logging.error('Species was not found in MLST database')
         return 'Unknown'
     else:
-        kma_finders("-ont -md 5", "mlst", moss_object, "/opt/moss_resources/mlst_db/{}/{}".format(specie, specie))
-def kma_finders_consensus_sequence(arguments, output_name, moss_object, database):
+        kma_finders("-ont -md 5", "mlst", LPF_object, "/opt/LPF_databases/mlst_db/{}/{}".format(specie, specie))
+def kma_finders_consensus_sequence(arguments, output_name, LPF_object, database):
     """Runs the kma finders"""
     logging.info("Performing KMA alingnment against {}".format(database))
-    os.system("~/bin/kma -i {}/finders/{}.fsa -o {}/finders_1t1/{} -t_db {} {}".format(moss_object.target_dir, output_name, moss_object.target_dir, output_name, database, arguments))
+    os.system("~/bin/kma -i {}/finders/{}.fsa -o {}/finders_1t1/{} -t_db {} {}".format(LPF_object.target_dir, output_name, LPF_object.target_dir, output_name, database, arguments))
 
 
-def kma_finders(arguments, output_name, moss_object, database):
+def kma_finders(arguments, output_name, LPF_object, database):
     """Runs the kma finders"""
     logging.info("Performing KMA alingnment against {}".format(database))
-    os.system("~/bin/kma -i {} -o {}/finders/{} -t_db {} {}".format(moss_object.input_path, moss_object.target_dir, output_name, database, arguments))
+    os.system("~/bin/kma -i {} -o {}/finders/{} -t_db {} {}".format(LPF_object.input_path, LPF_object.target_dir, output_name, database, arguments))
 
 def create_directory_from_dict(dict, path):
     for directory in dict:
@@ -391,16 +390,16 @@ def create_directory_from_dict(dict, path):
             os.system("mkdir {}{}/{}".format(path, directory, subdirectory))
     return True
 
-def sql_fetch_one(string, moss_db):
-    conn = sqlite3.connect(moss_db)
+def sql_fetch_one(string, LPF_db):
+    conn = sqlite3.connect(LPF_db)
     c = conn.cursor()
     c.execute(string)
     data = c.fetchone()
     conn.close()
     return data
 
-def sql_fetch_all(string, moss_db):
-    conn = sqlite3.connect(moss_db)
+def sql_fetch_all(string, LPF_db):
+    conn = sqlite3.connect(LPF_db)
     c = conn.cursor()
     c.execute(string)
     data = c.fetchall()
@@ -408,56 +407,56 @@ def sql_fetch_all(string, moss_db):
     conn.close()
     return data
 
-def sql_execute_command(command, moss_db):
-    conn = sqlite3.connect(moss_db)
+def sql_execute_command(command, LPF_db):
+    conn = sqlite3.connect(LPF_db)
     c = conn.cursor()
     c.execute(command)
     conn.commit()
     conn.close()
 
-def moss_mkfs(config_path, entry_id):
+def LPF_mkfs(config_path, entry_id):
     target_dir = "{}/analysis/{}/".format(config_path, entry_id)
     os.system("mkdir {}".format(target_dir))
     os.system("mkdir {}/finders".format(target_dir))
     os.system("mkdir {}/finders_1t1".format(target_dir))
 
 
-def get_kma_template_number(moss_object):
-    with open('{}/REFDB.ATG.name'.format(moss_object.config_path), 'r') as infile:
+def get_kma_template_number(LPF_object):
+    with open('{}/REFDB.ATG.name'.format(LPF_object.config_path), 'r') as infile:
         t = 1
         number = 0
         for line in infile:
-            if moss_object.reference_header_text in line:
+            if LPF_object.reference_header_text in line:
                 infile.close()
                 return t
             t += 1
         infile.close()
         return t
 
-def make_phytree_output_folder(moss_object):
-    cmd = "mkdir {}/phytree_output".format(moss_object.target_dir)
+def make_phytree_output_folder(LPF_object):
+    cmd = "mkdir {}/phytree_output".format(LPF_object.target_dir)
     os.system(cmd)
 
-    for item in moss_object.isolate_list: #Can we put this into an sql table too?
-        path = "{}/consensus_sequences/{}".format(moss_object.config_path, item)
-        cmd = "cp {} {}/phytree_output/.".format(path, moss_object.target_dir)
+    for item in LPF_object.isolate_list: #Can we put this into an sql table too?
+        path = "{}/consensus_sequences/{}".format(LPF_object.config_path, item)
+        cmd = "cp {} {}/phytree_output/.".format(path, LPF_object.target_dir)
         os.system(cmd)
-    moss_object.consensus_sequence_path = "{}consensus_sequences/{}".format(moss_object.config_path, moss_object.consensus_name,)
-    os.system("cp {} {}/phytree_output/.".format(moss_object.consensus_sequence_path, moss_object.target_dir))
+    LPF_object.consensus_sequence_path = "{}consensus_sequences/{}".format(LPF_object.config_path, LPF_object.consensus_name,)
+    os.system("cp {} {}/phytree_output/.".format(LPF_object.consensus_sequence_path, LPF_object.target_dir))
 
 
-    moss_object.header_name = moss_object.reference_header_text.split()[0] + '.fsa'
+    LPF_object.header_name = LPF_object.reference_header_text.split()[0] + '.fsa'
     cmd = "~/bin/kma seq2fasta -t_db {} -seqs {} > {}/phytree_output/{}"\
-        .format(moss_object.ref_db, moss_object.template_number, moss_object.target_dir, moss_object.header_name)
+        .format(LPF_object.ref_db, LPF_object.template_number, LPF_object.target_dir, LPF_object.header_name)
     os.system(cmd)
 
-    cmd = "cp {0}*_consensus.fsa {0}phytree_output/.".format(moss_object.target_dir)
+    cmd = "cp {0}*_consensus.fsa {0}phytree_output/.".format(LPF_object.target_dir)
     os.system(cmd)
 
-    return moss_object
+    return LPF_object
 
-def create_phylo_tree(moss_object):
-    with open ("{}phytree_output/tree.newick".format(moss_object.target_dir)) as fd:
+def create_phylo_tree(LPF_object):
+    with open ("{}phytree_output/tree.newick".format(LPF_object.target_dir)) as fd:
         data = fd.read()
     handle = StringIO(data)
     tree = Phylo.read(handle, "newick")
@@ -465,9 +464,9 @@ def create_phylo_tree(moss_object):
     fig = plt.figure(figsize=(20, 20), dpi=80)
     axes = fig.add_subplot(1, 1, 1)
     Phylo.draw(tree, axes=axes, do_show=False)
-    plt.savefig("{}/phytree_output/tree.png".format(moss_object.target_dir), dpi=100)
-    moss_object.phytree_path = "{}/phytree_output/tree.png".format(moss_object.target_dir)
-    return moss_object
+    plt.savefig("{}/phytree_output/tree.png".format(LPF_object.target_dir), dpi=100)
+    LPF_object.phytree_path = "{}/phytree_output/tree.png".format(LPF_object.target_dir)
+    return LPF_object
 
 def plot_tree(treedata, output_file):
     handle = StringIO(treedata)  # parse the newick string
@@ -486,7 +485,7 @@ def plot_tree(treedata, output_file):
 def init_insert_reference_table(config_path):
     infile = open(config_path + "REFDB.ATG.name", 'r')
     t = 1
-    conn = sqlite3.connect(config_path + 'moss.db')
+    conn = sqlite3.connect(config_path + 'LPF.db')
     c = conn.cursor()
     ids = list()
     for line in infile:
@@ -511,22 +510,22 @@ def check_assembly_result(path):
 
     return True
 
-def run_assembly(moss_object):
+def run_assembly(LPF_object):
     """
     Performing Flye assebly
     """
     logging.info("Performing assembly with Flye")
-    moss_object.reference_id = None
-    sql_update_status_table(moss_object.entry_id, "Running", "Flye Assembly", "Assembly", "4", "10", "Running", moss_object.moss_db)
-    flye_assembly(moss_object)
+    LPF_object.reference_id = None
+    sql_update_status_table(LPF_object.entry_id, "Running", "Flye Assembly", "Assembly", "4", "10", "Running", LPF_object.LPF_db)
+    flye_assembly(LPF_object)
 
-    sql_update_status_table(moss_object.entry_id, "Running", "Compiling PDF report", "Assembly", "9", "10", "Running", moss_object.moss_db)
+    sql_update_status_table(LPF_object.entry_id, "Running", "Compiling PDF report", "Assembly", "9", "10", "Running", LPF_object.LPF_db)
 
-    compileReportAssembly(moss_object)
+    compileReportAssembly(LPF_object)
 
-    sql_update_status_table(moss_object.entry_id, "Completed", "Completed", "reference", "10", "10", "Completed", moss_object.moss_db)
+    sql_update_status_table(LPF_object.entry_id, "Completed", "Completed", "reference", "10", "10", "Completed", LPF_object.LPF_db)
 
-def init_moss_variables(config_path, ):
+def init_LPF_variables(config_path, ):
     referenceSyncFile = config_path + "syncFiles/referenceSync.json"
     isolateSyncFile = config_path + "syncFiles/isolateSync.json"
     return "~/bin/kma"
@@ -563,16 +562,16 @@ def varify_all_dependencies(laptop):
         update_list.append("conda")
     return update_list
 
-def run_mlst(moss_object):
+def run_mlst(LPF_object):
     """
     Run MLST on raw reads
     """
     logging.info("Running MLST on raw reads")
-    specie = moss_object.reference_header_text.split()[1].lower() + " " + moss_object.reference_header_text.split()[2].lower() #Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
+    specie = LPF_object.reference_header_text.split()[1].lower() + " " + LPF_object.reference_header_text.split()[2].lower() #Make broader implementation here - fx "ecoli" is for e.coli mlst - how does that worK?
 
     mlst_dict = dict()
 
-    with open("/opt/moss/mlst/mlst_db/config", 'r') as infile:
+    with open("/opt/LPF/mlst/mlst_db/config", 'r') as infile:
         for line in infile:
             if line[0] != "#":
                 line = line.split("\t")
@@ -583,13 +582,13 @@ def run_mlst(moss_object):
 
 
     if specie in mlst_dict:
-        cmd = "mkdir {}/mlstresults".format(moss_object.target_dir)
+        cmd = "mkdir {}/mlstresults".format(LPF_object.target_dir)
         os.system(cmd)
-        cmd = "python3 /opt/moss/mlst/mlst.py -i {} -o {}mlstresults" \
-              " -mp ~/bin/kma -p /opt/moss/mlst/mlst_db/ -s {} -nano"\
-            .format(moss_object.input_path, moss_object.target_dir, mlst_dict[specie])
+        cmd = "python3 /opt/LPF/mlst/mlst.py -i {} -o {}mlstresults" \
+              " -mp ~/bin/kma -p /opt/LPF/mlst/mlst_db/ -s {} -nano"\
+            .format(LPF_object.input_path, LPF_object.target_dir, mlst_dict[specie])
         os.system(cmd)
-        moss_object.mlst = specie
+        LPF_object.mlst = specie
 
 def sql_string_metadata(metadict):
     entries = ""
@@ -626,7 +625,7 @@ def correctPathCheck(pathName):
 
 def calc_coordinates_from_location(city, country):
     try:
-        geolocator = Nominatim(user_agent="moss")
+        geolocator = Nominatim(user_agent="LPF")
         loc = geolocator.geocode("{},{}".format(city, country))
         latitude = loc.latitude
         longitude = loc.longitude
@@ -638,7 +637,7 @@ def calc_coordinates_from_location(city, country):
 def check_coordinates(coordinates):
     try:
         coordinates = geocoder.ip('me').latlng
-        geolocator = Nominatim(user_agent="moss")
+        geolocator = Nominatim(user_agent="LPF")
         location = geolocator.reverse(coordinates)
     except:
         coordinates = ""
@@ -660,50 +659,50 @@ def check_alignment_kma_cov(file):
 
     return coverage
 
-def kma_mapping(moss_object):
+def kma_mapping(LPF_object):
     """
-    :param moss_object:
+    :param LPF_object:
     """
     logging.info("KMA mapping of input reads ")
     os.system("~/bin/kma -i {} -o {}kma_mapping -t_db {}/REFDB.ATG"
-              " -ID 0 -nf -mem_mode -sasm -ef -1t1".format(moss_object.input_path, moss_object.target_dir, moss_object.config_path))
-    num_lines = sum(1 for line in open("{}kma_mapping.res".format(moss_object.target_dir))) #1 line is empty, more have hits.
+              " -ID 0 -nf -mem_mode -sasm -ef -1t1".format(LPF_object.input_path, LPF_object.target_dir, LPF_object.config_path))
+    num_lines = sum(1 for line in open("{}kma_mapping.res".format(LPF_object.target_dir))) #1 line is empty, more have hits.
     template_score = 0
     if num_lines > 1:
-        moss_object.reference_header_text = None
-        with open("{}kma_mapping.res".format(moss_object.target_dir)) as infile:
+        LPF_object.reference_header_text = None
+        with open("{}kma_mapping.res".format(LPF_object.target_dir)) as infile:
             for line in infile:
                 line = line.rstrip()
                 line = line.split("\t")
                 if line[0][0] != "#":
                     if float(line[1]) > template_score:
                         template_score = float(line[1])
-                        moss_object.reference_header_text = line[0]
-        template_number = findTemplateNumber(moss_object.config_path, moss_object.reference_header_text)
-        moss_object.template_number = template_number
-        moss_object.reference_header_text = moss_object.reference_header_text
-        if " " in moss_object.reference_header_text:
-            moss_object.accesion = moss_object.reference_header_text.split(" ")[0]
+                        LPF_object.reference_header_text = line[0]
+        template_number = findTemplateNumber(LPF_object.config_path, LPF_object.reference_header_text)
+        LPF_object.template_number = template_number
+        LPF_object.reference_header_text = LPF_object.reference_header_text
+        if " " in LPF_object.reference_header_text:
+            LPF_object.accesion = LPF_object.reference_header_text.split(" ")[0]
         else:
-            moss_object.accesion = moss_object.reference_header_text
-        moss_object.consensus_name = "{}_{}_consensus.fsa".format(moss_object.sample_name, moss_object.accesion)
+            LPF_object.accesion = LPF_object.reference_header_text
+        LPF_object.consensus_name = "{}_{}_consensus.fsa".format(LPF_object.sample_name, LPF_object.accesion)
 
-        return moss_object
+        return LPF_object
     else:
         print("None of the given templates matches any of the entries in given ref_kma_database."
               " The input reads will now be assembled and added to the reference ref_kma_database as a new reference.")
-        moss_object.template_number = None
-        moss_object.reference_header_text = None
-        return moss_object
+        LPF_object.template_number = None
+        LPF_object.reference_header_text = None
+        return LPF_object
 
-def nanopore_alignment(moss_object):
+def nanopore_alignment(LPF_object):
     """
-    :param moss_object:
+    :param LPF_object:
     """
     logging.info("Performing KMA alignment against best reference")
     cmd = "~/bin/kma -i {} -o {}{} -t_db {}/REFDB.ATG -mint3 -Mt1 {} -t 8"\
-        .format(moss_object.input_path, moss_object.target_dir, moss_object.consensus_name[:-4],
-                moss_object.config_path, str(moss_object.template_number))
+        .format(LPF_object.input_path, LPF_object.target_dir, LPF_object.consensus_name[:-4],
+                LPF_object.config_path, str(LPF_object.template_number))
     os.system(cmd)
 
 def concatenateDraftGenome(input_file):
@@ -751,7 +750,7 @@ def md5_of_file(file_path):
     md5code = m.hexdigest()
     return md5code
 
-def ThreshholdDistanceCheck(distancematrixfile, moss_object):
+def ThreshholdDistanceCheck(distancematrixfile, LPF_object):
     infile = open(distancematrixfile, 'r')
     linecount = 0
     secondentry = False
@@ -759,55 +758,55 @@ def ThreshholdDistanceCheck(distancematrixfile, moss_object):
         line = line.rstrip()
         line = line.split("\t")
         if secondentry == True:
-            if line[0] == moss_object.consensus_name or line[0] == moss_object.header_name:
+            if line[0] == LPF_object.consensus_name or line[0] == LPF_object.header_name:
                 distance = line[linecount-1]
                 return float(distance)
         if secondentry == False:
-            if line[0] == moss_object.consensus_name or line[0] == moss_object.header_name:
+            if line[0] == LPF_object.consensus_name or line[0] == LPF_object.header_name:
                 index = linecount
                 secondentry = True
         linecount += 1
     return None
 
-def flye_assembly(moss_object):
+def flye_assembly(LPF_object):
     cmd = "docker run --name assembly_{0} -v {1}:/tmp/{2} staphb/flye flye -o /tmp/assembly_results" \
           " --threads 8 --nano-raw /tmp/{2}"\
-        .format(moss_object.entry_id, moss_object.input_path, moss_object.input_file)
+        .format(LPF_object.entry_id, LPF_object.input_path, LPF_object.input_file)
     os.system(cmd)
 
-    proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_", moss_object.entry_id), shell=True, stdout=subprocess.PIPE)
+    proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("assembly_", LPF_object.entry_id), shell=True, stdout=subprocess.PIPE)
     output = proc.communicate()[0]
     id = output.decode().rstrip()
 
-    cmd = "docker cp {}:/tmp/assembly_results {}.".format(id, moss_object.target_dir)
+    cmd = "docker cp {}:/tmp/assembly_results {}.".format(id, LPF_object.target_dir)
     os.system(cmd)
     cmd = "docker container rm {}".format(id)
     os.system(cmd)
 
     # Concatenate contigs
-    with open("{}assembly_results/assembly.fasta".format(moss_object.target_dir), 'r') as infile:
-        with open("{}{}_assembly.fasta".format(moss_object.target_dir, moss_object.sample_name), 'w') as outfile:
+    with open("{}assembly_results/assembly.fasta".format(LPF_object.target_dir), 'r') as infile:
+        with open("{}{}_assembly.fasta".format(LPF_object.target_dir, LPF_object.sample_name), 'w') as outfile:
             sequence = ""
             for line in infile:
                 if line[0] != ">":
                     line = line.rstrip()
                     sequence += line
 
-            if moss_object.reference_header_text.startswith(">Assembly"):
-                new_header_text = ">{}_Assembly_{}".format(moss_object.reference_id, moss_object.reference_header_text[1:]
+            if LPF_object.reference_header_text.startswith(">Assembly"):
+                new_header_text = ">{}_Assembly_{}".format(LPF_object.reference_id, LPF_object.reference_header_text[1:]
                                                            .split("_Assembly_")[-1])
             else:
-                new_header_text = ">{}_Assembly_{}".format(moss_object.reference_id, moss_object.reference_header_text[1:])
+                new_header_text = ">{}_Assembly_{}".format(LPF_object.reference_id, LPF_object.reference_header_text[1:])
             print(new_header_text, file=outfile)
             print(sequence, file=outfile)
 
     os.system("~/bin/kma index -t_db {} -i {}{}_assembly.fasta"\
-        .format(moss_object.ref_db, moss_object.target_dir, moss_object.sample_name))
+        .format(LPF_object.ref_db, LPF_object.target_dir, LPF_object.sample_name))
     print ("Done indexing")
 
-def check_unique_entry_id(entry_id, moss_db):
+def check_unique_entry_id(entry_id, LPF_db):
 
-    conn = sqlite3.connect(moss_db)
+    conn = sqlite3.connect(LPF_db)
     c = conn.cursor()
 
     c.execute("SELECT * FROM sample_table WHERE entry_id = '{}'".format(entry_id))
@@ -849,7 +848,7 @@ def run_quast(target_dir, jobid):
     os.system(cmd)
 
 def isolate_file_name(config_path, entry_id):
-    isolatedb = "{}/moss.db".format(config_path)
+    isolatedb = "{}/LPF.db".format(config_path)
     conn = sqlite3.connect(isolatedb)
     c = conn.cursor()
 
@@ -877,40 +876,40 @@ def run_bandage(target_dir, jobid):
     cmd = "docker container rm {}".format(id)
     os.system(cmd)
 
-def compileReportAssembly(moss_object):
+def compileReportAssembly(LPF_object):
     pdf = FPDF()  # A4 (210 by 297 mm)
-    filename = "{}.pdf".format(moss_object.entry_id)
+    filename = "{}.pdf".format(LPF_object.entry_id)
 
     ''' First Page '''
     pdf.add_page()
-    pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
-    create_title(pdf, moss_object.entry_id, "MOSS analytical report, Version: {}".format(moss_object.version))
+    pdf.image("/opt/LPF/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
+    create_title(pdf, LPF_object.entry_id, "LPF analytical report, Version: {}".format(LPF_object.version))
     pdf.ln(20)
     pdf.set_font('Arial', '', 12)
     textstring = "ID: {} \n" \
                  "Suggested reference: {} \n\n" \
                  "No related phylogeny cluster was identified. \n" \
-                 "".format(moss_object.entry_id, moss_object.associated_species) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
+                 "".format(LPF_object.entry_id, LPF_object.associated_species) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(20)
 
-    run_quast(moss_object.target_dir, moss_object.entry_id)
+    run_quast(LPF_object.target_dir, LPF_object.entry_id)
 
-    df = pd.read_csv(moss_object.target_dir + "quast_output/report.tsv", sep='\t')
+    df = pd.read_csv(LPF_object.target_dir + "quast_output/report.tsv", sep='\t')
 
     df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
-    dfi.export(df_styled, moss_object.target_dir + "quast_table.png")
-    pdf.image("{}quast_table.png".format(moss_object.target_dir), x=10, y=90, w=pdf.w / 2.5, h=pdf.h / 2.7)
-    run_bandage(moss_object.target_dir, moss_object.entry_id)
+    dfi.export(df_styled, LPF_object.target_dir + "quast_table.png")
+    pdf.image("{}quast_table.png".format(LPF_object.target_dir), x=10, y=90, w=pdf.w / 2.5, h=pdf.h / 2.7)
+    run_bandage(LPF_object.target_dir, LPF_object.entry_id)
     pdf.set_xy(x=10, y=58)
     pdf.set_font('Arial', '', 14)
     pdf.set_text_color(51, 153, 255)
-    pdf.image("{}contigs.jpg".format(moss_object.target_dir), x=115, y=90, w=pdf.w / 2.5, h=pdf.h / 2.7)
+    pdf.image("{}contigs.jpg".format(LPF_object.target_dir), x=115, y=90, w=pdf.w / 2.5, h=pdf.h / 2.7)
 
     ''' Second Page '''
     pdf.add_page()
-    pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
-    create_title(pdf, moss_object.entry_id, "CGE Finder results")
+    pdf.image("/opt/LPF/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
+    create_title(pdf, LPF_object.entry_id, "CGE Finder results")
 
     pdf.set_font('Arial', '', 10)
 
@@ -918,7 +917,7 @@ def compileReportAssembly(moss_object):
 
     pdf.cell(85, 5, "Antimicrobial Genes Found:", 0, 1, 'L')
 
-    csv_data = derive_amr_stats(moss_object.resfinder_hits, "resfinder_db")
+    csv_data = derive_amr_stats(LPF_object.resfinder_hits, "resfinder_db")
 
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
@@ -950,8 +949,8 @@ def compileReportAssembly(moss_object):
 
     pdf.cell(85, 5, "Virulence Genes Found: ", 0, 1, 'L')
 
-    csv_data = derive_virulence_stats(moss_object.virulence_hits,
-                                                           "virulencefinder_db", moss_object.target_dir)
+    csv_data = derive_virulence_stats(LPF_object.virulence_hits,
+                                                           "virulencefinder_db", LPF_object.target_dir)
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
     lh_list = []  # list with proper line_height for each row
@@ -984,13 +983,13 @@ def compileReportAssembly(moss_object):
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('Arial', '', 10)
     textstring = ""
-    for item in moss_object.plasmid_hits:
+    for item in LPF_object.plasmid_hits:
         textstring += "* {}\n".format(item)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
 
     pdf.set_font('Arial', '', 12)
 
-    pdf.output(moss_object.target_dir + filename, 'F')
+    pdf.output(LPF_object.target_dir + filename, 'F')
 
 def mlst_sequence_type(target_dir):
     try:
@@ -1001,24 +1000,24 @@ def mlst_sequence_type(target_dir):
     except:
         return "No MLST Found"
 
-def compileReportAlignment(moss_object):
+def compileReportAlignment(LPF_object):
     pdf = FPDF()  # A4 (210 by 297 mm)
 
-    filename = "{}.pdf".format(moss_object.entry_id) #ADD idd
-    clusterSize = len(moss_object.isolate_list)
+    filename = "{}.pdf".format(LPF_object.entry_id) #ADD idd
+    clusterSize = len(LPF_object.isolate_list)
 
     ''' First Page '''
     pdf.add_page()
-    pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
+    pdf.image("/opt/LPF/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
 
-    create_title(pdf, moss_object.entry_id, "MOSS analytical report, Version : {}".format(moss_object.version))
+    create_title(pdf, LPF_object.entry_id, "LPF analytical report, Version : {}".format(LPF_object.version))
     pdf.ln(5)
     pdf.set_font('Arial', '', 12)
 
     textstring = "ID: {} \n" \
                  "sample_name: {} \n" \
                  "Identified reference: {} \n" \
-                 "".format(moss_object.entry_id, moss_object.sample_name, moss_object.reference_header_text)
+                 "".format(LPF_object.entry_id, LPF_object.sample_name, LPF_object.reference_header_text)
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(10)
     pdf.set_font('Arial', '', 10)
@@ -1044,7 +1043,7 @@ def compileReportAlignment(moss_object):
                  "Plasmids in this sample: {}. \n" \
                  "Virulence genes in this sample: {}. \n" \
                  "MLST: ST{}. \n" \
-                 "".format(len(moss_object.resfinder_hits), len(moss_object.plasmid_hits), len(moss_object.virulence_hits), moss_object.mlst_type)
+                 "".format(len(LPF_object.resfinder_hits), len(LPF_object.plasmid_hits), len(LPF_object.virulence_hits), LPF_object.mlst_type)
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('Arial', '', 10)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
@@ -1054,8 +1053,8 @@ def compileReportAlignment(moss_object):
 
     ''' Second Page '''
     pdf.add_page()
-    pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
-    create_title(pdf, moss_object.entry_id, "CGE Finder results")
+    pdf.image("/opt/LPF/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w/8.5, h=pdf.h/8.5)
+    create_title(pdf, LPF_object.entry_id, "CGE Finder results")
 
     pdf.set_font('Arial', '', 10)
 
@@ -1063,7 +1062,7 @@ def compileReportAlignment(moss_object):
 
     pdf.cell(85, 5, "Antimicrobial Genes Found:", 0, 1, 'L')
 
-    csv_data = derive_amr_stats(moss_object.resfinder_hits, "resfinder_db")
+    csv_data = derive_amr_stats(LPF_object.resfinder_hits, "resfinder_db")
 
 
     line_height = pdf.font_size * 3
@@ -1096,7 +1095,7 @@ def compileReportAlignment(moss_object):
 
     pdf.cell(85, 5, "Virulence Genes Found: ", 0, 1, 'L')
 
-    csv_data = derive_virulence_stats(moss_object.virulence_hits, "virulencefinder_db", moss_object.target_dir)
+    csv_data = derive_virulence_stats(LPF_object.virulence_hits, "virulencefinder_db", LPF_object.target_dir)
     line_height = pdf.font_size * 3
     col_width = pdf.w / 4  # distribute content evenly
     lh_list = []  # list with proper line_height for each row
@@ -1129,7 +1128,7 @@ def compileReportAlignment(moss_object):
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('Arial', '', 10)
     textstring = ""
-    for item in moss_object.plasmid_hits:
+    for item in LPF_object.plasmid_hits:
         textstring += "* {}\n".format(item)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
 
@@ -1137,20 +1136,20 @@ def compileReportAlignment(moss_object):
 
     ''' Third Page '''
     pdf.add_page()
-    pdf.image("/opt/moss/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
-    create_title(pdf, moss_object.entry_id, "Cluster phylogeny:")
+    pdf.image("/opt/LPF/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
+    create_title(pdf, LPF_object.entry_id, "Cluster phylogeny:")
 
     pdf.set_font('Arial', '', 10)
 
     pdf.ln(10)
 
-    pdf.cell(85, 5, "Phylo tree for cluser {}: ".format(moss_object.reference_header_text.split("\t")[0]), 0, 1, 'L')
+    pdf.cell(85, 5, "Phylo tree for cluser {}: ".format(LPF_object.reference_header_text.split("\t")[0]), 0, 1, 'L')
 
-    moss_object = create_phylo_tree(moss_object)
+    LPF_object = create_phylo_tree(LPF_object)
 
-    pdf.image("{}/phytree_output/tree.png".format(moss_object.target_dir), x=10, y=55, w=pdf.w / 1.5, h=pdf.h / 1.75)
+    pdf.image("{}/phytree_output/tree.png".format(LPF_object.target_dir), x=10, y=55, w=pdf.w / 1.5, h=pdf.h / 1.75)
 
-    pdf.output(moss_object.target_dir + filename, 'F')
+    pdf.output(LPF_object.target_dir + filename, 'F')
 
 def resfinderPage(tabfile, pdf, target_dir):
     infile = open(tabfile, 'r')

@@ -82,7 +82,7 @@ function create_meta_data_table_fastq(){
                 }
             }
             new_obj['input_path'] = file_list_obj[i].path;
-            new_obj['config_path'] = '/opt/moss_db/' + require('/opt/moss_db/config.json')["current_working_db"] + '/';
+            new_obj['config_path'] = '/opt/LPF_db/' + require('/opt/LPF_db/config.json')["current_working_db"] + '/';
             var errorMessage = window.validateData(new_obj);
             if (errorMessage != "") {
                 console.log(errorMessage);
@@ -93,8 +93,8 @@ function create_meta_data_table_fastq(){
         }
 
         const final_obj = {'samples': obj_list}
-        const current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
-        const output_json_file = `/opt/moss_db/${current_moss_system}/metadata_json/${experiment_name}.json`;
+        const current_LPF_system = require('/opt/LPF_db/config.json')["current_working_db"];
+        const output_json_file = `/opt/LPF_db/${current_LPF_system}/metadata_json/${experiment_name}.json`;
 
       /*
       if (errorMessage != "") {
@@ -119,9 +119,9 @@ function create_meta_data_table_fastq(){
                       create_button.id = "begin-analyses-button";
                       create_button.innerHTML = "Begin analysis";
                       create_button.onclick = function() {
-                        var config_json = require('/opt/moss_db/config.json');
+                        var config_json = require('/opt/LPF_db/config.json');
 
-                        var cmd_msg = `~/anaconda3/bin/conda run -n moss python3 /opt/moss/src/moss_parallel_wrapper.py -json ${output_json_file}`;
+                        var cmd_msg = `~/anaconda3/bin/conda run -n LPF python3 /opt/LPF/src/LPF_parallel_wrapper.py -json ${output_json_file}`;
                         console.log(cmd_msg);
                         execute_command_as_subprocess(cmd_msg);
                       }
@@ -155,7 +155,7 @@ function getCities() {
             for (let t = 0; t < rows[i].cells.length; t++) {
                 if (header_row.cells[t].innerHTML == "country") {
                     const countryValue = document.getElementById(`input${[i]}${[t]}`).value
-                    const countryData= require('/opt/moss/datafiles/cities_and_countries.json');
+                    const countryData= require('/opt/LPF/datafiles/cities_and_countries.json');
                     while (document.getElementById(`input${[i]}${[t-1]}`).hasChildNodes()) {
                         document.getElementById(`input${[i]}${[t-1]}`).removeChild(document.getElementById(`input${[i]}${[t-1]}`).firstChild);
                     }
@@ -189,7 +189,7 @@ function generate_table_fastq(file_number) {
     headRow.id = "thead_tr";
     let columnNames = [];
 
-    const jsonData= require('/opt/moss/datafiles/ena_list.json');
+    const jsonData= require('/opt/LPF/datafiles/ena_list.json');
     const ena_keys = Object.keys(jsonData);
     columnNames.push.apply(columnNames, ena_keys)
 
@@ -231,7 +231,7 @@ function generate_table_fastq(file_number) {
                 input.id = `input${i}${j}`;
                 let object_options = [];
                 if (columnNames[j] =="country") {
-                    const countryData= require('/opt/moss/datafiles/cities_and_countries.json');
+                    const countryData= require('/opt/LPF/datafiles/cities_and_countries.json');
                     const countries = Object.keys(countryData);
                     const countryNames = ["Unspecified country"];
                     countryNames.push.apply(countryNames, countries);

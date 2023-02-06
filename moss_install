@@ -5,114 +5,126 @@ import sys
 import subprocess
 
 def main(command_line=None):
-    parser = argparse.ArgumentParser('MOSS INSTALL COMMANDS')
+    parser = argparse.ArgumentParser('LPF INSTALL COMMANDS')
     parser.add_argument(
         '--debug',
         action='store_true',
         help='Print debug info'
     )
     subparsers = parser.add_subparsers(dest='command')
-    all = subparsers.add_parser('all', help='Complete installation of ONT deps, MOSS deps and build app. Recommended for first installation or complete reinstallation.')
+    all = subparsers.add_parser('all', help='Complete installation of ONT deps, LPF deps and build app. Recommended for first installation or complete reinstallation.')
     env = subparsers.add_parser('env', help='Install conda environment')
     ont_deps = subparsers.add_parser('ont_deps', help='ONT repos for ubuntu 22.')
-    moss_deps = subparsers.add_parser('moss_deps', help='Local dependencies for MOSS')
-    moss_databases = subparsers.add_parser('moss_databases', help='Downloads databases for MOSS')
-    moss_databases_overwrite = subparsers.add_parser('moss_databases_overwrite', help='Full, fresh download which overwrites existing databases')
-    moss_build = subparsers.add_parser('moss_build', help='Build MOSS app and relocates report to /opt/moss ( Requires moss_deps to be installed in advance.')
-    check_deps = subparsers.add_parser('check_deps', help='Check for MOSS dependencies.')
+    LPF_deps = subparsers.add_parser('LPF_deps', help='Local dependencies for LPF')
+    LPF_databases = subparsers.add_parser('LPF_databases', help='Downloads databases for LPF')
+    LPF_databases_overwrite = subparsers.add_parser('LPF_databases_overwrite', help='Full, fresh download which overwrites existing databases')
+    LPF_build = subparsers.add_parser('LPF_build', help='Build LPF app and relocates report to /opt/LPF ( Requires LPF_deps to be installed in advance.')
+    check_deps = subparsers.add_parser('check_deps', help='Check for LPF dependencies.')
 
     args = parser.parse_args(command_line)
     proc = subprocess.Popen("whoami", shell=True,
                             stdout=subprocess.PIPE, )
     user = proc.communicate()[0].decode().rstrip()
     if user == "root":
-        print(bcolors.FAIL + "MOSS should not be installed as root, please run as a normal user. This means DO NOT put sudo in the command line when running ./moss_install, as it will ruin your user path" + bcolors.ENDC)
+        print(bcolors.FAIL + "LPF should not be installed as root, please run as a normal user. This means DO NOT put sudo in the command line when running ./LPF_install, as it will ruin your user path" + bcolors.ENDC)
         sys.exit()
     if args.command == None:
         sys.exit("No command given.")
     if not os.path.exists('/home/{}/bin'.format(user)):
         os.system('sudo mkdir /home/{}/bin'.format(user))
+    setup_LPF_paths()
     add_bin_path()
     if args.command == 'all':
         print ("ONT DEPENDENCIES")
         solve_conda_env(user)
         install_ont_deps()
-        print ("MOSS DEPENDENCIES")
-        install_moss_deps(user)
-        print ("MOSS DATABASES")
-        download_finder_dbs(user, False)
-        print ("MOSS BUILD")
-        moss_build_app()
+        print ("LPF DEPENDENCIES")
+        install_LPF_deps(user)
+        print ("LPF DATABASES")
+        download_databases(user, False)
+        print ("LPF BUILD")
+        LPF_build_app()
     elif args.command == 'env':
         solve_conda_env(user)
     elif args.command == 'ont_deps':
         install_ont_deps()
-    elif args.command == 'moss_deps':
-        install_moss_deps(user)
-    elif args.command == 'moss_databases':
-        download_finder_dbs(user, False) #DOES NOT CHECK FOR BACTERIA_DB
-    elif args.command == 'moss_databases_overwrite':
-        download_finder_dbs(user, True)
+    elif args.command == 'LPF_deps':
+        install_LPF_deps(user)
+    elif args.command == 'LPF_databases':
+        download_databases(user, False) #DOES NOT CHECK FOR BACTERIA_DB
+    elif args.command == 'LPF_databases_overwrite':
+        download_databases(user, True)
         #STFP solution with Maja
-    elif args.command == 'moss_build':
-        moss_build_app()
+    elif args.command == 'LPF_build':
+        LPF_build_app()
     elif args.command == 'check_deps':
         check_all_deps()
+
+def setup_LPF_paths():
+    path_list = ["/opt/LPF_db/",
+                 "/opt/LPF_data/",
+                 "/opt/LPF_databases/",
+                 "/opt/LPF_reports/",
+                 "/opt/LPF_logs/"]
+    for item in path_list:
+        if not os.path.exists(item):
+            os.system("sudo mkdir -m 777 {}".format(item))
 
 def solve_conda_env(user):
     proc = subprocess.Popen("conda env list", shell=True,
                             stdout=subprocess.PIPE, )
     env = proc.communicate()[0].decode().split()
-    if 'moss' in env:
-        print ("Moss environment already exists")
-        print ("Updating moss environment")
+    if 'LPF' in env:
+        print ("LPF environment already exists")
+        print ("Updating LPF environment")
         os.system("conda env update --file environment.yml  --prune")
     else:
         os.system("conda env create -f environment.yml")
 def check_local_database():
-    if not os.path.exists('/opt/moss_resources/resfinder_db'):
+    if not os.path.exists('/opt/LPF_databases/resfinder_db'):
         print(bcolors.FAIL + "Resfinder database not found" + bcolors.ENDC)
         return False
-    if not os.path.exists('/opt/moss_resources/plasmidfinder_db'):
+    if not os.path.exists('/opt/LPF_databases/plasmidfinder_db'):
         print(bcolors.FAIL + "Plasmidfinder database not found" + bcolors.ENDC)
         return False
-    if not os.path.exists('/opt/moss_resources/virulencefinder_db'):
+    if not os.path.exists('/opt/LPF_databases/virulencefinder_db'):
         print(bcolors.FAIL + "Virulencefinder database not found" + bcolors.ENDC)
         return False
-    if not os.path.exists('/opt/moss_resources/mlst_db'):
+    if not os.path.exists('/opt/LPF_databases/mlst_db'):
         print(bcolors.FAIL + "MLST database not found" + bcolors.ENDC)
         return False
     else:
         print(bcolors.OKGREEN + "CGE Finder Databases are installed" + bcolors.ENDC)
         return True
 
-def download_finder_dbs(user, overwrite):
+def download_databases(user, overwrite):
     if not check_local_software:
-        print(bcolors.FAIL + "MOSS dependencies are not installed, and databases cant be indexed" + bcolors.ENDC)
+        print(bcolors.FAIL + "LPF dependencies are not installed, and databases cant be indexed" + bcolors.ENDC)
         sys.exit()
     cwd = os.getcwd()
-    if not os.path.exists('/opt/moss_resources'):
-        os.system('sudo mkdir -m 777 /opt/moss_resources')
     if overwrite:
-        os.system('sudo rm -r /opt/moss_resources/*')
-    if not os.path.exists('/opt/moss_resources/plasmidfinder_db'):
-        os.chdir("/opt/moss_resources/")
-        os.system("git clone https://bitbucket.org/genomicepidemiology/plasmidfinder_db.git")
-        os.system("/home/{}/bin/kma_index -i plasmidfinder_db/*.fsa -o plasmidfinder_db/all -m 14".format(user))
-    if not os.path.exists('/opt/moss_resources/resfinder_db'):
-        os.chdir("/opt/moss_resources/")
-        os.system("git clone https://bitbucket.org/genomicepidemiology/resfinder_db.git")
-        os.system("/home/{}/bin/kma_index -i resfinder_db/*.fsa -o resfinder_db/all -m 14".format(user))
+        os.system('sudo rm -r /opt/LPF_databases/*')
 
-    if not os.path.exists('/opt/moss_resources/virulencefinder_db'):
-        os.chdir("/opt/moss_resources/")
-        os.system("git clone https://bitbucket.org/genomicepidemiology/virulencefinder_db.git")
-        os.system("/home/{}/bin/kma_index -i virulencefinder_db/*.fsa -o virulencefinder_db/all -m 14".format(user))
-
-    if not os.path.exists('/opt/moss_resources/mlst'):
-        os.chdir("/opt/moss_resources/")
-        os.system("git clone https://bitbucket.org/genomicepidemiology/mlst_db.git; cd mlst_db; git checkout nanopore; sudo python3 INSTALL.py /home/{}/bin/kma_index;".format(user, cwd))
-
+    if not os.path.exists('/opt/LPF_databases/plasmidfinder_db'):
+        os.mkdir('/opt/LPF_databases/plasmidfinder_db')
+        os.chdir('/opt/LPF_databases/plasmidfinder_db')
+        os.system("wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/plasmidfinder_db/export/all_plasmidfinder.fasta.gz")
+        os.system("/home/{}/bin/kma_index -i all_plasmidfinder.fasta.gz -o plasmidfinder_db -m 14".format(user))
+    if not os.path.exists('/opt/LPF_databases/resfinder_db'):
+        os.mkdir('/opt/LPF_databases/resfinder_db')
+        os.chdir('/opt/LPF_databases/resfinder_db')
+        os.system("wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/resfinder_db/export/all_resfinder.fasta.gz")
+        os.system("/home/{}/bin/kma_index -i all_resfinder.fasta.gz -o resfinder_db -m 14".format(user))
+    if not os.path.exists('/opt/LPF_databases/virulencefinder_db'):
+        os.mkdir('/opt/LPF_databases/virulencefinder_db')
+        os.chdir('/opt/LPF_databases/virulencefinder_db')
+        os.system("wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/virulencefinder_db/export/all_virulencefinder.fasta.gz")
+        os.system("/home/{}/bin/kma_index -i all_virulencefinder.fasta.gz -o virulencefinder_db -m 14".format(user))
+    if not os.path.exists('/opt/LPF_databases/mlst_db'):
+        os.mkdir('/opt/LPF_databases/mlst_db')
+        os.chdir('/opt/LPF_databases/mlst_db')
+        os.system("wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/mlst_db/export/all_mlst.fasta.gz")
+        os.system("/home/{}/bin/kma_index -i all_mlst.fasta.gz -o mlst_db -m 14".format(user))
     os.chdir(cwd)
     if check_local_database():
         print(bcolors.OKGREEN + "CGE Finder Databases are installed" + bcolors.ENDC)
@@ -167,15 +179,15 @@ def check_virtual_env():
     proc = subprocess.Popen("conda env list", shell=True,
                             stdout=subprocess.PIPE, )
     env = proc.communicate()[0].decode().split()
-    if 'moss' in env:
-        print(bcolors.OKGREEN + "Moss environment is installed" + bcolors.ENDC)
+    if 'LPF' in env:
+        print(bcolors.OKGREEN + "LPF environment is installed" + bcolors.ENDC)
         return True
     else:
-        print(bcolors.FAIL + "Moss environment is not installed" + bcolors.ENDC)
+        print(bcolors.FAIL + "LPF environment is not installed" + bcolors.ENDC)
         return False
 
 def check_all_deps():
-    os.system("cd /opt/moss")
+    os.system("cd /opt/LPF")
     conda_result = check_conda()
     ont_check = check_ont_deps()
     docker_images_result = check_docker_images()
@@ -242,12 +254,11 @@ def add_bin_path():
         print ("Adding ~/bin to PATH")
         os.system("echo \'export PATH=$PATH:~/bin\' >> ~/.bashrc")
         os.system("source ~/.bashrc")
-def moss_build_app():
+def LPF_build_app():
     build_app()
     check_dist_build()
     cwd = os.getcwd()
-    set_up_directories()
-    move_moss_repo(cwd)
+    move_LPF_repo(cwd)
 
 def install_docker_images():
     docker_list = [
@@ -260,7 +271,7 @@ def install_docker_images():
         cmd = "docker pull " + item
         os.system(cmd)
 
-def install_moss_deps(user):
+def install_LPF_deps(user):
     if not check_kma():
         if os.path.exists("kma"):
             os.system("sudo rm -rf kma")
@@ -300,13 +311,8 @@ def check_google_chrome():
     print("Google Chrome is not installed")
     return False
 
-def set_up_directories():
-    path_list = ["/opt/moss_db/", "/opt/moss_data/", "/opt/moss_resources/", "/opt/moss_reports/", "/opt/moss_logs/"]
-    for item in path_list:
-        if not os.path.exists(item):
-            os.system("sudo mkdir -m 777 {}".format(item))
 def check_app_build():
-    path_list = ["/opt/moss_db", "/opt/moss_data", "/opt/moss_resources", "/opt/moss_reports"]
+    path_list = ["/opt/LPF_db", "/opt/LPF_data", "/opt/LPF_databases", "/opt/LPF_reports"]
     for item in path_list:
         if not os.path.exists(item):
             print(bcolors.FAIL+ item +" is not installed" + bcolors.ENDC)
@@ -388,22 +394,22 @@ def check_pip_deps():
         return True
 
 def check_dist_build():
-    if not os.path.isfile("local_app/dist/linux-unpacked/moss"):
-        sys.exit("A MOSS distribution was not created correctly. Installation was not completed")
+    if not os.path.isfile("local_app/dist/linux-unpacked/LPF"):
+        sys.exit("A LPF distribution was not created correctly. Installation was not completed")
         return False
     else:
         print ("The installation was completed")
         return True
 
 def build_app():
-    os.system("cd local_app; chmod a+x moss_launch; npm i; ./node_modules/.bin/electron-rebuild; npm run dist;sudo cp moss.desktop /usr/share/applications/.; cd ..")
+    os.system("cd local_app; chmod a+x LPF_launch; npm i; ./node_modules/.bin/electron-rebuild; npm run dist;sudo cp LPF.desktop /usr/share/applications/.; cd ..")
     return True
 
-def move_moss_repo(cwd):
-    if (cwd != '/opt/moss'):
-        os.system("sudo rm -rf /opt/moss")
-        os.system("sudo cp -r {} /opt/moss".format(cwd))
-        os.system("sudo chmod a+rwx /opt/moss")
+def move_LPF_repo(cwd):
+    if (cwd != '/opt/LPF'):
+        os.system("sudo rm -rf /opt/LPF")
+        os.system("sudo cp -r {} /opt/LPF".format(cwd))
+        os.system("sudo chmod a+rwx /opt/LPF")
         os.system("sudo rm -r {}".format(cwd))
 
 class bcolors:

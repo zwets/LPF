@@ -1,4 +1,4 @@
-name: moss
+name: LPF
 channels:
   - defaults
 dependencies:

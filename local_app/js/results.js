@@ -3,11 +3,11 @@ const fs = require('fs');
 const storage = require('electron-json-storage');
 
 function showFinishedAnalyses() {
-    var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
-    var db_dir = '/opt/moss_db/' + current_moss_system + "/";
+    var current_LPF_system = require('/opt/LPF_db/config.json')["current_working_db"];
+    var db_dir = '/opt/LPF_db/' + current_LPF_system + "/";
     let sql = `SELECT * FROM status_table`;
     document.getElementById('showData').innerHTML="" ;
-    const db = require('better-sqlite3')(db_dir + 'moss.db');
+    const db = require('better-sqlite3')(db_dir + 'LPF.db');
     const sql_data_obj = db.prepare(sql).all();
     console.log(sql_data_obj);
 
@@ -65,7 +65,7 @@ function tableFromObj(sql_data_obj, db_dir) {
                 var img = document.createElement('img');
                 img.id = sql_data_obj[i].entry_id;
                 img.name = sql_data_obj[i].entry_id;
-                img.src = "/opt/moss/local_app/images/report-icon.png";
+                img.src = "/opt/LPF/local_app/images/report-icon.png";
                 img.setAttribute('height', '17pt');
                 img.innerHTML = sql_data_obj[i].entry_id;
                 img.onclick = function() {openPDF(this.id, db_dir)};

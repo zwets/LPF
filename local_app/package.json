@@ -1,5 +1,5 @@
 {
-  "name": "moss",
+  "name": "LPF",
   "version": "1.1.0",
   "description": "Microbial Outbreak Surveillance System",
   "main": "main.js",
@@ -12,11 +12,11 @@
     "linux": {
       "desktop": {
         "Terminal": "true",
-        "Name": "moss",
-        "Icon": "/opt/moss/local_app/images/report-icon.png"
+        "Name": "LPF",
+        "Icon": "/opt/LPF/local_app/images/report-icon.png"
       }
     },
-    "appId": "com.moss.app"
+    "appId": "com.LPF.app"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [

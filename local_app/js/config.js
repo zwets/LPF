@@ -23,7 +23,7 @@ function multipleInputFunction() {
 
 function submitAnalysis() {
     var element = document.getElementById('file-content').innerHTML;
-    var config_json = require('/opt/moss_db/config.json');
+    var config_json = require('/opt/LPF_db/config.json');
 
     storage.set('currentConfig', { exepath: configobj.exepath, db_dir: configobj.db_dir }, function(error) {
         if (error) throw error;

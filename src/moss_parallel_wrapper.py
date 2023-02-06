@@ -2,7 +2,7 @@
 import sys
 import os
 import argparse
-import moss_functions as moss
+import LPF_functions as LPF
 from joblib import Parallel, delayed
 import json
 
@@ -13,7 +13,7 @@ parser.add_argument('-json', action="store", type=str, dest='json', default="",
                     help='json file')
 args = parser.parse_args()
 
-def moss_analysis(jobslist, i):
+def LPF_analysis(jobslist, i):
     """Start analysis"""
     os.system(jobslist[i])
 
@@ -24,17 +24,17 @@ def main(json_file):
     jobslist = []
 
     for item in data['samples']:
-        cmd = 'python3 /opt/moss/src/moss.py -json \'{}\''.format(str(item).replace("\'", "\""))
+        cmd = 'python3 /opt/LPF/src/LPF.py -json \'{}\''.format(str(item).replace("\'", "\""))
         jobslist.append(cmd)
-        entry_id = moss.md5_of_file(item['input_path'])
-        print (item['config_path'] + 'moss.db')
-        moss.sql_execute_command(
+        entry_id = LPF.md5_of_file(item['input_path'])
+        print (item['config_path'] + 'LPF.db')
+        LPF.sql_execute_command(
             "INSERT INTO status_table(entry_id, sample_name, status,"
             " type, current_stage, final_stage, result, time_stamp)"
             " VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')" \
             .format(entry_id, item['input_path'].split("/")[-1][0:-9], "Analysis waiting.", "Queued", "Queued",
-                    "Queued", "Queued", ""), item['config_path'] + 'moss.db')
-    Parallel(n_jobs=1)(delayed(moss_analysis)(jobslist, i) for i in range(len(jobslist)))
+                    "Queued", "Queued", ""), item['config_path'] + 'LPF.db')
+    Parallel(n_jobs=1)(delayed(LPF_analysis)(jobslist, i) for i in range(len(jobslist)))
     print ("Analysis complete")
 
 if __name__== "__main__":

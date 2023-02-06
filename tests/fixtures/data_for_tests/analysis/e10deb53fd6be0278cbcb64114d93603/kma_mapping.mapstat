@@ -3,7 +3,7 @@
 ## database	REFDB.ATG
 ## fragmentCount	1998
 ## date	2022-08-15
-## command	/opt/moss/kma/kma -i "/opt/moss/tests/fixtures/data_for_tests/assembly_test.fastq.gz" -o "/opt/moss_db/test//analysis/e10deb53fd6be0278cbcb64114d93603/kma_mapping" -t_db /opt/moss_db/test//REFDB.ATG -ID 0 -nf -mem_mode -sasm -ef -1t1
+## command	/opt/LPF/kma/kma -i "/opt/LPF/tests/fixtures/data_for_tests/assembly_test.fastq.gz" -o "/opt/LPF_db/test//analysis/e10deb53fd6be0278cbcb64114d93603/kma_mapping" -t_db /opt/LPF_db/test//REFDB.ATG -ID 0 -nf -mem_mode -sasm -ef -1t1
 # refSequence	readCount	fragmentCount	mapScoreSum	refCoveredPositions	refConsensusSum	bpTotal	depthVariance	nucHighDepthVariance	depthMax	snpSum	insertSum	deletionSum	readCountAln	fragmentCountAln
 NZ_CP018814.1 Enterobacter cloacae strain AR_0002, complete genome	1	1	0	0	0	4642	0.000000	0	0	0	0	0	0	0
 NC_009800.1 Escherichia coli HS, complete genome	10	10	0	0	0	187189	0.000000	0	0	0	0	0	0	0
