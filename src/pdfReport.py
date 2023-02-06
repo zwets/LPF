@@ -19,7 +19,7 @@ def compile_assembly_report(bacterial_parser):
     textstring = "ID: {} \n" \
                  "Suggested reference: {} \n\n" \
                  "No related phylogeny cluster was identified. \n" \
-                 "".format(bacterial_parser.data.entry_id, bacterial_parser.data.associated_species) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
+                 "".format(bacterial_parser.data.entry_id, bacterial_parser.data.mlst_species) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(20)
 
