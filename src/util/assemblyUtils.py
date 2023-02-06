@@ -1,6 +1,41 @@
 import os
 import subprocess
 
+def run_bandage(bacterial_parser):
+    #TBD run bandage in assembly func
+    cmd = "docker run --name bandage{} -v {}/assembly_results/:/data/assembly_results/ nanozoo/bandage Bandage image /data/assembly_results/assembly_graph.gfa contigs.jpg".format(
+        bacterial_parser.data.entry_id, bacterial_parser.data.target_dir)
+    os.system(cmd)
+
+    proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("bandage", bacterial_parser.data.entry_id), shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0]
+    id = output.decode().rstrip()
+
+    cmd = "docker cp {}:contigs.jpg {}contigs.jpg".format(id, bacterial_parser.data.target_dir)
+    os.system(cmd)
+
+    cmd = "docker container rm {}".format(id)
+    os.system(cmd)
+
+
+def run_quast(bacterial_parser):
+    cmd = "docker run --name quast{} -v {}/assembly_results/:/data/assembly_results/ staphb/quast quast.py /data/assembly_results/assembly.fasta -o /output/quast_output".format(
+        bacterial_parser.data.entry_id, bacterial_parser.data.target_dir)
+    os.system(cmd)
+
+    proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("quast", bacterial_parser.data.entry_id), shell=True,
+                            stdout=subprocess.PIPE, )
+    output = proc.communicate()[0]
+    id = output.decode().rstrip()
+
+    cmd = "docker cp {}:/output/quast_output {}quast_output".format(id, target_dir)
+    os.system(cmd)
+
+    cmd = "docker container rm {}".format(id)
+    os.system(cmd)
+
+
 def flye_assembly(bacterial_parser):
     cmd = "docker run --name assembly_{0} -v {1}:/tmp/{2} staphb/flye flye -o /tmp/assembly_results" \
           " --threads 8 --nano-raw /tmp/{2}"\

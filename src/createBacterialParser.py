@@ -10,7 +10,8 @@ import src.sqlCommands as sqlCommands
 from types import SimpleNamespace
 import src.util.kmaUtils as kmaUtils
 from src.kmaRunner import KMARunner
-from src.util.assemblyUtils import flye_assembly
+from src.util.assemblyUtils import flye_assembly, run_quast, run_bandage
+import src.pdfReport as pdfReport
 
 
 from src.loggingHandlers import begin_logging
@@ -114,6 +115,11 @@ class BacterialParser():
         self.data.mlst_species = mlst.derive_mlst_species(self.data.reference_header_text)
         self.data.mlst_result = mlst.determine_mlst(self)
 
+    def parse_finder_results(self):
+        """Parses the results from the finders"""
+        self.logger.info("Parsing results from finders")
+        kmaUtils.parse_finders(self)
+
     def run_assembly(self):
         """
         Performing Flye assebly
@@ -125,6 +131,17 @@ class BacterialParser():
 
         sqlCommands.sql_update_status_table('Assembly completed', self.data.sample_name, '8', self.data.entry_id, self.data.sql_db)
 
+        self.logger.info('Flye assembly completed')
+
+        run_quast(self)
+
+        run_bandage(self)
+
+        pdfReport.compile_assembly_report(self)
+
+        self.logger.info('Assembly report compiled')
+
+        sqlCommands.sql_update_status_table('Assembly report compiled', self.data.sample_name, '9', self.data.entry_id, self.data.sql_db)
 
     def single_template_alignment_bacteria(self):
         self.logger.info("Running single template alignment for bacteria")

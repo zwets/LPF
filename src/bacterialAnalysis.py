@@ -54,8 +54,9 @@ def bacterial_analysis_pipeline(bacterial_parser):
     bacterial_parser.get_reference_mapping_results()
 
     #Eval reference hit
-
+    bacterial_parser.parse_finder_results()
     bacterial_parser.get_mlst_results()
+
     if bacterial_parser.data.mlst_result != "Unknown":
         print ("MLST result: {}".format(bacterial_parser.data.mlst_result))
 
