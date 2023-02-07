@@ -52,10 +52,7 @@ exports.isExperimentNameValid = isExperimentNameValid
 function create_meta_data_table_fastq(){
     const experiment_name = document.getElementById('experiment-name').value;
 
-    !(window.isExperimentNameValid(experiment_name) {
-        alert("please enter the sequencing experiment name without .json extension");
-        return;
-    }
+    !(window.isExperimentNameValid(experiment_name)) ? console.log("experiment name is not valid") : console.log("experiment name is valid");
 }
 
 function input_prompt_costum_city(rowNumber, columnNumber) {
