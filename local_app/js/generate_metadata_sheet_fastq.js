@@ -147,12 +147,54 @@ function create_meta_data_table_fastq(){
     }
 }
 
-function getCities() {
+function getCities(rowNumber, columnNumber) {
    let rows = document.getElementById("metadata_csv_table").rows;
    let header_row = rows[0];
+   if (header_row.cells[columnNumber].innerHTML == "country") {
+                       const countryValue = document.getElementById(`input${[rowNumber]}${[columnNumber]}`).value
+                       const countryData= require('/opt/moss/datafiles/cities_and_countries.json');
+                       while (document.getElementById(`input${[rowNumber]}${[columnNumber-1]}`).hasChildNodes()) {
+                       document.getElementById(`input${[rowNumber]}${[columnNumber-1]}`).removeChild(document.getElementById(`input${[rowNumber]}${[columnNumber-1]}`).firstChild);
+                       }
+                       const none_option = document.createElement("option");
+                       none_option.value = "Unspecified city";
+                       none_option.text = "Unspecified city";
+                       document.getElementById(`input${[rowNumber]}${[columnNumber-1]}`).add(none_option);
+       	            const custom_option = document.createElement("option");
+   	        	    custom_option.value = "custom city";
+   		            custom_option.text = "custom city";
+   		            document.getElementById(`input${[rowNumber]}${[columnNumber-1]}`).add(custom_option);
+   		    for(let city in countryData[countryValue]) {
+                          const cityName = countryData[countryValue][city]
+                          const option = document.createElement("option");
+                          option.value = cityName;
+                          option.text = cityName;
+                          document.getElementById(`input${[rowNumber]}${[columnNumber-1]}`).add(option);
+                       }
+                       document.getElementById(`input${[rowNumber]}${[columnNumber-1]}`).defaultValue = "Unspecified city";
+                   }
+}
 
-      for (let i = 0; i < rows.length-1; i++) {
+function getCustomValue() {
+    let rows = document.getElementById("metadata_csv_table").rows;
+    let header_row = rows[0];
+
+        for (let i = 0; i < rows.length-1; i++) {
             for (let t = 0; t < rows[i].cells.length; t++) {
+                if (header_row.cells[t].innerHTML == "city") {
+                    const cityValue = document.getElementById(`input${[i]}${[t]}`).value
+                    if(cityValue == "custom city") {
+                        const Dialogs = require('dialogs')
+                        const dialogs = Dialogs()
+                        dialogs.prompt('Give the city name', ok => {
+                        const custom_option = document.createElement("option");
+                        custom_option.value = ok;
+                        custom_option.text = ok;
+                        document.getElementById(`input${[i]}${[t]}`).add(custom_option);
+                        document.getElementById(`input${[i]}${[t]}`).value = custom_option.value;
+                           })
+                       }
+
                 if (header_row.cells[t].innerHTML == "country") {
                     const countryValue = document.getElementById(`input${[i]}${[t]}`).value
                     const countryData= require('/opt/LPF/datafiles/cities_and_countries.json');
@@ -172,8 +214,11 @@ function getCities() {
                     }
                     document.getElementById(`input${[i]}${[t-1]}`).defaultValue = "Unspecified city";
                 }
+
+               }
+
             }
-        }
+
 }
 
 function generate_table_fastq(file_number) {
@@ -236,7 +281,11 @@ function generate_table_fastq(file_number) {
                     const countryNames = ["Unspecified country"];
                     countryNames.push.apply(countryNames, countries);
                     object_options = countryNames;
-                    input.onclick = function(){window.getCities()};
+                    input.onclick = function(){window.getCities(i, j)};
+                }
+		        else if (columnNames[j] == "city") {
+                    object_options = Object.values(identifier);
+                    input.onclick = function(){window.getCustomValue()};
                 }
                 else {
                     object_options = Object.values(identifier);
@@ -303,7 +352,16 @@ function validateData(jsonFinal) {
    }
    const collDate = new Date(jsonFinal.collection_date);
    let timeS = collDate.getTime();
-
+   if(jsonFinal.city === "undefined") {
+     window.alert("Please enter or select the city");
+     errors = errors.concat("\n").concat("Please enter or select the city name");
+     return errors;
+   }
+   if(jsonFinal.city === "" || jsonFinal.city == "Unspecified city") {
+     window.alert("Please select city");
+     errors = errors.concat("\n").concat("Please select city");
+     return errors;
+   }
    if (typeof timeS !== 'number' || Number.isNaN(timeS)) {
       window.alert(dateError);
       errors = errors.concat("\n").concat(dateError);
