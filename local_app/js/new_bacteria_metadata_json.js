@@ -235,6 +235,7 @@ function generate_table_fastq(file_number) {
 
 function getCities(rowNumber) {
     let country = document.getElementById(`country${[rowNumber]}`).value;
+    console.log(country);
     let rows = document.getElementById("metadata_csv_table").rows;
     const countryData= require('/opt/LPF/datafiles/cities_and_countries.json');
     let cities = countryData[country];
