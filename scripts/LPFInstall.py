@@ -51,7 +51,7 @@ def build_app():
 def move_LPF_repo():
     cwd = os.getcwd()
     print ("current working directory is {}".format(cwd))
-it p    if (cwd != '/opt/LPF'):
+    if (cwd != '/opt/LPF'):
         os.system("sudo rm -rf /opt/LPF")
         os.system("sudo cp -r {} /opt/LPF".format(cwd))
         os.system("sudo chmod a+rwx /opt/LPF")
