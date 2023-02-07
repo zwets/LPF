@@ -17,9 +17,10 @@ def compile_assembly_report(bacterial_parser):
     pdf.ln(20)
     pdf.set_font('Arial', '', 12)
     textstring = "ID: {} \n" \
+                 "{}, {}"\
                  "Suggested reference: {} \n\n" \
                  "No related phylogeny cluster was identified. \n" \
-                 "".format(bacterial_parser.data.entry_id, bacterial_parser.data.reference_header_text) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
+                 "".format(bacterial_parser.data.entry_id, bacterial_parser.data.city, bacterial_parser.data.country, bacterial_parser.data.reference_header_text) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(20)
 
@@ -147,10 +148,10 @@ def compile_alignment_report(bacterial_parser):
     pdf.set_text_color(0, 0, 0)
 
     pdf.set_font('Arial', '', 10)
-    textstring = "Copenhagen, Denmark \n" \
-                 "Time of sampling: 2019-06-11 18:03:00. \n" \
+    textstring = "{}, {} \n" \
+                 "Time of sampling: No INPUT \n" \
                  "Number of associated isolates: {} \n" \
-                 "".format(clusterSize)
+                 "".format(bacterial_parser.data.city, bacterial_parser.data.country, clusterSize)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(5)
     pdf.set_text_color(51, 153, 255)
