@@ -239,6 +239,7 @@ function getCities(rowNumber, columnNumber) {
     const country = document.getElementById(`input${[rowNumber]}${[columnNumber]}`).value;
     console.log(country);
     let rows = document.getElementById("metadata_csv_table").rows;
+    //HERE TOMORROW WORKS AND GETS RIGHT COUNTRY
     const countryData= require('/opt/LPF/datafiles/cities_and_countries.json');
     let cities = countryData[country];
     console.log(cities);
