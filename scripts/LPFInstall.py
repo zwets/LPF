@@ -44,7 +44,6 @@ def LPF_installation(arguments):
     check_all_deps()
     check_and_add_bookmarks()
     print ('Installation complete')
-    print ('If the LPF app in not shown in the menu, try restarting your computer')
 
 def build_app():
     if os.path.exists("/usr/share/applications/moss.desktop"): #Remove old copy
