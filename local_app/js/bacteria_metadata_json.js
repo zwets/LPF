@@ -115,7 +115,7 @@ function create_meta_data_table_fastq(){
                       create_button.id = "begin-analyses-button";
                       create_button.innerHTML = "Begin analysis";
                       create_button.onclick = function() {
-                        var cmd_msg = `~/anaconda3/bin/conda run -n LPF python3 /opt/LPF/src/LPF_parallel_wrapper.py -json ${output_json_file}`;
+                        var cmd_msg = `~/anaconda3/bin/conda run -n LPF python3 /opt/LPF/src/batchStarter.py -analysis_type bacteria -batch_json ${output_json_file}`;
                         console.log(cmd_msg);
                         execute_command_as_subprocess(cmd_msg);
                       }
