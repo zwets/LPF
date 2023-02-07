@@ -10,7 +10,7 @@ parser.add_argument("-name", action="store", type=str, default = "", dest="name"
 args = parser.parse_args()
 
 def merge():
-    if args.name.endswith(".fastq.gz"):
+    if args.name.endswith(".fastq.gz"):x
         args.name = args.name[:-9]
     existing_list = os.listdir("/opt/LPF_data/")
     if args.name + ".fastq.gz" in existing_list:
