@@ -143,6 +143,9 @@ class BacterialParser():
 
         sqlCommands.sql_update_status_table('Assembly report compiled', self.data.sample_name, '9', self.data.entry_id, self.data.sql_db)
 
+        sqlCommands.sql_update_status_table('Analysis completed', self.data.sample_name, '10', self.data.entry_id, self.data.sql_db)
+        sys.exit(0)
+
     def single_template_alignment_bacteria(self):
         self.logger.info("Running single template alignment for bacteria")
         template_alignment = KMARunner(self.data.input_path,
