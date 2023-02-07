@@ -122,18 +122,16 @@ function create_meta_data_table_fastq(){
 
                       document.getElementById('metadata-table-div').appendChild(create_button);
                       //Make go to analyses shortcut
-                })
+                    })
 
+                }
             }
         }
-      }
 
       create_button.innerHTML = "Validate metadata";
       const mybr = document.createElement('br');
       document.getElementById('metadata-table-div').appendChild(mybr);
       document.getElementById('metadata-table-div').appendChild(create_button);
-
-    }
 
 }
 
