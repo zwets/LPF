@@ -238,6 +238,7 @@ function getCities(rowNumber) {
     let rows = document.getElementById("metadata_csv_table").rows;
     const countryData= require('/opt/LPF/datafiles/cities_and_countries.json');
     let cities = countryData[country];
+    console.log(cities);
     let citySelect = document.getElementById(`city${[rowNumber]}`);
     while (citySelect.hasChildNodes()) {
         citySelect.removeChild(citySelect.firstChild);
