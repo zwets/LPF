@@ -20,7 +20,10 @@ args = parser.parse_args()
 
 def LPF_analysis(jobslist, i):
     """Start analysis"""
-    os.system(jobslist[i])
+    try:
+        os.system(jobslist[i])
+    except Exception as e:
+        sys.exit("LocalPathogenFinder: Error: {}. LPF was NOT run.".format(e))
 
 def main(analysis_type, batch_json):
     """Main func"""
