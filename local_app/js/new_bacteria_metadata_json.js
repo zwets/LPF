@@ -54,7 +54,6 @@ function create_meta_data_table_fastq(){
 
     !(window.isExperimentNameValid(experiment_name)) ? console.log("experiment name is not valid") : console.log("experiment name is valid");
 
-    console.log("hello");
 }
 
 function input_prompt_costum_city(rowNumber, colum pushnNumber) {
