@@ -302,6 +302,9 @@ function validateData(jsonFinal) {
       window.alert(dateError);
       errors = errors.concat("\n").concat(dateError);
    }
+
+   //Check in sample has been analyzed before, i.e. if it is in the database sampel_table
+
    return errors;
 }
 

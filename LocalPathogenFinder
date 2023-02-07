@@ -16,22 +16,29 @@ from src.kmaRunner import KMARunner
 from src.bacterialAnalysis import bacterial_analysis_pipeline
 import scripts.LPFInstall as LPFInstall
 import src.util.md5 as md5
+from src.util.cleanFailedRun import clean_failed_run
 #from scripts.validateDatabases import ValidateDatabases
 
 
 
 def main(arguments):
     """Main function"""
-    if arguments.subparser_name == 'install':
-        LPFInstall.LPF_installation(arguments)
-    elif arguments.subparser_name == 'bacteria':
-        bacterial_parser = BacterialParser(arguments.bacterial_json)
-        bacterial_analysis_pipeline(bacterial_parser)
-        pass
-    elif arguments.subparser_name == 'viral':
-        pass
-    elif arguments.subparser_name == 'metagenomic':
-        pass
+    try:
+        if arguments.subparser_name == 'install':
+            LPFInstall.LPF_installation(arguments)
+        elif arguments.subparser_name == 'bacteria':
+            bacterial_parser = BacterialParser(arguments.bacterial_json)
+            bacterial_analysis_pipeline(bacterial_parser)
+            pass
+        elif arguments.subparser_name == 'viral':
+            pass
+        elif arguments.subparser_name == 'metagenomic':
+            pass
+    except Exception as e:
+        logging.exception(e)
+        clean_failed_run(arguments)
+        raise e
+
 
 if __name__ == '__main__':
     # initialize the options parser
