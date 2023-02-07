@@ -27,7 +27,7 @@ def main(arguments):
         if arguments.subparser_name == 'install':
             LPFInstall.LPF_installation(arguments)
         elif arguments.subparser_name == 'bacteria':
-            bacterial_parser = BacterialParser(arguments.bacterial_json)
+            bacterial_parser = BacterialParser(arguments.json)
             bacterial_analysis_pipeline(bacterial_parser)
             pass
         elif arguments.subparser_name == 'viral':
@@ -36,7 +36,7 @@ def main(arguments):
             pass
     except Exception as e:
         logging.exception(e)
-        clean_failed_run(arguments)
+        clean_failed_run(arguments.json)
         raise e
 
 
@@ -48,16 +48,16 @@ if __name__ == '__main__':
     bacterial_parser = subparsers.add_parser('bacteria',
                                              help='Bacterial analysis'
                                              )
-    bacterial_parser.add_argument('-json', action="store", type=str, default="", dest="bacterial_json")
+    bacterial_parser.add_argument('-json', action="store", type=str, default="", dest="json")
 
     viral_parser = subparsers.add_parser('virus',
                             help='Viral sample. Currently under development',
                              )
-    viral_parser.add_argument('-json', action="store", type=str, default="", dest="viral_json")
+    viral_parser.add_argument('-json', action="store", type=str, default="", dest="json")
     metagenomic_parser = subparsers.add_parser('metagenomic',
                              help='Metagenomic sample. Currently under development',
                              )
-    metagenomic_parser.add_argument('-json', action="store", type=str, default="", dest="metagenomic_json")
+    metagenomic_parser.add_argument('-json', action="store", type=str, default="", dest="json")
     install_parser = subparsers.add_parser('install',
                                            help='Install',
                                            )

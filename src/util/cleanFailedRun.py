@@ -1,5 +1,16 @@
 import os
 import src.sqlCommands as sqlCommands
-def clean_failed_run(arguments):
+import json
+import src.util.md5 as md5
+
+class EmptyDataObject:
+    pass
+def clean_failed_run(json):
     """Clean up failed run"""
-    sqlCommands.sql_update_status_table('Analysis failed', arguments.input_file, 'Failed, log info in /opt/LPF_logs', arguments.entry_id, arguments.sql_db)
+    with open(json, 'r') as f:
+        data_dict = json.loads(f.read())
+    data = EmptyDataObject()
+    for item in data_dict:
+        setattr(data, item, data_dict[item])
+    data.entry_id = md5.md5_of_file(data.input_path)
+    sqlCommands.sql_update_status_table('Analysis failed', data.input_file, 'Failed, log info in /opt/LPF_logs', data.entry_id, data.sql_db)
