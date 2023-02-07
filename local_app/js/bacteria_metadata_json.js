@@ -267,46 +267,44 @@ function getCustomValue() {
     let rows = document.getElementById("metadata_csv_table").rows;
     let header_row = rows[0];
 
-        for (let i = 0; i < rows.length-1; i++) {
-            for (let t = 0; t < rows[i].cells.length; t++) {
-                if (header_row.cells[t].innerHTML == "city") {
-                    const cityValue = document.getElementById(`input${[i]}${[t]}`).value
-                    if(cityValue == "custom city") {
-                        const Dialogs = require('dialogs')
-                        const dialogs = Dialogs()
-                        dialogs.prompt('Give the city name', ok => {
+    for (let i = 0; i < rows.length-1; i++) {
+        for (let t = 0; t < rows[i].cells.length; t++) {
+            if (header_row.cells[t].innerHTML == "city") {
+                const cityValue = document.getElementById(`input${[i]}${[t]}`).value
+                if (cityValue == "custom city") {
+                    const Dialogs = require('dialogs')
+                    const dialogs = Dialogs()
+                    dialogs.prompt('Give the city name', ok => {
                         const custom_option = document.createElement("option");
                         custom_option.value = ok;
                         custom_option.text = ok;
                         document.getElementById(`input${[i]}${[t]}`).add(custom_option);
                         document.getElementById(`input${[i]}${[t]}`).value = custom_option.value;
-                           })
-                       }
-
-                if (header_row.cells[t].innerHTML == "country") {
-                    const countryValue = document.getElementById(`input${[i]}${[t]}`).value
-                    const countryData= require('/opt/LPF/datafiles/cities_and_countries.json');
-                    while (document.getElementById(`input${[i]}${[t-1]}`).hasChildNodes()) {
-                        document.getElementById(`input${[i]}${[t-1]}`).removeChild(document.getElementById(`input${[i]}${[t-1]}`).firstChild);
-                    }
-                    const none_option = document.createElement("option");
-                    none_option.value = "Unspecified city";
-                    none_option.text = "Unspecified city";
-                    document.getElementById(`input${[i]}${[t-1]}`).add(none_option);
-		    for(let city in countryData[countryValue]) {
-                       const cityName = countryData[countryValue][city]
-                       const option = document.createElement("option");
-                       option.value = cityName;
-                       option.text = cityName;
-                       document.getElementById(`input${[i]}${[t-1]}`).add(option);
-                    }
-                    document.getElementById(`input${[i]}${[t-1]}`).defaultValue = "Unspecified city";
+                    })
                 }
-
-               }
-
             }
 
+            if (header_row.cells[t].innerHTML == "country") {
+                const countryValue = document.getElementById(`input${[i]}${[t]}`).value
+                const countryData = require('/opt/LPF/datafiles/cities_and_countries.json');
+                while (document.getElementById(`input${[i]}${[t - 1]}`).hasChildNodes()) {
+                    document.getElementById(`input${[i]}${[t - 1]}`).removeChild(document.getElementById(`input${[i]}${[t - 1]}`).firstChild);
+                }
+                const none_option = document.createElement("option");
+                none_option.value = "Unspecified city";
+                none_option.text = "Unspecified city";
+                document.getElementById(`input${[i]}${[t - 1]}`).add(none_option);
+                for (let city in countryData[countryValue]) {
+                    const cityName = countryData[countryValue][city]
+                    const option = document.createElement("option");
+                    option.value = cityName;
+                    option.text = cityName;
+                    document.getElementById(`input${[i]}${[t - 1]}`).add(option);
+                }
+                document.getElementById(`input${[i]}${[t - 1]}`).defaultValue = "Unspecified city";
+            }
+        }
+    }
 }
 
 function generate_table_fastq(file_number) {
