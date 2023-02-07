@@ -142,6 +142,8 @@ function create_meta_data_table_fastq(){
 }
 
 function input_prompt_costum_city(rowNumber, columnNumber) {
+    let custom_city = prompt("Please enter a custom city name", "City Name Here");
+    /*
     let rows = document.getElementById("metadata_csv_table").rows;
     let header_row = rows[0];
     if (header_row.cells[columnNumber].innerHTML == "city") {
@@ -153,7 +155,7 @@ function input_prompt_costum_city(rowNumber, columnNumber) {
                           input.placeholder = "Enter city name";
                           document.getElementById(`input${[rowNumber]}${[columnNumber]}`).parentNode.appendChild(input);
                           }
-    }
+    }*/
 }
 
 function getCities(rowNumber, columnNumber) {
