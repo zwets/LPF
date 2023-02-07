@@ -64,7 +64,7 @@ function generate_table_fastq(file_number) {
     table.classList.add('table');
 
     const headRow = document.createElement('tr');
-    headRow.id = "thead_tr";
+    headRow.id = "header_row";
     let columnNames = [];
 
     const jsonData= require('/opt/LPF/datafiles/ena_list.json');
@@ -89,13 +89,13 @@ function generate_table_fastq(file_number) {
         let identifier = jsonData[columnNames[j]];
         let td = document.createElement('td');
         td.style.textAlign = "center";
-        td.id = `${columnNames[i]}${j}`;
+        td.id = `${columnNames[j]}${i}`;
         if (j > 0) {
             if (identifier=="free_text") {
                 td.defaultValue = "";
                 td.classList.add("input");
                 const input = document.createElement('input');
-                input.id = `${columnNames[i]}${j}`;
+                input.id = `${columnNames[j]}${i}`;
                 td.appendChild(input);
                 tr.appendChild(td);
                 if (columnNames[j] =="collection_date") {
@@ -137,7 +137,7 @@ function generate_table_fastq(file_number) {
         } else if (j == 0) {
             td.defaultValue = "";
             const label = document.createElement('label');
-            label.id = `${columnNames[i]}${j}`;
+            label.id = `${columnNames[j]}${i}`;
             label.innerHTML = sample_name;
             label.value = sample_name;
             td.appendChild(label);
