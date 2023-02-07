@@ -195,7 +195,7 @@ function generate_table_fastq(file_number) {
                     const countryNames = ["Unspecified country"];
                     countryNames.push.apply(countryNames, countries);
                     object_options = countryNames;
-                    input.onclick = function(){window.getCities(i, j)};
+                    input.onclick = function(){window.getCities(i)};
                 }
 		        else if (columnNames[j] == "city") {
                     object_options = Object.values(identifier);
@@ -231,4 +231,29 @@ function generate_table_fastq(file_number) {
       table.appendChild(tr);
     }
     return table
+}
+
+function getCities(rowNumber) {
+    let country = document.getElementById(`country${[rowNumber]}`).value;
+    let rows = document.getElementById("metadata_csv_table").rows;
+    const countryData= require('/opt/LPF/datafiles/cities_and_countries.json');
+    let cities = countryData[country];
+    let citySelect = document.getElementById(`city${[rowNumber]}`);
+    while (citySelect.hasChildNodes()) {
+        citySelect.removeChild(citySelect.firstChild);
+    }
+    const none_option = document.createElement("option");
+    none_option.value = "Unspecified city";
+    none_option.text = "Unspecified city";
+    citySelect.add(none_option);
+    const custom_option = document.createElement("option");
+    custom_option.value = "Custom city";
+    custom_option.text = "Custom city";
+    citySelect.add(custom_option);
+    for (let i = 0; i < cities.length; i++) {
+        let option = document.createElement("option");
+        option.value = cities[i];
+        option.text = cities[i];
+        citySelect.add(option);
+    }
 }
