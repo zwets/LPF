@@ -176,7 +176,7 @@ function generate_table_fastq(file_number) {
                 td.defaultValue = "";
                 td.classList.add("input");
                 const input = document.createElement('input');
-                input.id = `${columnNames[j]}${i}`;
+                input.id = `input${j}${i}`;
                 td.appendChild(input);
                 tr.appendChild(td);
                 if (columnNames[j] =="collection_date") {
@@ -187,7 +187,7 @@ function generate_table_fastq(file_number) {
                 td.defaultValue = "";
                 td.classList.add("select");
                 const input = document.createElement('select');
-                input.id = `${columnNames[i]}${j}`;
+                input.id = `input${j}${i}`;
                 let object_options = [];
                 if (columnNames[j] =="country") {
                     const countryData= require('/opt/LPF/datafiles/cities_and_countries.json');
@@ -218,7 +218,7 @@ function generate_table_fastq(file_number) {
         } else if (j == 0) {
             td.defaultValue = "";
             const label = document.createElement('label');
-            label.id = `${columnNames[j]}${i}`;
+            label.id = `input${j}${i}`;
             label.innerHTML = sample_name;
             label.value = sample_name;
             td.appendChild(label);
