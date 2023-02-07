@@ -3,6 +3,7 @@ const fs = require('fs')
 const storage = require('electron-json-storage');
 const mkdirp = require('mkdirp');
 const path = require("path");
+const Dialogs = require("dialogs");
 
 function execute_command_as_subprocess(cmd, print_msg) {
     console.log(cmd);
@@ -50,6 +51,13 @@ exports.isExperimentNameValid = isExperimentNameValid
 
 function create_meta_data_table_fastq(){
     const experiment_name = document.getElementById('experiment-name').value;
+
+    !(window.isExperimentNameValid(experiment_name) {
+        alert("please enter the sequencing experiment name without .json extension");
+        return;
+    }
+
+
     if (window.isExperimentNameValid(experiment_name)) {
         document.getElementById('metadata-table-div').innerHTML = "";
         const file_list_obj = document.getElementById('input').files;
