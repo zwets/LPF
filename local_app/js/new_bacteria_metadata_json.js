@@ -49,4 +49,5 @@ function create_meta_data_table_fastq(){
 
     !(isExperimentNameValid(experiment_name)) ? console.log("experiment name is not valid") : console.log("experiment name is valid");
 
+    console.log(experiment_name);
 }
