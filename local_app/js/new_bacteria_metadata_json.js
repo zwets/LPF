@@ -53,9 +53,11 @@ function create_meta_data_table_fastq(){
     const experiment_name = document.getElementById('experiment-name').value;
 
     !(window.isExperimentNameValid(experiment_name)) ? console.log("experiment name is not valid") : console.log("experiment name is valid");
+
+    console.log("hello");
 }
 
-function input_prompt_costum_city(rowNumber, columnNumber) {
+function input_prompt_costum_city(rowNumber, colum pushnNumber) {
     var Dialogs = require('dialogs')
     var dialogs = Dialogs()
     dialogs.prompt('Please enter a custom city name', function (custom_city) {
