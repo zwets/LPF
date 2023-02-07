@@ -141,6 +141,21 @@ function create_meta_data_table_fastq(){
     }
 }
 
+function input_prompt_costum_city(rowNumber, columnNumber) {
+    let rows = document.getElementById("metadata_csv_table").rows;
+    let header_row = rows[0];
+    if (header_row.cells[columnNumber].innerHTML == "city") {
+                          const cityValue = document.getElementById(`input${[rowNumber]}${[columnNumber]}`).value
+                          if (cityValue == "Other") {
+                          const input = document.createElement("input");
+                          input.type = "text";
+                          input.id = `input${[rowNumber]}${[columnNumber-1]}`;
+                          input.placeholder = "Enter city name";
+                          document.getElementById(`input${[rowNumber]}${[columnNumber]}`).parentNode.appendChild(input);
+                          }
+    }
+}
+
 function getCities(rowNumber, columnNumber) {
    let rows = document.getElementById("metadata_csv_table").rows;
    let header_row = rows[0];
@@ -157,6 +172,7 @@ function getCities(rowNumber, columnNumber) {
        	            const custom_option = document.createElement("option");
    	        	    custom_option.value = "custom city";
    		            custom_option.text = "custom city";
+                    costom_option.onclick = input_prompt_costum_city(rowNumber, columnNumber);
    		            document.getElementById(`input${[rowNumber]}${[columnNumber-1]}`).add(custom_option);
    		    for(let city in countryData[countryValue]) {
                           const cityName = countryData[countryValue][city]
