@@ -82,32 +82,31 @@ function generate_table_fastq(file_number) {
     // Add the data rows.
     for (let i = 0; i < file_number; i++) {
       let tr = document.createElement('tr');
-      tr.id = columnNames[i] + i;
+      tr.id = "row" + i;
       let sample_name = file_list_obj[i].path.split("/").slice(-1);
 
       for (let j = 0; j < columnNames.length; j++) {
         let identifier = jsonData[columnNames[j]];
         let td = document.createElement('td');
         td.style.textAlign = "center";
-        td.id = `outer${i}${j}`;
+        td.id = `${columnNames[i]}${j}`;
         if (j > 0) {
             if (identifier=="free_text") {
                 td.defaultValue = "";
                 td.classList.add("input");
                 const input = document.createElement('input');
-                input.id = `${tr.id}${j}`;
+                input.id = `${columnNames[i]}${j}`;
                 td.appendChild(input);
                 tr.appendChild(td);
                 if (columnNames[j] =="collection_date") {
                     input.placeholder = "YYYY-MM-DD";
                     }
                 continue;
-
             } else if (typeof identifier === "object") {
                 td.defaultValue = "";
                 td.classList.add("select");
                 const input = document.createElement('select');
-                input.id = `${tr.id}${j}`;
+                input.id = `${columnNames[i]}${j}`;
                 let object_options = [];
                 if (columnNames[j] =="country") {
                     const countryData= require('/opt/LPF/datafiles/cities_and_countries.json');
@@ -138,7 +137,7 @@ function generate_table_fastq(file_number) {
         } else if (j == 0) {
             td.defaultValue = "";
             const label = document.createElement('label');
-            label.id = `${tr.id}${j}`;
+            label.id = `${columnNames[i]}${j}`;
             label.innerHTML = sample_name;
             label.value = sample_name;
             td.appendChild(label);
