@@ -1,7 +1,7 @@
 {
   "name": "LPF",
   "version": "1.1.0",
-  "description": "Microbial Outbreak Surveillance System",
+  "description": "Local Pathogen Finder",
   "main": "main.js",
   "scripts": {
     "dev": "npm run development",
