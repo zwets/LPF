@@ -48,7 +48,6 @@ def LPF_installation(arguments):
 def build_app():
     if os.path.exists("/usr/share/applications/moss.desktop"): #Remove old copy
         os.system("sudo rm /usr/share/applications/moss.desktop")
-    os.system("sudo chmod a+rwx local_app")
     if os.path.exists("local_app/dist"): #Remove old copy
         os.system("sudo rm -rf local_app/dist")
     os.system("cd local_app;sudo chmod a+x lpf_launch; npm i; ./node_modules/.bin/electron-rebuild; npm run dist;sudo cp lpf.desktop /usr/share/applications/.; cd ..")
