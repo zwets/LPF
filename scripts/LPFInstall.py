@@ -37,7 +37,7 @@ def LPF_installation(arguments):
         LPF_build_app()
         print (bcolors.OKGREEN + "LPF app built" + bcolors.ENDC)
     elif arguments.app:
-
+        reinstall_app()
     elif arguments.install_databases:
         install_databases(arguments)
         os.chdir(cwd)
