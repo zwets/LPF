@@ -70,7 +70,7 @@ def flye_assembly(bacterial_parser):
             print(sequence, file=outfile)
 
     #Move indexing to after check in assembly was completed correctly
-    #test_list = ['62b06be200d3967db6b0f6023d7b5b2e', 'fac82762aa980d285edbbcd45ce952fb'] #IDs of test files to be ignored
-    #if bacterial_parser.data.entry_id not in test_list:
-    #    os.system("~/bin/kma index -t_db {} -i {}{}_assembly.fasta"\
-    #              .format(bacterial_parser.data.ref_db, bacterial_parser.data.target_dir, bacterial_parser.data.sample_name))
+    test_list = ['62b06be200d3967db6b0f6023d7b5b2e', 'fac82762aa980d285edbbcd45ce952fb'] #IDs of test files to be ignored
+    if bacterial_parser.data.entry_id not in test_list:
+        os.system("~/bin/kma index -t_db {} -i {}{}_assembly.fasta"\
+                  .format(bacterial_parser.data.ref_db, bacterial_parser.data.target_dir, bacterial_parser.data.sample_name))

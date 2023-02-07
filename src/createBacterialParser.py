@@ -141,6 +141,11 @@ class BacterialParser():
 
         self.logger.info('Assembly report compiled')
 
+        sqlCommands.sql_execute_command()
+
+        #Insert into reference database
+
+
         sqlCommands.sql_update_status_table('Assembly report compiled', self.data.sample_name, '9', self.data.entry_id, self.data.sql_db)
 
     def single_template_alignment_bacteria(self):
