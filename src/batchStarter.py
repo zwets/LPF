@@ -8,7 +8,6 @@ import sqlCommands as sqlCommands
 import datetime
 import json
 
-
 parser = argparse.ArgumentParser(description='.')
 parser.add_argument('-info', type=int, help='surveillance info')
 parser.add_argument('-batch_json', action="store", type=str, dest='batch_json', default="",
