@@ -61,8 +61,8 @@ def move_LPF_repo():
         os.system("sudo chmod a+rwx /opt/LPF")
 def LPF_build_app():
     build_app()
-    check_dist_build()
     move_LPF_repo()
+    check_dist_build()
 
 def reinstall_app():
     if os.path.exists("/opt/LPF/local_app/dist"):
