@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Exec=/opt/LPF/local_app/dist/linux-unpacked/lpf
+Name=Local Pathogen Finder (LPF)
+GenericName=Local Pathogen Finder (LPF)
+Icon=/opt/LPF/local_app/images/report-icon.png
+Terminal=false

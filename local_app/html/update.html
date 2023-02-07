@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Microbial Outbreak Surveillance System 1.0</title>
+    <title>Local Pathogen Finder 1.0</title>
     <link rel="stylesheet" href="../css/styles.css">
     <script src="../js/update.js" type="text/javascript"></script>
 </head>
@@ -15,15 +15,14 @@
     <a href="./results.html">Results</>
     <a href="./concat.html">Merge FastQ</a>
     <a href="./update.html">Update</a>
-    <a href="./config.html">Config</a>
 </div>
 
   <div class="main" id="main">
       <main data-router-wrapper>
       <section data-router-view="Guide" class="Guide">
           <div class ="home-choose">
-              <h1>Update MOSS software and dependencies</h1><br><br>
-              <button onclick="update_moss('pab');" type="button" class="analyse-btn"><i class="fa fa-address-book-o"></i>Update and rebuild the MOSS app</button>
+              <h1>Update LPF software and dependencies</h1><br><br>
+              <button onclick="update_LPF('pab');" type="button" class="analyse-btn"><i class="fa fa-address-book-o"></i>Update and rebuild the LPF app</button>
               <button type="button" class="analyse-btn"><i class="fa fa-address-book-o"></i>Update Databases (Doesn't work)</button> <br> <br>
               <button type="button" class="analyse-btn"><i class="fa fa-address-book-o"></i>Check for new dependency updates and update (Doesn't work)</button>
             <div class="loader" id="loader">

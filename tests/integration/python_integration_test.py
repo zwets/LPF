@@ -1,5 +1,5 @@
 from unittest import TestCase
-import src.moss_functions as moss
+import src.LPF_functions as LPF
 import json
 
 # class TestAlignment(TestCase):

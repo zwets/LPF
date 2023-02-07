@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Microbial Outbreak Surveillance System 1.0</title>
+    <title>Local Pathogen Finder 1.0</title>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="../js/main.js" type="text/javascript"></script>
@@ -15,18 +15,17 @@
     <a href="./results.html">Results</>
     <a href="./concat.html">Merge FastQ</a>
     <a href="./update.html">Update</a>
-    <a href="./config.html">Config</a>
 </div>
   <div class="main" id="main">
     <main data-router-wrapper>
       <section data-router-view="Guide" class="Guide">
           <div class ="home-choose">
-              <h1>For a comprehensive usage guide please visit: https://mbhallgren.github.io/moss_mkdocs</h1><br><br><br>
-              <button onclick="location.href='./generate_metadata_sheet_fastq.html'" type="button" class="analyse-btn"><i class="fa fa-address-book-o"></i>Analyse DNA</button>
+              <h1>For a comprehensive usage guide please visit: https://mbhallgren.github.io/LPF_mkdocs</h1><br><br><br>
+              <button onclick="location.href='bacterial_meta_data.html'" type="button" class="analyse-btn"><i class="fa fa-address-book-o"></i>Analyse bacteria</button>
               <button onclick="location.href='./concat.html'" type="button" class="analyse-btn"><i class="fa fa-area-chart"></i>Merge Fastqs</button>
               <br>
-              <button onclick="location.href='./initialize.html'" type="button" class="analyse-btn"><i class="fa fa-cog"></i>Initialize database</button>
-              <button type="button" class="analyse-btn"><i class="fa fa-cloud"></i>Synchronize</button>
+              <button type="button" class="analyse-btn"><i class="fa fa-address-book-o"></i>Analyse virus</button>
+              <button type="button" class="analyse-btn"><i class="fa fa-address-book-o"></i>Analyse metagenome</button>
 
 
 
