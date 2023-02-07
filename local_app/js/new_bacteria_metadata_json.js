@@ -52,6 +52,89 @@ function create_meta_data_table_fastq(){
     const file_number = Object.keys(file_list_obj).length;
     let append_table = generate_table_fastq(file_number)
     document.getElementById('metadata-table-div').appendChild(append_table);
+
+    const create_button = document.createElement('button');
+    create_button.classList.add('button-7');
+
+    create_button.type = "button";
+    create_button.id = "generate-metadata-sheet";
+    create_button.onclick = function() {
+        const experiment_name = document.getElementById('experiment-name').value;
+        const file_list_obj = document.getElementById('input').files;
+
+        const obj_list = [];
+        const rows = document.getElementById("metadata_csv_table").rows;
+        const header_row = rows[0];
+
+        for (let i = 0; i < rows.length-1; i++) {
+            let new_obj = {};
+            for (let t = 0; t < rows[i].cells.length; t++) {
+                if (header_row.cells[t].innerHTML == 'input_file') {
+                    new_obj[header_row.cells[t].innerHTML] = document.getElementById(`${header_row.cells[t].innerHTML}${i}`).value[0];
+                } else {
+                    new_obj[header_row.cells[t].innerHTML] = document.getElementById(`${header_row.cells[t].innerHTML}${i}`).value;
+                }
+            }
+            new_obj['input_path'] = file_list_obj[i].path;
+            var errorMessage = window.validateData(new_obj);
+            if (errorMessage != "") {
+                console.log(errorMessage);
+                break;
+              }
+            obj_list.push(new_obj);
+
+        }
+
+        console.log(obj_list);
+        console.log(JSON.stringify(obj_list));
+
+        const final_obj = {'batch_runs': obj_list}
+        const output_json_file = `/opt/LPF_metadata_json/${experiment_name}.json`;
+
+      //Here insert validation function for ENA compatibility
+        if (errorMessage == "") {
+            if (fs.existsSync(output_json_file)) {
+              // path exists
+              alert("A file with this name already exists, please choose another one than: ", output_json_file);
+            } else {
+                fs.writeFile(output_json_file, JSON.stringify(final_obj), err => {
+                      if (err) {
+                        console.error(err)
+                        return
+                      }
+                      alert("The input data was successfully validated. Analysis can begin.");
+                      const create_button = document.createElement('button');
+                      create_button.classList.add('button-7');
+                      create_button.type = "button";
+                      create_button.id = "begin-analyses-button";
+                      create_button.innerHTML = "Begin analysis";
+                      create_button.onclick = function() {
+                        var cmd_msg = `~/anaconda3/bin/conda run -n LPF python3 /opt/LPF/src/batchStarter.py -analysis_type bacteria -batch_json ${output_json_file}`;
+                        console.log(cmd_msg);
+                        execute_command_as_subprocess(cmd_msg);
+                      }
+                      create_button.style.width = "400px";
+                      create_button.style.height = "150px";
+                      create_button.style.fontSize = "large"
+
+                      document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
+                      document.getElementById('metadata-table-div').appendChild(document.createElement('br'));
+
+                      document.getElementById('metadata-table-div').appendChild(create_button);
+                      //Make go to analyses shortcut
+                })
+
+            }
+        }
+      }
+
+      create_button.innerHTML = "Validate metadata";
+      const mybr = document.createElement('br');
+      document.getElementById('metadata-table-div').appendChild(mybr);
+      document.getElementById('metadata-table-div').appendChild(create_button);
+
+    }
+
 }
 
 
