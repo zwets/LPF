@@ -38,7 +38,7 @@ def main(analysis_type, batch_json):
         except Exception as e:
             sys.exit("LocalPathogenFinder: Error: {}. LPF was NOT run.".format(e))
 
-        if os.path.exists('/opt/LPF/LPF'):
+        if os.path.exists('/opt/LPF/LocalPathogenFinder'):
             cmd = 'python3 /opt/LPF/LocalPathogenFinder {} -json {}'.format(analysis_type, item)
         else:
             cmd = 'python3 LocalPathogenFinder {} -json {}'.format(analysis_type, item)
