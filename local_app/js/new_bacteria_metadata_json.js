@@ -176,7 +176,7 @@ function generate_table_fastq(file_number) {
                 td.defaultValue = "";
                 td.classList.add("input");
                 const input = document.createElement('input');
-                input.id = `input${j}${i}`;
+                input.id = `input${i}${j}`;
                 td.appendChild(input);
                 tr.appendChild(td);
                 if (columnNames[j] =="collection_date") {
@@ -187,7 +187,7 @@ function generate_table_fastq(file_number) {
                 td.defaultValue = "";
                 td.classList.add("select");
                 const input = document.createElement('select');
-                input.id = `input${j}${i}`;
+                input.id = `input${i}${j}`;
                 let object_options = [];
                 if (columnNames[j] =="country") {
                     const countryData= require('/opt/LPF/datafiles/cities_and_countries.json');
@@ -195,7 +195,7 @@ function generate_table_fastq(file_number) {
                     const countryNames = ["Unspecified country"];
                     countryNames.push.apply(countryNames, countries);
                     object_options = countryNames;
-                    input.onclick = function(){window.getCities(i)};
+                    input.onclick = function(){window.getCities(i, j)};
                 }
 		        else if (columnNames[j] == "city") {
                     object_options = Object.values(identifier);
@@ -218,7 +218,7 @@ function generate_table_fastq(file_number) {
         } else if (j == 0) {
             td.defaultValue = "";
             const label = document.createElement('label');
-            label.id = `input${j}${i}`;
+            label.id = `input${i}${j}`;
             label.innerHTML = sample_name;
             label.value = sample_name;
             td.appendChild(label);
@@ -233,9 +233,10 @@ function generate_table_fastq(file_number) {
     return table
 }
 
-function getCities(rowNumber) {
+function getCities(rowNumber, columnNumber) {
     console.log(rowNumber);
-    let country = document.getElementById(`country${[rowNumber]}`).value;
+    console.log(columnNumber);
+    const country = document.getElementById(`input${[rowNumber]}${[columnNumber]}`).value;
     console.log(country);
     let rows = document.getElementById("metadata_csv_table").rows;
     const countryData= require('/opt/LPF/datafiles/cities_and_countries.json');
