@@ -110,10 +110,10 @@ class BacterialParser():
                 self.logger.info("Reference mapping results: Template number: {}. Template score: {}. Reference header: {}. Reference ID: {}".format(self.data.template_number, self.data.template_score, self.data.reference_header_text, self.data.reference_id))
 
 
-    def get_mlst_results(self):
+    def get_mlst_type(self):
         """Returns the mlst results"""
         self.data.mlst_species = mlst.derive_mlst_species(self.data.reference_header_text)
-        self.data.mlst_result = mlst.determine_mlst(self)
+        self.data.mlst_type = mlst.determine_mlst(self)
 
     def parse_finder_results(self):
         """Parses the results from the finders"""

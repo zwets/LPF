@@ -274,7 +274,7 @@ def parse_finders(LPF_object):
     LPF_object.resfinder_hits = parse_kma_res("{}/finders_1t1/resfinder.res".format(LPF_object.target_dir))
     LPF_object.virulence_hits = parse_kma_res("{}/finders_1t1/virulencefinder.res".format(LPF_object.target_dir))
     LPF_object.plasmid_hits = parse_kma_res("{}/finders_1t1/plasmidfinder.res".format(LPF_object.target_dir))
-    LPF_object.mlst_type = parse_mlst_result("{}/mlstresults/data.json".format(LPF_object.target_dir))
+    LPF_object.mlst_type = parse_mlst_type("{}/mlstresults/data.json".format(LPF_object.target_dir))
     return LPF_object
 def derive_amr_stats(genes, database): #TBD rewrite and remove.
     phenotype = dict()
@@ -317,13 +317,13 @@ def push_finders_data_sql(target_dir, config_path, entry_id): #TBD insert all me
     resfinder_hits = parse_kma_res("{}/finders/resfinder.res".format(target_dir))
     virulence_hits = parse_kma_res("{}/finders/virulencefinder.res".format(target_dir))
     plasmid_hits = parse_kma_res("{}/finders/plasmidfinder.res".format(target_dir))
-    mlst_type = parse_mlst_result("{}/mlstresults/data.json".format(target_dir))
+    mlst_type = parse_mlst_type("{}/mlstresults/data.json".format(target_dir))
 
     sql_execute_command(sql_cmd,  LPF_object.config_path)
 
     return resfinder_hits, virulence_hits, plasmid_hits, mlst_type
 
-def parse_mlst_result(filename): #TBD rewrite
+def parse_mlst_type(filename): #TBD rewrite
     try:
         with open(filename) as json_file:
             data = json.load(json_file)

@@ -19,7 +19,7 @@ def compile_assembly_report(bacterial_parser):
     textstring = "ID: {} \n" \
                  "Suggested reference: {} \n\n" \
                  "No related phylogeny cluster was identified. \n" \
-                 "".format(bacterial_parser.data.entry_id, bacterial_parser.data.mlst_species) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
+                 "".format(bacterial_parser.data.entry_id, bacterial_parser.data.reference_header_text) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(20)
 
@@ -161,7 +161,7 @@ def compile_alignment_report(bacterial_parser):
                  "Plasmids in this sample: {}. \n" \
                  "Virulence genes in this sample: {}. \n" \
                  "MLST: ST{}. \n" \
-                 "".format(len(bacterial_parser.data.resfinder_hits), len(bacterial_parser.data.plasmid_hits), len(bacterial_parser.data.virulence_hits), bacterial_parser.data.mlst_species)
+                 "".format(len(bacterial_parser.data.resfinder_hits), len(bacterial_parser.data.plasmid_hits), len(bacterial_parser.data.virulence_hits), bacterial_parser.data.mlst_type)
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('Arial', '', 10)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
