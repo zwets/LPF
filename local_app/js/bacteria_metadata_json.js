@@ -142,7 +142,11 @@ function create_meta_data_table_fastq(){
 }
 
 function input_prompt_costum_city(rowNumber, columnNumber) {
-    let custom_city = prompt("Please enter a custom city name", "City Name Here");
+    var Dialogs = require('dialogs')
+    var dialogs = Dialogs()
+    dialogs.prompt('Please enter a custom city name', function (custom_city) {
+        console.log(custom_city)
+        })
     /*
     let rows = document.getElementById("metadata_csv_table").rows;
     let header_row = rows[0];
