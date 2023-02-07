@@ -157,7 +157,6 @@ function getCities(rowNumber, columnNumber) {
        	            const custom_option = document.createElement("option");
    	        	    custom_option.value = "custom city";
    		            custom_option.text = "custom city";
-                    custom_option.onclick =
    		            document.getElementById(`input${[rowNumber]}${[columnNumber-1]}`).add(custom_option);
    		    for(let city in countryData[countryValue]) {
                           const cityName = countryData[countryValue][city]
