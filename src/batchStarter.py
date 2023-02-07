@@ -31,10 +31,12 @@ def main(analysis_type, batch_json):
         input_file = data['input_file']
         entry_id = md5.md5_of_file(data['input_path'])
         time_stamp = str(datetime.datetime.now())[0:-7]
-
-        sqlCommands.sql_execute_command(
-            "INSERT INTO status_table(entry_id, input_file, status, time_stamp, stage) VALUES ('{}', '{}', '{}', '{}', '{}')" \
-                .format(entry_id, input_file, 'Queued, not started', time_stamp, '1'), '/opt/LPF_databases/LPF.db')
+        try:
+            sqlCommands.sql_execute_command(
+                "INSERT INTO status_table(entry_id, input_file, status, time_stamp, stage) VALUES ('{}', '{}', '{}', '{}', '{}')" \
+                    .format(entry_id, input_file, 'Queued, not started', time_stamp, '1'), '/opt/LPF_databases/LPF.db')
+        except Exception as e:
+            sys.exit("LocalPathogenFinder: Error: {}. LPF was NOT run.".format(e))
 
         if os.path.exists('/opt/LPF/LPF'):
             cmd = 'python3 /opt/LPF/LocalPathogenFinder {} -json {}'.format(analysis_type, item)
