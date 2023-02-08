@@ -71,6 +71,7 @@ function create_meta_data_table_fastq(){
             for (let t = 0; t < rows[i].cells.length; t++) {
                 if (header_row.cells[t].innerHTML == 'input_file') {
                     console.log(document.getElementById(`${header_row.cells[t].innerHTML}${i}`));
+                    console.log(document.getElementById(`${header_row.cells[t].innerHTML}${i}`).value);
                     new_obj[header_row.cells[t].innerHTML] = document.getElementById(`${header_row.cells[t].innerHTML}${i}`).value[0];
                 } else {
                     new_obj[header_row.cells[t].innerHTML] = document.getElementById(`${header_row.cells[t].innerHTML}${i}`).value;
