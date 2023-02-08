@@ -268,7 +268,7 @@ function getCustomValue(i, j) {
     if (element.value == "CUSTOM INPUT") {
         const Dialogs = require('dialogs')
         const dialogs = Dialogs()
-        dialogs.prompt('Give the city name', ok => {
+        dialogs.prompt('Give a custom input', ok => {
             console.log(ok);
             const custom_option = document.createElement("option");
             custom_option.value = ok;
