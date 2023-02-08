@@ -268,11 +268,15 @@ function getCustomValue(i, j) {
         const Dialogs = require('dialogs')
         const dialogs = Dialogs()
         dialogs.prompt('Give the city name', ok => {
+            console.log(ok);
+            /*
             const custom_option = document.createElement("option");
             custom_option.value = ok;
             custom_option.text = ok;
             document.getElementById(`input${[i]}${[t]}`).add(custom_option);
             document.getElementById(`input${[i]}${[t]}`).value = custom_option.value;
+
+             */
         })
     }
 }
