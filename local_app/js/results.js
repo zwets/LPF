@@ -7,7 +7,7 @@ var intervalId = window.setInterval(function(){
 }, 5000);
 
 function showFinishedAnalyses() {
-    let sql = `SELECT * FROM status_table`;
+    let sql = `SELECT * FROM status_table ORDER BY time_stamp DESC`;
     document.getElementById('showData').innerHTML="" ;
     const db = require('better-sqlite3')('/opt/LPF_databases/LPF.db');
     const sql_data_obj = db.prepare(sql).all();
