@@ -199,7 +199,7 @@ function generate_table_fastq(file_number) {
                 }
 		        else if (columnNames[j] == "city") {
                     object_options = Object.values(identifier);
-                    input.onchange = function() {getCustomValue(`input${i}${j}`)};
+                    input.onclick = function () {window.getCustomValue(i, j)};
                 }
                 else {
                     object_options = Object.values(identifier);
@@ -262,7 +262,9 @@ function getCities(rowNumber, columnNumber) {
     }
 }
 
-function getCustomValue(value) {
+function getCustomValue(i, j) {
+    const value = document.getElementById(`input${[i]}${[j]}`).value;
+    console.log(value);
     if (value == "Custom city") {
         alert("Custom city");
     }
