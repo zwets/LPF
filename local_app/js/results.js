@@ -4,7 +4,7 @@ const fs = require('fs');
 var intervalId = window.setInterval(function(){
     showFinishedAnalyses();
   // call your function here
-}, 5);
+}, 5000);
 
 function showFinishedAnalyses() {
     let sql = `SELECT * FROM status_table`;
