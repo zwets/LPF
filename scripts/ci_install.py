@@ -2,7 +2,7 @@ import os
 import sys
 import subprocess
 
-from LPFInstall import check_local_software, download_mlst_tables, create_sql_db,  insert_bacterial_references_into_sql
+from scripts.LPFInstall import check_local_software, download_mlst_tables, create_sql_db, insert_bacterial_references_into_sql
 
 class bcolors:
     HEADER = '\033[95m'
