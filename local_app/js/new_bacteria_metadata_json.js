@@ -199,7 +199,7 @@ function generate_table_fastq(file_number) {
                 }
 		        else if (columnNames[j] == "city") {
                     object_options = Object.values(identifier);
-                    input.onclick = function(){window.getCustomValue(`input${i}${j}`)};
+                }
                 else {
                     object_options = Object.values(identifier);
                     }
