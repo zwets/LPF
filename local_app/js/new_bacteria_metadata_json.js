@@ -263,20 +263,18 @@ function getCities(rowNumber, columnNumber) {
 }
 
 function getCustomValue(i, j) {
-    const value = document.getElementById(`input${[i]}${[j]}`).value;
-    if (value == "Custom city") {
+    const element = document.getElementById(`input${[i]}${[j]}`);
+    if (element.value == "Custom city") {
         const Dialogs = require('dialogs')
         const dialogs = Dialogs()
         dialogs.prompt('Give the city name', ok => {
             console.log(ok);
-            /*
             const custom_option = document.createElement("option");
             custom_option.value = ok;
             custom_option.text = ok;
-            document.getElementById(`input${[i]}${[t]}`).add(custom_option);
-            document.getElementById(`input${[i]}${[t]}`).value = custom_option.value;
-
-             */
+            element.add(custom_option);
+            element.value = custom_option.value;
+            console.log(element.value);
         })
     }
 }
