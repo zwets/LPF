@@ -201,12 +201,17 @@ function generate_table_fastq(file_number) {
                     object_options = Object.values(identifier);
                     input.onclick = function () {window.getCustomValue(i, j)};
                     }
-            for (let t = 0; t < object_options.length; t++) {
-                let option = document.createElement("option");
-                option.value = object_options[t];
-                option.text = object_options[t];
-                input.add(option);
-                }
+                for (let t = 0; t < object_options.length; t++) {
+                    let option = document.createElement("option");
+                    option.value = object_options[t];
+                    option.text = object_options[t];
+                    input.add(option);
+                    }
+
+                const custom_option = document.createElement("option");
+                custom_option.value = "Custom input";
+                custom_option.text = "Custom input";
+                input.add(custom_option);
             input.defaultValue = object_options[0];
             td.appendChild(input);
             tr.appendChild(td);
@@ -224,8 +229,7 @@ function generate_table_fastq(file_number) {
         }
         tr.appendChild(td);
       }
-
-      table.appendChild(tr);
+    table.appendChild(tr);
     }
     return table
 }
