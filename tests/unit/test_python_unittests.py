@@ -7,7 +7,7 @@ import inspect
 
 class TestSetUpFunctions(TestCase):
     def setUp(self):
-        with open('tests/fixtures/data_for_tests/json/assembly_test.json') as json_file:
+        with open('tests/fixtures/json/assembly_test.json') as json_file:
             test_json = json.load(json_file)['samples'][0]
         self.input_dict = LPFObject(test_json)
         print (inspect(getmembers(self.input_dict)))
@@ -22,7 +22,7 @@ class TestSetUpFunctions(TestCase):
         self.assertEqual(self.input_dict['target_dir'] is not None, True)
 class TestLeftOvers(TestCase):
     def setUp(self):
-        with open('tests/fixtures/data_for_tests/json/assembly_test.json') as json_file:
+        with open('tests/fixtures/json/assembly_test.json') as json_file:
             test_json = json.load(json_file)['samples'][0]
         self.input_dict = LPF.LPF_init(test_json)
 
@@ -34,10 +34,10 @@ class TestLeftOvers(TestCase):
 
 class TestParseFunctions(TestCase):
     def setUp(self):
-        with open('tests/fixtures/data_for_tests/json/assembly_test.json') as json_file:
+        with open('tests/fixtures/json/assembly_test.json') as json_file:
             test_json = json.load(json_file)['samples'][0]
         self.input_dict = LPF.LPF_init(test_json)
-        self.input_dict['target_dir'] = 'tests/fixtures/data_for_tests/'
+        self.input_dict['target_dir'] = 'tests/fixtures/'
 
     def test_parse_finders_pass(self):
         self.input_dict = LPF.parse_finders(self.input_dict)
@@ -48,13 +48,13 @@ class TestParseFunctions(TestCase):
         #mlst missing
 
     def test_parse_kma_res_pass(self):
-        self.plasmid_list = LPF.parse_kma_res('tests/fixtures/data_for_tests/finders/plasmidfinder.res')
+        self.plasmid_list = LPF.parse_kma_res('tests/fixtures/finders/plasmidfinder.res')
         print (self.plasmid_list)
 
 
 class TestQcCheck(TestCase):
     def setUp(self):
-        with open('tests/fixtures/data_for_tests/json/assembly_test.json') as json_file:
+        with open('tests/fixtures/json/assembly_test.json') as json_file:
             test_json = json.load(json_file)['samples'][0]
         self.input_dict = LPF.LPF_init(test_json)
 
@@ -62,19 +62,19 @@ class TestQcCheck(TestCase):
         self.assertTrue(LPF.qc_check(self.input_dict), 'Input QC check showed below 3MB file size')
 
     def test_qc_check_fail(self):
-        self.input_dict['input_path'] = 'tests/fixtures/data_for_tests/mlstresults/kma_ecoli_alignment_test.res'
+        self.input_dict['input_path'] = 'tests/fixtures/mlstresults/kma_ecoli_alignment_test.res'
         self.assertRaises(SystemExit, LPF.qc_check, self.input_dict) #Consider using other file
 
 class TestSqlCommands(TestCase):
     def setUp(self):
-        with open('tests/fixtures/data_for_tests/json/assembly_test.json') as json_file:
+        with open('tests/fixtures/json/assembly_test.json') as json_file:
             test_json = json.load(json_file)['samples'][0]
         self.input_dict = LPF.LPF_init(test_json)
-        self.input_dict['LPF_db'] = 'tests/fixtures/data_for_tests/database/LPF.db'
-        LPF.create_sql_db('tests/fixtures/data_for_tests/database/', 'datafiles/ena_list.json')
+        self.input_dict['LPF_db'] = 'tests/fixtures/database/LPF.db'
+        LPF.create_sql_db('tests/fixtures/database/', 'datafiles/ena_list.json')
 
     def tearDown(self):
-        os.system("rm -rf tests/fixtures/data_for_tests/database/LPF.db")
+        os.system("rm -rf tests/fixtures/database/LPF.db")
 
     def test_sql_execute_command_pass(self):
         entry_id = LPF.md5_of_file(self.input_dict['input_path'])
@@ -83,7 +83,7 @@ class TestSqlCommands(TestCase):
             " type, current_stage, final_stage, result, time_stamp)"
             " VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')" \
                 .format(entry_id, self.input_dict['sample_name'], "Queued", "Queued", "Queued",
-                        "Queued", "Queued", ""), 'tests/fixtures/data_for_tests/database/LPF.db')
+                        "Queued", "Queued", ""), 'tests/fixtures/database/LPF.db')
         result = LPF.sql_fetch_one("SELECT result FROM status_table WHERE entry_id = '{}'".format(entry_id),
                                     self.input_dict['LPF_db'])
         self.assertEqual(len(result), 1)
@@ -94,7 +94,7 @@ class TestSqlCommands(TestCase):
             " type, current_stage, final_stage, result, time_stamp)"
             " VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')" \
                 .format(entry_id, self.input_dict['sample_name'], "Queued", "Queued", "Queued",
-                        "Queued", "Queued", ""), 'tests/fixtures/data_for_tests/database/LPF.db')
+                        "Queued", "Queued", ""), 'tests/fixtures/database/LPF.db')
         result = LPF.sql_fetch_one("SELECT result FROM status_table WHERE entry_id = '{}'".format(entry_id),
                                     self.input_dict['LPF_db'])
         self.assertEqual(len(result), 1)
@@ -103,7 +103,7 @@ class TestSqlCommands(TestCase):
             " type, current_stage, final_stage, result, time_stamp)"
             " VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')" \
                 .format('test1', self.input_dict['sample_name'], "Queued", "Queued", "Queued",
-                        "Queued", "Queued", ""), 'tests/fixtures/data_for_tests/database/LPF.db')
+                        "Queued", "Queued", ""), 'tests/fixtures/database/LPF.db')
         result = LPF.sql_fetch_one("SELECT result FROM status_table WHERE entry_id = '{}'".format('test1'),
                                     self.input_dict['LPF_db'])
         self.assertEqual(len(result), 1)
@@ -115,7 +115,7 @@ class TestSqlCommands(TestCase):
             " type, current_stage, final_stage, result, time_stamp)"
             " VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')" \
                 .format(entry_id, self.input_dict['sample_name'], "Queued", "Queued", "Queued",
-                        "Queued", "Queued", ""), 'tests/fixtures/data_for_tests/database/LPF.db')
+                        "Queued", "Queued", ""), 'tests/fixtures/database/LPF.db')
         result = LPF.sql_fetch_all("SELECT entry_id FROM status_table WHERE result = '{}'".format('Queued'),
                                     self.input_dict['LPF_db'])
         self.assertEqual(len(result), 1)
@@ -124,7 +124,7 @@ class TestSqlCommands(TestCase):
             " type, current_stage, final_stage, result, time_stamp)"
             " VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')" \
                 .format('test1', self.input_dict['sample_name'], "Queued", "Queued", "Queued",
-                        "Queued", "Queued", ""), 'tests/fixtures/data_for_tests/database/LPF.db')
+                        "Queued", "Queued", ""), 'tests/fixtures/database/LPF.db')
         result = LPF.sql_fetch_all("SELECT entry_id FROM status_table WHERE result = '{}'".format('Queued'),
                                     self.input_dict['LPF_db'])
         print (result)
@@ -137,7 +137,7 @@ class TestSqlCommands(TestCase):
             " type, current_stage, final_stage, result, time_stamp)"
             " VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')" \
                 .format(entry_id, self.input_dict['sample_name'], "Queued", "Queued", "Queued",
-                        "Queued", "Queued", ""), 'tests/fixtures/data_for_tests/database/LPF.db')
+                        "Queued", "Queued", ""), 'tests/fixtures/database/LPF.db')
         LPF.completed_run_update_sql_database('assembly', self.input_dict)
         result = LPF.sql_fetch_one("SELECT status FROM status_table WHERE entry_id = '{}'".format(entry_id), self.input_dict['LPF_db'])[0]
         self.assertEqual(result, 'Completed')
@@ -149,7 +149,7 @@ class TestSqlCommands(TestCase):
             " type, current_stage, final_stage, result, time_stamp)"
             " VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')" \
                 .format(entry_id, self.input_dict['sample_name'], "Queued", "Queuedqc_check", "Queued",
-                        "Queued", "Queued", ""), 'tests/fixtures/data_for_tests/database/LPF.db')
+                        "Queued", "Queued", ""), 'tests/fixtures/database/LPF.db')
         LPF.completed_run_update_sql_database('alignment', self.input_dict)
         result = LPF.sql_fetch_one("SELECT status FROM status_table WHERE entry_id = '{}'".format(entry_id), self.input_dict['LPF_db'])[0]
         self.assertEqual(result, 'Completed')
@@ -161,14 +161,14 @@ class TestSqlCommands(TestCase):
             " type, current_stage, final_stage, result, time_stamp)"
             " VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')" \
                 .format(entry_id, self.input_dict['sample_name'], "Queued", "Queued", "Queued",
-                        "Queued", "Queued", ""), 'tests/fixtures/data_for_tests/database/LPF.db')
-        LPF.sql_execute_command(LPF.clean_sql_for_LPF_run(self.input_dict), 'tests/fixtures/data_for_tests/database/LPF.db')
+                        "Queued", "Queued", ""), 'tests/fixtures/database/LPF.db')
+        LPF.sql_execute_command(LPF.clean_sql_for_LPF_run(self.input_dict), 'tests/fixtures/database/LPF.db')
         result = LPF.sql_fetch_one("SELECT status FROM status_table WHERE entry_id = '{}'"
                       .format(entry_id), self.input_dict['LPF_db'])[0]
         self.assertEqual(result, 'Run failed')
 
     def test_create_sql_db(self):
-        self.assertTrue(os.path.exists('tests/fixtures/data_for_tests/database/LPF.db'), 'create_sql_db did not create a database')
+        self.assertTrue(os.path.exists('tests/fixtures/database/LPF.db'), 'create_sql_db did not create a database')
 
 class TestValidateDateText(TestCase):
     def setUp(self):
@@ -184,7 +184,7 @@ class TestValidateDateText(TestCase):
 
 class TestValidateInput(TestCase):
     def setUp(self):
-        with open('tests/fixtures/data_for_tests/json/assembly_test.json') as json_file:
+        with open('tests/fixtures/json/assembly_test.json') as json_file:
             self.test_json = json.load(json_file)['samples'][0]
 
     def test_sp_input_path(self):

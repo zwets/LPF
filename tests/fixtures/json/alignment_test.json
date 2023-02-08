@@ -1,6 +1,6 @@
 {
   "input_file": "alignment_test.fastq.gz",
-  "input_path": "/opt/LPF/tests/fixtures/data_for_tests/read_files/alignment_test.fastq.gz",
+  "input_path": "/opt/LPF/tests/fixtures/read_files/alignment_test.fastq.gz",
   "sequencing_method": "nanopore minion",
   "isolation_source": "isolate",
   "investigation_type": "type1",
