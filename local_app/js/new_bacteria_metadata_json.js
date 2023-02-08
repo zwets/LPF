@@ -278,3 +278,50 @@ function getCustomValue(i, j) {
         })
     }
 }
+
+function allNumeric(inputText, propertyName, errors) {
+   if (inputText != "") {
+       let numeric = new RegExp (/^\d{1,3}$/);
+        if (!numeric.test(inputText)) {
+     	 const message = String(propertyName+" should contain only numbers upto three digits");
+      	    errors = errors.concat("\n").concat(message);
+            window.alert(message);
+  	      }
+      }
+   return errors;
+}
+
+function validateData(jsonFinal) {
+   let errors = "";
+   errors = window.allNumeric(jsonFinal.patient_age, "patient age", errors);
+   if(jsonFinal.country === "" || jsonFinal.country == "Unspecified country") {
+     window.alert("Please select country");
+     errors = errors.concat("\n").concat("Please select country");
+   }
+   const dateReg = /^\d{4}-\d{2}-\d{2}$/;
+   const dateError = "Collection Date should be in YYYY-MM-DD format"
+   if(!dateReg.test(jsonFinal.collection_date)) {
+      window.alert(dateError);
+      errors = errors.concat("\n").concat(dateError);
+      return errors;
+   }
+   const collDate = new Date(jsonFinal.collection_date);
+   let timeS = collDate.getTime();
+   if(jsonFinal.city === "undefined") {
+     window.alert("Please enter or select the city");
+     errors = errors.concat("\n").concat("Please enter or select the city name");
+     return errors;
+   }
+   if(jsonFinal.city === "" || jsonFinal.city == "Unspecified city") {
+     window.alert("Please select city");
+     errors = errors.concat("\n").concat("Please select city");
+     return errors;
+   }
+   if (typeof timeS !== 'number' || Number.isNaN(timeS)) {
+      window.alert(dateError);
+      errors = errors.concat("\n").concat(dateError);
+   }
+   return errors;
+}
+
+exports.validateData = validateData
