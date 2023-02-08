@@ -1,12 +1,17 @@
 const { exec } = require('child_process');
 const fs = require('fs');
 
+var intervalId = window.setInterval(function(){
+    showFinishedAnalyses();
+  // call your function here
+}, 5);
+
 function showFinishedAnalyses() {
     let sql = `SELECT * FROM status_table`;
     document.getElementById('showData').innerHTML="" ;
     const db = require('better-sqlite3')('/opt/LPF_databases/LPF.db');
     const sql_data_obj = db.prepare(sql).all();
-    console.log(sql_data_obj);
+    console.log("updated");
 
     tableFromObj(sql_data_obj);
 
