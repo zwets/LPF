@@ -33,7 +33,8 @@ function tableFromObj(sql_data_obj) {
             }
         }
 
-        console.log(col);
+        col.push("PDF Report");
+        col.push("Log File");
 
         // Create a table.
         var table = document.createElement("table");
