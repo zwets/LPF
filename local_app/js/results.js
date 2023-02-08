@@ -68,8 +68,8 @@ function tableFromObj(sql_data_obj) {
             for (var j = 0; j < col.length; j++) {
                 if (col[j] == "PDF Report") {
                     var tabCell = tr.insertCell(-1);
+                    tabCell.style.alignContent = "center";
                     var img = document.createElement('img');
-                    img.style.alignContent = "center";
                     img.id = sql_data_obj[i].entry_id;
                     img.name = sql_data_obj[i].entry_id;
                     img.src = "/opt/LPF/local_app/images/report-icon.png";
@@ -80,8 +80,8 @@ function tableFromObj(sql_data_obj) {
                 }
                 else if (col[j] == "Log File") {
                     var tabCell = tr.insertCell(-1);
+                    tabCell.style.alignContent = "center";
                     var img = document.createElement('img');
-                    img.style.alignContent = "center";
                     img.id = sql_data_obj[i].entry_id;
                     img.name = sql_data_obj[i].entry_id;
                     img.src = "/opt/LPF/local_app/images/log-icon.png";
