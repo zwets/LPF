@@ -65,6 +65,7 @@ if __name__ == '__main__':
     install_parser.add_argument('-databases', action="store_true", default=False, dest="install_databases", help="Install databases.")
     install_parser.add_argument('-app', action="store_true", default=False, dest="app", help="Rebuild application.")
     install_parser.add_argument('-check_deps', action="store_true", default=False, dest="check_deps", help="Dependency check.")
+    install_parser.add_argument('-ci', action="store_true", default=False, dest="ci", help="install for CI tests - DO NOT USE.")
     update_parser = subparsers.add_parser('update',
                                             help='Update',
                                             )

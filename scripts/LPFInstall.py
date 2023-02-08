@@ -5,6 +5,7 @@ import sqlite3
 import src.sqlCommands as sqlCommands
 import src.util.md5 as md5
 from pathlib import Path
+from ci_install import ci_install
 
 
 
@@ -41,9 +42,18 @@ def LPF_installation(arguments):
     elif arguments.install_databases:
         install_databases(arguments)
         os.chdir(cwd)
+    elif arguments.ci:
+        solve_conda_env()
+        install_LPF_deps(user)
+        ci_install(user, cwd)
+        sys.exit()
     check_all_deps()
     check_and_add_bookmarks()
     print ('Installation complete')
+
+
+
+
 
 def build_app():
     if os.path.exists("/usr/share/applications/moss.desktop"): #Remove old copy
