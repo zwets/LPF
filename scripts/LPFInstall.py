@@ -584,7 +584,7 @@ def ci_install(user, cwd):
         if not os.path.exists('/opt/LPF_databases/{}/{}.name'.format(item, item)):
             os.chdir('/opt/LPF_databases/{}'.format(item))
             if item == 'bacteria_db':
-                os.system('cp tests/fixtures/data_for_tests/database/bacteria_db/* /opt/LPF_databases/bacteria_db/.')
+                os.system('cp tests/fixtures/data_for_tests/database/* /opt/LPF_databases/bacteria_db/.')
                 os.system("kma index -i {}.fasta.gz -o {} -m 14 -Sparse ATG".format(item, item))
             else:
                 os.system(

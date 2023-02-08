@@ -1,6 +1,6 @@
 name: LPF integration test
-on:
-  pull_request
+on: [push]
+  #pull_request
 jobs:
   tests:
     runs-on: ubuntu-22.04
