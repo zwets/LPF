@@ -5,7 +5,7 @@ import sqlite3
 import src.sqlCommands as sqlCommands
 import src.util.md5 as md5
 from pathlib import Path
-from ci_install import ci_install
+from scripts.ci_install import ci_install
 
 
 
