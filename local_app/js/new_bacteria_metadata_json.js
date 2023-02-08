@@ -69,8 +69,6 @@ function create_meta_data_table_fastq(){
         for (let i = 0; i < rows.length-1; i++) {
             let new_obj = {};
             for (let t = 0; t < rows[i].cells.length; t++) {
-                console.log(header_row.cells[t].innerHTML);
-                console.log(document.getElementById(`input${i}${t}`).value);
                 if (header_row.cells[t].innerHTML == 'input_file') {
                     new_obj[header_row.cells[t].innerHTML] = document.getElementById(`input${i}${t}`).value[0];
                 } else {
