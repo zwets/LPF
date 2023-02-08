@@ -93,19 +93,6 @@ function tableFromObj(sql_data_obj) {
                     tabCell.innerHTML = sql_data_obj[i][col[j]];
                 }
             }
-            if (sql_data_obj != "none") {
-                var tabCell = tr.insertCell(-1);
-                var img = document.createElement('img');
-                img.id = sql_data_obj[i].entry_id;
-                img.name = sql_data_obj[i].entry_id;
-                img.src = "/opt/LPF/local_app/images/report-icon.png";
-                img.setAttribute('height', '17pt');
-                img.innerHTML = sql_data_obj[i].entry_id;
-                img.onclick = function() {openPDF(this.id)};
-                tabCell.appendChild(img);
-            };
-
-
         }
 
 
