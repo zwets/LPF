@@ -199,7 +199,6 @@ function generate_table_fastq(file_number) {
                 }
 		        else if (columnNames[j] == "city") {
                     object_options = Object.values(identifier);
-                    input.onclick = function(){window.getCustomValue()};
                 }
                 else {
                     object_options = Object.values(identifier);
@@ -253,6 +252,8 @@ function getCities(rowNumber, columnNumber) {
     const custom_option = document.createElement("option");
     custom_option.value = "Custom city";
     custom_option.text = "Custom city";
+    custom_option.onclick = function () {getCustomValue(
+    )};
     citySelect.add(custom_option);
     for (let i = 0; i < cities.length; i++) {
         let option = document.createElement("option");
@@ -260,4 +261,8 @@ function getCities(rowNumber, columnNumber) {
         option.text = cities[i];
         citySelect.add(option);
     }
+}
+
+function getCustomValue() {
+    alert("Custom city");
 }
