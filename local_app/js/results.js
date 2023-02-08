@@ -23,6 +23,12 @@ function openPDF(id){
   //return false;
 }
 
+function open_log_file(id){
+    console.log("/opt/LPF_logs/" + id + ".log");
+    window.open("/opt/LPF_logs/" + id + ".log");
+    //return false;
+}
+
 
 function tableFromObj(sql_data_obj) {
         var divShowData = document.getElementById('showData');
@@ -69,6 +75,17 @@ function tableFromObj(sql_data_obj) {
                     img.setAttribute('height', '17pt');
                     img.innerHTML = sql_data_obj[i].entry_id;
                     img.onclick = function() {openPDF(this.id)};
+                    tabCell.appendChild(img);
+                }
+                else if (col[j] == "Log File") {
+                    var tabCell = tr.insertCell(-1);
+                    var img = document.createElement('img');
+                    img.id = sql_data_obj[i].entry_id;
+                    img.name = sql_data_obj[i].entry_id;
+                    img.src = "/opt/LPF/local_app/images/log-icon.png";
+                    img.setAttribute('height', '17pt');
+                    img.innerHTML = sql_data_obj[i].entry_id;
+                    img.onclick = function() {open_log_file(this.id)};
                     tabCell.appendChild(img);
                 }
                 else {
