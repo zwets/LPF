@@ -605,6 +605,10 @@ def ci_install(user, cwd):
         create_sql_db()
     insert_bacterial_references_into_sql()
 
+    os.chdir(cwd)
+
+    move_LPF_repo()
+
 
 class bcolors:
     HEADER = '\033[95m'
