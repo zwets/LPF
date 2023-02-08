@@ -60,7 +60,7 @@ function tableFromObj(sql_data_obj) {
             tr = table.insertRow(-1);
 
             for (var j = 0; j < col.length; j++) {
-                if (col[j] == "PDF Report")) {
+                if (col[j] == "PDF Report") {
                     var tabCell = tr.insertCell(-1);
                     var img = document.createElement('img');
                     img.id = sql_data_obj[i].entry_id;
