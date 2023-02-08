@@ -253,7 +253,7 @@ function getCities(rowNumber, columnNumber) {
     const custom_option = document.createElement("option");
     custom_option.value = "Custom city";
     custom_option.text = "Custom city";
-    citySelect.add(custom_option);¨
+    citySelect.add(custom_option);
     for (let i = 0; i < cities.length; i++) {
         let option = document.createElement("option");
         option.value = cities[i];
