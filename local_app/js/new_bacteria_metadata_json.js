@@ -197,19 +197,21 @@ function generate_table_fastq(file_number) {
                     object_options = countryNames;
                     input.onclick = function(){window.getCities(i, j)};
                 }
-		        else if (columnNames[j] == "city") {
-                    object_options = Object.values(identifier);
-                    input.onclick = function () {window.getCustomValue(i, j)};
-                }
                 else {
                     object_options = Object.values(identifier);
+                    input.onclick = function () {window.getCustomValue(i, j)};
                     }
-            for (let t = 0; t < object_options.length; t++) {
-                let option = document.createElement("option");
-                option.value = object_options[t];
-                option.text = object_options[t];
-                input.add(option);
-                }
+                for (let t = 0; t < object_options.length; t++) {
+                    let option = document.createElement("option");
+                    option.value = object_options[t];
+                    option.text = object_options[t];
+                    input.add(option);
+                    }
+
+                const custom_option = document.createElement("option");
+                custom_option.value = "CUSTOM INPUT";
+                custom_option.text = "CUSTOM INPUT";
+                input.add(custom_option);
             input.defaultValue = object_options[0];
             td.appendChild(input);
             tr.appendChild(td);
@@ -227,8 +229,7 @@ function generate_table_fastq(file_number) {
         }
         tr.appendChild(td);
       }
-
-      table.appendChild(tr);
+    table.appendChild(tr);
     }
     return table
 }
@@ -251,8 +252,8 @@ function getCities(rowNumber, columnNumber) {
     none_option.text = "Unspecified city";
     citySelect.add(none_option);
     const custom_option = document.createElement("option");
-    custom_option.value = "Custom city";
-    custom_option.text = "Custom city";
+    custom_option.value = "CUSTOM INPUT";
+    custom_option.text = "CUSTOM INPUT";
     citySelect.add(custom_option);
     for (let i = 0; i < cities.length; i++) {
         let option = document.createElement("option");
@@ -264,10 +265,10 @@ function getCities(rowNumber, columnNumber) {
 
 function getCustomValue(i, j) {
     const element = document.getElementById(`input${[i]}${[j]}`);
-    if (element.value == "Custom city") {
+    if (element.value == "CUSTOM INPUT") {
         const Dialogs = require('dialogs')
         const dialogs = Dialogs()
-        dialogs.prompt('Give the city name', ok => {
+        dialogs.prompt('Give a custom input', ok => {
             console.log(ok);
             const custom_option = document.createElement("option");
             custom_option.value = ok;
