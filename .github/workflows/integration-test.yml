@@ -1,6 +1,6 @@
 name: LPF integration test
-on: [push]
-  #pull_request
+on:
+  pull_request
 jobs:
   tests:
     runs-on: ubuntu-22.04
@@ -20,9 +20,9 @@ jobs:
       - name: Run install script
         run: |
           ./LocalPathogenFinder install -ci
-      #- name: LPF init
-      #  run: |
-      #    python3 /opt/LPF/src/LPF_init.py -db /opt/LPF/tests/fixtures/data_for_tests/database/ -config_name test
+      - name: LPF init
+        run: |
+          python3 /opt/LPF/quick_test.py
       - name: Nosetests
         run: |
            nose2 -s tests/integration --verbosity 2
