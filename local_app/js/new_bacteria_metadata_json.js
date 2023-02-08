@@ -209,8 +209,8 @@ function generate_table_fastq(file_number) {
                     }
 
                 const custom_option = document.createElement("option");
-                custom_option.value = "Custom input";
-                custom_option.text = "Custom input";
+                custom_option.value = "CUSTOM INPUT";
+                custom_option.text = "CUSTOM INPUT";
                 input.add(custom_option);
             input.defaultValue = object_options[0];
             td.appendChild(input);
@@ -252,8 +252,8 @@ function getCities(rowNumber, columnNumber) {
     none_option.text = "Unspecified city";
     citySelect.add(none_option);
     const custom_option = document.createElement("option");
-    custom_option.value = "Custom input";
-    custom_option.text = "Custom input";
+    custom_option.value = "CUSTOM INPUT";
+    custom_option.text = "CUSTOM INPUT";
     citySelect.add(custom_option);
     for (let i = 0; i < cities.length; i++) {
         let option = document.createElement("option");
@@ -265,7 +265,7 @@ function getCities(rowNumber, columnNumber) {
 
 function getCustomValue(i, j) {
     const element = document.getElementById(`input${[i]}${[j]}`);
-    if (element.value == "Custom input") {
+    if (element.value == "CUSTOM INPUT") {
         const Dialogs = require('dialogs')
         const dialogs = Dialogs()
         dialogs.prompt('Give the city name', ok => {
