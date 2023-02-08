@@ -70,11 +70,11 @@ function create_meta_data_table_fastq(){
             let new_obj = {};
             for (let t = 0; t < rows[i].cells.length; t++) {
                 console.log(header_row.cells[t].innerHTML);
-                console.log(document.getElementById(`input${t}${i}`).value);
+                console.log(document.getElementById(`input${i}${t}`).value);
                 if (header_row.cells[t].innerHTML == 'input_file') {
-                    new_obj[header_row.cells[t].innerHTML] = document.getElementById(`input${t}${i}`).value[0];
+                    new_obj[header_row.cells[t].innerHTML] = document.getElementById(`input${i}${t}`).value[0];
                 } else {
-                    new_obj[header_row.cells[t].innerHTML] = document.getElementById(`input${t}${i}`).value;
+                    new_obj[header_row.cells[t].innerHTML] = document.getElementById(`input${i}${t}}`).value;
                 }
             }
             new_obj['input_path'] = file_list_obj[i].path;
