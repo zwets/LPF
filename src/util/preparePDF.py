@@ -9,8 +9,17 @@ import csv
 def prepare_alignment_pdf(bacterial_parser):
     if not os.path.exists(bacterial_parser.data.target_dir + "/pdf_resources"):
         os.mkdir(bacterial_parser.data.target_dir + "/pdf_resources")
-    pass
-
+    file_list = ["/opt/LPF_databases/resfinder_db/phenotypes.txt",
+                 "/opt/LPF_databases/virulencefinder_db/notes.txt",
+                 ]
+    for item in file_list:
+        if not os.path.exists(item):
+            bacterial_parser.logger.info("File {} does not exist. Could not compile assembly".format(file))
+            sys.exit(1)
+    make_amr_csv(bacterial_parser)
+    make_virulence_csv(bacterial_parser)
+    make_plasmid_csv(bacterial_parser)
+    output_bacterial_parser(bacterial_parser)
 
 def make_amr_csv(bacterial_parser): #TBD rewrite and remove.
     phenotype = dict()
@@ -69,7 +78,10 @@ def make_plasmid_csv(bacterial_parser):
 def prepare_assembly_pdf(bacterial_parser):
     if not os.path.exists(bacterial_parser.data.target_dir + "/pdf_resources"):
         os.mkdir(bacterial_parser.data.target_dir + "/pdf_resources")
-    file_list = []
+    file_list = ["/opt/LPF_databases/resfinder_db/phenotypes.txt",
+                 "/opt/LPF_databases/virulencefinder_db/notes.txt",
+                 bacterial_parser.data.target_dir + "/quast_output/report.tsv"
+                 ]
     for file in file_list:
         if not os.path.exists(file):
             bacterial_parser.logger.info("File {} does not exist. Could not compile assembly".format(file))
