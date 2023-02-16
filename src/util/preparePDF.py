@@ -11,7 +11,7 @@ def prepare_alignment_pdf(bacterial_parser):
 
 
 def make_amr_csv(bacterial_parser): #TBD rewrite and remove.
-    is not os.path.exists(bacterial_parser.data.target_dir + "/pdf_resources", 'w'):
+    if not os.path.exists(bacterial_parser.data.target_dir + "/pdf_resources", 'w'):
         os.mkdir(bacterial_parser.data.target_dir + "/pdf_resources")
     phenotype = dict()
     infile = open("/opt/LPF_databases/resfinder_db/phenotypes.txt", 'r')
