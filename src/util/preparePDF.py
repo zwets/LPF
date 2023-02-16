@@ -92,7 +92,7 @@ def prepare_assembly_pdf(bacterial_parser):
         for line in f:
             csv_data.append(line.rstrip().split("\t"))
             
-    with open(bacterial_parser.data.target_dir + "/pdf_resources/report.csv", 'w') as f:
+    with open(bacterial_parser.data.target_dir + "/pdf_resources/quast_report.csv", 'w') as f:
         for item in csv_data:
             print (",".join(item), file=f)
 
