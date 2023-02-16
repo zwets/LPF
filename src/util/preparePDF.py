@@ -10,7 +10,9 @@ def prepare_alignment_pdf(bacterial_parser):
     pass
 
 
-def make_amr_json(bacterial_parser): #TBD rewrite and remove.
+def make_amr_csv(bacterial_parser): #TBD rewrite and remove.
+    is not os.path.exists(bacterial_parser.data.target_dir + "/pdf_resources", 'w'):
+        os.mkdir(bacterial_parser.data.target_dir + "/pdf_resources")
     phenotype = dict()
     infile = open("/opt/LPF_databases/resfinder_db/phenotypes.txt", 'r')
     for line in infile:
@@ -22,13 +24,12 @@ def make_amr_json(bacterial_parser): #TBD rewrite and remove.
     csv_data.append(("Gene", "Resistance Class", "Phenotype"))
     for item in phenotype:
         csv_data.append([item, phenotype[item][0], phenotype[item][1]])
-    amr_data = {}
-    for item in csv_data:
-        amr_data[item[0]] = [item[1], item[2]]
-    with open(bacterial_parser.data.target_dir + "/finders/amr_data.json", 'w') as f:
-        json.dump(amr_data, f)
+    with open(bacterial_parser.data.target_dir + "/pdf_resources/amr_data.csv", 'w') as f:)
+        for item in csv_data:
+            print (",".join(item), file=f)
 
-def make_virulence_json(bacterial_parser):  #TBD rewrite and remove.
+
+def make_virulence_csv(bacterial_parser):  #TBD rewrite and remove.
     new_genes = list()
     for item in bacterial_parser.data.virulence_hits:
         new_genes.append(item.split(":")[0])
@@ -48,11 +49,22 @@ def make_virulence_json(bacterial_parser):  #TBD rewrite and remove.
     csv_data.append(("Virulence", "Genes"))
     for item in phenotype:
         csv_data.append((item, ", ".join(phenotype[item])))
-    virulence_data = {}
-    for item in csv_data:
-        virulence_data[item[0]] = item[1]
-    with open(bacterial_parser.data.target_dir + "/finders/virulence_data.json", 'w') as f:
-        json.dump(virulence_data, f)
+    with open(bacterial_parser.data.target_dir + "/pdf_resources/virulence_data.csv", 'w') as f:
+        for item in csv_data:
+            print (",".join(item), file=f)
+
+def output_bacterial_parser(bacterial_parser):
+    with open(bacterial_parser.data.target_dir + "/pdf_resources/bacterial_parser.json", 'w') as f:
+        json.dump(bacterial_parser.data.__dict__, f, indent=4)
+
+def make_plasmid_csv(bacterial_parser):
+    csv_data = []
+    csv_data.append(("Plasmids"))
+    for item in bacterial_parser.data.plasmid_hits:
+        csv_data.append((item))
+    with open(bacterial_parser.data.target_dir + "/pdf_resources/plasmid_data.csv", 'w') as f:
+        for item in csv_data:
+            print (item, file=f)
 
 def prepare_assembly_pdf(bacterial_parser):
     file_list = []
@@ -61,14 +73,16 @@ def prepare_assembly_pdf(bacterial_parser):
             bacterial_parser.logger.info("File {} does not exist. Could not compile assembly".format(file))
             sys.exit(1)
 
-    quast_data = {}
+    csv_data = []
     with open(bacterial_parser.data.target_dir + "/quast_output/report.tsv", 'r') as f:
-        reader = csv.reader(f, delimiter='\t')
-        for row in reader:
-            quast_data[row[0]] = row[1]
+        for line in f:
+            csv_data.append(line.rstrip().split("\t"))
+            
+    with open(bacterial_parser.data.target_dir + "/pdf_resources/report.csv", 'w') as f:
+        for item in csv_data:
+            print (",".join(item), file=f)
 
-    with open(bacterial_parser.data.target_dir + "/finders/quast_output.json", 'w') as f:
-        json.dump(quast_data, f)
-
-    make_amr_json(bacterial_parser)
-    make_virulence_json(bacterial_parser)
+    make_amr_csv(bacterial_parser)
+    make_virulence_csv(bacterial_parser)
+    make_plasmid_csv(bacterial_parser)
+    output_bacterial_parser(bacterial_parser)
