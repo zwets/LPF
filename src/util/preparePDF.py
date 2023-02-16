@@ -25,7 +25,7 @@ def make_amr_json(bacterial_parser): #TBD rewrite and remove.
     amr_data = {}
     for item in csv_data:
         amr_data[item[0]] = [item[1], item[2]]
-    with open(bacterial_parser.data.target_dir + "amr_data.json", 'w') as f:
+    with open(bacterial_parser.data.target_dir + "/finders/amr_data.json", 'w') as f:
         json.dump(amr_data, f)
 
 def make_virulence_json(bacterial_parser):  #TBD rewrite and remove.
@@ -51,7 +51,7 @@ def make_virulence_json(bacterial_parser):  #TBD rewrite and remove.
     virulence_data = {}
     for item in csv_data:
         virulence_data[item[0]] = item[1]
-    with open(bacterial_parser.data.target_dir + "virulence_data.json", 'w') as f:
+    with open(bacterial_parser.data.target_dir + "/finders/virulence_data.json", 'w') as f:
         json.dump(virulence_data, f)
 
 def prepare_assembly_pdf(bacterial_parser):
@@ -67,7 +67,7 @@ def prepare_assembly_pdf(bacterial_parser):
         for row in reader:
             quast_data[row[0]] = row[1]
 
-    with open(bacterial_parser.data.target_dir + "quast_output.json", 'w') as f:
+    with open(bacterial_parser.data.target_dir + "/finders/quast_output.json", 'w') as f:
         json.dump(quast_data, f)
 
     make_amr_json(bacterial_parser)
