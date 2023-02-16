@@ -7,12 +7,12 @@ import pandas as pd
 import json
 import csv
 def prepare_alignment_pdf(bacterial_parser):
+    if not os.path.exists(bacterial_parser.data.target_dir + "/pdf_resources", 'w'):
+        os.mkdir(bacterial_parser.data.target_dir + "/pdf_resources")
     pass
 
 
 def make_amr_csv(bacterial_parser): #TBD rewrite and remove.
-    if not os.path.exists(bacterial_parser.data.target_dir + "/pdf_resources", 'w'):
-        os.mkdir(bacterial_parser.data.target_dir + "/pdf_resources")
     phenotype = dict()
     infile = open("/opt/LPF_databases/resfinder_db/phenotypes.txt", 'r')
     for line in infile:
@@ -67,6 +67,8 @@ def make_plasmid_csv(bacterial_parser):
             print (item, file=f)
 
 def prepare_assembly_pdf(bacterial_parser):
+    if not os.path.exists(bacterial_parser.data.target_dir + "/pdf_resources", 'w'):
+        os.mkdir(bacterial_parser.data.target_dir + "/pdf_resources")
     file_list = []
     for file in file_list:
         if not os.path.exists(file):
