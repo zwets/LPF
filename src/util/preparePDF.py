@@ -24,7 +24,7 @@ def make_amr_csv(bacterial_parser): #TBD rewrite and remove.
     csv_data.append(("Gene", "Resistance Class", "Phenotype"))
     for item in phenotype:
         csv_data.append([item, phenotype[item][0], phenotype[item][1]])
-    with open(bacterial_parser.data.target_dir + "/pdf_resources/amr_data.csv", 'w') as f:)
+    with open(bacterial_parser.data.target_dir + "/pdf_resources/amr_data.csv", 'w') as f:
         for item in csv_data:
             print (",".join(item), file=f)
 
