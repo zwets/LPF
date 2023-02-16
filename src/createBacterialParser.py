@@ -12,7 +12,7 @@ import src.util.kmaUtils as kmaUtils
 from src.kmaRunner import KMARunner
 from src.util.assemblyUtils import flye_assembly, run_quast, run_bandage
 import src.pdfReport as pdfReport
-
+import src.util.preparePDF as preparePDF
 
 from src.loggingHandlers import begin_logging
 import src.util.mlst as mlst
@@ -128,6 +128,7 @@ class BacterialParser():
         sqlCommands.sql_update_status_table('Performing assembly', self.data.sample_name, '7', self.data.entry_id, self.data.sql_db)
 
         flye_assembly(self)
+        #TBD medaka
 
         sqlCommands.sql_update_status_table('Assembly completed', self.data.sample_name, '8', self.data.entry_id, self.data.sql_db)
 
@@ -136,6 +137,8 @@ class BacterialParser():
         run_quast(self)
 
         run_bandage(self)
+
+        preparePDF.prepare_assembly_pdf(self)
 
         pdfReport.compile_assembly_report(self)
 
