@@ -10,6 +10,7 @@ from src.kmaRunner import KMARunner
 import src.util.ccphyloUtils as ccphyloUtils
 import src.sqlCommands as sqlCommands
 import src.pdfReport as pdfReport
+import src.util.preparePDF as preparePDF
 
 
 def bacterial_analysis_pipeline(bacterial_parser):
@@ -91,7 +92,7 @@ def bacterial_analysis_pipeline(bacterial_parser):
 
     sqlCommands.sql_update_status_table('Generating report', bacterial_parser.data.sample_name, '10', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
 
-
+    preparePDF.prepare_alignment_pdf(bacterial_parser)
     pdfReport.compile_alignment_report(bacterial_parser)
 
     sqlCommands.sql_update_status_table('Analysis completed', bacterial_parser.data.sample_name, '10', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
