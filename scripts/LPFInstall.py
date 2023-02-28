@@ -462,6 +462,7 @@ def check_and_add_bookmarks():
                 fd.write(item + '\n')
 
 def install_databases(arguments, cwd):
+    print (arguments)
     """Installs the databases"""
     if not check_local_software:
         print(bcolors.FAIL + "LPF dependencies are not installed, and databases cant be indexed" + bcolors.ENDC)
