@@ -561,12 +561,12 @@ def install_databases(arguments, cwd):
                 shutil.copyfile('{}/{}'.format(arguments.mlst_db, item), '/opt/LPF_databases/mlst_db/mlst_db.length.b'.format(item))
             elif item.endswith('.comp.b'):
                 shutil.copyfile('{}/{}'.format(arguments.mlst_db, item), '/opt/LPF_databases/mlst_db/mlst_db.comp.b'.format(item))
+        if not os.path.exists('/opt/LPF_databases/{}/config'.format('mlst_db')):
+            os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/config".format('mlst_db'))
+        download_mlst_tables()
     else:
         database_list.append("mlst_db")
 
-    if not os.path.exists('/opt/LPF_databases/{}/config'.format(item)):
-        os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/config".format(item))
-    download_mlst_tables()
 
 
     for item in database_list:
