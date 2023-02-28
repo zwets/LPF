@@ -8,6 +8,7 @@ import argparse
 import logging
 import json
 import os
+import sys
 
 from src.loggingHandlers import begin_logging
 from scripts.version import __version__
@@ -36,7 +37,10 @@ def main(arguments):
             pass
     except Exception as e:
         logging.exception(e)
-        clean_failed_run(arguments.json)
+        if not arguments.json == None:
+            clean_failed_run(arguments.json)
+        else:
+            sys.exit()
         raise e
 
 

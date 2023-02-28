@@ -475,6 +475,7 @@ def install_databases(arguments, cwd):
     #                 "bacteria_db"]
     database_list = []
     if arguments.bacteria_db != None:
+        print ('Copying bacteria database')
         if not os.path.exists('/opt/LPF_databases/bacteria_db'):
             os.system('sudo mkdir -m 777 /opt/LPF_databases/bacteria_db')
         else:
@@ -493,6 +494,7 @@ def install_databases(arguments, cwd):
         database_list.append("bacteria_db")
 
     if arguments.resfinder_db != None:
+        print ('Copying resfinder database')
         if not os.path.exists('/opt/LPF_databases/resfinder_db'):
             os.system('sudo mkdir -m 777 /opt/LPF_databases/resfinder_db')
         else:
@@ -511,6 +513,7 @@ def install_databases(arguments, cwd):
         database_list.append("resfinder_db")
 
     if arguments.plasmidfinder_db != None:
+        print ('Copying plasmidfinder database')
         if not os.path.exists('/opt/LPF_databases/plasmidfinder_db'):
             os.system('sudo mkdir -m 777 /opt/LPF_databases/plasmidfinder_db')
         else:
@@ -529,6 +532,7 @@ def install_databases(arguments, cwd):
         database_list.append("plasmidfinder_db")
 
     if arguments.virulencefinder_db != None:
+        print ('Copying virulencefinder database')
         if not os.path.exists('/opt/LPF_databases/virulencefinder_db'):
             os.system('sudo mkdir -m 777 /opt/LPF_databases/virulencefinder_db')
         else:
@@ -547,6 +551,7 @@ def install_databases(arguments, cwd):
         database_list.append("virulencefinder_db")
 
     if arguments.mlst_db != None:
+        print ('Copying mlst database')
         if not os.path.exists('/opt/LPF_databases/mlst_db'):
             os.system('sudo mkdir -m 777 /opt/LPF_databases/mlst_db')
         else:
@@ -563,6 +568,7 @@ def install_databases(arguments, cwd):
                 shutil.copyfile('{}/{}'.format(arguments.mlst_db, item), '/opt/LPF_databases/mlst_db/mlst_db.comp.b'.format(item))
         if not os.path.exists('/opt/LPF_databases/{}/config'.format('mlst_db')):
             os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/config".format('mlst_db'))
+            shutil.copyfile('config', '/opt/LPF_databases/{}/config'.format('mlst_db'))
         download_mlst_tables()
     else:
         database_list.append("mlst_db")
