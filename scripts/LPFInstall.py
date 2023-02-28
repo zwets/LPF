@@ -5,8 +5,7 @@ import sqlite3
 import src.sqlCommands as sqlCommands
 import src.util.md5 as md5
 from pathlib import Path
-
-
+import shutil
 
 def LPF_installation(arguments):
     """Checks if the databases are installed"""
@@ -31,7 +30,7 @@ def LPF_installation(arguments):
         print (bcolors.OKGREEN + "ONT dependencies installed" + bcolors.ENDC)
         install_LPF_deps(user)
         print (bcolors.OKGREEN + "LPF dependencies installed" + bcolors.ENDC)
-        install_databases(cwd)
+        install_databases(arguments, cwd)
         os.chdir(cwd)
         print (bcolors.OKGREEN + "Databases installed" + bcolors.ENDC)
         LPF_build_app()
@@ -39,7 +38,7 @@ def LPF_installation(arguments):
     elif arguments.app:
         reinstall_app()
     elif arguments.install_databases:
-        install_databases(arguments)
+        install_databases(arguments, cwd)
         os.chdir(cwd)
     elif arguments.ci:
         solve_conda_env()
@@ -462,17 +461,112 @@ def check_and_add_bookmarks():
             for item in new_bookmark_list:
                 fd.write(item + '\n')
 
-def install_databases(cwd):
+def install_databases(arguments, cwd):
     """Installs the databases"""
     if not check_local_software:
         print(bcolors.FAIL + "LPF dependencies are not installed, and databases cant be indexed" + bcolors.ENDC)
         sys.exit()
 
-    database_list = ["resfinder_db",
-                     "plasmidfinder_db",
-                     "virulencefinder_db",
-                     "mlst_db",
-                     "bacteria_db"]
+    #database_list = ["resfinder_db",
+    #                 "plasmidfinder_db",
+    #                 "virulencefinder_db",
+    #                 "mlst_db",
+    #                 "bacteria_db"]
+    database_list = []
+    if arguments.bacteria_db != None:
+        if not os.path.exists('/opt/LPF_databases/bacteria_db'):
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/bacteria_db')
+        else:
+            os.system('sudo rm -r /opt/LPF_databases/bacteria_db')
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/bacteria_db')
+        for item in os.listdir(arguments.bacteria_db):
+            if item.endswith('.seq.b'):
+                shutil.copyfile('{}/{}'.format(arguments.bacteria_db, item), '/opt/LPF_databases/bacteria_db/bacteria_db.seq.b'.format(item))
+            elif item.endswith('.name'):
+                shutil.copyfile('{}/{}'.format(arguments.bacteria_db, item), '/opt/LPF_databases/bacteria_db/bacteria_db.name'.format(item))
+            elif item.endswith('.length.b'):
+                shutil.copyfile('{}/{}'.format(arguments.bacteria_db, item), '/opt/LPF_databases/bacteria_db/bacteria_db.length.b'.format(item))
+            elif item.endswith('.comp.b'):
+                shutil.copyfile('{}/{}'.format(arguments.bacteria_db, item), '/opt/LPF_databases/bacteria_db/bacteria_db.comp.b'.format(item))
+    else:
+        database_list.append("bacteria_db")
+
+    if arguments.resfinder_db != None:
+        if not os.path.exists('/opt/LPF_databases/resfinder_db'):
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/resfinder_db')
+        else:
+            os.system('sudo rm -r /opt/LPF_databases/resfinder_db')
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/resfinder_db')
+        for item in os.listdir(arguments.resfinder_db):
+            if item.endswith('.seq.b'):
+                shutil.copyfile('{}/{}'.format(arguments.resfinder_db, item), '/opt/LPF_databases/resfinder_db/resfinder_db.seq.b'.format(item))
+            elif item.endswith('.name'):
+                shutil.copyfile('{}/{}'.format(arguments.resfinder_db, item), '/opt/LPF_databases/resfinder_db/resfinder_db.name'.format(item))
+            elif item.endswith('.length.b'):
+                shutil.copyfile('{}/{}'.format(arguments.resfinder_db, item), '/opt/LPF_databases/resfinder_db/resfinder_db.length.b'.format(item))
+            elif item.endswith('.comp.b'):
+                shutil.copyfile('{}/{}'.format(arguments.resfinder_db, item), '/opt/LPF_databases/resfinder_db/resfinder_db.comp.b'.format(item))
+    else:
+        database_list.append("resfinder_db")
+
+    if arguments.plasmidfinder_db != None:
+        if not os.path.exists('/opt/LPF_databases/plasmidfinder_db'):
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/plasmidfinder_db')
+        else:
+            os.system('sudo rm -r /opt/LPF_databases/plasmidfinder_db')
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/plasmidfinder_db')
+        for item in os.listdir(arguments.plasmidfinder_db):
+            if item.endswith('.seq.b'):
+                shutil.copyfile('{}/{}'.format(arguments.plasmidfinder_db, item), '/opt/LPF_databases/plasmidfinder_db/plasmidfinder_db.seq.b'.format(item))
+            elif item.endswith('.name'):
+                shutil.copyfile('{}/{}'.format(arguments.plasmidfinder_db, item), '/opt/LPF_databases/plasmidfinder_db/plasmidfinder_db.name'.format(item))
+            elif item.endswith('.length.b'):
+                shutil.copyfile('{}/{}'.format(arguments.plasmidfinder_db, item), '/opt/LPF_databases/plasmidfinder_db/plasmidfinder_db.length.b'.format(item))
+            elif item.endswith('.comp.b'):
+                shutil.copyfile('{}/{}'.format(arguments.plasmidfinder_db, item), '/opt/LPF_databases/plasmidfinder_db/plasmidfinder_db.comp.b'.format(item))
+    else:
+        database_list.append("plasmidfinder_db")
+
+    if arguments.virulencefinder_db != None:
+        if not os.path.exists('/opt/LPF_databases/virulencefinder_db'):
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/virulencefinder_db')
+        else:
+            os.system('sudo rm -r /opt/LPF_databases/virulencefinder_db')
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/virulencefinder_db')
+        for item in os.listdir(arguments.virulencefinder_db):
+            if item.endswith('.seq.b'):
+                shutil.copyfile('{}/{}'.format(arguments.virulencefinder_db, item), '/opt/LPF_databases/virulencefinder_db/virulencefinder_db.seq.b'.format(item))
+            elif item.endswith('.name'):
+                shutil.copyfile('{}/{}'.format(arguments.virulencefinder_db, item), '/opt/LPF_databases/virulencefinder_db/virulencefinder_db.name'.format(item))
+            elif item.endswith('.length.b'):
+                shutil.copyfile('{}/{}'.format(arguments.virulencefinder_db, item), '/opt/LPF_databases/virulencefinder_db/virulencefinder_db.length.b'.format(item))
+            elif item.endswith('.comp.b'):
+                shutil.copyfile('{}/{}'.format(arguments.virulencefinder_db, item), '/opt/LPF_databases/virulencefinder_db/virulencefinder_db.comp.b'.format(item))
+    else:
+        database_list.append("virulencefinder_db")
+
+    if arguments.mlst_db != None:
+        if not os.path.exists('/opt/LPF_databases/mlst_db'):
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/mlst_db')
+        else:
+            os.system('sudo rm -r /opt/LPF_databases/mlst_db')
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/mlst_db')
+        for item in os.listdir(arguments.mlst_db):
+            if item.endswith('.seq.b'):
+                shutil.copyfile('{}/{}'.format(arguments.mlst_db, item), '/opt/LPF_databases/mlst_db/mlst_db.seq.b'.format(item))
+            elif item.endswith('.name'):
+                shutil.copyfile('{}/{}'.format(arguments.mlst_db, item), '/opt/LPF_databases/mlst_db/mlst_db.name'.format(item))
+            elif item.endswith('.length.b'):
+                shutil.copyfile('{}/{}'.format(arguments.mlst_db, item), '/opt/LPF_databases/mlst_db/mlst_db.length.b'.format(item))
+            elif item.endswith('.comp.b'):
+                shutil.copyfile('{}/{}'.format(arguments.mlst_db, item), '/opt/LPF_databases/mlst_db/mlst_db.comp.b'.format(item))
+    else:
+        database_list.append("mlst_db")
+
+    if not os.path.exists('/opt/LPF_databases/{}/config'.format(item)):
+        os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/config".format(item))
+    download_mlst_tables()
+
 
     for item in database_list:
         if not os.path.exists('/opt/LPF_databases/{}'.format(item)):

@@ -62,7 +62,12 @@ if __name__ == '__main__':
                                            help='Install',
                                            )
     install_parser.add_argument('-complete', action="store_true", default=False, dest="complete", help="Complete installation of databases, LPF software and the LBP GUI.")
-    install_parser.add_argument('-databases', action="store_true", default=False, dest="install_databases", help="Install databases.")
+    install_parser.add_argument('-install_databases', action="store_true", default=False, dest="install_databases", help="Install databases.")
+    install_parser.add_argument('-bacteria_db', action="store", dest="bacteria_db", help="Path to existing bacteria database stored locally.")
+    install_parser.add_argument('-mlst_db', action="store", dest="mlst_db", help="Path to existing mlst database stored locally.")
+    install_parser.add_argument('-virulence_db', action="store", dest="virulence_db", help="Path to existing virulence database stored locally.")
+    install_parser.add_argument('-resfinder_db', action="store", dest="resfinder_db", help="Path to existing resfinder database stored locally.")
+    install_parser.add_argument('-plasmidfinder_db', action="store", dest="plasmidfinder_db", help="Path to existing plasmidfinder database stored locally.")
     install_parser.add_argument('-app', action="store_true", default=False, dest="app", help="Rebuild application.")
     install_parser.add_argument('-check_deps', action="store_true", default=False, dest="check_deps", help="Dependency check.")
     install_parser.add_argument('-ci', action="store_true", default=False, dest="ci", help="install for CI tests - DO NOT USE.")
