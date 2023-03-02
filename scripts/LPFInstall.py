@@ -597,6 +597,7 @@ def install_databases(arguments, cwd):
     os.system("cp scripts/schemes/phenotypes.txt /opt/LPF_databases/resfinder_db/phenotypes.txt")
 
     if not os.path.exists('/opt/LPF_databases/LPF.db'):
+        print ("HERE")
         create_sql_db()
     sys.exit()
     insert_bacterial_references_into_sql()
