@@ -255,6 +255,7 @@ function getCities(rowNumber, columnNumber) {
     custom_option.value = "CUSTOM INPUT";
     custom_option.text = "CUSTOM INPUT";
     citySelect.add(custom_option);
+    console.log(cities);
     for (let i = 0; i < cities.length; i++) {
         let option = document.createElement("option");
         option.value = cities[i];
