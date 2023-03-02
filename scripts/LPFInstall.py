@@ -9,6 +9,7 @@ import shutil
 
 def LPF_installation(arguments):
     """Checks if the databases are installed"""
+    sys.exit('what')
     proc = subprocess.Popen("whoami", shell=True,
                             stdout=subprocess.PIPE, )
     user = proc.communicate()[0].decode().rstrip()
@@ -23,7 +24,6 @@ def LPF_installation(arguments):
     mkfs_LPF()
     print (bcolors.OKGREEN + "LPF filesystem created" + bcolors.ENDC)
     cwd = os.getcwd()
-    sys.exit('sql')
     if arguments.complete:
         solve_conda_env()
         print (bcolors.OKGREEN + "LPF environment created" + bcolors.ENDC)
