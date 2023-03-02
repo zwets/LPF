@@ -574,6 +574,8 @@ def install_databases(arguments, cwd):
     else:
         database_list.append("mlst_db")
 
+    sys.exit("sql")
+
 
 
     for item in database_list:
