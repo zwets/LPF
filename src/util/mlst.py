@@ -1,21 +1,22 @@
 import sys
 import logging
 def derive_mlst_species(reference_header_text):
-    specie = reference_header_text(' ')[1] + ' ' + reference_header_text.split(' ')[2]
-    specie = specie[0].lower() + specie.split(' ')[1].lower()
+    specie = reference_header_text.split(' ')[1] + ' ' + reference_header_text.split(' ')[2]
+    mlst_species = reference_header_text.split(' ')[1][0].lower() + reference_header_text.split(' ')[2].lower()
+    print (specie, mlst_species)
     mlst_dict = dict()
-    if specie == "ecoli":  # special
-        return 'ecoli'
+    if specie == "mlst_species":  # special
+        return specie, 'ecoli'
     else:
         with open("/opt/LPF_databases/mlst_db/config", 'r') as infile:
             for line in infile:
                 if line[0] != "#":
                     line = line.split("\t")
                     mlst_dict[line[1].lower()] = line[0]
-    if specie in mlst_dict or specie == 'ecoli':
-        return specie
+    if mlst_species in mlst_dict or mlst_species == 'ecoli':
+        return specie, mlst_species
     else:
-        return 'Unknown'
+        return specie, 'No MLST Scheme'
 
 def determine_mlst(bacterial_parser):
     """Returns the mlst results"""
