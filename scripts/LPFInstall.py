@@ -598,6 +598,7 @@ def install_databases(arguments, cwd):
 
     if not os.path.exists('/opt/LPF_databases/LPF.db'):
         create_sql_db()
+    sys.exit()
     insert_bacterial_references_into_sql()
 
 def download_mlst_tables():
