@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "better-sqlite3": "^7.6.2",
+    "dialogs": "^2.0.1",
     "electron-forge": "^5.2.4",
     "electron-json-storage": "^4.5.0",
     "electron-store": "^8.0.2",
