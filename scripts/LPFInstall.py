@@ -23,6 +23,7 @@ def LPF_installation(arguments):
     mkfs_LPF()
     print (bcolors.OKGREEN + "LPF filesystem created" + bcolors.ENDC)
     cwd = os.getcwd()
+    sys.exit('sql')
     if arguments.complete:
         solve_conda_env()
         print (bcolors.OKGREEN + "LPF environment created" + bcolors.ENDC)
@@ -468,7 +469,6 @@ def install_databases(arguments, cwd):
     if not check_local_software:
         print(bcolors.FAIL + "LPF dependencies are not installed, and databases cant be indexed" + bcolors.ENDC)
         sys.exit()
-    sys.exit("sql")
 
     #database_list = ["resfinder_db",
     #                 "plasmidfinder_db",
