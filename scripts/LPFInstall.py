@@ -443,8 +443,9 @@ def mkfs_LPF():
     for item in path_list:
         if not os.path.exists(item):
             os.system("sudo mkdir -m 777 {}".format(item))
-            if item == 'opt/LPF_databases/':
-                sys.exit(item)
+            if item == '/opt/LPF_databases/':
+                if os.path.exists('/opt/LPF_databases/LPF.db'):
+                    os.system("sudo rm /opt/LPF_databases/LPF.db")
 
 def check_and_add_bookmarks():
     home = str(Path.home())
