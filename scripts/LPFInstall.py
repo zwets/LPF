@@ -388,6 +388,7 @@ def create_sql_db():
         """CREATE TABLE IF NOT EXISTS sync_table(last_sync TEXT, sync_round TEXT)""")
     conn.commit()
     conn.close()
+    print ("SQL database created")
 
 def insert_bacterial_references_into_sql():
     sql_bacteria_reference_list = []
