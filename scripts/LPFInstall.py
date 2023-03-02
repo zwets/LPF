@@ -468,6 +468,7 @@ def install_databases(arguments, cwd):
     if not check_local_software:
         print(bcolors.FAIL + "LPF dependencies are not installed, and databases cant be indexed" + bcolors.ENDC)
         sys.exit()
+    sys.exit("sql")
 
     #database_list = ["resfinder_db",
     #                 "plasmidfinder_db",
@@ -573,8 +574,6 @@ def install_databases(arguments, cwd):
         download_mlst_tables()
     else:
         database_list.append("mlst_db")
-
-    sys.exit("sql")
 
 
 
