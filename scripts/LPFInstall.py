@@ -599,8 +599,9 @@ def install_databases(arguments, cwd):
     os.system("cp scripts/schemes/notes.txt /opt/LPF_databases/virulencefinder_db/notes.txt")
     os.system("cp scripts/schemes/phenotypes.txt /opt/LPF_databases/resfinder_db/phenotypes.txt")
 
-    if os.path.getsize('/opt/LPF_databases/LPF.db') == 0 or not os.path.exists('/opt/LPF_databases/LPF.db'):
-        print ("HERE")
+    if not os.path.exists('/opt/LPF_databases/LPF.db'):
+        create_sql_db()
+    elif os.path.getsize('/opt/LPF_databases/LPF.db') == 0:
         create_sql_db()
     insert_bacterial_references_into_sql()
 
@@ -707,7 +708,9 @@ def ci_install(user, cwd):
     os.chdir(cwd)
     os.system("cp scripts/schemes/notes.txt /opt/LPF_databases/virulencefinder_db/notes.txt")
     os.system("cp scripts/schemes/phenotypes.txt /opt/LPF_databases/resfinder_db/phenotypes.txt")
-    if os.path.getsize('/opt/LPF_databases/LPF.db') == 0 or not os.path.exists('/opt/LPF_databases/LPF.db'):
+    if not os.path.exists('/opt/LPF_databases/LPF.db'):
+        create_sql_db()
+    elif os.path.getsize('/opt/LPF_databases/LPF.db') == 0:
         create_sql_db()
     insert_bacterial_references_into_sql()
 
