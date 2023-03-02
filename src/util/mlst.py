@@ -1,9 +1,10 @@
 import sys
 import logging
 def derive_mlst_species(reference_header_text):
-    specie = reference_header_text.split()[1].lower() + " " + reference_header_text.split()[2].lower()
+    specie = reference_header_text(' ')[1] + ' ' + reference_header_text.split(' ')[2]
+    specie = specie[0].lower() + specie.split(' ')[1].lower()
     mlst_dict = dict()
-    if specie == "escherichia coli":  # special
+    if specie == "ecoli":  # special
         return 'ecoli'
     else:
         with open("/opt/LPF_databases/mlst_db/config", 'r') as infile:
