@@ -9,7 +9,6 @@ import shutil
 
 def LPF_installation(arguments):
     """Checks if the databases are installed"""
-    sys.exit('what')
     proc = subprocess.Popen("whoami", shell=True,
                             stdout=subprocess.PIPE, )
     user = proc.communicate()[0].decode().rstrip()
@@ -444,6 +443,7 @@ def mkfs_LPF():
     for item in path_list:
         if not os.path.exists(item):
             os.system("sudo mkdir -m 777 {}".format(item))
+    sys.exit('what')
 
 def check_and_add_bookmarks():
     home = str(Path.home())
