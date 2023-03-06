@@ -84,11 +84,13 @@ def reinstall_app():
 
 def install_LPF_deps(user):
     if not check_kma():
+        print ("kma not found, installing")
         if os.path.exists("kma"):
             os.system("sudo rm -rf kma")
         os.system(
             "git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma;make; sudo cp kma* /home/{}/bin/.; cd ..;".format(user))
     if not check_ccphylo():
+        print ("ccphylo not found, installing")
         if os.path.exists("ccphylo"):
             os.system("sudo rm -rf ccphylo")
         os.system(
