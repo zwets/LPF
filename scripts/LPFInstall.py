@@ -140,7 +140,7 @@ def install_ont_deps():
     os.system('touch {}'.format(file))
     cmd = "sudo apt update".split()
     print (cmd)
-    subprocess.call(cmd, stdout=open(file, 'a'), stderr=open(file, 'a')
+    subprocess.call(cmd, stdout=open(file, 'a'), stderr=open(file, 'a'))
     #os.system("sudo apt update", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
     cmd = "sudo apt upgrade".split()
     print (cmd)
