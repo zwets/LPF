@@ -136,22 +136,16 @@ def install_docker_images():
         os.system(cmd)
 
 def install_ont_deps():
-    print("Installing ONT dependencies")
-    os.system("sudo apt update &> install_log.txt")
-    os.system("sudo apt upgrade &> install_log.txt")
-    print ("apt update and upgrade complete")
-    os.system("wget http://apt.kcri.it/debs/kcri-apt-repo_1.0.0_all.deb &> install_log.txt")
-    print ("kcri-apt-repo downloaded")
-    os.system("sudo apt install ./kcri-apt-repo_1.0.0_all.deb &> install_log.txt")
-    print ("kcri-apt-repo installed")
-    os.system("sudo apt update &> install_log.txt")
-    os.system("sudo apt install kcri-seqtz-repos &> install_log.txt")
-    print ("kcri-seqtz-repos installed")
-    os.system("sudo apt update &> install_log.txt")
-    os.system("sudo apt install kcri-seqtz-deps &> install_log.txt")
-    print ("kcri-seqtz-deps installed")
-    os.system('sudo groupadd docker; sudo usermod -aG docker $USER; sudo chmod 666 /var/run/docker.sock &> install_log.txt')
-    print ("docker installed")
+
+    os.system("sudo apt update", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
+    os.system("sudo apt upgrade", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
+    os.system("wget http://apt.kcri.it/debs/kcri-apt-repo_1.0.0_all.deb", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
+    os.system("sudo apt install ./kcri-apt-repo_1.0.0_all.deb", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
+    os.system("sudo apt update", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
+    os.system("sudo apt install kcri-seqtz-repos", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
+    os.system("sudo apt update", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
+    os.system("sudo apt install kcri-seqtz-deps", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
+    os.system('sudo groupadd docker; sudo usermod -aG docker $USER; sudo chmod 666 /var/run/docker.sock', stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
 
 def solve_conda_env():
     proc = subprocess.Popen("conda env list", shell=True,
