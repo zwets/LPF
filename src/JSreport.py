@@ -7,7 +7,7 @@ def main():
     parser.add_argument('-alignment', action="store_true", default=False, dest="alignment")
     parser.add_argument('-id ', action="store", default="", dest="id")
     args = parser.parse_args()
-    eval_res, js_file = js2py.run_file("createReport.js")
+    eval_res, js_file = js2py.run_file("createPDF.js")
     if args.assembly:
         js_file.generatePDFReport(args.id, 'assembly')
     elif args.alignment:

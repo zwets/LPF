@@ -2,7 +2,7 @@ function generatePDFReport(analysisId, type) {
     console.log("Generating PDF report for analysis: "+analysisId);
 }
 
-async function generatePDFReport2(analysisId, type) {
+function generatePDFReport2(analysisId, type) {
     dtu_logo_base64 = '/home/satya/dev/moss/local_app/js/image_data/dtu_logo_base64.txt';
     let amr_data = '/opt/LPF_analyses/'+analysisId+'/pdf_resources/amr_data.csv';
     let vir_data = '/opt/LPF_analyses/'+analysisId+'/pdf_resources/virulence_data.csv';
@@ -42,10 +42,10 @@ async function generatePDFReport2(analysisId, type) {
     doc.text(80, 340, hits);
 
     if (type == "assembly") {
-        await generateAssemblyReport(quast_data, doc, imageData, contigs_jpg); // Assembly Report
+        generateAssemblyReport(quast_data, doc, imageData, contigs_jpg); // Assembly Report
     }
     else if (type == "alignment") {
-        await generateAlignmentReport(amr_data, vir_data, plas_data, doc, imageData); // Alignment Report
+        generateAlignmentReport(amr_data, vir_data, plas_data, doc, imageData); // Alignment Report
     }
     doc.save(output_pdf_file);
 }
