@@ -12,10 +12,17 @@ from src.loggingHandlers import begin_logging
 
 def LPF_installation(arguments):
     """Checks if the databases are installed"""
-    begin_logging('install_log.txt')
-    log = logging.getLogger()
-    sys.stdout = LoggerWriter(log.info)
-    sys.stderr = LoggerWriter(log.info)
+    if os.path.exists('install_log.txt'):
+        os.remove('install_log.txt')
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
+        filename='install_log.txt',
+        filemode='a'
+    )
+    log = logging.getLogger('foobar')
+    sys.stdout = StreamToLogger(log, logging.INFO)
+    sys.stderr = StreamToLogger(log, logging.ERROR)
     print("LPF installation started")
 
     proc = subprocess.Popen("whoami", shell=True,
@@ -755,21 +762,18 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 
-class LoggerWriter:
-    def __init__(self, level):
-        # self.level is really like using log.debug(message)
-        # at least in my case
-        self.level = level
+class StreamToLogger(object):
+    """
+    Fake file-like stream object that redirects writes to a logger instance.
+    """
+    def __init__(self, logger, level):
+       self.logger = logger
+       self.level = level
+       self.linebuf = ''
 
-    def write(self, message):
-        # if statement reduces the amount of newlines that are
-        # printed to the logger
-        if message != '\n':
-            self.level(message)
+    def write(self, buf):
+       for line in buf.rstrip().splitlines():
+          self.logger.log(self.level, line.rstrip())
 
     def flush(self):
-        # create a flush method so things can be flushed when
-        # the system wants to. Not sure if simply 'printing'
-        # sys.stderr is the correct way to do it, but it seemed
-        # to work properly for me.
-        self.level(sys.stderr)
+        pass
