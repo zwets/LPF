@@ -22,7 +22,7 @@ def LPF_installation(arguments):
     )
     log = logging.getLogger('foobar')
     sys.stdout = StreamToLogger(log, logging.INFO)
-    sys.stderr = StreamToLogger(log, logging.ERROR)
+    sys.stderr = StreamToLogger(log, logging.INFO)
     print("LPF installation started")
 
     proc = subprocess.Popen("whoami", shell=True,
