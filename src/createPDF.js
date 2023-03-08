@@ -1,8 +1,4 @@
-function generatePDFReport(analysisId, type) {
-    console.log("Generating PDF report for analysis: "+analysisId);
-}
-
-function generatePDFReport2(analysisId, type) {
+async function generatePDFReport2(analysisId, type) {
     dtu_logo_base64 = '/home/satya/dev/moss/local_app/js/image_data/dtu_logo_base64.txt';
     let amr_data = '/opt/LPF_analyses/'+analysisId+'/pdf_resources/amr_data.csv';
     let vir_data = '/opt/LPF_analyses/'+analysisId+'/pdf_resources/virulence_data.csv';
@@ -14,7 +10,7 @@ function generatePDFReport2(analysisId, type) {
     const output_pdf_file = '/opt/LPF_analyses/'+analysisId+'/'+analysisId+'.pdf';
 
     var imageData = "";
-        fetch(dtu_logo_base64) //to fetch the encoded base64 text
+        await fetch(dtu_logo_base64) //to fetch the encoded base64 text
         .then(response => response.text()).then(text => imageData = text)
     const { jsPDF } = require("jspdf"); // will automatically load the jspdf
     const { autoTable } = require("jspdf-autotable");  //load autotable in jspdf
@@ -42,15 +38,15 @@ function generatePDFReport2(analysisId, type) {
     doc.text(80, 340, hits);
 
     if (type == "assembly") {
-        generateAssemblyReport(quast_data, doc, imageData, contigs_jpg); // Assembly Report
+        await generateAssemblyReport(quast_data, doc, imageData, contigs_jpg); // Assembly Report
     }
     else if (type == "alignment") {
-        generateAlignmentReport(amr_data, vir_data, plas_data, doc, imageData); // Alignment Report
+        await generateAlignmentReport(amr_data, vir_data, plas_data, doc, imageData); // Alignment Report
     }
     doc.save(output_pdf_file);
 }
-function generateAssemblyReport(quast_data, doc, imageData, contigs_jpg) { //assembly function for the load and display
-    var error = loadTableData(quast_data, doc, imageData);
+async function generateAssemblyReport(quast_data, doc, imageData, contigs_jpg) { //assembly function for the load and display
+    var error = await loadTableData(quast_data, doc, imageData);
         if(error == null) {
             doc.text(50, 70, "Assembly Report:");
         }
@@ -69,30 +65,30 @@ function generateAssemblyReport(quast_data, doc, imageData, contigs_jpg) { //ass
          });
 }
 
-function generateAlignmentReport(amr_data, vir_data, plas_data, doc, imageData) { //alignment function to load and display
-    loadTableData(amr_data, doc, imageData);
+async function generateAlignmentReport(amr_data, vir_data, plas_data, doc, imageData) { //alignment function to load and display
+    await loadTableData(amr_data, doc, imageData);
         doc.text(50, 50, "CGE FINDER RESULTS");
         doc.text(50, 70, "Antimicrobial resistance Genes Found:");
 
-        loadTableData(vir_data, doc, imageData);
+        await loadTableData(vir_data, doc, imageData);
         doc.text(50, 70, "Virulence Genes Found:");
 
-        loadTableData(plas_data, doc, imageData);
+        await loadTableData(plas_data, doc, imageData);
         doc.text(50, 70, "Plasmids Found:");
 }
 
-function readFileData(file) {   //parse the csv data
+async function readFileData(file) {   //parse the csv data
     const fs = require('fs');
     const parse = require('csv-parser');
     var output = [];
     var outData = [];
     var error = "";
-    fetch(file).catch((err) => {
+    await fetch(file).catch((err) => {
                             error = err;
                             throw new Error(error);
                          });
     if(error == "") {
-         fetch(file).then(response => response.text())
+         await fetch(file).then(response => response.text())
                               .then(text => {
                               for (let i = 0; i < text.toString().split("\n").length ; i++) {    //converting text into strings & for displaying rows
                                   output[i] = text.toString().split("\n")[i].toString();
@@ -135,13 +131,13 @@ function createTable(doc, data, imageData) {   //creating tables for all the loa
     return doc;
 }
 
-function loadTableData(data, doc, imageData) { //create the tables without quast output for alignment
+async function loadTableData(data, doc, imageData) { //create the tables without quast output for alignment
     var error = "";
-    readFileData(data).catch((err) => {
+    await readFileData(data).catch((err) => {
                                            error = err;
                                         });
     if(error == "") {
-        readFileData(data).then(newData => {
+        await readFileData(data).then(newData => {
             doc = createTable(doc, newData, imageData);
         });
     }else {

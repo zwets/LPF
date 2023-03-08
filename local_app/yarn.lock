@@ -2341,6 +2341,11 @@
   "resolved" "https://registry.npmjs.org/crypto-random-string/-/crypto-random-string-2.0.0.tgz"
   "version" "2.0.0"
 
+"csv-parse@^5.3.6":
+  "integrity" "sha512-WI330GjCuEioK/ii8HM2YE/eV+ynpeLvU+RXw4R8bRU8R0laK5zO3fDsc4gH8s472e3Ga38rbIjCAiQh+tEHkw=="
+  "resolved" "https://registry.npmjs.org/csv-parse/-/csv-parse-5.3.6.tgz"
+  "version" "5.3.6"
+
 "cuint@^0.2.1", "cuint@^0.2.2":
   "integrity" "sha512-d4ZVpCW31eWwCMe1YT3ur7mUDnTXbgwyzaL320DrcRT45rfjYxkt5QWLrmOJ+/UEAI2+fQgKe/fCjR8l4TpRgw=="
   "resolved" "https://registry.npmjs.org/cuint/-/cuint-0.2.2.tgz"
