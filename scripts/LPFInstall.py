@@ -136,16 +136,21 @@ def install_docker_images():
         os.system(cmd)
 
 def install_ont_deps():
-
-    os.system("sudo apt update", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
-    os.system("sudo apt upgrade", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
-    os.system("wget http://apt.kcri.it/debs/kcri-apt-repo_1.0.0_all.deb", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
-    os.system("sudo apt install ./kcri-apt-repo_1.0.0_all.deb", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
-    os.system("sudo apt update", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
-    os.system("sudo apt install kcri-seqtz-repos", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
-    os.system("sudo apt update", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
-    os.system("sudo apt install kcri-seqtz-deps", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
-    os.system('sudo groupadd docker; sudo usermod -aG docker $USER; sudo chmod 666 /var/run/docker.sock', stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
+    cmd = "sudo apt update".split('')
+    Popen(cmd, stdout=open('install_log.txt', 'a'))
+    #os.system("sudo apt update", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
+    cmd = "sudo apt upgrade".split(' ')
+    Popen(cmd, stdout=open('install_log.txt', 'a'))
+    #os.system("sudo apt upgrade", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
+    cmd = "wget http://apt.kcri.it/debs/kcri-apt-repo_1.0.0_all.deb".split(' ')
+    Popen(cmd, stdout=open('install_log.txt', 'a'))
+    #os.system("wget http://apt.kcri.it/debs/kcri-apt-repo_1.0.0_all.deb", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
+    os.system("sudo apt install ./kcri-apt-repo_1.0.0_all.deb")
+    os.system("sudo apt update")
+    os.system("sudo apt install kcri-seqtz-repos")
+    os.system("sudo apt update")
+    os.system("sudo apt install kcri-seqtz-deps")
+    os.system('sudo groupadd docker; sudo usermod -aG docker $USER; sudo chmod 666 /var/run/docker.sock')
 
 def solve_conda_env():
     proc = subprocess.Popen("conda env list", shell=True,
