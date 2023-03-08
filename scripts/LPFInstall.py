@@ -14,9 +14,8 @@ def LPF_installation(arguments):
     """Checks if the databases are installed"""
     begin_logging('install_log.txt')
     log = logging.getLogger()
-    log.info("LPF installation started")
-    sys.stdout = LoggerWriter(log.debug)
-    sys.stderr = LoggerWriter(log.warning)
+    sys.stdout = LoggerWriter(log.info)
+    sys.stderr = LoggerWriter(log.info)
     print("LPF installation started")
 
     proc = subprocess.Popen("whoami", shell=True,
