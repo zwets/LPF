@@ -18,8 +18,8 @@ def LPF_installation(arguments):
         sys.exit()
     if not os.path.exists('/home/{}/bin'.format(user)):
         os.system('sudo mkdir /home/{}/bin'.format(user))
+    os.system("pip install -r requirements.txt")
     add_bin_path()
-
     mkfs_LPF()
     print (bcolors.OKGREEN + "LPF filesystem created" + bcolors.ENDC)
     cwd = os.getcwd()
@@ -99,7 +99,7 @@ def install_LPF_deps(user):
     if not check_google_chrome():
         os.system(
             "sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -nv; sudo apt install ./google-chrome-stable_current_amd64.deb; rm google*")
-    os.system("pip install -r requirements.txt")
+    #os.system("pip install -r requirements.txt")
 
 def install_docker_images():
     docker_list = [
