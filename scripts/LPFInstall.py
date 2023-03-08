@@ -12,17 +12,8 @@ from src.loggingHandlers import begin_logging
 
 def LPF_installation(arguments):
     """Checks if the databases are installed"""
-    #if os.path.exists('install_log.txt'):
-    #    os.remove('install_log.txt')
-    #logging.basicConfig(
-    #    level=logging.DEBUG,
-    #    format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
-    #    filename='install_log.txt',
-    #    filemode='a'
-    #)
-    #log = logging.getLogger('foobar')
-    #sys.stdout = StreamToLogger(log, logging.INFO)
-    #sys.stderr = StreamToLogger(log, logging.INFO)
+    #install with log:
+    #./LocalPathogenFinder install -complete 2>&1 | tee -a LPF_install.log
     print("LPF installation started")
 
     proc = subprocess.Popen("whoami", shell=True,
