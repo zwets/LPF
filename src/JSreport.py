@@ -3,7 +3,7 @@ import argparse
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-assembly', action="store_true", default=F alse, dest="assembly")
+    parser.add_argument('-assembly', action="store_true", default=False, dest="assembly")
     parser.add_argument('-alignment', action="store_true", default=False, dest="alignment")
     parser.add_argument('-id ', action="store", default="", dest="id")
     args = parser.parse_args()
