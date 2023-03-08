@@ -136,9 +136,15 @@ class BacterialParser():
 
         run_quast(self)
 
+        self.logger.info('Quast completed')
+
         run_bandage(self)
 
+        self.logger.info('Bandage completed')
+
         preparePDF.prepare_assembly_pdf(self)
+
+        self.logger.info('Assembly PDF prepared')
 
         pdfReport.compile_assembly_report(self)
 

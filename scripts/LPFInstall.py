@@ -6,35 +6,49 @@ import src.sqlCommands as sqlCommands
 import src.util.md5 as md5
 from pathlib import Path
 import shutil
+import logging
+from src.loggingHandlers import begin_logging
+
 
 def LPF_installation(arguments):
     """Checks if the databases are installed"""
+    #install with log:
+    #./LocalPathogenFinder install -complete 2>&1 | tee -a LPF_install.log
+    print("LPF installation started")
+
     proc = subprocess.Popen("whoami", shell=True,
                             stdout=subprocess.PIPE, )
     user = proc.communicate()[0].decode().rstrip()
+    print("User is {}".format(user))
     if user == "root":
         print(
             bcolors.FAIL + "This script should not be run as root, please run as a normal user. This means DO NOT put sudo in the command line when running ./LPF install, as it will ruin your user path" + bcolors.ENDC)
+        print("User is root, exiting")
         sys.exit()
     if not os.path.exists('/home/{}/bin'.format(user)):
         os.system('sudo mkdir /home/{}/bin'.format(user))
     os.system("pip install -r requirements.txt")
     add_bin_path()
     mkfs_LPF()
-    print (bcolors.OKGREEN + "LPF filesystem created" + bcolors.ENDC)
+
+    print(bcolors.OKGREEN + "LPF filesystem created" + bcolors.ENDC)
     cwd = os.getcwd()
+    print("Current working directory is {}".format(cwd))
     if arguments.complete:
         solve_conda_env()
-        print (bcolors.OKGREEN + "LPF environment created" + bcolors.ENDC)
+        print(bcolors.OKGREEN + "LPF environment created" + bcolors.ENDC)
         install_ont_deps()
-        print (bcolors.OKGREEN + "ONT dependencies installed" + bcolors.ENDC)
+        print(bcolors.OKGREEN + "ONT dependencies installed" + bcolors.ENDC)
         install_LPF_deps(user)
-        print (bcolors.OKGREEN + "LPF dependencies installed" + bcolors.ENDC)
+        print(bcolors.OKGREEN + "LPF dependencies installed" + bcolors.ENDC)
         install_databases(arguments, cwd)
         os.chdir(cwd)
-        print (bcolors.OKGREEN + "Databases installed" + bcolors.ENDC)
+        print(bcolors.OKGREEN + "Databases installed" + bcolors.ENDC)
         LPF_build_app()
-        print (bcolors.OKGREEN + "LPF app built" + bcolors.ENDC)
+        print(bcolors.OKGREEN + "LPF app built" + bcolors.ENDC)
+    elif arguments.install_ont_deps:
+        solve_conda_env()
+        install_ont_deps()
     elif arguments.app:
         reinstall_app()
     elif arguments.install_databases:
@@ -47,7 +61,7 @@ def LPF_installation(arguments):
         sys.exit()
     check_all_deps()
     check_and_add_bookmarks()
-    print ('Installation complete')
+    print('Installation complete')
 
 
 
@@ -66,7 +80,7 @@ def build_app():
 
 def move_LPF_repo():
     cwd = os.getcwd()
-    print ("current working directory is {}".format(cwd))
+    print("current working directory is {}".format(cwd))
     if (cwd != '/opt/LPF'):
         os.system("sudo rm -rf /opt/LPF")
         os.system("sudo cp -r {} /opt/LPF".format(cwd))
@@ -84,13 +98,13 @@ def reinstall_app():
 
 def install_LPF_deps(user):
     if not check_kma():
-        print ("kma not found, installing")
+        print("kma not found, installing")
         if os.path.exists("kma"):
             os.system("sudo rm -rf kma")
         os.system(
             "git clone https://bitbucket.org/genomicepidemiology/kma.git; cd kma;make; sudo cp kma* /home/{}/bin/.; cd ..;".format(user))
     if not check_ccphylo():
-        print ("ccphylo not found, installing")
+        print("ccphylo not found, installing")
         if os.path.exists("ccphylo"):
             os.system("sudo rm -rf ccphylo")
         os.system(
@@ -127,9 +141,11 @@ def solve_conda_env():
     proc = subprocess.Popen("conda env list", shell=True,
                             stdout=subprocess.PIPE, )
     env = proc.communicate()[0].decode().split()
+    print("Checking for LPF environment")
+    print(env)
     if 'LPF' in env:
-        print ("LPF environment already exists")
-        print ("Updating LPF environment")
+        print("LPF environment already exists")
+        print("Updating LPF environment")
         os.system("conda env update --file environment.yml  --prune")
     else:
         os.system("conda env create -f environment.yml")
@@ -140,9 +156,10 @@ def add_bin_path():
     infile.close()
     data = data.split("\n")
     if "export PATH=$PATH:~/bin" not in data:
-        print ("Adding ~/bin to PATH")
+        print("Adding ~/bin to PATH")
         os.system("echo \'export PATH=$PATH:~/bin\' >> ~/.bashrc")
         os.system("source ~/.bashrc")
+    print("Adding ~/bin to PATH")
 
 def check_all_deps():
     os.system("cd /opt/LPF")
@@ -298,9 +315,9 @@ def check_docker_images():
             print(bcolors.OKGREEN + name + " are installed" + bcolors.ENDC)
             docker_list.remove(name)
     if len(docker_list) > 0:
-        print ("The following docker images are missing:")
+        print("The following docker images are missing:")
         for item in docker_list:
-            print (item)
+            print(item)
         return False
     else:
         return True
@@ -311,7 +328,7 @@ def check_conda():
                             stdout=subprocess.PIPE, )
     conda_output = proc.communicate()[0].decode().rstrip()
     if (conda_output.startswith(home)):
-        print (bcolors.OKGREEN + "Conda is installed corrently in /home/user/" + bcolors.ENDC)
+        print(bcolors.OKGREEN + "Conda is installed corrently in /home/user/" + bcolors.ENDC)
         return True
     else:
         print(bcolors.FAIL + "Conda is not installed" + bcolors.ENDC)
@@ -366,7 +383,7 @@ def check_app_build():
         return False
 
 def create_sql_db():
-    print ("Creating SQL database")
+    print("Creating SQL database")
     conn = sqlite3.connect('/opt/LPF_databases/LPF.db')
     c = conn.cursor()
 
@@ -390,7 +407,7 @@ def create_sql_db():
         """CREATE TABLE IF NOT EXISTS sync_table(last_sync TEXT, sync_round TEXT)""")
     conn.commit()
     conn.close()
-    print ("SQL database created")
+    print("SQL database created")
 
 def insert_bacterial_references_into_sql():
     sql_bacteria_reference_list = []
@@ -405,7 +422,7 @@ def insert_bacterial_references_into_sql():
     else:
         sys.exit("LPF.db is not found")
 
-    print ("calculating the difference between the reference table and the database")
+    print("calculating the difference between the reference table and the database")
     local_missing_references_in_sql_db = set(set(bacteria_db_reference_list) - set(result))
     local_missing_references_in_bacteria_db = set(set(result) - set(bacteria_db_reference_list))
 
@@ -417,7 +434,7 @@ def insert_bacterial_references_into_sql():
             for line in f:
                 t += 1
                 if t%100 == 0:
-                    print ("{} references processed".format(t))
+                    print("{} references processed".format(t))
                 if line.rstrip() in local_missing_references_in_sql_db: #set search
                     cmd = "~/bin/kma seq2fasta -t_db /opt/LPF_databases/bacteria_db/bacteria_db -seqs {}".format(t)
                     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
@@ -445,9 +462,12 @@ def mkfs_LPF():
     for item in path_list:
         if not os.path.exists(item):
             os.system("sudo mkdir -m 777 {}".format(item))
+            print("Created {}".format(item))
             if item == '/opt/LPF_databases/':
                 if os.path.exists('/opt/LPF_databases/LPF.db'):
                     os.system("sudo rm /opt/LPF_databases/LPF.db")
+                    print("Removed old LPF.db")
+
 
 def check_and_add_bookmarks():
     home = str(Path.home())
@@ -468,7 +488,7 @@ def check_and_add_bookmarks():
                 fd.write(item + '\n')
 
 def install_databases(arguments, cwd):
-    print (arguments)
+    print(arguments)
     """Installs the databases"""
     if not check_local_software:
         print(bcolors.FAIL + "LPF dependencies are not installed, and databases cant be indexed" + bcolors.ENDC)
@@ -481,7 +501,7 @@ def install_databases(arguments, cwd):
     #                 "bacteria_db"]
     database_list = []
     if arguments.bacteria_db != None:
-        print ('Copying bacteria database')
+        print('Copying bacteria database')
         if not os.path.exists('/opt/LPF_databases/bacteria_db'):
             os.system('sudo mkdir -m 777 /opt/LPF_databases/bacteria_db')
         else:
@@ -500,7 +520,7 @@ def install_databases(arguments, cwd):
         database_list.append("bacteria_db")
 
     if arguments.resfinder_db != None:
-        print ('Copying resfinder database')
+        print('Copying resfinder database')
         if not os.path.exists('/opt/LPF_databases/resfinder_db'):
             os.system('sudo mkdir -m 777 /opt/LPF_databases/resfinder_db')
         else:
@@ -519,7 +539,7 @@ def install_databases(arguments, cwd):
         database_list.append("resfinder_db")
 
     if arguments.plasmidfinder_db != None:
-        print ('Copying plasmidfinder database')
+        print('Copying plasmidfinder database')
         if not os.path.exists('/opt/LPF_databases/plasmidfinder_db'):
             os.system('sudo mkdir -m 777 /opt/LPF_databases/plasmidfinder_db')
         else:
@@ -538,7 +558,7 @@ def install_databases(arguments, cwd):
         database_list.append("plasmidfinder_db")
 
     if arguments.virulencefinder_db != None:
-        print ('Copying virulencefinder database')
+        print('Copying virulencefinder database')
         if not os.path.exists('/opt/LPF_databases/virulencefinder_db'):
             os.system('sudo mkdir -m 777 /opt/LPF_databases/virulencefinder_db')
         else:
@@ -557,7 +577,7 @@ def install_databases(arguments, cwd):
         database_list.append("virulencefinder_db")
 
     if arguments.mlst_db != None:
-        print ('Copying mlst database')
+        print('Copying mlst database')
         if not os.path.exists('/opt/LPF_databases/mlst_db'):
             os.system('sudo mkdir -m 777 /opt/LPF_databases/mlst_db')
         else:
@@ -658,17 +678,17 @@ def check_dist_build():
     local = False
     deployment = False
     if not os.path.isfile("local_app/dist/linux-unpacked/lpf"):
-        print (bcolors.FAIL + "Local App is not installed in current working directory" + bcolors.ENDC)
+        print(bcolors.FAIL + "Local App is not installed in current working directory" + bcolors.ENDC)
         local = False
     else:
-        print (bcolors.OKGREEN + "Local App is installed in current working directory" + bcolors.ENDC)
+        print(bcolors.OKGREEN + "Local App is installed in current working directory" + bcolors.ENDC)
         local = True
 
     if not os.path.isfile("/opt/LPF/local_app/dist/linux-unpacked/lpf"):
-        print (bcolors.FAIL + "Local App is not installed /opt/LPF" + bcolors.ENDC)
+        print(bcolors.FAIL + "Local App is not installed /opt/LPF" + bcolors.ENDC)
         deployment = False
     else:
-        print (bcolors.OKGREEN + "Local App is installed /opt/LPF" + bcolors.ENDC)
+        print(bcolors.OKGREEN + "Local App is installed /opt/LPF" + bcolors.ENDC)
         deployment = True
     if local and deployment:
         return True
@@ -731,3 +751,20 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
+
+class StreamToLogger(object):
+    """
+    Fake file-like stream object that redirects writes to a logger instance.
+    """
+    def __init__(self, logger, level):
+       self.logger = logger
+       self.level = level
+       self.linebuf = ''
+
+    def write(self, buf):
+       for line in buf.rstrip().splitlines():
+          self.logger.log(self.level, line.rstrip())
+
+    def flush(self):
+        pass

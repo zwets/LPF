@@ -76,6 +76,7 @@ def bacterial_analysis_pipeline(bacterial_parser):
 
     sqlCommands.sql_update_status_table('Calculating distance matrix', bacterial_parser.data.sample_name, '8', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
 
+
     inclusion_fraction, distance = ccphyloUtils.ccphylo_dist(bacterial_parser)
 
     if distance == None:

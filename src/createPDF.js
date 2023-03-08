@@ -1,4 +1,4 @@
-async function generatePDFReport(analysisId) {
+async function generatePDFReport2(analysisId, type) {
     dtu_logo_base64 = '/home/satya/dev/moss/local_app/js/image_data/dtu_logo_base64.txt';
     let amr_data = '/opt/LPF_analyses/'+analysisId+'/pdf_resources/amr_data.csv';
     let vir_data = '/opt/LPF_analyses/'+analysisId+'/pdf_resources/virulence_data.csv';
@@ -7,7 +7,7 @@ async function generatePDFReport(analysisId) {
     let contigs_jpg = '/opt/LPF_analyses/'+analysisId+'/contigs.jpg';
     let bacterial_parser = '/opt/LPF_analyses/'+analysisId+'/pdf_resources/bacterial_parser.json';
     let bact_parse_data =  require(bacterial_parser);
-    const output_pdf_file = '/opt/LPF_analyses/'+analysisId+'/pdf_resources/'+analysisId+'.pdf';
+    const output_pdf_file = '/opt/LPF_analyses/'+analysisId+'/'+analysisId+'.pdf';
 
     var imageData = "";
         await fetch(dtu_logo_base64) //to fetch the encoded base64 text
@@ -37,10 +37,12 @@ async function generatePDFReport(analysisId) {
     doc.setTextColor(0, 0 ,0);
     doc.text(80, 340, hits);
 
-    await generateAssemblyReport(quast_data, doc, imageData, contigs_jpg); // Assembly Report
-
-    await generateAlignmentReport(amr_data, vir_data, plas_data, doc, imageData); // Alignment Report
-
+    if (type == "assembly") {
+        await generateAssemblyReport(quast_data, doc, imageData, contigs_jpg); // Assembly Report
+    }
+    else if (type == "alignment") {
+        await generateAlignmentReport(amr_data, vir_data, plas_data, doc, imageData); // Alignment Report
+    }
     doc.save(output_pdf_file);
 }
 async function generateAssemblyReport(quast_data, doc, imageData, contigs_jpg) { //assembly function for the load and display
