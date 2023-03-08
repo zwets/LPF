@@ -1,4 +1,4 @@
-name: moss unit test
+name: LPF unit test
 
 on: [push]
 

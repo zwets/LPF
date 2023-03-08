@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Microbial Outbreak Surveillance System 1.0</title>
+    <title>Local Pathogen Finder 1.0</title>
     <link rel="stylesheet" href="../css/styles.css">
     <script src="../js/results.js" type="text/javascript"></script>
 </head>
@@ -14,7 +14,6 @@
     <a href="./results.html">Results</>
     <a href="./concat.html">Merge FastQ</a>
     <a href="./update.html">Update</a>
-    <a href="./config.html">Config</a>
 </div>
 
 
@@ -24,9 +23,10 @@
             <div align = "center">
             <h1>Analyses results</h1>
                 </div>
+            <h3>Fetching latest results:</h3>
+                <div class="smallloader"></div>
+
             <div class="Guide-content">
-                    <input type='button' onclick='showFinishedAnalyses()'
-                           value='Refresh analysis table' />
                     <div align="left">
                     <p id='showData'></p>
                     <br><br>

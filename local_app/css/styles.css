@@ -178,6 +178,20 @@ body {
   .sidenav a {font-size: 18px;}
 }
 
+tr,th:nth-child(10)::after {
+    content: "*";
+    color: black;
+}
+
+tr,th:nth-child(11)::after {
+    content: "*";
+    color: black;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #fff;
+}
+
 .multiple-input {
   display: None;
 }
@@ -217,6 +231,15 @@ body {
     animation: spin 2s linear infinite;
     display: none;
  }
+
+.smallloader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 2s linear infinite;
+}
 
 @keyframes spin {
     0% { transform: rotate(0deg); }

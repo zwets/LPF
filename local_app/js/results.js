@@ -1,28 +1,36 @@
 const { exec } = require('child_process');
 const fs = require('fs');
-const storage = require('electron-json-storage');
+
+var intervalId = window.setInterval(function(){
+    showFinishedAnalyses();
+  // call your function here
+}, 5000);
 
 function showFinishedAnalyses() {
-    var current_moss_system = require('/opt/moss_db/config.json')["current_working_db"];
-    var db_dir = '/opt/moss_db/' + current_moss_system + "/";
-    let sql = `SELECT * FROM status_table`;
+    let sql = `SELECT * FROM status_table ORDER BY time_stamp DESC`;
     document.getElementById('showData').innerHTML="" ;
-    const db = require('better-sqlite3')(db_dir + 'moss.db');
+    const db = require('better-sqlite3')('/opt/LPF_databases/LPF.db');
     const sql_data_obj = db.prepare(sql).all();
-    console.log(sql_data_obj);
+    console.log("updated");
 
-    tableFromObj(sql_data_obj, db_dir);
+    tableFromObj(sql_data_obj);
 
 }
 
-function openPDF(id, db_dir){
-  console.log(db_dir + "analysis/" + id + "/" + id + ".pdf");
-  window.open(db_dir + "analysis/" + id + "/" + id + ".pdf");
+function openPDF(id){
+  console.log("/opt/LPF_analyses/" + id + "/" + id + ".pdf");
+  window.open("/opt/LPF_analyses/" + id + "/" + id + ".pdf");
   //return false;
 }
 
+function open_log_file(id){
+    console.log("/opt/LPF_logs/" + id + ".log");
+    window.open("/opt/LPF_logs/" + id + ".log");
+    //return false;
+}
 
-function tableFromObj(sql_data_obj, db_dir) {
+
+function tableFromObj(sql_data_obj) {
         var divShowData = document.getElementById('showData');
         divShowData.innerHTML = "";
 
@@ -36,7 +44,8 @@ function tableFromObj(sql_data_obj, db_dir) {
             }
         }
 
-        console.log(col);
+        col.push("PDF Report");
+        col.push("Log File");
 
         // Create a table.
         var table = document.createElement("table");
@@ -57,22 +66,35 @@ function tableFromObj(sql_data_obj, db_dir) {
             tr = table.insertRow(-1);
 
             for (var j = 0; j < col.length; j++) {
-                var tabCell = tr.insertCell(-1);
-                tabCell.innerHTML = sql_data_obj[i][col[j]];
+                if (col[j] == "PDF Report") {
+                    var tabCell = tr.insertCell(-1);
+                    tabCell.style.alignContent = "center";
+                    var img = document.createElement('img');
+                    img.id = sql_data_obj[i].entry_id;
+                    img.name = sql_data_obj[i].entry_id;
+                    img.src = "/opt/LPF/local_app/images/report-icon.png";
+                    img.setAttribute('height', '17pt');
+                    img.innerHTML = sql_data_obj[i].entry_id;
+                    img.onclick = function() {openPDF(this.id)};
+                    tabCell.appendChild(img);
+                }
+                else if (col[j] == "Log File") {
+                    var tabCell = tr.insertCell(-1);
+                    tabCell.style.alignContent = "center";
+                    var img = document.createElement('img');
+                    img.id = sql_data_obj[i].entry_id;
+                    img.name = sql_data_obj[i].entry_id;
+                    img.src = "/opt/LPF/local_app/images/log-icon.png";
+                    img.setAttribute('height', '17pt');
+                    img.innerHTML = sql_data_obj[i].entry_id;
+                    img.onclick = function() {open_log_file(this.id)};
+                    tabCell.appendChild(img);
+                }
+                else {
+                    var tabCell = tr.insertCell(-1);
+                    tabCell.innerHTML = sql_data_obj[i][col[j]];
+                }
             }
-            if (sql_data_obj != "none") {
-                var tabCell = tr.insertCell(-1);
-                var img = document.createElement('img');
-                img.id = sql_data_obj[i].entry_id;
-                img.name = sql_data_obj[i].entry_id;
-                img.src = "/opt/moss/local_app/images/report-icon.png";
-                img.setAttribute('height', '17pt');
-                img.innerHTML = sql_data_obj[i].entry_id;
-                img.onclick = function() {openPDF(this.id, db_dir)};
-                tabCell.appendChild(img);
-            };
-
-
         }
 
 
