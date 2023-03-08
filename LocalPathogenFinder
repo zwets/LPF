@@ -66,7 +66,7 @@ if __name__ == '__main__':
                                            help='Install',
                                            )
     install_parser.add_argument('-complete', action="store_true", default=False, dest="complete", help="Complete installation of databases, LPF software and the LBP GUI.")
-    install_parser.add_argument('install_ont_deps', action="store_true", default=False, dest="install_ont_deps", help="Install ONT dependencies.")')
+    install_parser.add_argument('install_ont_deps', action="store_true", default=False, dest="install_ont_deps", help="Install ONT dependencies.")
     install_parser.add_argument('-install_databases', action="store_true", default=False, dest="install_databases", help="Install databases.")
     install_parser.add_argument('-bacteria_db', action="store", dest="bacteria_db", help="Path to existing bacteria database stored locally.")
     install_parser.add_argument('-mlst_db', action="store", dest="mlst_db", help="Path to existing mlst database stored locally.")
