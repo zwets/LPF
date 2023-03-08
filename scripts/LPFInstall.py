@@ -14,8 +14,8 @@ def LPF_installation(arguments):
     """Checks if the databases are installed"""
     begin_logging('install_log.txt')
     log = logging.getLogger()
-    sys.stdout = StreamToLogger(log, print)
-    sys.stderr = StreamToLogger(log, logging.ERROR)
+    sys.stdout = LoggerWriter(log.debug)
+    sys.stderr = LoggerWriter(log.warning)
     print("LPF installation started")
 
     proc = subprocess.Popen("whoami", shell=True,
@@ -753,3 +753,23 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
+
+class LoggerWriter:
+    def __init__(self, level):
+        # self.level is really like using log.debug(message)
+        # at least in my case
+        self.level = level
+
+    def write(self, message):
+        # if statement reduces the amount of newlines that are
+        # printed to the logger
+        if message != '\n':
+            self.level(message)
+
+    def flush(self):
+        # create a flush method so things can be flushed when
+        # the system wants to. Not sure if simply 'printing'
+        # sys.stderr is the correct way to do it, but it seemed
+        # to work properly for me.
+        self.level(sys.stderr)
