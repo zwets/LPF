@@ -137,12 +137,15 @@ def install_docker_images():
 
 def install_ont_deps():
     cmd = "sudo apt update".split()
+    print (cmd)
     subprocess.Popen(cmd, stdout=open('install_log.txt', 'a'))
     #os.system("sudo apt update", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
     cmd = "sudo apt upgrade".split()
+    print (cmd)
     subprocess.Popen(cmd, stdout=open('install_log.txt', 'a'))
     #os.system("sudo apt upgrade", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
     cmd = "wget http://apt.kcri.it/debs/kcri-apt-repo_1.0.0_all.deb".split()
+    print (cmd)
     subprocess.Popen(cmd, stdout=open('install_log.txt', 'a'))
     #os.system("wget http://apt.kcri.it/debs/kcri-apt-repo_1.0.0_all.deb", stdout=open('install_log.txt', 'a'), stderr=open('install_log.txt', 'a'))
     os.system("sudo apt install ./kcri-apt-repo_1.0.0_all.deb")
