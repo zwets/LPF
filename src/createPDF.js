@@ -37,10 +37,10 @@ async function generatePDFReport(analysisId, type) {
     doc.setTextColor(0, 0 ,0);
     doc.text(80, 340, hits);
 
-    if type == "assembly" {
+    if (type == "assembly") {
         await generateAssemblyReport(quast_data, doc, imageData, contigs_jpg); // Assembly Report
     }
-    else if type == "alignment" {
+    else if (type == "alignment") {
         await generateAlignmentReport(amr_data, vir_data, plas_data, doc, imageData); // Alignment Report
     }
     doc.save(output_pdf_file);
