@@ -1,4 +1,4 @@
-import { parse } from 'csv-parse';
+//import { parse } from 'csv-parse';
 function generatePDFReport(analysisId, type) {
     dtu_logo_base64 = '/opt/LPF/local_app/js/image_data/dtu_logo_base64.txt';
     console.log(dtu_logo_base64);
