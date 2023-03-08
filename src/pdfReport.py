@@ -75,6 +75,8 @@ def compile_assembly_report(bacterial_parser):
 
     pdf.ln(10)
 
+    print ('This worked')
+
     pdf.cell(85, 5, "Virulence Genes Found: ", 0, 1, 'L')
 
     csv_data = derive_virulence_stats(bacterial_parser)
