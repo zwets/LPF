@@ -37,11 +37,11 @@ def main(arguments):
             pass
     except Exception as e:
         logging.exception(e)
-        if not arguments.json == None:
+        try:
             clean_failed_run(arguments.json)
-        else:
+        except Exception as e:
+            logging.exception(e)
             sys.exit()
-        raise e
 
 
 if __name__ == '__main__':
