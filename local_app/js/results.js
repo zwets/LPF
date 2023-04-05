@@ -5,7 +5,7 @@ const Dialogs = require("dialogs");
 var intervalId = window.setInterval(function(){
     showFinishedAnalyses();
   // call your function here
-}, 5000);
+}, 2000);
 
 function showFinishedAnalyses() {
     let sql = `SELECT * FROM status_table ORDER BY time_stamp DESC`;
