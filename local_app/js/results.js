@@ -71,6 +71,7 @@ function tableFromObj(sql_data_obj) {
                     var tabCell = tr.insertCell(-1);
                     tabCell.style.alignContent = "center";
                     var img = document.createElement('img');
+                    img.style.alignContent = "center";
                     img.id = sql_data_obj[i].entry_id;
                     img.name = sql_data_obj[i].entry_id;
                     img.src = "/opt/LPF/local_app/images/report-icon.png";
@@ -83,6 +84,7 @@ function tableFromObj(sql_data_obj) {
                     var tabCell = tr.insertCell(-1);
                     tabCell.style.alignContent = "center";
                     var img = document.createElement('img');
+                    img.style.alignContent = "center";
                     img.id = sql_data_obj[i].entry_id;
                     img.name = sql_data_obj[i].entry_id;
                     img.src = "/opt/LPF/local_app/images/log-icon.png";
@@ -95,13 +97,13 @@ function tableFromObj(sql_data_obj) {
                     var tabCell = tr.insertCell(-1);
                     tabCell.style.alignContent = "center";
                     var img = document.createElement('img');
+                    img.style.alignContent = "center";
                     img.id = sql_data_obj[i].entry_id;
                     img.name = sql_data_obj[i].entry_id;
                     img.src = "/opt/LPF/local_app/images/icons8-delete-key-100.png";
                     img.setAttribute('height', '17pt');
                     img.innerHTML = sql_data_obj[i].entry_id;
-                    img.onclikc = function() {console.log("delete")};
-                    //img.onclick = function() {delete_entry(this.id)};
+                    img.onclick = function() {delete_entry(this.id)};
                     tabCell.appendChild(img);
                 }
                 else {
@@ -116,3 +118,14 @@ function tableFromObj(sql_data_obj) {
         // Now, add the newly created table with json data, to a container.
         divShowData.appendChild(table);
     }
+
+function delete_entry(id){
+    exec('/opt/LPF/scripts/removeFromdatabase.py -i ' + id + '
+    function (error, stdout, stderr) {
+        console.log('stdout: ' + stdout);
+        console.log('stderr: ' + stderr);
+        if (error !== null) {
+             console.log('exec error: ' + error);
+        }
+    });
+}
