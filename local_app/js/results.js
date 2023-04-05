@@ -123,18 +123,21 @@ function tableFromObj(sql_data_obj) {
 function delete_entry(id){
     const Dialogs = require('dialogs')
     const dialogs = Dialogs()
-    var result = dialogs.prompt('Write DELETE to delete the analysis entry:', result => {
-       })
-    console.log(result);
-
-    cmd = 'python3 /opt/LPF/scripts/removeFromDatabase.py -i ' + id;
-    console.log(cmd);
-    exec(cmd,
-    function (error, stdout, stderr) {
-        console.log('stdout: ' + stdout);
-        console.log('stderr: ' + stderr);
-        if (error !== null) {
-             console.log('exec error: ' + error);
-        }
-    });
+    dialogs.prompt('Write DELETE to delete the analysis entry:', result => {
+        if (result == "DELETE") {
+            console.log("Deleting entry");
+            cmd = 'python3 /opt/LPF/scripts/removeFromDatabase.py -i ' + id;
+            console.log(cmd);
+            exec(cmd,
+            function (error, stdout, stderr) {
+                console.log('stdout: ' + stdout);
+                console.log('stderr: ' + stderr);
+                if (error !== null) {
+                     console.log('exec error: ' + error);
+                }
+            });
+       }
+       else {
+            console.log("Not deleting entry");
+       }
 }
