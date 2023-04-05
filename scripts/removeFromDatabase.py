@@ -2,6 +2,8 @@ import os
 import src.sqlCommands as sqlCommands
 import argparse
 
+sys.path = [os.path.join(os.path.dirname(os.path.realpath(__file__)),'..')] + sys.path
+
 parser = argparse.ArgumentParser(description='.')
 parser.add_argument('-id', action="store", type=str, dest='id', default="",
                     help='id')
