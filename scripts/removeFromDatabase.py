@@ -14,6 +14,7 @@ args = parser.parse_args()
 def main(arguments):
     clean_up(arguments.id)
 def clean_up(id):
+    #Missing removal of added references to KMA database. Simpler way than unindexing, removing and reindexing?
     os.system("rm -rf /opt/LPF_logs/{}.log".format(id))
     os.system("rm -rf /opt/LPF_analyses/{}".format(id))
     sqlCommands.sql_execute_command('DELETE FROM status_table WHERE entry_id = \"{}\"'.format(id), '/opt/LPF_databases/LPF.db')

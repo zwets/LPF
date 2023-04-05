@@ -136,6 +136,7 @@ function delete_entry(id){
                      console.log('exec error: ' + error);
                 }
             });
+            showFinishedAnalyses();
        }
        else {
             console.log("Not deleting entry");
