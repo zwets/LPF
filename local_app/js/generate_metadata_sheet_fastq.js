@@ -368,11 +368,13 @@ function validateData(jsonFinal) {
       window.alert(dateError);
       errors = errors.concat("\n").concat(dateError);
    }
+   checkForExistingInput(jsonFinal.input_path);
+   /*
    if (!checkForExistingInput(jsonFinal.input_path)) {
         window.alert("Input file already " + jsonFinal.input_path + " exists and has been analyzed previously." +
             " Go to the results section to see the results and/or delete it in order to reanalyze the sample.");
         errors = errors.concat("\n").concat("Input file already exists");
-   }
+   }*/
    return errors;
 }
 

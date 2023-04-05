@@ -5,9 +5,10 @@ import src.util.md5 as md5
 
 class EmptyDataObject:
     pass
-def clean_failed_run(json):
+def clean_failed_run(input_json):
     """Clean up failed run"""
-    with open(json, 'r') as f:
+
+    with open(input_json, 'r') as f:
         data_dict = json.loads(f.read())
     data = EmptyDataObject()
     for item in data_dict:
