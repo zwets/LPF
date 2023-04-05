@@ -35,7 +35,7 @@ class BacterialParser():
         self.logger.setLevel(logging.INFO)
         self.logger.addHandler(logging.StreamHandler())
         self.logger.info("Starting analysis of {}".format(self.data.entry_id))
-        self.data.sample_name = self.derive_prefix(self)
+        self.data.sample_name = self.derive_prefix(self.data.input_path)
         self.data.bacteria_db = "/opt/LPF_databases/bacteria_db/bacteria_db"
         self.data.resfinder_db = '/opt/LPF_databases/resfinder_db/resfinder_db'
         self.data.plasmidfinder_db = '/opt/LPF_databases/plasmidfinder_db/plasmidfinder_db'
@@ -62,8 +62,8 @@ class BacterialParser():
         self.data[key] = value
         return self.data[key]
 
-    def derive_prefix(self):
-        return os.path.basename(self.data.input_path).split('.')[0]
+    def derive_prefix(input_path):
+        return os.path.basename(input_path).split('.')[0]
     def qc_check(self):
         """Very basic QC. Only checks for a minimum amount of input data for bacterial analysis"""
         fq = pyfastx.Fastq(self.data.input_path, build_index=False)
