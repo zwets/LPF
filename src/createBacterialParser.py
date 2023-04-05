@@ -35,7 +35,7 @@ class BacterialParser():
         self.logger.setLevel(logging.INFO)
         self.logger.addHandler(logging.StreamHandler())
         self.logger.info("Starting analysis of {}".format(self.data.entry_id))
-        self.data.sample_name = self.data.input_path.split("/")[-1][0:-9]
+        self.data.sample_name = self.derive_prefix(self)
         self.data.bacteria_db = "/opt/LPF_databases/bacteria_db/bacteria_db"
         self.data.resfinder_db = '/opt/LPF_databases/resfinder_db/resfinder_db'
         self.data.plasmidfinder_db = '/opt/LPF_databases/plasmidfinder_db/plasmidfinder_db'
@@ -62,6 +62,8 @@ class BacterialParser():
         self.data[key] = value
         return self.data[key]
 
+    def derive_prefix(self):
+        return os.path.basename(self.data.input_path).split('.')[0]
     def qc_check(self):
         """Very basic QC. Only checks for a minimum amount of input data for bacterial analysis"""
         fq = pyfastx.Fastq(self.data.input_path, build_index=False)
@@ -112,7 +114,7 @@ class BacterialParser():
     def get_mlst_type(self):
         """Returns the mlst results"""
         if self.data.mlst_species != None:
-            self.data.mlst_genes = kmaUtils.parse_kma_res(self.data.target_dir + "/finders/mlst/*.res")
+            self.data.mlst_genes = kmaUtils.parse_kma_res('{}/finders/mlst/{}.res'.format(self.data.target_dir, self.data.sample_name))
             self.data.mlst_type = mlst.get_mlst(self.data.mlst_species, self.data.mlst_genes)
         else:
             self.data.mlst_genes = None
