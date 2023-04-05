@@ -59,7 +59,7 @@ def bacterial_analysis_pipeline(bacterial_parser):
     bacterial_parser.logger.info("MLST species: {}".format(bacterial_parser.data.mlst_species))
 
     kmergenetyperRunner(bacterial_parser.data.input_path,
-                        '{}/{1}/{1}'.format(bacterial_parser.data.mlst_db, bacterial_parser.data.mlst_species),
+                        '{0}/{1}/{1}'.format(bacterial_parser.data.mlst_db, bacterial_parser.data.mlst_species),
                         3,
                         bacterial_parser.data.target_dir + "/finders/mlst").run()
 
