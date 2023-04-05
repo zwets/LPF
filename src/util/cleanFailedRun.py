@@ -14,4 +14,4 @@ def clean_failed_run(input_json):
     for item in data_dict:
         setattr(data, item, data_dict[item])
     data.entry_id = md5.md5_of_file(data.input_path)
-    sqlCommands.sql_update_status_table('Analysis failed', data.input_file, 'Failed, log info in /opt/LPF_logs', data.entry_id, data.sql_db)
+    sqlCommands.sql_update_status_table('Analysis failed', data.input_file, 'Failed, log info in /opt/LPF_logs', data.entry_id, '/opt/LPF_databases/LPF.db')
