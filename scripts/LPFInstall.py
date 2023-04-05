@@ -590,15 +590,28 @@ def install_databases(arguments, cwd):
                 os.system("kma index -i {}.fasta.gz -o {} -m 14".format(item, item))
 
     if arguments.mlst_db != None:
-        print('Copying MLST database')
         os.chdir('/opt/LPF_databases')
+        os.system("git clone https://bitbucket.org/genomicepidemiology/mlst_db.git")
+        os.system('chmod -R 777 /opt/LPF_databases/mlst_db')
+        os.chdir('/opt/LPF_databases/mlst_db')
+        file_list = os.listdir('/opt/LPF_databases/mlst_db')
+        for item in file_list:
+            if os.path.exists('/opt/LPF_databases/mlst_db/{}/{}.fsa'.format(item)):
+                os.chdir('/opt/LPF_databases/mlst_db/{}'.format(item))
+                os.system("kma index -i {}.fsa -o {} -m 14".format(item, item))
+                os.chdir('/opt/LPF_databases/mlst_db')
+    else:
         if not os.path.exists('/opt/LPF_databases/mlst_db'):
-            os.system(
-                "sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/mlst_db")
-    elif not os.path.exists('/opt/LPF_databases/mlst_db'):
-        os.chdir('/opt/LPF_databases')
-        os.system(
-            "sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/mlst_db")
+            os.chdir('/opt/LPF_databases')
+            os.system("git clone https://bitbucket.org/genomicepidemiology/mlst_db.git")
+            os.system('chmod -R 777 /opt/LPF_databases/mlst_db')
+            os.chdir('/opt/LPF_databases/mlst_db')
+            file_list = os.listdir('/opt/LPF_databases/mlst_db')
+            for item in file_list:
+                if os.path.exists('/opt/LPF_databases/mlst_db/{}/{}.fsa'.format(item)):
+                    os.chdir('/opt/LPF_databases/mlst_db/{}'.format(item))
+                    os.system("kma index -i {}.fsa -o {} -m 14".format(item, item))
+                    os.chdir('/opt/LPF_databases/mlst_db')
 
     os.chdir(cwd)
     os.system("cp scripts/schemes/notes.txt /opt/LPF_databases/virulencefinder_db/notes.txt")
@@ -690,8 +703,17 @@ def ci_install(user, cwd):
                 os.system("kma index -i {}.fasta.gz -o {} -m 14".format(item, item))
 
     if not os.path.exists('/opt/LPF_databases/mlst_db'):
-        os.system(
-            "sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/mlst_db")
+        os.chdir('/opt/LPF_databases')
+        os.system("git clone https://bitbucket.org/genomicepidemiology/mlst_db.git")
+        os.system('chmod -R 777 /opt/LPF_databases/mlst_db')
+        os.chdir('/opt/LPF_databases/mlst_db')
+        file_list = os.listdir('/opt/LPF_databases/mlst_db')
+        for item in file_list:
+            if os.path.exists('/opt/LPF_databases/mlst_db/{}/{}.fsa'.format(item)):
+                os.chdir('/opt/LPF_databases/mlst_db/{}'.format(item))
+                os.system("kma index -i {}.fsa -o {} -m 14".format(item, item))
+                os.chdir('/opt/LPF_databases/mlst_db')
+
 
 
     os.chdir(cwd)
