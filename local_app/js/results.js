@@ -123,12 +123,13 @@ function tableFromObj(sql_data_obj) {
 function delete_entry(id){
     const Dialogs = require('dialogs')
     const dialogs = Dialogs()
-    dialogs.prompt('Enter password to delete entry:', password => {
-    var password_string = password.toString();
+    dialogs.prompt('Write DELETE to delete the analysis entry:', result => {
+        var res = result;
        })
 
+    console.log(res);
 
-    cmd = 'python3 /opt/LPF/scripts/removeFromDatabase.py -i ' + id + ' -S ' + password_string;
+    cmd = 'python3 /opt/LPF/scripts/removeFromDatabase.py -i ' + id;
     console.log(cmd);
     exec(cmd,
     function (error, stdout, stderr) {
