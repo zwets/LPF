@@ -101,7 +101,7 @@ function tableFromObj(sql_data_obj) {
                     img.style.alignContent = "center";
                     img.id = sql_data_obj[i].entry_id;
                     img.name = sql_data_obj[i].entry_id;
-                    img.src = "/opt/LPF/local_app/images/icons8-delete-key-100.png";
+                    img.src = "/opt/LPF/local_app/images/icons8-cross-mark-button-96.png";
                     img.setAttribute('height', '17pt');
                     img.innerHTML = sql_data_obj[i].entry_id;
                     img.onclick = function() {delete_entry(this.id)};
