@@ -1,16 +1,19 @@
 ###############################################################################
 # Pipeline for bacterial analysis
 ###############################################################################
-
 import logging
 import os
 import sys
 import datetime
+
 from src.kmaRunner import KMARunner
 import src.util.ccphyloUtils as ccphyloUtils
 import src.sqlCommands as sqlCommands
 import src.pdfReport as pdfReport
 import src.util.preparePDF as preparePDF
+from src.kmergenetyperRunner import kmergenetyperRunner
+import src.util.mlst as mlst
+
 
 
 def bacterial_analysis_pipeline(bacterial_parser):
@@ -45,22 +48,24 @@ def bacterial_analysis_pipeline(bacterial_parser):
         bacterial_parser.data.virulencefinder_db,
         "-ont -md 5").run()
 
-    sqlCommands.sql_update_status_table('MLST mapping', bacterial_parser.data.sample_name, '6', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
-
-    KMARunner(bacterial_parser.data.input_path,
-        bacterial_parser.data.target_dir + "/finders/mlst_mapping",
-        bacterial_parser.data.mlst_db,
-        "-ont -md 5").run()
-
-    #1t1?
-
     bacterial_parser.get_reference_mapping_results()
 
-    #Eval reference hit
+    # Eval reference hit
     bacterial_parser.parse_finder_results()
+
+    sqlCommands.sql_update_status_table('MLST mapping', bacterial_parser.data.sample_name, '6', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
+
+    bacterial_parser.data.species, bacterial_parser.data.mlst_species = mlst.derive_mlst_species(bacterial_parser.data.reference_header_text)
+    bacterial_parser.logger.info("MLST species: {}".format(bacterial_parser.data.mlst_species))
+
+    kmergenetyperRunner(bacterial_parser.data.input_path,
+                        '{0}/{1}/{1}'.format(bacterial_parser.data.mlst_db, bacterial_parser.data.mlst_species),
+                        3,
+                        bacterial_parser.data.target_dir + "/finders/mlst").run()
+
     bacterial_parser.get_mlst_type()
 
-    if bacterial_parser.data.mlst_type != "Unknown":
+    if bacterial_parser.data.mlst_type != None:
         print ("MLST result: {}".format(bacterial_parser.data.mlst_type))
 
     if bacterial_parser.data.template_number == None: #No reference template found

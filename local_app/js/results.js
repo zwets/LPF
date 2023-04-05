@@ -1,17 +1,17 @@
 const { exec } = require('child_process');
 const fs = require('fs');
+const Dialogs = require("dialogs");
 
 var intervalId = window.setInterval(function(){
     showFinishedAnalyses();
   // call your function here
-}, 5000);
+}, 2000);
 
 function showFinishedAnalyses() {
     let sql = `SELECT * FROM status_table ORDER BY time_stamp DESC`;
     document.getElementById('showData').innerHTML="" ;
     const db = require('better-sqlite3')('/opt/LPF_databases/LPF.db');
     const sql_data_obj = db.prepare(sql).all();
-    console.log("updated");
 
     tableFromObj(sql_data_obj);
 
@@ -46,6 +46,7 @@ function tableFromObj(sql_data_obj) {
 
         col.push("PDF Report");
         col.push("Log File");
+        col.push("Delete Entry");
 
         // Create a table.
         var table = document.createElement("table");
@@ -70,6 +71,7 @@ function tableFromObj(sql_data_obj) {
                     var tabCell = tr.insertCell(-1);
                     tabCell.style.alignContent = "center";
                     var img = document.createElement('img');
+                    img.style.alignContent = "center";
                     img.id = sql_data_obj[i].entry_id;
                     img.name = sql_data_obj[i].entry_id;
                     img.src = "/opt/LPF/local_app/images/report-icon.png";
@@ -82,12 +84,26 @@ function tableFromObj(sql_data_obj) {
                     var tabCell = tr.insertCell(-1);
                     tabCell.style.alignContent = "center";
                     var img = document.createElement('img');
+                    img.style.alignContent = "center";
                     img.id = sql_data_obj[i].entry_id;
                     img.name = sql_data_obj[i].entry_id;
                     img.src = "/opt/LPF/local_app/images/log-icon.png";
                     img.setAttribute('height', '17pt');
                     img.innerHTML = sql_data_obj[i].entry_id;
                     img.onclick = function() {open_log_file(this.id)};
+                    tabCell.appendChild(img);
+                }
+                else if (col[j] == "Delete Entry") {
+                    var tabCell = tr.insertCell(-1);
+                    tabCell.style.alignContent = "center";
+                    var img = document.createElement('img');
+                    img.style.alignContent = "center";
+                    img.id = sql_data_obj[i].entry_id;
+                    img.name = sql_data_obj[i].entry_id;
+                    img.src = "/opt/LPF/local_app/images/icons8-cross-mark-button-96.png";
+                    img.setAttribute('height', '17pt');
+                    img.innerHTML = sql_data_obj[i].entry_id;
+                    img.onclick = function() {delete_entry(this.id)};
                     tabCell.appendChild(img);
                 }
                 else {
@@ -102,3 +118,27 @@ function tableFromObj(sql_data_obj) {
         // Now, add the newly created table with json data, to a container.
         divShowData.appendChild(table);
     }
+
+function delete_entry(id){
+    const Dialogs = require('dialogs')
+    const dialogs = Dialogs()
+    dialogs.prompt('Write DELETE to delete the analysis entry:', result => {
+        if (result == "DELETE") {
+            console.log("Deleting entry");
+            cmd = 'python3 /opt/LPF/scripts/removeFromDatabase.py -i ' + id;
+            console.log(cmd);
+            exec(cmd,
+            function (error, stdout, stderr) {
+                console.log('stdout: ' + stdout);
+                console.log('stderr: ' + stderr);
+                if (error !== null) {
+                     console.log('exec error: ' + error);
+                }
+            });
+       }
+       else {
+            console.log("Not deleting entry");
+       }
+       showFinishedAnalyses();
+    })
+}

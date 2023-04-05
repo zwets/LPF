@@ -285,7 +285,7 @@ def check_local_database():
     if not os.path.exists('/opt/LPF_databases/virulencefinder_db/virulencefinder_db.name'):
         print(bcolors.FAIL + "Virulencefinder database not found" + bcolors.ENDC)
         return False
-    if not os.path.exists('/opt/LPF_databases/mlst_db/mlst_db.name'):
+    if not os.path.exists('/opt/LPF_databases/mlst_db'):
         print(bcolors.FAIL + "MLST database not found" + bcolors.ENDC)
         return False
     if not os.path.exists('/opt/LPF_databases/bacteria_db/bacteria_db.name'):
@@ -500,7 +500,6 @@ def install_databases(arguments, cwd):
     #database_list = ["resfinder_db",
     #                 "plasmidfinder_db",
     #                 "virulencefinder_db",
-    #                 "mlst_db",
     #                 "bacteria_db"]
     database_list = []
     if arguments.bacteria_db != None:
@@ -579,31 +578,6 @@ def install_databases(arguments, cwd):
     else:
         database_list.append("virulencefinder_db")
 
-    if arguments.mlst_db != None:
-        print('Copying mlst database')
-        if not os.path.exists('/opt/LPF_databases/mlst_db'):
-            os.system('sudo mkdir -m 777 /opt/LPF_databases/mlst_db')
-        else:
-            os.system('sudo rm -r /opt/LPF_databases/mlst_db')
-            os.system('sudo mkdir -m 777 /opt/LPF_databases/mlst_db')
-        for item in os.listdir(arguments.mlst_db):
-            if item.endswith('.seq.b'):
-                shutil.copyfile('{}/{}'.format(arguments.mlst_db, item), '/opt/LPF_databases/mlst_db/mlst_db.seq.b'.format(item))
-            elif item.endswith('.name'):
-                shutil.copyfile('{}/{}'.format(arguments.mlst_db, item), '/opt/LPF_databases/mlst_db/mlst_db.name'.format(item))
-            elif item.endswith('.length.b'):
-                shutil.copyfile('{}/{}'.format(arguments.mlst_db, item), '/opt/LPF_databases/mlst_db/mlst_db.length.b'.format(item))
-            elif item.endswith('.comp.b'):
-                shutil.copyfile('{}/{}'.format(arguments.mlst_db, item), '/opt/LPF_databases/mlst_db/mlst_db.comp.b'.format(item))
-        if not os.path.exists('/opt/LPF_databases/{}/config'.format('mlst_db')):
-            os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/config".format('mlst_db'))
-            shutil.move('config', '/opt/LPF_databases/{}/config'.format('mlst_db'))
-        download_mlst_tables()
-    else:
-        database_list.append("mlst_db")
-
-
-
     for item in database_list:
         if not os.path.exists('/opt/LPF_databases/{}'.format(item)):
             os.system("sudo mkdir -m 777 /opt/LPF_databases/{}".format(item))
@@ -614,11 +588,30 @@ def install_databases(arguments, cwd):
                 os.system("kma index -i {}.fasta.gz -o {} -m 14 -Sparse ATG".format(item, item))
             else:
                 os.system("kma index -i {}.fasta.gz -o {} -m 14".format(item, item))
-        if item == "mlst_db":
-            os.chdir('/opt/LPF_databases/{}'.format(item))
-            if not os.path.exists('/opt/LPF_databases/{}/config'.format(item)):
-                os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/config".format(item))
-            download_mlst_tables()
+
+    if arguments.mlst_db != None:
+        os.chdir('/opt/LPF_databases')
+        os.system("git clone https://bitbucket.org/genomicepidemiology/mlst_db.git")
+        os.system('chmod -R 777 /opt/LPF_databases/mlst_db')
+        os.chdir('/opt/LPF_databases/mlst_db')
+        file_list = os.listdir('/opt/LPF_databases/mlst_db')
+        for item in file_list:
+            if os.path.exists('/opt/LPF_databases/mlst_db/{0}/{0}.fsa'.format(item)):
+                os.chdir('/opt/LPF_databases/mlst_db/{}'.format(item))
+                os.system("kma index -i {}.fsa -o {} -m 14".format(item, item))
+                os.chdir('/opt/LPF_databases/mlst_db')
+    else:
+        if not os.path.exists('/opt/LPF_databases/mlst_db'):
+            os.chdir('/opt/LPF_databases')
+            os.system("git clone https://bitbucket.org/genomicepidemiology/mlst_db.git")
+            os.system('chmod -R 777 /opt/LPF_databases/mlst_db')
+            os.chdir('/opt/LPF_databases/mlst_db')
+            file_list = os.listdir('/opt/LPF_databases/mlst_db')
+            for item in file_list:
+                if os.path.exists('/opt/LPF_databases/mlst_db/{0}/{0}.fsa'.format(item)):
+                    os.chdir('/opt/LPF_databases/mlst_db/{}'.format(item))
+                    os.system("kma index -i {}.fsa -o {} -m 14".format(item, item))
+                    os.chdir('/opt/LPF_databases/mlst_db')
 
     os.chdir(cwd)
     os.system("cp scripts/schemes/notes.txt /opt/LPF_databases/virulencefinder_db/notes.txt")
@@ -629,20 +622,6 @@ def install_databases(arguments, cwd):
     elif os.path.getsize('/opt/LPF_databases/LPF.db') == 0:
         create_sql_db()
     insert_bacterial_references_into_sql()
-
-def download_mlst_tables():
-    """Downloads the MLST tables"""
-    species_list = []
-    if not os.path.exists('/opt/LPF_databases/mlst_db/mlst_tables/'):
-        os.system('sudo mkdir -m 777 /opt/LPF_databases/mlst_db/mlst_tables/')
-        os.chdir('/opt/LPF_databases/mlst_db/mlst_tables/')
-        with open('/opt/LPF_databases/mlst_db/config') as fd:
-            for line in fd:
-                if line.startswith('#'):
-                    continue
-                species_list.append(line.split('\t')[0])
-        for species in species_list:
-            os.system("sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/mlst_db/mlst_tables/{}.tsv".format(species))
 
 def check_local_software():
     kma_result = check_kma()
@@ -707,7 +686,6 @@ def ci_install(user, cwd):
     database_list = ["resfinder_db",
                      "plasmidfinder_db",
                      "virulencefinder_db",
-                     "mlst_db",
                      "bacteria_db"]
 
     for item in database_list:
@@ -723,12 +701,20 @@ def ci_install(user, cwd):
                     "sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/export/{0}.fasta.gz".format(
                         item))
                 os.system("kma index -i {}.fasta.gz -o {} -m 14".format(item, item))
-        if item == "mlst_db":
-            os.chdir('/opt/LPF_databases/{}'.format(item))
-            if not os.path.exists('/opt/LPF_databases/{}/config'.format(item)):
-                os.system(
-                    "sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/{0}/config".format(item))
-            download_mlst_tables()
+
+    if not os.path.exists('/opt/LPF_databases/mlst_db'):
+        os.chdir('/opt/LPF_databases')
+        os.system("git clone https://bitbucket.org/genomicepidemiology/mlst_db.git")
+        os.system('chmod -R 777 /opt/LPF_databases/mlst_db')
+        os.chdir('/opt/LPF_databases/mlst_db')
+        file_list = os.listdir('/opt/LPF_databases/mlst_db')
+        for item in file_list:
+            if os.path.exists('/opt/LPF_databases/mlst_db/{0}/{0}.fsa'.format(item)):
+                os.chdir('/opt/LPF_databases/mlst_db/{}'.format(item))
+                os.system("kma index -i {}.fsa -o {} -m 14".format(item, item))
+                os.chdir('/opt/LPF_databases/mlst_db')
+
+
 
     os.chdir(cwd)
     os.system("cp scripts/schemes/notes.txt /opt/LPF_databases/virulencefinder_db/notes.txt")

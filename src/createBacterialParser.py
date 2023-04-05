@@ -35,12 +35,12 @@ class BacterialParser():
         self.logger.setLevel(logging.INFO)
         self.logger.addHandler(logging.StreamHandler())
         self.logger.info("Starting analysis of {}".format(self.data.entry_id))
-        self.data.sample_name = self.data.input_path.split("/")[-1][0:-9]
+        self.data.sample_name = os.path.basename(self.data.input_path).split('.')[0]
         self.data.bacteria_db = "/opt/LPF_databases/bacteria_db/bacteria_db"
         self.data.resfinder_db = '/opt/LPF_databases/resfinder_db/resfinder_db'
         self.data.plasmidfinder_db = '/opt/LPF_databases/plasmidfinder_db/plasmidfinder_db'
         self.data.virulencefinder_db = '/opt/LPF_databases/virulencefinder_db/virulencefinder_db'
-        self.data.mlst_db = '/opt/LPF_databases/mlst_db/mlst_db'
+        self.data.mlst_db = '/opt/LPF_databases/mlst_db'
         self.data.sql_db = '/opt/LPF_databases/LPF.db'
         self.data.target_dir = "/opt/LPF_analyses/{}".format(self.data.entry_id)
         self.data.version = __version__
@@ -61,7 +61,6 @@ class BacterialParser():
     def __setitem__(self, key, value):
         self.data[key] = value
         return self.data[key]
-
     def qc_check(self):
         """Very basic QC. Only checks for a minimum amount of input data for bacterial analysis"""
         fq = pyfastx.Fastq(self.data.input_path, build_index=False)
@@ -80,7 +79,6 @@ class BacterialParser():
         if not os.path.exists(self.data.target_dir):
             os.makedirs(self.data.target_dir)
             os.makedirs(self.data.target_dir + "/finders")
-            os.makedirs(self.data.target_dir + "/finders_1t1/")
         else:
             self.logger.info("Target directory already exists. Sample has been analysed before. Exiting.")
             #Consider not existing but just rerunning the analysis
@@ -112,8 +110,12 @@ class BacterialParser():
 
     def get_mlst_type(self):
         """Returns the mlst results"""
-        self.data.species, self.data.mlst_species = mlst.derive_mlst_species(self.data.reference_header_text)
-        self.data.mlst_type = mlst.determine_mlst(self)
+        if self.data.mlst_species != None:
+            self.data.mlst_genes = kmaUtils.parse_kma_res('{}/finders/mlst/{}.res'.format(self.data.target_dir, self.data.sample_name))
+            self.data.mlst_type = mlst.get_mlst(self.data.mlst_species, self.data.mlst_genes)
+        else:
+            self.data.mlst_genes = None
+            self.data.mlst_type = None
 
     def parse_finder_results(self):
         """Parses the results from the finders"""
