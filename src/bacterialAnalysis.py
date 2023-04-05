@@ -1,11 +1,11 @@
 ###############################################################################
 # Pipeline for bacterial analysis
 ###############################################################################
-
 import logging
 import os
 import sys
 import datetime
+
 from src.kmaRunner import KMARunner
 import src.util.ccphyloUtils as ccphyloUtils
 import src.sqlCommands as sqlCommands
