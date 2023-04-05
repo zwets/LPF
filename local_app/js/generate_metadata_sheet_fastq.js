@@ -319,6 +319,8 @@ function generate_table_fastq(file_number) {
     return table
 }
 
+
+
 //code to check numerical in input field (patient_age)
 function allNumeric(inputText, propertyName, errors) {
    if (inputText != "") {
@@ -366,7 +368,27 @@ function validateData(jsonFinal) {
       window.alert(dateError);
       errors = errors.concat("\n").concat(dateError);
    }
+   if (!checkForExistingInput(jsonFinal.input_path)) {
+        window.alert("Input file already " + jsonFinal.input_path + " exists and has been analyzed previously." +
+            " Go to the results section to see the results and/or delete it in order to reanalyze the sample.");
+        errors = errors.concat("\n").concat("Input file already exists");
+   }
    return errors;
 }
 
 exports.validateData = validateData
+
+function checkForExistingInput(input) {
+    console.log("Checking for existing input: " + input);
+    fetch(input)
+      .then(response => response.text())
+      .then((data) => {
+          var md5Hash = CryptoJS.MD5(input);
+          console.log(md5Hash.toString());
+      })
+        .catch((error) => {
+            console.error('Error:', error);
+        }
+    );
+    return true;
+}

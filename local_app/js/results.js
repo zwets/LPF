@@ -12,7 +12,6 @@ function showFinishedAnalyses() {
     document.getElementById('showData').innerHTML="" ;
     const db = require('better-sqlite3')('/opt/LPF_databases/LPF.db');
     const sql_data_obj = db.prepare(sql).all();
-    console.log("updated");
 
     tableFromObj(sql_data_obj);
 
