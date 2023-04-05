@@ -124,9 +124,10 @@ function delete_entry(id){
     const Dialogs = require('dialogs')
     const dialogs = Dialogs()
     dialogs.prompt('Write DELETE to delete the analysis entry:', result => {
+        console.log(result);
         var res = result;
        })
-
+    console.log(result);
     console.log(res);
 
     cmd = 'python3 /opt/LPF/scripts/removeFromDatabase.py -i ' + id;
