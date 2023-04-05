@@ -591,9 +591,14 @@ def install_databases(arguments, cwd):
 
     if args.mlst_db != None:
         print('Copying MLST database')
+        os.chdir('/opt/LPF_databases')
         if not os.path.exists('/opt/LPF_databases/mlst_db'):
             os.system(
                 "sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/mlst_db")
+    elif not os.path.exists('/opt/LPF_databases/mlst_db'):
+        os.chdir('/opt/LPF_databases')
+        os.system(
+            "sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/mlst_db")
 
     os.chdir(cwd)
     os.system("cp scripts/schemes/notes.txt /opt/LPF_databases/virulencefinder_db/notes.txt")
@@ -668,7 +673,6 @@ def ci_install(user, cwd):
     database_list = ["resfinder_db",
                      "plasmidfinder_db",
                      "virulencefinder_db",
-                     "mlst_db",
                      "bacteria_db"]
 
     for item in database_list:
