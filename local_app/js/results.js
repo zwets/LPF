@@ -46,6 +46,7 @@ function tableFromObj(sql_data_obj) {
 
         col.push("PDF Report");
         col.push("Log File");
+        col.push("Delete Entry");
 
         // Create a table.
         var table = document.createElement("table");
@@ -88,6 +89,19 @@ function tableFromObj(sql_data_obj) {
                     img.setAttribute('height', '17pt');
                     img.innerHTML = sql_data_obj[i].entry_id;
                     img.onclick = function() {open_log_file(this.id)};
+                    tabCell.appendChild(img);
+                }
+                else if (col[j] == "Delete Entry") {
+                    var tabCell = tr.insertCell(-1);
+                    tabCell.style.alignContent = "center";
+                    var img = document.createElement('img');
+                    img.id = sql_data_obj[i].entry_id;
+                    img.name = sql_data_obj[i].entry_id;
+                    img.src = "/opt/LPF/local_app/images/icons8-delete-key-100.png";
+                    img.setAttribute('height', '17pt');
+                    img.innerHTML = sql_data_obj[i].entry_id;
+                    img.onclikc = function() {console.log("delete")};
+                    //img.onclick = function() {delete_entry(this.id)};
                     tabCell.appendChild(img);
                 }
                 else {
