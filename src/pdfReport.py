@@ -162,7 +162,7 @@ def compile_alignment_report(bacterial_parser):
     textstring = "AMR genes in this sample: {}. \n" \
                  "Plasmids in this sample: {}. \n" \
                  "Virulence genes in this sample: {}. \n" \
-                 "MLST: ST{}. \n" \
+                 "MLST: ST {}. \n" \
                  "".format(len(bacterial_parser.data.resfinder_hits), len(bacterial_parser.data.plasmid_hits), len(bacterial_parser.data.virulence_hits), bacterial_parser.data.mlst_type)
     pdf.set_text_color(0, 0, 0)
     pdf.set_font('Arial', '', 10)

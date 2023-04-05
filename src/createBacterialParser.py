@@ -40,7 +40,7 @@ class BacterialParser():
         self.data.resfinder_db = '/opt/LPF_databases/resfinder_db/resfinder_db'
         self.data.plasmidfinder_db = '/opt/LPF_databases/plasmidfinder_db/plasmidfinder_db'
         self.data.virulencefinder_db = '/opt/LPF_databases/virulencefinder_db/virulencefinder_db'
-        self.data.mlst_db = '/opt/LPF_databases/mlst_db/mlst_db'
+        self.data.mlst_db = '/opt/LPF_databases/mlst_db'
         self.data.sql_db = '/opt/LPF_databases/LPF.db'
         self.data.target_dir = "/opt/LPF_analyses/{}".format(self.data.entry_id)
         self.data.version = __version__
@@ -112,8 +112,12 @@ class BacterialParser():
 
     def get_mlst_type(self):
         """Returns the mlst results"""
-        self.data.species, self.data.mlst_species = mlst.derive_mlst_species(self.data.reference_header_text)
-        self.data.mlst_type = mlst.determine_mlst(self)
+        if self.data.mlst_species != None:
+            self.data.mlst_genes = kmaUtils.parse_kma_res(self.data.target_dir + "/mlst/*.res")
+            self.data.mlst_type = mlst.get_mlst(self.data.mlst_species, self.data.mlst_genes)
+        else:
+            self.data.mlst_genes = None
+            self.data.mlst_type = None
 
     def parse_finder_results(self):
         """Parses the results from the finders"""
