@@ -589,7 +589,7 @@ def install_databases(arguments, cwd):
             else:
                 os.system("kma index -i {}.fasta.gz -o {} -m 14".format(item, item))
 
-    if args.mlst_db != None:
+    if arguments.mlst_db != None:
         print('Copying MLST database')
         os.chdir('/opt/LPF_databases')
         if not os.path.exists('/opt/LPF_databases/mlst_db'):
