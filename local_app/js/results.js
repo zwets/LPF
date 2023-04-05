@@ -1,5 +1,6 @@
 const { exec } = require('child_process');
 const fs = require('fs');
+const Dialogs = require("dialogs");
 
 var intervalId = window.setInterval(function(){
     showFinishedAnalyses();
@@ -120,7 +121,14 @@ function tableFromObj(sql_data_obj) {
     }
 
 function delete_entry(id){
-    cmd = 'python3 /opt/LPF/scripts/removeFromDatabase.py -i ' + id;
+    const Dialogs = require('dialogs')
+    const dialogs = Dialogs()
+    dialogs.prompt('Enter password to delete entry:', password => {
+    var password_string = password.toString();
+       })
+
+
+    cmd = 'python3 /opt/LPF/scripts/removeFromDatabase.py -i ' + id + ' -S ' + password_string;
     console.log(cmd);
     exec(cmd,
     function (error, stdout, stderr) {
