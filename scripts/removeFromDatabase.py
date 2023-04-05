@@ -15,8 +15,8 @@ args = parser.parse_args()
 def main(arguments):
     clean_up(arguments.id, arguments.password)
 def clean_up(id, password):
-    os.system("sudo rm -rf -S {} /opt/LPF_logs/{}.log".format(password, id))
-    os.system("sudo rm -rf -S {} /opt/LPF_analyses/{}".format(password, id))
+    os.system("sudo -S {} rm -rf /opt/LPF_logs/{}.log".format(password, id))
+    os.system("sudo -S {} rm -rf /opt/LPF_analyses/{}".format(password, id))
     sqlCommands.sql_execute_command('DELETE FROM status_table WHERE entry_id = \"{}\"'.format(id), '/opt/LPF_databases/LPF.db')
     sqlCommands.sql_execute_command('DELETE FROM meta_data_table WHERE entry_id = \"{}\"'.format(id), '/opt/LPF_databases/LPF.db')
     sqlCommands.sql_execute_command('DELETE FROM sample_table WHERE entry_id = \"{}\"'.format(id), '/opt/LPF_databases/LPF.db')
