@@ -596,7 +596,7 @@ def install_databases(arguments, cwd):
         os.chdir('/opt/LPF_databases/mlst_db')
         file_list = os.listdir('/opt/LPF_databases/mlst_db')
         for item in file_list:
-            if os.path.exists('/opt/LPF_databases/mlst_db/{}/{}.fsa'.format(item)):
+            if os.path.exists('/opt/LPF_databases/mlst_db/{0}/{0}.fsa'.format(item)):
                 os.chdir('/opt/LPF_databases/mlst_db/{}'.format(item))
                 os.system("kma index -i {}.fsa -o {} -m 14".format(item, item))
                 os.chdir('/opt/LPF_databases/mlst_db')
@@ -608,7 +608,7 @@ def install_databases(arguments, cwd):
             os.chdir('/opt/LPF_databases/mlst_db')
             file_list = os.listdir('/opt/LPF_databases/mlst_db')
             for item in file_list:
-                if os.path.exists('/opt/LPF_databases/mlst_db/{}/{}.fsa'.format(item)):
+                if os.path.exists('/opt/LPF_databases/mlst_db/{0}/{0}.fsa'.format(item)):
                     os.chdir('/opt/LPF_databases/mlst_db/{}'.format(item))
                     os.system("kma index -i {}.fsa -o {} -m 14".format(item, item))
                     os.chdir('/opt/LPF_databases/mlst_db')
@@ -709,7 +709,7 @@ def ci_install(user, cwd):
         os.chdir('/opt/LPF_databases/mlst_db')
         file_list = os.listdir('/opt/LPF_databases/mlst_db')
         for item in file_list:
-            if os.path.exists('/opt/LPF_databases/mlst_db/{}/{}.fsa'.format(item)):
+            if os.path.exists('/opt/LPF_databases/mlst_db/{0}/{0}.fsa'.format(item)):
                 os.chdir('/opt/LPF_databases/mlst_db/{}'.format(item))
                 os.system("kma index -i {}.fsa -o {} -m 14".format(item, item))
                 os.chdir('/opt/LPF_databases/mlst_db')
