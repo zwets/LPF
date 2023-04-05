@@ -20,8 +20,7 @@ import src.util.md5 as md5
 from src.util.cleanFailedRun import clean_failed_run
 #from scripts.validateDatabases import ValidateDatabases
 
-
-
+sys.path = [os.path.join(os.path.dirname(os.path.realpath(__file__)),'..')] + sys.path
 def main(arguments):
     """Main function"""
     try:
