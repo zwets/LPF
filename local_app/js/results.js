@@ -120,7 +120,9 @@ function tableFromObj(sql_data_obj) {
     }
 
 function delete_entry(id){
-    exec('/opt/LPF/scripts/removeFromdatabase.py -i ' + id + '
+    cmd = 'python3 /opt/LPF/scripts/removeFromdatabase.py -i ' + id;
+    console.log(cmd);
+    exec(cmd,
     function (error, stdout, stderr) {
         console.log('stdout: ' + stdout);
         console.log('stderr: ' + stderr);
