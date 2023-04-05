@@ -195,6 +195,7 @@ setuptool*
 /local_app/npm-debug.log*
 /local_app/yarn-debug.log*
 /local_app/yarn-error.log*
+/local_app/yarn.lock
 /local_app/node_modules*
 /local_app/node_modules*
 /local_app/.idea*
