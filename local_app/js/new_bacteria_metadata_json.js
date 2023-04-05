@@ -95,7 +95,7 @@ function create_meta_data_table_fastq(){
         if (errorMessage == "") {
             if (fs.existsSync(output_json_file)) {
               // path exists
-              alert("A file with this name already exists, please choose another one than: ", output_json_file);
+              alert("A input json file with this name already exists, please choose another one than: ", output_json_file);
             } else {
                 fs.writeFile(output_json_file, JSON.stringify(final_obj), err => {
                       if (err) {

@@ -30,7 +30,7 @@ def get_mlst(species, genes):
         mlst_flag = False
 
     if mlst_flag:
-        with open("/opt/LPF_databases/mlst_db/mlst_tables/{}.tsv".format(species), 'r') as infile:
+        with open("/opt/LPF_databases/mlst_db/{0}/{0}.tsv".format(species), 'r') as infile:
             for line in infile:
                 if line.startswith("ST"):
                     line = line.rstrip().split("\t")
