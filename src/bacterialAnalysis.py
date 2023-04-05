@@ -51,11 +51,12 @@ def bacterial_analysis_pipeline(bacterial_parser):
     sqlCommands.sql_update_status_table('MLST mapping', bacterial_parser.data.sample_name, '6', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
 
     bacterial_parser.data.species, bacterial_parser.data.mlst_species = mlst.derive_mlst_species(bacterial_parser.data.reference_header_text)
+    bacterial_parser.logger.info("MLST species: {}".format(bacterial_parser.data.mlst_species))
 
     kmergenetyperRunner(bacterial_parser.data.input_path,
                         '{}/{1}/{1}'.format(bacterial_parser.data.mlst_db, bacterial_parser.data.mlst_species),
                         3,
-                        bacterial_parser.data.target_dir + "/mlst").run()
+                        bacterial_parser.data.target_dir + "/finders/mlst").run()
 
     bacterial_parser.get_reference_mapping_results()
 

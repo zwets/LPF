@@ -80,7 +80,6 @@ class BacterialParser():
         if not os.path.exists(self.data.target_dir):
             os.makedirs(self.data.target_dir)
             os.makedirs(self.data.target_dir + "/finders")
-            os.makedirs(self.data.target_dir + "/finders_1t1/")
         else:
             self.logger.info("Target directory already exists. Sample has been analysed before. Exiting.")
             #Consider not existing but just rerunning the analysis
@@ -113,7 +112,7 @@ class BacterialParser():
     def get_mlst_type(self):
         """Returns the mlst results"""
         if self.data.mlst_species != None:
-            self.data.mlst_genes = kmaUtils.parse_kma_res(self.data.target_dir + "/mlst/*.res")
+            self.data.mlst_genes = kmaUtils.parse_kma_res(self.data.target_dir + "/finders/mlst/*.res")
             self.data.mlst_type = mlst.get_mlst(self.data.mlst_species, self.data.mlst_genes)
         else:
             self.data.mlst_genes = None
