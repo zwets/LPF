@@ -48,6 +48,11 @@ def bacterial_analysis_pipeline(bacterial_parser):
         bacterial_parser.data.virulencefinder_db,
         "-ont -md 5").run()
 
+    bacterial_parser.get_reference_mapping_results()
+
+    # Eval reference hit
+    bacterial_parser.parse_finder_results()
+
     sqlCommands.sql_update_status_table('MLST mapping', bacterial_parser.data.sample_name, '6', bacterial_parser.data.entry_id, bacterial_parser.data.sql_db)
 
     bacterial_parser.data.species, bacterial_parser.data.mlst_species = mlst.derive_mlst_species(bacterial_parser.data.reference_header_text)
@@ -58,10 +63,6 @@ def bacterial_analysis_pipeline(bacterial_parser):
                         3,
                         bacterial_parser.data.target_dir + "/finders/mlst").run()
 
-    bacterial_parser.get_reference_mapping_results()
-
-    #Eval reference hit
-    bacterial_parser.parse_finder_results()
     bacterial_parser.get_mlst_type()
 
     if bacterial_parser.data.mlst_type != None:
