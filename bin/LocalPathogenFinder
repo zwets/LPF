@@ -10,6 +10,8 @@ import json
 import os
 import sys
 
+sys.path = [os.path.join(os.path.dirname(os.path.realpath(__file__)),'..')] + sys.path
+
 from src.loggingHandlers import begin_logging
 from scripts.version import __version__
 from src.createBacterialParser import BacterialParser
@@ -20,7 +22,6 @@ import src.util.md5 as md5
 from src.util.cleanFailedRun import clean_failed_run
 #from scripts.validateDatabases import ValidateDatabases
 
-sys.path = [os.path.join(os.path.dirname(os.path.realpath(__file__)),'..')] + sys.path
 def main(arguments):
     """Main function"""
     try:

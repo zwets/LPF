@@ -1,7 +1,9 @@
 import os
-import src.sqlCommands as sqlCommands
 
 sys.path = [os.path.join(os.path.dirname(os.path.realpath(__file__)),'..')] + sys.path
+
+import src.sqlCommands as sqlCommands
+
 
 def clean_up(md5_list):
     for item in md5_list:
