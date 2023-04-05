@@ -1,5 +1,8 @@
 import os
 import src.sqlCommands as sqlCommands
+
+sys.path = [os.path.join(os.path.dirname(os.path.realpath(__file__)),'..')] + sys.path
+
 def clean_up(md5_list):
     for item in md5_list:
         os.system("sudo rm -rf /opt/LPF_logs/{}.log".format(item))
