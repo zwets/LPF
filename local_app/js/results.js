@@ -140,4 +140,5 @@ function delete_entry(id){
        else {
             console.log("Not deleting entry");
        }
+    })
 }
