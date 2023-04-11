@@ -181,7 +181,6 @@ cython_debug/
 /.pytest_cache
 # production
 /local_app/build
-/local_app/dist
 
 ez_setup.py
 setuptool*
@@ -202,6 +201,8 @@ setuptool*
 /local_app/.idea
 /local_app/js/coverage
 
+
+package-lock.json
 
 
 /.idea
