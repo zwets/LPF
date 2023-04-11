@@ -19,7 +19,7 @@ jobs:
           pip install -r requirements.txt
       - name: Run install script
         run: |
-          ./LocalPathogenFinder install -ci
+          bin/LocalPathogenFinder install -ci
       - name: LPF init
         run: |
           python3 /opt/LPF/quick_test.py
