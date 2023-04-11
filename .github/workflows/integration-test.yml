@@ -22,7 +22,7 @@ jobs:
           bin/LocalPathogenFinder install -ci
       - name: LPF init
         run: |
-          python3 /opt/LPF/quick_test.py
+          python3 /opt/LPF/bin/quick_test.py
       - name: Nosetests
         run: |
            nose2 -s tests/integration --verbosity 2
