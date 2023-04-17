@@ -578,24 +578,24 @@ def install_databases(arguments, cwd):
     else:
         database_list.append("virulencefinder_db")
 
-    if arguments.ccd_db != None:
+    if arguments.cdd_cb != None:
         print('Copying ccd database')
-        if not os.path.exists('/opt/LPF_databases/ccd_db'):
-            os.system('sudo mkdir -m 777 /opt/LPF_databases/ccd_db')
+        if not os.path.exists('/opt/LPF_databases/cdd_cb'):
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/cdd_cb')
         else:
-            os.system('sudo rm -r /opt/LPF_databases/ccd_db')
-            os.system('sudo mkdir -m 777 /opt/LPF_databases/ccd_db')
-        for item in os.listdir(arguments.ccd_db):
+            os.system('sudo rm -r /opt/LPF_databases/cdd_cb')
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/cdd_cb')
+        for item in os.listdir(arguments.cdd_cb):
             if item.endswith('.seq.b'):
-                shutil.copyfile('{}/{}'.format(arguments.ccd_db, item), '/opt/LPF_databases/ccd_db/ccd_db.seq.b'.format(item))
+                shutil.copyfile('{}/{}'.format(arguments.cdd_cb, item), '/opt/LPF_databases/cdd_cb/cdd_cb.seq.b'.format(item))
             elif item.endswith('.name'):
-                shutil.copyfile('{}/{}'.format(arguments.ccd_db, item), '/opt/LPF_databases/ccd_db/ccd_db.name'.format(item))
+                shutil.copyfile('{}/{}'.format(arguments.cdd_cb, item), '/opt/LPF_databases/cdd_cb/cdd_cb.name'.format(item))
             elif item.endswith('.length.b'):
-                shutil.copyfile('{}/{}'.format(arguments.ccd_db, item), '/opt/LPF_databases/ccd_db/ccd_db.length.b'.format(item))
+                shutil.copyfile('{}/{}'.format(arguments.cdd_cb, item), '/opt/LPF_databases/cdd_cb/cdd_cb.length.b'.format(item))
             elif item.endswith('.comp.b'):
-                shutil.copyfile('{}/{}'.format(arguments.ccd_db, item), '/opt/LPF_databases/ccd_db/ccd_db.comp.b'.format(item))
+                shutil.copyfile('{}/{}'.format(arguments.cdd_cb, item), '/opt/LPF_databases/cdd_cb/cdd_cb.comp.b'.format(item))
     else:
-        database_list.append("ccd_db")
+        database_list.append("cdd_cb")
 
     if arguments.viral_db != None:
         print('Copying viral database')
