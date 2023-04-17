@@ -339,7 +339,7 @@ def compile_virus_report(virus_parser):
     pdf.ln(20)
 
     with pdf.table() as table:
-        for data_row in virus_parser.prokka_tsv_list:
+        for data_row in virus_parser.data.prokka_tsv_list:
             row = table.row()
             for datum in data_row:
                 row.cell(datum)
