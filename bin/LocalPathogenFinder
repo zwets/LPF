@@ -77,6 +77,8 @@ if __name__ == '__main__':
     install_parser.add_argument('-virulencefinder_db', action="store", dest="virulencefinder_db", help="Path to existing virulence database stored locally.")
     install_parser.add_argument('-resfinder_db', action="store", dest="resfinder_db", help="Path to existing resfinder database stored locally.")
     install_parser.add_argument('-plasmidfinder_db', action="store", dest="plasmidfinder_db", help="Path to existing plasmidfinder database stored locally.")
+    install_parser.add_argument('-cdd_db', action="store", dest="cdd_db", help="Path to existing cdd database stored locally.")
+    install_parser.add_argument('-viral_db', action="store", dest="viral_db", help="Path to existing viral database stored locally.")
     install_parser.add_argument('-app', action="store_true", default=False, dest="app", help="Rebuild application.")
     install_parser.add_argument('-check_deps', action="store_true", default=False, dest="check_deps", help="Dependency check.")
     install_parser.add_argument('-ci', action="store_true", default=False, dest="ci", help="install for CI tests - DO NOT USE.")

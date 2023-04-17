@@ -578,6 +578,44 @@ def install_databases(arguments, cwd):
     else:
         database_list.append("virulencefinder_db")
 
+    if arguments.ccd_db != None:
+        print('Copying ccd database')
+        if not os.path.exists('/opt/LPF_databases/ccd_db'):
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/ccd_db')
+        else:
+            os.system('sudo rm -r /opt/LPF_databases/ccd_db')
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/ccd_db')
+        for item in os.listdir(arguments.ccd_db):
+            if item.endswith('.seq.b'):
+                shutil.copyfile('{}/{}'.format(arguments.ccd_db, item), '/opt/LPF_databases/ccd_db/ccd_db.seq.b'.format(item))
+            elif item.endswith('.name'):
+                shutil.copyfile('{}/{}'.format(arguments.ccd_db, item), '/opt/LPF_databases/ccd_db/ccd_db.name'.format(item))
+            elif item.endswith('.length.b'):
+                shutil.copyfile('{}/{}'.format(arguments.ccd_db, item), '/opt/LPF_databases/ccd_db/ccd_db.length.b'.format(item))
+            elif item.endswith('.comp.b'):
+                shutil.copyfile('{}/{}'.format(arguments.ccd_db, item), '/opt/LPF_databases/ccd_db/ccd_db.comp.b'.format(item))
+    else:
+        database_list.append("ccd_db")
+
+    if arguments.viral_db != None:
+        print('Copying viral database')
+        if not os.path.exists('/opt/LPF_databases/viral_db'):
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/viral_db')
+        else:
+            os.system('sudo rm -r /opt/LPF_databases/viral_db')
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/viral_db')
+        for item in os.listdir(arguments.viral_db):
+            if item.endswith('.seq.b'):
+                shutil.copyfile('{}/{}'.format(arguments.viral_db, item), '/opt/LPF_databases/viral_db/viral_db.seq.b'.format(item))
+            elif item.endswith('.name'):
+                shutil.copyfile('{}/{}'.format(arguments.viral_db, item), '/opt/LPF_databases/viral_db/viral_db.name'.format(item))
+            elif item.endswith('.length.b'):
+                shutil.copyfile('{}/{}'.format(arguments.viral_db, item), '/opt/LPF_databases/viral_db/viral_db.length.b'.format(item))
+            elif item.endswith('.comp.b'):
+                shutil.copyfile('{}/{}'.format(arguments.viral_db, item), '/opt/LPF_databases/viral_db/viral_db.comp.b'.format(item))
+    else:
+        database_list.append("viral_db")
+
     for item in database_list:
         if not os.path.exists('/opt/LPF_databases/{}'.format(item)):
             os.system("sudo mkdir -m 777 /opt/LPF_databases/{}".format(item))
@@ -616,6 +654,8 @@ def install_databases(arguments, cwd):
     os.chdir(cwd)
     os.system("cp scripts/schemes/notes.txt /opt/LPF_databases/virulencefinder_db/notes.txt")
     os.system("cp scripts/schemes/phenotypes.txt /opt/LPF_databases/resfinder_db/phenotypes.txt")
+    if not os.exists('/opt/LPF_databases/cdd_db/cddid_all.tbl'):
+        os.system('sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/cdd_db/export/cddid_all.tbl -O /opt/LPF_databases/cdd_db/cddid_all.tbl')
 
     if not os.path.exists('/opt/LPF_databases/LPF.db'):
         create_sql_db()
@@ -686,7 +726,9 @@ def ci_install(user, cwd):
     database_list = ["resfinder_db",
                      "plasmidfinder_db",
                      "virulencefinder_db",
-                     "bacteria_db"]
+                     "bacteria_db",
+                     "cdd_db",
+                     "viral_db"]
 
     for item in database_list:
         if not os.path.exists('/opt/LPF_databases/{}'.format(item)):
@@ -719,6 +761,8 @@ def ci_install(user, cwd):
     os.chdir(cwd)
     os.system("cp scripts/schemes/notes.txt /opt/LPF_databases/virulencefinder_db/notes.txt")
     os.system("cp scripts/schemes/phenotypes.txt /opt/LPF_databases/resfinder_db/phenotypes.txt")
+    if not os.exists('/opt/LPF_databases/cdd_db/cddid_all.tbl'):
+        os.system('sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/cdd_db/export/cddid_all.tbl -O /opt/LPF_databases/cdd_db/cddid_all.tbl')
     if not os.path.exists('/opt/LPF_databases/LPF.db'):
         create_sql_db()
     elif os.path.getsize('/opt/LPF_databases/LPF.db') == 0:
