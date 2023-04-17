@@ -40,17 +40,6 @@ def parse_kma_res_to_list_of_lists(filename):
     return item_list
 
 
-
-    infile = open(filename, 'r')
-    for line in infile:
-        line = line.rstrip(=
-        if line[0] != "#":
-            inner_list = list()
-            line = line.split('\t')
-            item_list.append(line[0])
-    return item_list
-
-
 def get_reference_mapping_results(file, database):
     """Returns the mapping results from the reference mapping"""
     if os.path.exists(file):
