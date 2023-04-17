@@ -39,5 +39,5 @@ def get_reference_mapping_results(file, database):
                 if float(item[1]) > template_score:
                     template_score = float(item[1])
                     reference_header_text = item[0]
-        template_number = kmaUtils.findTemplateNumber(reference_header_text, database)
+        template_number = findTemplateNumber(reference_header_text, database)
         return template_number, template_score, reference_header_text
