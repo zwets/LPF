@@ -338,9 +338,8 @@ def compile_virus_report(virus_parser):
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     pdf.ln(20)
 
-    df = pd.read_csv(virus_parser.data.prokka_tsv, sep='\t')
     with pdf.table() as table:
-        for data_row in df.values:
+        for data_row in virus_parser.prokka_tsv_list:
             row = table.row()
             for datum in data_row:
                 row.cell(datum)

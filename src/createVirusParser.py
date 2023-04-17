@@ -94,7 +94,11 @@ class VirusParser():
             pass
         if os.path.exists(self.data.target_dir + '/prokka_output/prokka_results.tsv'):
             if not os.stat(self.data.target_dir + '/prokka_output/prokka_results.tsv').st_size == 0:
-                self.data.prokka_tsv = self.data.target_dir + '/prokka_output/prokka_results.tsv'
+                prokka_tsv_list = []
+                with open(self.data.target_dir + '/prokka_output/prokka_results.tsv', 'r') as f:
+                    for line in f:
+                        prokka_tsv_list.append(line.strip().split('\t'))
+                self.data.prokka_tsv_list = prokka_tsv_list
 
 
 
