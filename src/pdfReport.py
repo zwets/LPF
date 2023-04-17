@@ -368,7 +368,7 @@ def compile_virus_report(virus_parser):
     else:
         pdf.set_font('Arial', '', 16)
         pdf.ln(10)
-        pdf.cell(85, 5, "No conserved domain annotations were found", 0, 1, 'L')
+        pdf.cell(85, 5, "No conserved domain annotations were found.", 0, 1, 'L')
         pdf.set_font('Arial', '', 12)
 
 

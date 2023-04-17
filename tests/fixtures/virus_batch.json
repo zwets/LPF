@@ -11,7 +11,20 @@
   "patient_age": "",
   "type_of_infection": "",
   "experimental_condition": "",
-  "analysis_type": "virus"}]
+  "analysis_type": "virus"},
+  {"input_file": "hiv.fastq.gz",
+    "input_path": "/opt/LPF/tests/fixtures/read_files/hiv.fastq.gz",
+    "sequencing_method": "nanopore minion",
+    "isolation_source": "isolate",
+    "investigation_type": "type1",
+    "collection_date": "1999-01-19",
+    "city": "Copenhagen",
+    "country": "Denmark",
+    "patient_gender": "",
+    "patient_age": "",
+    "type_of_infection": "",
+    "experimental_condition": "",
+    "analysis_type": "virus"}]
 }
 
 

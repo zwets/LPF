@@ -25,7 +25,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
 
-    md5_list = ['62b06be200d3967db6b0f6023d7b5b2e', 'fac82762aa980d285edbbcd45ce952fb', '83d1531bdc862f7ddbf754221fae6a66']
+    md5_list = ['62b06be200d3967db6b0f6023d7b5b2e', 'fac82762aa980d285edbbcd45ce952fb', '83d1531bdc862f7ddbf754221fae6a66', 'e919efc7e3f8906bb47d99f85478d1d5']
     clean_up(md5_list)
     if args.virus:
         os.system('python3 /opt/LPF/src/batchStarter.py -analysis_type virus -batch_json /opt/LPF/tests/fixtures/virus_batch.json')
