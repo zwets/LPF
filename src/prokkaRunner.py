@@ -27,6 +27,7 @@ class prokkaRunner():
 
         cmd = "docker cp {}:/output {}/prokka_output".format(self.entry_id, self.target_dir)
         os.system(cmd)
+        sys.exit()
 
         cmd = "docker container rm {}".format(id)
         os.system(cmd)
