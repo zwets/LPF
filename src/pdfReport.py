@@ -333,14 +333,15 @@ def compile_virus_report(virus_parser):
     pdf.ln(20)
     pdf.set_font('Arial', '', 12)
     textstring = "LPF ID: {} \n" \
-                 "{}, {} \n"\
+                 "Location: {}, {} \n"\
                  "Identified reference: {} \n".format(virus_parser.data.entry_id, virus_parser.data.city, virus_parser.data.country, virus_parser.data.reference_header_text) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
     if virus_parser.data.prokka_tsv_list != None:
-        pdf.set_font('Arial', '', 22)
+        pdf.set_font('Arial', '', 16)
         pdf.ln(10)
         pdf.cell(85, 5, "Prokka annotations (hypothetical proteins not included):", 0, 1, 'L')
         pdf.set_font('Arial', '', 12)
+        pdf.ln(5)
         with pdf.table() as table:
             for data_row in virus_parser.data.prokka_tsv_list:
                 if not data_row[-1] == "hypothetical protein":
@@ -348,23 +349,24 @@ def compile_virus_report(virus_parser):
                     for datum in data_row:
                         row.cell(datum)
     else:
-        pdf.set_font('Arial', '', 22)
+        pdf.set_font('Arial', '', 16)
         pdf.ln(10)
-        pdf.cell(85, 5, "No prokka annotations were found", 0, 1, 'L')
+        pdf.cell(85, 5, "No prokka annotations were found.", 0, 1, 'L')
         pdf.set_font('Arial', '', 12)
 
     if virus_parser.data.cdd_hits != None:
-        pdf.set_font('Arial', '', 22)
+        pdf.set_font('Arial', '', 16)
         pdf.ln(10)
         pdf.cell(85, 5, "Conserved Domain Annotations:", 0, 1, 'L')
         pdf.set_font('Arial', '', 12)
+        pdf.ln(5)
         with pdf.table() as table:
             for data_row in virus_parser.data.cdd_hits:
                 row = table.row()
                 for datum in data_row:
                     row.cell(datum)
     else:
-        pdf.set_font('Arial', '', 22)
+        pdf.set_font('Arial', '', 16)
         pdf.ln(10)
         pdf.cell(85, 5, "No conserved domain annotations were found", 0, 1, 'L')
         pdf.set_font('Arial', '', 12)
