@@ -15,7 +15,7 @@ class prokkaRunner():
 
     def run(self):
         """runs kmergenetyper"""
-        cmd = "docker run --name prokka_{} -v {}:/data/genome.fsa staphb/prokka prokka --outdir /output --prefix prokka_results /data/genome.fsa"\
+        cmd = "docker run --name prokka_{} -v {}:/data/genome.fsa staphb/prokka prokka --outdir /output/prokka_output --centre virus_alignment --prefix prokka_results /data/genome.fsa"\
             .format(self.entry_id, self.genome)
         os.system(cmd)
 
@@ -25,9 +25,8 @@ class prokkaRunner():
         output = proc.communicate()[0]
         id = output.decode().rstrip()
 
-        cmd = "docker cp {}:/output {}/prokka_output".format(self.entry_id, self.target_dir)
+        cmd = "docker cp {}:/output/prokka_output {}/prokka_output".format(self.entry_id, self.target_dir)
         os.system(cmd)
-        sys.exit()
 
         cmd = "docker container rm {}".format(id)
         os.system(cmd)
