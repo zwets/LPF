@@ -321,3 +321,118 @@ def derive_virulence_stats(bacterial_parser):  #TBD rewrite and remove.
     return csv_data
 
 
+def compile_viral_report(viral_parser):
+    pdf = FPDF()  # A4 (210 by 297 mm)
+    filename = "{}.pdf".format(viral_parser.data.entry_id)
+
+    ''' First Page '''
+    pdf.add_page()
+    pdf.image("/opt/LPF/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
+    create_title(pdf, viral_parser.data.entry_id, "LPF viral report, Version: {}".format(viral_parser.data.version))
+    pdf.ln(20)
+    pdf.set_font('Arial', '', 12)
+    textstring = "ID: {} \n" \
+                 "{}, {} \n"\
+                 "Suggested reference: {} \n\n" \
+                 "No related phylogeny cluster was identified. \n" \
+                 "".format(bacterial_parser.data.entry_id, bacterial_parser.data.city, bacterial_parser.data.country, bacterial_parser.data.reference_header_text) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
+    pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
+    pdf.ln(20)
+
+    df = pd.read_csv(bacterial_parser.data.target_dir + "/quast_output/report.tsv", sep='\t')
+    df_styled = df.style.background_gradient()  # adding a gradient based on values in cell
+    #dfi.export(df_styled, bacterial_parser.data.target_dir + "/quast_table.png")
+    #pdf.image("{}/quast_table.png".format(bacterial_parser.data.target_dir), x=10, y=90, w=pdf.w / 2.5, h=pdf.h / 2.7)
+    pdf.set_xy(x=10, y=58)
+    pdf.set_font('Arial', '', 14)
+    pdf.set_text_color(51, 153, 255)
+    pdf.image("{}/contigs.jpg".format(bacterial_parser.data.target_dir), x=115, y=90, w=pdf.w / 2.5, h=pdf.h / 2.7)
+
+    ''' Second Page '''
+    pdf.add_page()
+    pdf.image("/opt/LPF/local_app/images/DTU_Logo_Corporate_Red_RGB.png", x=175, y=10, w=pdf.w / 8.5, h=pdf.h / 8.5)
+    create_title(pdf, bacterial_parser.data.entry_id, "CGE Finder results")
+
+    pdf.set_font('Arial', '', 10)
+
+    pdf.ln(10)
+
+    pdf.cell(85, 5, "Antimicrobial Genes Found:", 0, 1, 'L')
+
+    csv_data = derive_amr_stats(bacterial_parser)
+
+    line_height = pdf.font_size * 3
+    col_width = pdf.w / 4  # distribute content evenly
+    lh_list = []  # list with proper line_height for each row
+    use_default_height = 0  # flag
+
+    for row in csv_data:
+        for datum in row:
+            word_list = datum.split()
+            number_of_words = len(word_list)  # how many words
+            if number_of_words > 2:  # names and cities formed by 2 words like Los Angeles are ok)
+                use_default_height = 1
+                new_line_height = pdf.font_size * (number_of_words / 1.3)  # new height change according to data
+        if not use_default_height:
+            lh_list.append(line_height)
+        else:
+            lh_list.append(new_line_height)
+            use_default_height = 0
+
+    # create your fpdf table ..passing also max_line_height!
+    for j, row in enumerate(csv_data):
+        for datum in row:
+            line_height = lh_list[j]  # choose right height for current row
+            pdf.multi_cell(col_width, line_height, datum, border=1, align='L', ln=3,
+                           max_line_height=pdf.font_size)
+        pdf.ln(line_height)
+
+    pdf.ln(10)
+
+    print ('This worked')
+
+    pdf.cell(85, 5, "Virulence Genes Found: ", 0, 1, 'L')
+
+    csv_data = derive_virulence_stats(bacterial_parser)
+    line_height = pdf.font_size * 3
+    col_width = pdf.w / 4  # distribute content evenly
+    lh_list = []  # list with proper line_height for each row
+    use_default_height = 0  # flag
+
+    for row in csv_data:
+        for datum in row:
+            word_list = datum.split()
+            number_of_words = len(word_list)  # how many words
+            if number_of_words > 2:  # names and cities formed by 2 words like Los Angeles are ok)
+                use_default_height = 1
+                new_line_height = pdf.font_size * (number_of_words / 1.3)  # new height change according to data
+        if not use_default_height:
+            lh_list.append(line_height)
+        else:
+            lh_list.append(new_line_height)
+            use_default_height = 0
+
+    # create your fpdf table ..passing also max_line_height!
+    for j, row in enumerate(csv_data):
+        for datum in row:
+            line_height = lh_list[j]  # choose right height for current row
+            pdf.multi_cell(col_width, line_height, datum, border=1, align='L', ln=3,
+                           max_line_height=pdf.font_size)
+        pdf.ln(line_height)
+
+    pdf.ln(10)
+
+    pdf.cell(85, 5, "Plasmids Found:", 0, 1, 'L')
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font('Arial', '', 10)
+    textstring = ""
+    for item in bacterial_parser.data.plasmid_hits:
+        textstring += "* {}\n".format(item)
+    pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
+
+    pdf.set_font('Arial', '', 12)
+
+    pdf.output("{}/{}".format(bacterial_parser.data.target_dir, filename), 'F')
+
+
+

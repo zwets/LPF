@@ -71,7 +71,7 @@ class TestSqlCommands(TestCase):
             test_json = json.load(json_file)['samples'][0]
         self.input_dict = LPF.LPF_init(test_json)
         self.input_dict['LPF_db'] = 'tests/fixtures/database/LPF.db'
-        LPF.create_sql_db('tests/fixtures/database/', 'datafiles/ena_list.json')
+        LPF.create_sql_db('tests/fixtures/database/', 'datafiles/bacterial_metadata.json')
 
     def tearDown(self):
         os.system("rm -rf tests/fixtures/database/LPF.db")

@@ -16,6 +16,7 @@ def clean_up(md5_list):
         sqlCommands.sql_execute_command('DELETE FROM sequence_table WHERE entry_id = \"{}\"'.format(item), '/opt/LPF_databases/LPF.db')
 
 if __name__ == '__main__':
-    md5_list = ['62b06be200d3967db6b0f6023d7b5b2e', 'fac82762aa980d285edbbcd45ce952fb']
+    md5_list = ['62b06be200d3967db6b0f6023d7b5b2e', 'fac82762aa980d285edbbcd45ce952fb', '83d1531bdc862f7ddbf754221fae6a66']
     clean_up(md5_list)
-    os.system('python3 /opt/LPF/src/batchStarter.py -analysis_type bacteria -batch_json /opt/LPF/tests/fixtures/batchRuns.json')
+    os.system('python3 /opt/LPF/src/batchStarter.py -analysis_type bacteria -batch_json /opt/LPF/tests/fixtures/bacteria_batch.json')
+    os.system('python3 /opt/LPF/src/batchStarter.py -analysis_type virus -batch_json /opt/LPF/tests/fixtures/virus_batch.json')
