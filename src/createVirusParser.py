@@ -86,9 +86,16 @@ class VirusParser():
         self.logger.info("Parsing results from virus analysis")
         if not os.stat(self.data.target_dir + '/cdd_alignment.fsa').st_size == 0:
             self.data.cdd_hits = kmaUtils.parse_kma_res_to_list_of_lists(self.data.target_dir + '/cdd_alignment.res')
+        else:
+            self.data.cdd_hits = None
         if not os.stat(self.data.target_dir + '/virus_alignment.fsa').st_size == 0:
             self.data.virus_hits = kmaUtils.parse_kma_res(self.data.target_dir + '/virus_alignment.res')
             self.data.template_number, self.data.template_score, self.data.reference_header_text = kmaUtils.get_reference_mapping_results(self.data.target_dir + '/virus_alignment.res', self.data.virus_db)
+        else:
+            self.data.virus_hits = None
+            self.data.template_number = None
+            self.data.template_score = None
+            self.data.reference_header_text = None
         if os.path.exists(self.data.target_dir + '/virus_assembly.fsa'):
             #Change reference_header_text
             pass
@@ -99,6 +106,8 @@ class VirusParser():
                     for line in f:
                         prokka_tsv_list.append(line.strip().split('\t'))
                 self.data.prokka_tsv_list = prokka_tsv_list
+        else:
+            self.data.prokka_tsv_list = None
 
 
 
