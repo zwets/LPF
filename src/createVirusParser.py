@@ -75,7 +75,6 @@ class VirusParser():
         """Creates the target directory and the log file"""
         if not os.path.exists(self.data.target_dir):
             os.makedirs(self.data.target_dir)
-            os.makedirs(self.data.target_dir + "/finders")
         else:
             self.logger.info("Target directory already exists. Sample has been analysed before. Exiting.")
             #Consider not existing but just rerunning the analysis
