@@ -654,7 +654,7 @@ def install_databases(arguments, cwd):
     os.chdir(cwd)
     os.system("cp scripts/schemes/notes.txt /opt/LPF_databases/virulencefinder_db/notes.txt")
     os.system("cp scripts/schemes/phenotypes.txt /opt/LPF_databases/resfinder_db/phenotypes.txt")
-    if not os.exists('/opt/LPF_databases/cdd_db/cddid_all.tbl'):
+    if not os.path.exists('/opt/LPF_databases/cdd_db/cddid_all.tbl'):
         os.system('sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/cdd_db/export/cddid_all.tbl -O /opt/LPF_databases/cdd_db/cddid_all.tbl')
 
     if not os.path.exists('/opt/LPF_databases/LPF.db'):
@@ -761,7 +761,7 @@ def ci_install(user, cwd):
     os.chdir(cwd)
     os.system("cp scripts/schemes/notes.txt /opt/LPF_databases/virulencefinder_db/notes.txt")
     os.system("cp scripts/schemes/phenotypes.txt /opt/LPF_databases/resfinder_db/phenotypes.txt")
-    if not os.exists('/opt/LPF_databases/cdd_db/cddid_all.tbl'):
+    if not os.path.exists('/opt/LPF_databases/cdd_db/cddid_all.tbl'):
         os.system('sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/cdd_db/export/cddid_all.tbl -O /opt/LPF_databases/cdd_db/cddid_all.tbl')
     if not os.path.exists('/opt/LPF_databases/LPF.db'):
         create_sql_db()
