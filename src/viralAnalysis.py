@@ -1,5 +1,5 @@
 ###############################################################################
-# Pipeline for Viral analysis
+# Pipeline for Virus analysis
 ###############################################################################
 import logging
 import os
@@ -17,44 +17,44 @@ from src.prokkaRunner import prokkaRunner
 
 
 
-def viral_analysis_pipeline(viral_parser):
-    """Runs the viral analysis pipeline"""
-    sqlCommands.sql_update_status_table('Analysis started', viral_parser.data.sample_name, '1',
-                                        viral_parser.data.entry_id, viral_parser.data.sql_db)
+def virus_analysis_pipeline(virus_parser):
+    """Runs the virus analysis pipeline"""
+    sqlCommands.sql_update_status_table('Analysis started', virus_parser.data.sample_name, '1',
+                                        virus_parser.data.entry_id, virus_parser.data.sql_db)
     sqlCommands.sql_execute_command("INSERT INTO sample_table(entry_id, sample_type) VALUES('{}', '{}')"
-                                    .format(viral_parser.data.entry_id, 'virus'), viral_parser.data.sql_db)
-    sqlCommands.sql_update_status_table('Viral alignment', viral_parser.data.sample_name, '2',
-                                        viral_parser.data.entry_id, viral_parser.data.sql_db)
+                                    .format(virus_parser.data.entry_id, 'virus'), virus_parser.data.sql_db)
+    sqlCommands.sql_update_status_table('Virus alignment', virus_parser.data.sample_name, '2',
+                                        virus_parser.data.entry_id, virus_parser.data.sql_db)
 
-    KMARunner(viral_parser.data.input_path,
-              viral_parser.data.target_dir + "/viral_alignment",
-              viral_parser.data.viral_db,
+    KMARunner(virus_parser.data.input_path,
+              virus_parser.data.target_dir + "/virus_alignment",
+              virus_parser.data.virus_db,
               "-ont -ca -1t1 -mem_mode").run()
 
     #Consider identity and perhaps assemble if its bad:
 
-    sqlCommands.sql_update_status_table('CDD alignment', viral_parser.data.sample_name, '3',
-                                        viral_parser.data.entry_id, viral_parser.data.sql_db)
+    sqlCommands.sql_update_status_table('CDD alignment', virus_parser.data.sample_name, '3',
+                                        virus_parser.data.entry_id, virus_parser.data.sql_db)
 
-    KMARunner(viral_parser.data.input_path,
-              viral_parser.data.target_dir + "/cdd_alignment",
-              viral_parser.data.cdd_db,
+    KMARunner(virus_parser.data.input_path,
+              virus_parser.data.target_dir + "/cdd_alignment",
+              virus_parser.data.cdd_db,
               "-ont -ca -1t1 -mem_mode").run()
 
-    sqlCommands.sql_update_status_table('Prokka annotation', viral_parser.data.sample_name, '2',
-                                        viral_parser.data.entry_id, viral_parser.data.sql_db)
+    sqlCommands.sql_update_status_table('Prokka annotation', virus_parser.data.sample_name, '2',
+                                        virus_parser.data.entry_id, virus_parser.data.sql_db)
 
-    prokkaRunner(viral_parser.data.sample_name,
-                 viral_parser.data.target_dir + "/viral_alignment.fsa",
-                 viral_parser.data.entry_id,
-                 viral_parser.data.target_dir).run()
+    prokkaRunner(virus_parser.data.sample_name,
+                 virus_parser.data.target_dir + "/virus_alignment.fsa",
+                 virus_parser.data.entry_id,
+                 virus_parser.data.target_dir).run()
 
     #Phylogenetic analysis
     #Pathogenicy prediction
 
-    #pdfReport.compile_viral_report(viral_parser)
+    #pdfReport.compile_virus_report(virus_parser)
 
-    sqlCommands.sql_update_status_table('Analysis completed', viral_parser.data.sample_name, '10', viral_parser.data.entry_id, viral_parser.data.sql_db)
+    sqlCommands.sql_update_status_table('Analysis completed', virus_parser.data.sample_name, '10', virus_parser.data.entry_id, virus_parser.data.sql_db)
 
     return 0
 

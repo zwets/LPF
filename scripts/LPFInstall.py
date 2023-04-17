@@ -412,7 +412,7 @@ def create_sql_db():
     conn.close()
     print("SQL database created")
 
-def insert_bacterial_references_into_sql():
+def insert_bacteria_references_into_sql():
     sql_bacteria_reference_list = []
     bacteria_db_reference_list = []
 
@@ -597,24 +597,24 @@ def install_databases(arguments, cwd):
     else:
         database_list.append("cdd_db")
 
-    if arguments.viral_db != None:
-        print('Copying viral database')
-        if not os.path.exists('/opt/LPF_databases/viral_db'):
-            os.system('sudo mkdir -m 777 /opt/LPF_databases/viral_db')
+    if arguments.virus_db != None:
+        print('Copying virus database')
+        if not os.path.exists('/opt/LPF_databases/virus_db'):
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/virus_db')
         else:
-            os.system('sudo rm -r /opt/LPF_databases/viral_db')
-            os.system('sudo mkdir -m 777 /opt/LPF_databases/viral_db')
-        for item in os.listdir(arguments.viral_db):
+            os.system('sudo rm -r /opt/LPF_databases/virus_db')
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/virus_db')
+        for item in os.listdir(arguments.virus_db):
             if item.endswith('.seq.b'):
-                shutil.copyfile('{}/{}'.format(arguments.viral_db, item), '/opt/LPF_databases/viral_db/viral_db.seq.b'.format(item))
+                shutil.copyfile('{}/{}'.format(arguments.virus_db, item), '/opt/LPF_databases/virus_db/virus_db.seq.b'.format(item))
             elif item.endswith('.name'):
-                shutil.copyfile('{}/{}'.format(arguments.viral_db, item), '/opt/LPF_databases/viral_db/viral_db.name'.format(item))
+                shutil.copyfile('{}/{}'.format(arguments.virus_db, item), '/opt/LPF_databases/virus_db/virus_db.name'.format(item))
             elif item.endswith('.length.b'):
-                shutil.copyfile('{}/{}'.format(arguments.viral_db, item), '/opt/LPF_databases/viral_db/viral_db.length.b'.format(item))
+                shutil.copyfile('{}/{}'.format(arguments.virus_db, item), '/opt/LPF_databases/virus_db/virus_db.length.b'.format(item))
             elif item.endswith('.comp.b'):
-                shutil.copyfile('{}/{}'.format(arguments.viral_db, item), '/opt/LPF_databases/viral_db/viral_db.comp.b'.format(item))
+                shutil.copyfile('{}/{}'.format(arguments.virus_db, item), '/opt/LPF_databases/virus_db/virus_db.comp.b'.format(item))
     else:
-        database_list.append("viral_db")
+        database_list.append("virus_db")
 
     for item in database_list:
         if not os.path.exists('/opt/LPF_databases/{}'.format(item)):
@@ -661,7 +661,7 @@ def install_databases(arguments, cwd):
         create_sql_db()
     elif os.path.getsize('/opt/LPF_databases/LPF.db') == 0:
         create_sql_db()
-    insert_bacterial_references_into_sql()
+    insert_bacteria_references_into_sql()
 
 def check_local_software():
     kma_result = check_kma()
@@ -728,7 +728,7 @@ def ci_install(user, cwd):
                      "virulencefinder_db",
                      "bacteria_db",
                      "cdd_db",
-                     "viral_db"]
+                     "virus_db"]
 
     for item in database_list:
         if not os.path.exists('/opt/LPF_databases/{}'.format(item)):
@@ -767,7 +767,7 @@ def ci_install(user, cwd):
         create_sql_db()
     elif os.path.getsize('/opt/LPF_databases/LPF.db') == 0:
         create_sql_db()
-    insert_bacterial_references_into_sql()
+    insert_bacteria_references_into_sql()
 
     os.chdir(cwd)
 

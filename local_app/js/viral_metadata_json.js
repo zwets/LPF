@@ -109,7 +109,7 @@ function create_meta_data_table_fastq(){
                       create_button.id = "begin-analyses-button";
                       create_button.innerHTML = "Begin analysis";
                       create_button.onclick = function() {
-                        var cmd_msg = `~/anaconda3/bin/conda run -n LPF python3 /opt/LPF/src/batchStarter.py -analysis_type viral -batch_json ${output_json_file}`;
+                        var cmd_msg = `~/anaconda3/bin/conda run -n LPF python3 /opt/LPF/src/batchStarter.py -analysis_type virus -batch_json ${output_json_file}`;
                         console.log(cmd_msg);
                         execute_command_as_subprocess(cmd_msg);
                       }
@@ -148,7 +148,7 @@ function generate_table_fastq(file_number) {
     headRow.id = "header_row";
     let columnNames = [];
 
-    const jsonData= require('/opt/LPF/local_app/datafiles/viral_metadata.json'); //Replace with relative path
+    const jsonData= require('/opt/LPF/local_app/datafiles/virus_metadata.json'); //Replace with relative path
     const ena_keys = Object.keys(jsonData);
     columnNames.push.apply(columnNames, ena_keys)
 

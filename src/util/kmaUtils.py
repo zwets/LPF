@@ -10,10 +10,10 @@ def findTemplateNumber(name, database):
                 else:
                     t += 1
                     
-def parse_finders(bacterial_parser):
-    bacterial_parser.data.resfinder_hits = parse_kma_res("{}/finders/resfinder_mapping.res".format(bacterial_parser.data.target_dir))
-    bacterial_parser.data.virulence_hits = parse_kma_res("{}/finders/virulencefinder_mapping.res".format(bacterial_parser.data.target_dir))
-    bacterial_parser.data.plasmid_hits = parse_kma_res("{}/finders/plasmidfinder_mapping.res".format(bacterial_parser.data.target_dir))
+def parse_finders(bacteria_parser):
+    bacteria_parser.data.resfinder_hits = parse_kma_res("{}/finders/resfinder_mapping.res".format(bacteria_parser.data.target_dir))
+    bacteria_parser.data.virulence_hits = parse_kma_res("{}/finders/virulencefinder_mapping.res".format(bacteria_parser.data.target_dir))
+    bacteria_parser.data.plasmid_hits = parse_kma_res("{}/finders/plasmidfinder_mapping.res".format(bacteria_parser.data.target_dir))
 
 def parse_kma_res(filename):
     item_list = list()

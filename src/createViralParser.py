@@ -22,7 +22,7 @@ from scripts.version import __version__
 class EmptyDataObject:
     pass
 
-class ViralParser():
+class VirusParser():
     def __init__(self, file):
         with open(file, 'r') as f:
             data_dict = json.loads(f.read())
@@ -37,12 +37,12 @@ class ViralParser():
         self.logger.info("Starting analysis of {}".format(self.data.entry_id))
         self.data.sample_name = os.path.basename(self.data.input_path).split('.')[0]
         self.data.sql_db = '/opt/LPF_databases/LPF.db'
-        self.data.viral_db = '/opt/LPF_databases/viral_db/viral_db'
+        self.data.virus_db = '/opt/LPF_databases/virus_db/virus_db'
         self.data.cdd_db = '/opt/LPF_databases/cdd_db/cdd_db'
         self.data.target_dir = "/opt/LPF_analyses/{}".format(self.data.entry_id)
         self.data.version = __version__
         self.data.black_list = ['62b06be200d3967db6b0f6023d7b5b2e', 'fac82762aa980d285edbbcd45ce952fb'] #IDs from testfiles to be excluded from SQL and reference indexing
-        self.logger.info('ViralParser initialized with data: {}'.format(self.data.__dict__))
+        self.logger.info('VirusParser initialized with data: {}'.format(self.data.__dict__))
         self.qc_check()
         self.mkfs()
 
@@ -59,7 +59,7 @@ class ViralParser():
         self.data[key] = value
         return self.data[key]
     def qc_check(self):
-        """Very basic QC. Only checks for a minimum amount of input data for bacterial analysis"""
+        """Very basic QC. Only checks for a minimum amount of input data for bacteria analysis"""
         fq = pyfastx.Fastq(self.data.input_path, build_index=False)
         total_bases = 0
         for read in fq:

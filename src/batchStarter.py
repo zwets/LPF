@@ -14,7 +14,7 @@ parser.add_argument('-batch_json', action="store", type=str, dest='batch_json', 
                     help='batch json file')
 parser.add_argument('-analysis_type', action="store",
                                  type=str, dest='analysis_type', default="bacteria",
-                                 help='bacteria, viral or metagenomic')
+                                 help='bacteria, virus or metagenomic')
 args = parser.parse_args()
 
 def LPF_analysis(jobslist, i):

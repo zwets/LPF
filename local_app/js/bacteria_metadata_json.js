@@ -148,7 +148,7 @@ function generate_table_fastq(file_number) {
     headRow.id = "header_row";
     let columnNames = [];
 
-    const jsonData= require('/opt/LPF/local_app/datafiles/bacterial_metadata.json'); //Replace with relative path
+    const jsonData= require('/opt/LPF/local_app/datafiles/bacteria_metadata.json'); //Replace with relative path
     const ena_keys = Object.keys(jsonData);
     columnNames.push.apply(columnNames, ena_keys)
 

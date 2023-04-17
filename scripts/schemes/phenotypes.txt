@@ -310,7 +310,7 @@ blaOXA-25_1_AF201826	Beta-lactam	Unknown Beta-lactam	11158758	Enzymatic inactiva
 blaOXA-26_1_AF201827	Beta-lactam	Unknown Beta-lactam	11158758	Enzymatic inactivation	Class D;OXA-24-like;;;
 blaOXA-27_1_AF201828	Beta-lactam	Unknown Beta-lactam	11158758	Enzymatic inactivation	Class D;OXA-23-like;;;
 blaOXA-28_1_AF231133	Beta-lactam	Amoxicillin, Ampicillin, Aztreonam, Cefepime, Cefixime, Cefotaxime, Ceftazidime, Piperacillin, Piperacillin+Tazobactam	11158739	Enzymatic inactivation	Class D;OXA-10-like;;;
-blaOXA-29_1_AJ400619	Beta-lactam	Unknown Beta-lactam	11709332	Enzymatic inactivation	Class D;;;;OXA-29 enzyme extracts hydrolyze Amoxicillin, Piperacillin, Cefotaxime, Ceftazidime, Aztreonam but the effect on the MIC when expressed in bacterial strains is unknown
+blaOXA-29_1_AJ400619	Beta-lactam	Unknown Beta-lactam	11709332	Enzymatic inactivation	Class D;;;;OXA-29 enzyme extracts hydrolyze Amoxicillin, Piperacillin, Cefotaxime, Ceftazidime, Aztreonam but the effect on the MIC when expressed in bacteria strains is unknown
 blaOXA-31_1_AF294653	Beta-lactam	Amoxicillin, Ampicillin, Cefepime, Piperacillin, Piperacillin+Tazobactam	11353602	Enzymatic inactivation	Class D;OXA-1-like;;;
 blaOXA-32_1_AF315351	Beta-lactam	Amoxicillin, Amoxicillin+Clavulanic acid, Ampicillin, Ampicillin+Clavulanic acid, Aztreonam, Cefepime, Cefixime, Cefotaxime, Ceftazidime, Piperacillin	11796380	Enzymatic inactivation	Class D;OXA-2-like;;;
 blaOXA-34_1_AF350424	Beta-lactam	Unknown Beta-lactam	Unpublished	Enzymatic inactivation	Class D;OXA-2-like;;;
@@ -2717,9 +2717,9 @@ blaFRI-2_1_KX620467	Beta-lactam	Amoxicillin, Amoxicillin+Clavulanic acid, Ampici
 blaFRI-3_1_KY524440	Beta-lactam	Amoxicillin, Amoxicillin+Clavulanic acid, Ampicillin, Ampicillin+Clavulanic acid, Cefepime, Cefixime, Cefotaxime, Cefoxitin, Ceftazidime, Ertapenem, Imipenem, Meropenem, Piperacillin, Piperacillin+Tazobactam, Aztreonam	unpublished	Enzymatic inactivation	Class A
 blaFRI-4_1_NG_055267	Beta-lactam	Amoxicillin, Amoxicillin+Clavulanic acid, Ampicillin, Ampicillin+Clavulanic acid, Cefepime, Cefixime, Cefotaxime, Cefoxitin, Ceftazidime, Ertapenem, Imipenem, Meropenem, Piperacillin, Piperacillin+Tazobactam, Aztreonam	30060114	Enzymatic inactivation	Class A
 blaFRI-5_1_MH208723	Beta-lactam	Amoxicillin, Amoxicillin+Clavulanic acid, Ampicillin, Ampicillin+Clavulanic acid, Cefepime, Cefixime, Cefotaxime, Cefoxitin, Ceftazidime, Ertapenem, Imipenem, Meropenem, Piperacillin, Piperacillin+Tazobactam, Aztreonam	unpublished	Enzymatic inactivation	Class A
-fusB_1_AY373761	Steroid antibacterial	Fusidic acid	12205055	Target Protection	FusB-family protein
-fusB_2_JF777505	Steroid antibacterial	Fusidic acid	21968364	Target Protection	FusB-family protein
-fusC_1_KF527883	Steroid antibacterial	Fusidic acid	24277045	Target Protection	FusB-family protein
+fusB_1_AY373761	Steroid antibacteria	Fusidic acid	12205055	Target Protection	FusB-family protein
+fusB_2_JF777505	Steroid antibacteria	Fusidic acid	21968364	Target Protection	FusB-family protein
+fusC_1_KF527883	Steroid antibacteria	Fusidic acid	24277045	Target Protection	FusB-family protein
 mupA_1_X75439	Pseudomonic acid	Mupirocin	8067768	Alternate Pathway
 mupA_2_GU237136	Pseudomonic acid	Mupirocin	20211895	Alternate Patheway
 mupB_1_JQ231224	Pseudomonic acid	Mupirocin	22252810	Isoleucyl tRNA synthetase
