@@ -25,7 +25,7 @@ class prokkaRunner():
         output = proc.communicate()[0]
         id = output.decode().rstrip()
 
-        cmd = "docker cp {}:/output/prokka_output {}/prokka_output".format(self.entry_id, self.target_dir)
+        cmd = "docker cp {}:/output/prokka_output {}/prokka_output".format(id, self.target_dir)
         os.system(cmd)
 
         cmd = "docker container rm {}".format(id)
