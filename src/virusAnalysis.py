@@ -52,7 +52,11 @@ def virus_analysis_pipeline(virus_parser):
     #Phylogenetic analysis
     #Pathogenicy prediction
 
-    #pdfReport.compile_virus_report(virus_parser)
+    virus_parser.parse_virus_results()
+
+    sqlCommands.sql_update_status_table('Compiling PDF', virus_parser.data.sample_name, '9', virus_parser.data.entry_id, virus_parser.data.sql_db)
+
+    pdfReport.compile_virus_report(virus_parser)
 
     sqlCommands.sql_update_status_table('Analysis completed', virus_parser.data.sample_name, '10', virus_parser.data.entry_id, virus_parser.data.sql_db)
 
