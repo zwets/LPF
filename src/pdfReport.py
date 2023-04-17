@@ -334,15 +334,25 @@ def compile_virus_report(virus_parser):
     pdf.set_font('Arial', '', 12)
     textstring = "LPF ID: {} \n" \
                  "{}, {} \n"\
-                 "{} \n".format(virus_parser.data.entry_id, virus_parser.data.city, virus_parser.data.country, virus_parser.data.reference_header_text) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
+                 "Identified reference: {} \n".format(virus_parser.data.entry_id, virus_parser.data.city, virus_parser.data.country, virus_parser.data.reference_header_text) #What do we do here? How do we assign a name to a reference assembly? Manuel or automatic?
     pdf.multi_cell(w=155, h=5, txt=textstring, border=0, align='L', fill=False)
-    pdf.ln(20)
+    if virus_parser.data.prokka_tsv_list != None:
+        pdf.ln(10)
+        pdf.cell(85, 5, "Prokka annotations:", 0, 1, 'L')
+        with pdf.table() as table:
+            for data_row in virus_parser.data.prokka_tsv_list:
+                row = table.row()
+                for datum in data_row:
+                    row.cell(datum)
 
-    with pdf.table() as table:
-        for data_row in virus_parser.data.prokka_tsv_list:
-            row = table.row()
-            for datum in data_row:
-                row.cell(datum)
+    if virus_parser.data.cdd_hits != None:
+        pdf.ln(10)
+        pdf.cell(85, 5, "Conserved Domain Annotations:", 0, 1, 'L')
+        with pdf.table() as table:
+            for data_row in virus_parser.data.cdd_hits:
+                row = table.row()
+                for datum in data_row:
+                    row.cell(datum)
 
     pdf.output("{}/{}.pdf".format(virus_parser.data.target_dir, virus_parser.data.entry_id), 'F')
 

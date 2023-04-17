@@ -85,7 +85,7 @@ class VirusParser():
         """Parses virus analysis results"""
         self.logger.info("Parsing results from virus analysis")
         if not os.stat(self.data.target_dir + '/cdd_alignment.fsa').st_size == 0:
-            self.data.cdd_hits = kmaUtils.parse_kma_res(self.data.target_dir + '/cdd_alignment.res')
+            self.data.cdd_hits = kmaUtils.parse_kma_res_to_list_of_lists(self.data.target_dir + '/cdd_alignment.res')
         if not os.stat(self.data.target_dir + '/virus_alignment.fsa').st_size == 0:
             self.data.virus_hits = kmaUtils.parse_kma_res(self.data.target_dir + '/virus_alignment.res')
             self.data.template_number, self.data.template_score, self.data.reference_header_text = kmaUtils.get_reference_mapping_results(self.data.target_dir + '/virus_alignment.res', self.data.virus_db)
