@@ -322,6 +322,7 @@ def derive_virulence_stats(bacteria_parser):  #TBD rewrite and remove.
 
 
 def compile_virus_report(virus_parser):
+    print ("Compiling virus report")
     pdf = FPDF()  # A4 (210 by 297 mm)
     filename = "{}.pdf".format(virus_parser.data.entry_id)
 
