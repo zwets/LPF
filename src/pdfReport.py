@@ -115,7 +115,10 @@ def compile_assembly_report(bacteria_parser):
         textstring += "* {}\n".format(item)
     pdf.multi_cell(w=85, h=7, txt=textstring, border=0, align='L', fill=False)
 
+    pdf.ln(10)
     pdf.set_font('Arial', '', 12)
+    pdf.cell(85, 5, "All analysis results and additional data can be found in /opt/LPF_analyses/{}".format(
+        bacteria_parser.data.entry_id), 0, 1, 'L')
 
     pdf.output("{}/{}".format(bacteria_parser.data.target_dir, filename), 'F')
 
@@ -271,6 +274,11 @@ def compile_alignment_report(bacteria_parser):
 
     #pdf.image("{}/phytree_output/tree.png".format(bacteria_parser.data.target_dir), x=10, y=55, w=pdf.w / 1.5, h=pdf.h / 1.75)
 
+    pdf.ln(10)
+    pdf.set_font('Arial', '', 12)
+    pdf.cell(85, 5, "All analysis results and additional data can be found in /opt/LPF_analyses/{}".format(
+        bacteria_parser.data.entry_id), 0, 1, 'L')
+
     pdf.output("{}/{}".format(bacteria_parser.data.target_dir, filename), 'F')
 
 
@@ -371,6 +379,9 @@ def compile_virus_report(virus_parser):
         pdf.cell(85, 5, "No conserved domain annotations were found.", 0, 1, 'L')
         pdf.set_font('Arial', '', 12)
 
+    pdf.ln(10)
+    pdf.set_font('Arial', '', 12)
+    pdf.cell(85, 5, "All analysis results and additional data can be found in /opt/LPF_analyses/{}".format(virus_parser.data.entry_id), 0, 1, 'L')
 
 
     pdf.output("{}/{}.pdf".format(virus_parser.data.target_dir, virus_parser.data.entry_id), 'F')
