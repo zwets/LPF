@@ -345,7 +345,7 @@ def compile_virus_report(virus_parser):
             for datum in data_row:
                 row.cell(datum)
 
-    pdf.output("{}/{}".format(bacteria_parser.data.target_dir, filename), 'F')
+    pdf.output("{}/{}.pdf".format(virus_parser.data.target_dir, virus_parser.data.entry_id), 'F')
 
 
 
