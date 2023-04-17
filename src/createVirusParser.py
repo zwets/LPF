@@ -88,7 +88,7 @@ class VirusParser():
             self.data.cdd_hits = kmaUtils.parse_kma_res(self.data.target_dir + '/cdd_alignment.res')
         if not os.stat(self.data.target_dir + '/virus_alignment.fsa').st_size == 0:
             self.data.virus_hits = kmaUtils.parse_kma_res(self.data.target_dir + '/virus_alignment.res')
-            self.data.template_number, self.data.template_score, self.data.reference_header_text = kmaUtils.parse_kma_res(self.data.target_dir + '/virus_alignment.res')
+            self.data.template_number, self.data.template_score, self.data.reference_header_text = kmaUtils.get_reference_mapping_results(self.data.target_dir + '/virus_alignment.res', self.data.virus_db)
         if os.path.exists(self.data.target_dir + '/virus_assembly.fsa'):
             #Change reference_header_text
             pass
