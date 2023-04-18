@@ -361,7 +361,7 @@ def compile_virus_report(virus_parser):
         pdf.ln(10)
         pdf.cell(85, 5, "No prokka annotations were found.", 0, 1, 'L')
         pdf.set_font('Arial', '', 12)
-
+    '''
     if virus_parser.data.cdd_hits != None:
         pdf.set_font('Arial', '', 16)
         pdf.ln(10)
@@ -378,7 +378,7 @@ def compile_virus_report(virus_parser):
         pdf.ln(10)
         pdf.cell(85, 5, "No conserved domain annotations were found.", 0, 1, 'L')
         pdf.set_font('Arial', '', 12)
-
+    '''
     pdf.ln(10)
     pdf.set_font('Arial', '', 12)
     pdf.cell(85, 5, "All analysis results and additional data can be found in /opt/LPF_analyses/{}".format(virus_parser.data.entry_id), 0, 1, 'L')

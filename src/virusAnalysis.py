@@ -14,6 +14,7 @@ import src.util.preparePDF as preparePDF
 from src.kmergenetyperRunner import kmergenetyperRunner
 import src.util.mlst as mlst
 from src.prokkaRunner import prokkaRunner
+from src.localPhylogeny import local_phylogeny_from_input_and_database
 
 
 
@@ -55,6 +56,8 @@ def virus_analysis_pipeline(virus_parser):
     virus_parser.parse_virus_results()
 
     sqlCommands.sql_update_status_table('Compiling PDF', virus_parser.data.sample_name, '9', virus_parser.data.entry_id, virus_parser.data.sql_db)
+
+    local_phylogeny_from_input_and_database(virus_parser.data.input_path, virus_parser.data.virus_db, virus_parser.data.reference_header_text)
 
     pdfReport.compile_virus_report(virus_parser)
 
