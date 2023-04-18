@@ -1,9 +1,8 @@
 import os
 import sys
 
-def local_phylogeny_from_input_and_database(input, database, reference_header_text):
+def local_phylogeny_from_input_and_database(input, database, specie):
     """Runs local phylogeny from input and database"""
-    specie = reference_header_text.split(' ')[1] + ' ' + reference_header_text.split(' ')[2]
     reference_species = list()
     with open(database + ".name", 'r') as f:
         for line in f:
