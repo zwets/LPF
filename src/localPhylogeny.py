@@ -20,5 +20,7 @@ def local_phylogeny_from_input_and_database(input, database, specie, target_dir)
     os.mkdir(target_dir + "/local_phylogeny")
     for item in reference_species:
         template_number = kmaUtils.findTemplateNumber(item, database)
+        print (template_number)
+        print ('kma seq2fasta -t_db {} -seqs {} > {}/local_phylogeny/{}.fasta'.format(database, template_number, target_dir, item))
         os.system('kma seq2fasta -t_db {} -seqs {} > {}/local_phylogeny/{}.fasta'.format(database, template_number, target_dir, item))
 
