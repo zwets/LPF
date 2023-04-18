@@ -5,7 +5,7 @@ def findTemplateNumber(name, database):
         with open(database + ".name") as f:
             t = 1
             for line in f:
-                if line.rstrip() == name:
+                if line.rstrip().startswith(name):
                     return t
                 else:
                     t += 1
