@@ -57,7 +57,7 @@ def virus_analysis_pipeline(virus_parser):
 
     sqlCommands.sql_update_status_table('Compiling PDF', virus_parser.data.sample_name, '9', virus_parser.data.entry_id, virus_parser.data.sql_db)
 
-    local_phylogeny_from_input_and_database(virus_parser.data.input_path, virus_parser.data.virus_db, virus_parser.data.reference_header_text.split(':')[1], virus_parser.data.target_dir)
+    #local_phylogeny_from_input_and_database(virus_parser.data.input_path, virus_parser.data.virus_db, virus_parser.data.reference_header_text.split(':')[1], virus_parser.data.target_dir)
 
     pdfReport.compile_virus_report(virus_parser)
 
