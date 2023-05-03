@@ -412,7 +412,7 @@ def create_sql_db():
     conn.close()
     print("SQL database created")
 
-def insert_bacterial_references_into_sql():
+def insert_bacteria_references_into_sql():
     sql_bacteria_reference_list = []
     bacteria_db_reference_list = []
 
@@ -578,6 +578,44 @@ def install_databases(arguments, cwd):
     else:
         database_list.append("virulencefinder_db")
 
+    if arguments.cdd_db != None:
+        print('Copying ccd database')
+        if not os.path.exists('/opt/LPF_databases/cdd_db'):
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/cdd_db')
+        else:
+            os.system('sudo rm -r /opt/LPF_databases/cdd_db')
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/cdd_db')
+        for item in os.listdir(arguments.cdd_db):
+            if item.endswith('.seq.b'):
+                shutil.copyfile('{}/{}'.format(arguments.cdd_db, item), '/opt/LPF_databases/cdd_db/cdd_db.seq.b'.format(item))
+            elif item.endswith('.name'):
+                shutil.copyfile('{}/{}'.format(arguments.cdd_db, item), '/opt/LPF_databases/cdd_db/cdd_db.name'.format(item))
+            elif item.endswith('.length.b'):
+                shutil.copyfile('{}/{}'.format(arguments.cdd_db, item), '/opt/LPF_databases/cdd_db/cdd_db.length.b'.format(item))
+            elif item.endswith('.comp.b'):
+                shutil.copyfile('{}/{}'.format(arguments.cdd_db, item), '/opt/LPF_databases/cdd_db/cdd_db.comp.b'.format(item))
+    else:
+        database_list.append("cdd_db")
+
+    if arguments.virus_db != None:
+        print('Copying virus database')
+        if not os.path.exists('/opt/LPF_databases/virus_db'):
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/virus_db')
+        else:
+            os.system('sudo rm -r /opt/LPF_databases/virus_db')
+            os.system('sudo mkdir -m 777 /opt/LPF_databases/virus_db')
+        for item in os.listdir(arguments.virus_db):
+            if item.endswith('.seq.b'):
+                shutil.copyfile('{}/{}'.format(arguments.virus_db, item), '/opt/LPF_databases/virus_db/virus_db.seq.b'.format(item))
+            elif item.endswith('.name'):
+                shutil.copyfile('{}/{}'.format(arguments.virus_db, item), '/opt/LPF_databases/virus_db/virus_db.name'.format(item))
+            elif item.endswith('.length.b'):
+                shutil.copyfile('{}/{}'.format(arguments.virus_db, item), '/opt/LPF_databases/virus_db/virus_db.length.b'.format(item))
+            elif item.endswith('.comp.b'):
+                shutil.copyfile('{}/{}'.format(arguments.virus_db, item), '/opt/LPF_databases/virus_db/virus_db.comp.b'.format(item))
+    else:
+        database_list.append("virus_db")
+
     for item in database_list:
         if not os.path.exists('/opt/LPF_databases/{}'.format(item)):
             os.system("sudo mkdir -m 777 /opt/LPF_databases/{}".format(item))
@@ -616,12 +654,14 @@ def install_databases(arguments, cwd):
     os.chdir(cwd)
     os.system("cp scripts/schemes/notes.txt /opt/LPF_databases/virulencefinder_db/notes.txt")
     os.system("cp scripts/schemes/phenotypes.txt /opt/LPF_databases/resfinder_db/phenotypes.txt")
+    if not os.path.exists('/opt/LPF_databases/cdd_db/cddid_all.tbl'):
+        os.system('sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/cdd_db/export/cddid_all.tbl -O /opt/LPF_databases/cdd_db/cddid_all.tbl')
 
     if not os.path.exists('/opt/LPF_databases/LPF.db'):
         create_sql_db()
     elif os.path.getsize('/opt/LPF_databases/LPF.db') == 0:
         create_sql_db()
-    insert_bacterial_references_into_sql()
+    insert_bacteria_references_into_sql()
 
 def check_local_software():
     kma_result = check_kma()
@@ -686,7 +726,9 @@ def ci_install(user, cwd):
     database_list = ["resfinder_db",
                      "plasmidfinder_db",
                      "virulencefinder_db",
-                     "bacteria_db"]
+                     "bacteria_db",
+                     "cdd_db",
+                     "virus_db"]
 
     for item in database_list:
         if not os.path.exists('/opt/LPF_databases/{}'.format(item)):
@@ -719,11 +761,13 @@ def ci_install(user, cwd):
     os.chdir(cwd)
     os.system("cp scripts/schemes/notes.txt /opt/LPF_databases/virulencefinder_db/notes.txt")
     os.system("cp scripts/schemes/phenotypes.txt /opt/LPF_databases/resfinder_db/phenotypes.txt")
+    if not os.path.exists('/opt/LPF_databases/cdd_db/cddid_all.tbl'):
+        os.system('sudo wget https://cge.food.dtu.dk/services/MINTyper/LPF_databases/cdd_db/export/cddid_all.tbl -O /opt/LPF_databases/cdd_db/cddid_all.tbl')
     if not os.path.exists('/opt/LPF_databases/LPF.db'):
         create_sql_db()
     elif os.path.getsize('/opt/LPF_databases/LPF.db') == 0:
         create_sql_db()
-    insert_bacterial_references_into_sql()
+    insert_bacteria_references_into_sql()
 
     os.chdir(cwd)
 

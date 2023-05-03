@@ -1,0 +1,34 @@
+{ 
+   "input_file": "free_text",
+   "type_of_sample": ["Unspecified", "Soil", "Seawater", "Feces", "Swabs"],
+   "sequencing_method": ["Nanopore Minion", "Nanopore Gridion"],
+   "isolation_source": ["Isolate"],
+   "experimental_condition": ["Unspecified", "Control State", "Diseased state"],
+   "type_of_infection": ["Unspecified", "Skin Infections", "Respiratory Infections", "FoodBorne Bacteria Infections", "Urinary Tract infections", "Sexually Transmitted Infections"],
+   "patient_age": "free_text",
+   "patient_gender": ["Unspecified", "Male", "Female"],
+   "city": [],
+   "country": [],
+   "collection_date": "free_text"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

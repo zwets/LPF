@@ -14,7 +14,7 @@ class ValidateDatabases:
         self.resfinder_db = "/opt/LPF_databases/resfinder_db/resfinder_db.name"
         self.virulencefinder_db = "/opt/LPF_databases/virulencefinder_db/virulencefinder_db.name"
         self.plasmidfinder_db = "/opt/LPF_databases/plasmidfinder_db/plasmidfinder_db.name"
-        #viral
+        #virus
         #metagenomic
 
     def validate(self):
