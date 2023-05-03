@@ -5,8 +5,8 @@ async function generatePDFReport2(analysisId, type) {
     let plas_data = '/opt/LPF_analyses/'+analysisId+'/pdf_resources/plasmid_data.csv';
     let quast_data = '/opt/LPF_analyses/'+analysisId+'/pdf_resources/quast_report.csv';
     let contigs_jpg = '/opt/LPF_analyses/'+analysisId+'/contigs.jpg';
-    let bacterial_parser = '/opt/LPF_analyses/'+analysisId+'/pdf_resources/bacterial_parser.json';
-    let bact_parse_data =  require(bacterial_parser);
+    let bacteria_parser = '/opt/LPF_analyses/'+analysisId+'/pdf_resources/bacteria_parser.json';
+    let bact_parse_data =  require(bacteria_parser);
     const output_pdf_file = '/opt/LPF_analyses/'+analysisId+'/'+analysisId+'.pdf';
 
     var imageData = "";
