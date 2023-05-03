@@ -110,12 +110,17 @@ class BacteriaParser():
 
     def get_mlst_type(self):
         """Returns the mlst results"""
-        if self.data.mlst_species != None:
-            self.data.mlst_genes = kmaUtils.parse_kma_res('{}/finders/mlst/{}.res'.format(self.data.target_dir, self.data.sample_name))
-            self.data.mlst_type = mlst.get_mlst(self.data.mlst_species, self.data.mlst_genes)
-        else:
+        if not os.path.exists(self.data.target_dir + "/finders/mlst/{}.res".format(self.data.sample_name)):
             self.data.mlst_genes = None
             self.data.mlst_type = None
+            self.logger.info("Kmergenetyper didn't produce any results. Skipping MLST analysis")
+        else:
+            if self.data.mlst_species != None:
+                self.data.mlst_genes = kmaUtils.parse_kma_res('{}/finders/mlst/{}.res'.format(self.data.target_dir, self.data.sample_name))
+                self.data.mlst_type = mlst.get_mlst(self.data.mlst_species, self.data.mlst_genes)
+            else:
+                self.data.mlst_genes = None
+                self.data.mlst_type = None
 
     def parse_finder_results(self):
         """Parses the results from the finders"""

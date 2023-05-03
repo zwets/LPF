@@ -9,7 +9,7 @@ dataframe-image>=0.1.1
 fpdf2>=2.7.3
 pyfastx>=0.8.4
 js2py
-kmergenetyper>=1.0.7
+kmergenetyper>=1.0.13
 
 # Testing dependencies
 nose2
