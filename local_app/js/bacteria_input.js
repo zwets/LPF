@@ -190,7 +190,7 @@ function generate_table_fastq(file_number) {
                 input.id = `input${i}${j}`;
                 let object_options = [];
                 if (columnNames[j] =="country") {
-                    const countryData= require('/opt/LPF/datafiles/cities_and_countries.json');
+                    const countryData= require('/opt/LPF/local_app/datafiles/cities_and_countries.json');
                     const countries = Object.keys(countryData);
                     const countryNames = ["Unspecified country"];
                     countryNames.push.apply(countryNames, countries);
