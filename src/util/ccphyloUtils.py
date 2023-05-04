@@ -12,8 +12,12 @@ def ccphylo_dist(bacteria_parser):
     proc = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     err = proc.communicate()[1].decode().rstrip().split(" ")
     bacteria_parser.logger.info(proc.communicate()[1].decode().rstrip())
-    inclusion_fraction = int(err[1])/int(err[3])
-    bacteria_parser.logger.info("Inclusion fraction: {}".format(inclusion_fraction))
+    try:
+        inclusion_fraction = int(err[3])/int(err[5])
+        bacteria_parser.logger.info("Inclusion fraction: {}".format(inclusion_fraction))
+    except:
+        inclusion_fraction = None
+        bacteria_parser.logger.info("Inclusion fraction was not calculated.")
     distance = ThreshholdDistanceCheck(bacteria_parser)
     bacteria_parser.logger.info("Input consensus sequence distance from reference: {}".format(distance))
     return inclusion_fraction, distance
