@@ -86,7 +86,7 @@ def bacteria_analysis_pipeline(bacteria_parser):
 
     if distance == None:
         bacteria_parser.run_assembly()
-    elif distance > 300 or inclusion_fraction < 0.25: #TBD
+    elif distance > 300:# or inclusion_fraction < 0.25: #TBD FIX INCLUSION FRACTION
         bacteria_parser.run_assembly()
 
     sqlCommands.sql_update_status_table('Generating phylogenetic tree', bacteria_parser.data.sample_name, '9', bacteria_parser.data.entry_id, bacteria_parser.data.sql_db)
